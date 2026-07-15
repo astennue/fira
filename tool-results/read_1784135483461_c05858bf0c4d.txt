@@ -1,0 +1,741 @@
+     1→"use client";
+     2→
+     3→import { useState, useCallback } from 'react';
+     4→import { motion, AnimatePresence } from 'framer-motion';
+     5→import {
+     6→  Mail,
+     7→  Lock,
+     8→  Eye,
+     9→  EyeOff,
+    10→  User,
+    11→  UserPlus,
+    12→  LogIn,
+    13→  Globe,
+    14→  Loader2,
+    15→  AlertCircle,
+    16→} from 'lucide-react';
+    17→import {
+    18→  Dialog,
+    19→  DialogContent,
+    20→  DialogHeader,
+    21→  DialogTitle,
+    22→  DialogDescription,
+    23→} from '@/components/ui/dialog';
+    24→import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+    25→import { Button } from '@/components/ui/button';
+    26→import { Input } from '@/components/ui/input';
+    27→import { Label } from '@/components/ui/label';
+    28→import { Checkbox } from '@/components/ui/checkbox';
+    29→import { Separator } from '@/components/ui/separator';
+    30→import { useAuthModalStore } from '@/stores/auth-modal';
+    31→import { useToast } from '@/hooks/use-toast';
+    32→import { supabase } from '@/lib/supabase';
+    33→import { useRouter } from 'next/navigation';
+    34→
+    35→// ── Google "G" logo (official 4-color mark) ──────────────────
+    36→function GoogleIcon({ className }: { className?: string }) {
+    37→  return (
+    38→    <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+    39→      <path
+    40→        fill="#4285F4"
+    41→        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+    42→      />
+    43→      <path
+    44→        fill="#34A853"
+    45→        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+    46→      />
+    47→      <path
+    48→        fill="#FBBC05"
+    49→        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+    50→      />
+    51→      <path
+    52→        fill="#EA4335"
+    53→        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+    54→      />
+    55→    </svg>
+    56→  );
+    57→}
+    58→
+    59→// ── Reusable "Continue with Google" button ───────────────────
+    60→function GoogleButton({
+    61→  loading,
+    62→  onClick,
+    63→  disabled,
+    64→}: {
+    65→  loading: boolean;
+    66→  onClick: () => void;
+    67→  disabled?: boolean;
+    68→}) {
+    69→  return (
+    70→    <Button
+    71→      type="button"
+    72→      variant="outline"
+    73→      onClick={onClick}
+    74→      disabled={loading || disabled}
+    75→      className="w-full bg-white border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-400 transition-colors"
+    76→    >
+    77→      {loading ? (
+    78→        <>
+    79→          <Loader2 className="size-4 animate-spin" />
+    80→          Connecting...
+    81→        </>
+    82→      ) : (
+    83→        <>
+    84→          <GoogleIcon className="size-4" />
+    85→          Continue with Google
+    86→        </>
+    87→      )}
+    88→    </Button>
+    89→  );
+    90→}
+    91→
+    92→// ── Password strength ────────────────────────────────────────
+    93→function getPasswordStrength(password: string) {
+    94→  if (!password) return { score: 0, label: '', color: '', width: '0%' };
+    95→  let score = 0;
+    96→  if (password.length >= 8) score++;
+    97→  if (password.length >= 12) score++;
+    98→  if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++;
+    99→  if (/\d/.test(password)) score++;
+   100→  if (/[^a-zA-Z\d]/.test(password)) score++;
+   101→  switch (score) {
+   102→    case 0:
+   103→    case 1:
+   104→      return { score, label: 'Weak', color: 'bg-red-500', width: '20%' };
+   105→    case 2:
+   106→      return { score, label: 'Fair', color: 'bg-yellow-500', width: '40%' };
+   107→    case 3:
+   108→      return { score, label: 'Good', color: 'bg-yellow-500', width: '60%' };
+   109→    case 4:
+   110→      return { score, label: 'Strong', color: 'bg-green-500', width: '80%' };
+   111→    case 5:
+   112→      return { score, label: 'Very Strong', color: 'bg-green-500', width: '100%' };
+   113→    default:
+   114→      return { score: 0, label: '', color: '', width: '0%' };
+   115→  }
+   116→}
+   117→
+   118→function PasswordStrengthMeter({ password }: { password: string }) {
+   119→  const strength = getPasswordStrength(password);
+   120→  if (!password) return null;
+   121→  return (
+   122→    <div className="space-y-1.5" role="status" aria-live="polite">
+   123→      <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-muted">
+   124→        <motion.div
+   125→          initial={{ width: 0 }}
+   126→          animate={{ width: strength.width }}
+   127→          transition={{ duration: 0.3, ease: 'easeOut' }}
+   128→          className={`h-full rounded-full ${strength.color}`}
+   129→        />
+   130→      </div>
+   131→      <p className="text-xs text-muted-foreground">
+   132→        Password strength:{' '}
+   133→        <span className={strength.score >= 3 ? 'font-medium text-green-600' : 'font-medium text-muted-foreground'}>
+   134→          {strength.label}
+   135→        </span>
+   136→      </p>
+   137→    </div>
+   138→  );
+   139→}
+   140→
+   141→export default function AuthModal() {
+   142→  const { showAuthModal, closeAuthModal, authModalTab, openAuthModal } = useAuthModalStore();
+   143→  const { toast } = useToast();
+   144→  const router = useRouter();
+   145→
+   146→  // Login form state
+   147→  const [loginForm, setLoginForm] = useState({ email: '', password: '', rememberMe: false });
+   148→  const [showPassword, setShowPassword] = useState(false);
+   149→  const [loginError, setLoginError] = useState('');
+   150→  const [loginLoading, setLoginLoading] = useState(false);
+   151→
+   152→  // Register form state
+   153→  const [registerForm, setRegisterForm] = useState({
+   154→    fullName: '',
+   155→    email: '',
+   156→    password: '',
+   157→    confirmPassword: '',
+   158→  });
+   159→  const [agreeToTerms, setAgreeToTerms] = useState(false);
+   160→  const [showRegPassword, setShowRegPassword] = useState(false);
+   161→  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+   162→  const [registerError, setRegisterError] = useState('');
+   163→  const [registerLoading, setRegisterLoading] = useState(false);
+   164→
+   165→  // Google OAuth loading state (shared by both tabs)
+   166→  const [googleLoading, setGoogleLoading] = useState(false);
+   167→
+   168→  // ── Google OAuth sign-in (used by both Sign In and Sign Up tabs) ──
+   169→  const handleGoogleSignIn = useCallback(async () => {
+   170→    setGoogleLoading(true);
+   171→    try {
+   172→      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+   173→        provider: 'google',
+   174→        options: {
+   175→          // Redirect back to the current site after Google completes.
+   176→          // The @supabase/ssr middleware exchanges the code for a session
+   177→          // and the user lands on /dashboard (handled by the redirect URL).
+   178→          redirectTo: `${window.location.origin}/dashboard`,
+   179→        },
+   180→      });
+   181→      if (oauthError) throw oauthError;
+   182→      // The browser will redirect to Google's consent screen, then back here.
+   183→      // No further action needed in this component — AuthContext's
+   184→      // onAuthStateChange listener picks up the new session.
+   185→    } catch (err: any) {
+   186→      const raw = err?.message || 'Google sign-in failed. Please try again.';
+   187→      let friendly = raw;
+   188→      if (/provider.*not enabled|disabled/i.test(raw)) {
+   189→        friendly =
+   190→          'Google sign-in is not enabled. Please contact support or use email/password instead.';
+   191→      } else if (/redirect.*not allowed|redirect_uri_mismatch/i.test(raw)) {
+   192→        friendly =
+   193→          'Google sign-in redirect URL is not configured. Please contact support.';
+   194→      } else if (/popup.*closed|cancelled/i.test(raw)) {
+   195→        friendly = 'Google sign-in was cancelled.';
+   196→      }
+   197→      toast({
+   198→        title: 'Google Sign-In Failed',
+   199→        description: friendly,
+   200→        variant: 'destructive',
+   201→      });
+   202→      setGoogleLoading(false);
+   203→    }
+   204→  }, [toast]);
+   205→
+   206→  const handleLogin = useCallback(
+   207→    async (e: React.FormEvent) => {
+   208→      e.preventDefault();
+   209→      setLoginError('');
+   210→      if (!loginForm.email.trim()) {
+   211→        setLoginError('Please enter your email address.');
+   212→        return;
+   213→      }
+   214→      if (!loginForm.password) {
+   215→        setLoginError('Please enter your password.');
+   216→        return;
+   217→      }
+   218→      setLoginLoading(true);
+   219→      try {
+   220→        const { data, error: authError } = await supabase.auth.signInWithPassword({
+   221→          email: loginForm.email,
+   222→          password: loginForm.password,
+   223→        });
+   224→        if (authError) throw authError;
+   225→
+   226→        toast({
+   227→          title: 'Welcome back!',
+   228→          description: `Signed in as ${data.user.email}`,
+   229→        });
+   230→        setLoginForm({ email: '', password: '', rememberMe: false });
+   231→        closeAuthModal();
+   232→
+   233→        // Fetch role for redirect
+   234→        const { data: profile } = await supabase
+   235→          .from('users')
+   236→          .select('role')
+   237→          .eq('id', data.user.id)
+   238→          .single();
+   239→        if (profile?.role === 'admin') router.push('/admin');
+   240→        else if (profile?.role === 'employer') router.push('/employer/dashboard');
+   241→        else router.push('/dashboard');
+   242→      } catch (err: any) {
+   243→        const raw = err?.message || 'Login failed. Please try again.';
+   244→        let friendly = raw;
+   245→        if (/invalid login credentials/i.test(raw)) {
+   246→          friendly = 'Invalid email or password. Please try again.';
+   247→        } else if (/email not confirmed/i.test(raw)) {
+   248→          friendly = 'Please confirm your email address before signing in. Check your inbox for the verification link.';
+   249→        } else if (/rate limit|too many/i.test(raw)) {
+   250→          friendly = 'Too many login attempts. Please wait a moment and try again.';
+   251→        }
+   252→        setLoginError(friendly);
+   253→      } finally {
+   254→        setLoginLoading(false);
+   255→      }
+   256→    },
+   257→    [loginForm, closeAuthModal, toast, router]
+   258→  );
+   259→
+   260→  const handleRegister = useCallback(
+   261→    async (e: React.FormEvent) => {
+   262→      e.preventDefault();
+   263→      setRegisterError('');
+   264→      if (!registerForm.fullName.trim()) {
+   265→        setRegisterError('Please enter your full name.');
+   266→        return;
+   267→      }
+   268→      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerForm.email)) {
+   269→        setRegisterError('Please enter a valid email address.');
+   270→        return;
+   271→      }
+   272→      if (registerForm.password.length < 6) {
+   273→        setRegisterError('Password must be at least 6 characters long.');
+   274→        return;
+   275→      }
+   276→      if (registerForm.password !== registerForm.confirmPassword) {
+   277→        setRegisterError('Passwords do not match. Please re-enter your password to confirm.');
+   278→        return;
+   279→      }
+   280→      if (!agreeToTerms) {
+   281→        setRegisterError('Please accept the Terms of Service and Privacy Policy to create your account.');
+   282→        return;
+   283→      }
+   284→      setRegisterLoading(true);
+   285→      try {
+   286→        const { data, error: authError } = await supabase.auth.signUp({
+   287→          email: registerForm.email,
+   288→          password: registerForm.password,
+   289→          options: {
+   290→            data: {
+   291→              full_name: registerForm.fullName,
+   292→              role: 'employee',
+   293→            },
+   294→          },
+   295→        });
+   296→        if (authError) throw authError;
+   297→
+   298→        // Email confirmation required: Supabase returns either (a) a user but no
+   299→        // session, or (b) nothing at all (when OTP confirmation is enabled). In
+   300→        // both cases the account has been created in auth.users — the user just
+   301→        // needs to click the link in the confirmation email before they can sign in.
+   302→        if (!data.session) {
+   303→          toast({
+   304→            title: 'Account created — check your email',
+   305→            description:
+   306→              'We sent a verification link to ' +
+   307→              registerForm.email +
+   308→              '. Click it to activate your account, then sign in.',
+   309→          });
+   310→          setRegisterForm({ fullName: '', email: '', password: '', confirmPassword: '' });
+   311→          setAgreeToTerms(false);
+   312→          closeAuthModal();
+   313→          // Re-open on the Sign In tab so the user can sign in after confirming.
+   314→          openAuthModal('login');
+   315→          return;
+   316→        }
+   317→
+   318→        // Session exists (email confirmation disabled) — proceed to the app.
+   319→        toast({
+   320→          title: 'Account created!',
+   321→          description: 'Welcome to FIRA!',
+   322→        });
+   323→        setRegisterForm({ fullName: '', email: '', password: '', confirmPassword: '' });
+   324→        setAgreeToTerms(false);
+   325→        closeAuthModal();
+   326→        router.push('/dashboard');
+   327→      } catch (err: any) {
+   328→        const raw = err?.message || 'Registration failed. Please try again.';
+   329→        let friendly = raw;
+   330→        if (/already registered/i.test(raw)) {
+   331→          friendly = 'An account with this email already exists. Try signing in instead.';
+   332→        } else if (/rate limit|too many|email rate limit/i.test(raw)) {
+   333→          friendly = 'Too many signup attempts. Please wait a moment and try again.';
+   334→        } else if (/weak|password/i.test(raw) && /at least/i.test(raw)) {
+   335→          friendly = 'Password is too weak. Use at least 6 characters.';
+   336→        }
+   337→        setRegisterError(friendly);
+   338→      } finally {
+   339→        setRegisterLoading(false);
+   340→      }
+   341→    },
+   342→    [registerForm, agreeToTerms, closeAuthModal, toast, router, openAuthModal]
+   343→  );
+   344→
+   345→  const switchToTab = useCallback(
+   346→    (tab: 'login' | 'register') => {
+   347→      setLoginError('');
+   348→      setRegisterError('');
+   349→      openAuthModal(tab);
+   350→    },
+   351→    [openAuthModal]
+   352→  );
+   353→
+   354→  // Helper to navigate to /terms or /privacy-policy (closes the modal first)
+   355→  const goToPage = useCallback(
+   356→    (path: string) => {
+   357→      closeAuthModal();
+   358→      router.push(path);
+   359→    },
+   360→    [closeAuthModal, router]
+   361→  );
+   362→
+   363→  return (
+   364→    <Dialog open={showAuthModal} onOpenChange={(open) => !open && closeAuthModal()}>
+   365→      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+   366→        <DialogHeader className="pb-0">
+   367→          <DialogTitle className="flex items-center gap-2 text-xl font-bold">
+   368→            <div className="flex size-8 items-center justify-center rounded-lg bg-[#0078D7]">
+   369→              <Globe className="size-4 text-white" />
+   370→            </div>
+   371→            Welcome to FIRA
+   372→          </DialogTitle>
+   373→          <DialogDescription>
+   374→            Your gateway to international career opportunities
+   375→          </DialogDescription>
+   376→        </DialogHeader>
+   377→
+   378→        <Tabs
+   379→          value={authModalTab}
+   380→          onValueChange={(val) => switchToTab(val as 'login' | 'register')}
+   381→          className="mt-2"
+   382→        >
+   383→          <TabsList className="w-full">
+   384→            <TabsTrigger value="login" className="flex-1 gap-1.5">
+   385→              <LogIn className="size-3.5" />
+   386→              Sign In
+   387→            </TabsTrigger>
+   388→            <TabsTrigger value="register" className="flex-1 gap-1.5">
+   389→              <UserPlus className="size-3.5" />
+   390→              Sign Up
+   391→            </TabsTrigger>
+   392→          </TabsList>
+   393→
+   394→          {/* ========== LOGIN TAB ========== */}
+   395→          <TabsContent value="login" className="mt-4">
+   396→            <form onSubmit={handleLogin} noValidate className="space-y-4">
+   397→              <div className="space-y-2">
+   398→                <Label htmlFor="login-email" className="text-sm font-medium">
+   399→                  Email Address
+   400→                </Label>
+   401→                <div className="relative">
+   402→                  <Mail className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+   403→                  <Input
+   404→                    id="login-email"
+   405→                    type="email"
+   406→                    placeholder="you@example.com"
+   407→                    value={loginForm.email}
+   408→                    onChange={(e) => setLoginForm((prev) => ({ ...prev, email: e.target.value }))}
+   409→                    className="pl-9"
+   410→                    autoComplete="email"
+   411→                  />
+   412→                </div>
+   413→              </div>
+   414→
+   415→              <div className="space-y-2">
+   416→                <Label htmlFor="login-password" className="text-sm font-medium">
+   417→                  Password
+   418→                </Label>
+   419→                <div className="relative">
+   420→                  <Lock className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+   421→                  <Input
+   422→                    id="login-password"
+   423→                    type={showPassword ? 'text' : 'password'}
+   424→                    placeholder="Enter your password"
+   425→                    value={loginForm.password}
+   426→                    onChange={(e) => setLoginForm((prev) => ({ ...prev, password: e.target.value }))}
+   427→                    className="pl-9 pr-9"
+   428→                    autoComplete="current-password"
+   429→                  />
+   430→                  <button
+   431→                    type="button"
+   432→                    onClick={() => setShowPassword((prev) => !prev)}
+   433→                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors rounded-sm"
+   434→                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+   435→                  >
+   436→                    {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+   437→                  </button>
+   438→                </div>
+   439→              </div>
+   440→
+   441→              <div className="flex items-center justify-between">
+   442→                <div className="flex items-center gap-2">
+   443→                  <Checkbox
+   444→                    id="remember-me"
+   445→                    checked={loginForm.rememberMe}
+   446→                    onCheckedChange={(checked) =>
+   447→                      setLoginForm((prev) => ({ ...prev, rememberMe: checked === true }))
+   448→                    }
+   449→                  />
+   450→                  <Label htmlFor="remember-me" className="text-sm cursor-pointer">
+   451→                    Remember me
+   452→                  </Label>
+   453→                </div>
+   454→                <button
+   455→                  type="button"
+   456→                  onClick={() => {
+   457→                    closeAuthModal();
+   458→                    router.push('/forgot-password');
+   459→                  }}
+   460→                  className="text-sm font-medium text-[#0078D7] hover:text-[#005A9E] transition-colors rounded-sm"
+   461→                >
+   462→                  Forgot Password?
+   463→                </button>
+   464→              </div>
+   465→
+   466→              <AnimatePresence>
+   467→                {loginError && (
+   468→                  <motion.div
+   469→                    initial={{ opacity: 0, height: 0 }}
+   470→                    animate={{ opacity: 1, height: 'auto' }}
+   471→                    exit={{ opacity: 0, height: 0 }}
+   472→                    className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3"
+   473→                    role="alert"
+   474→                  >
+   475→                    <AlertCircle className="mt-0.5 size-4 shrink-0 text-red-500" />
+   476→                    <p className="text-sm text-red-700 whitespace-pre-line">{loginError}</p>
+   477→                  </motion.div>
+   478→                )}
+   479→              </AnimatePresence>
+   480→
+   481→              <Button
+   482→                type="submit"
+   483→                className="w-full bg-[#0078D7] font-semibold hover:bg-[#005A9E]"
+   484→                disabled={loginLoading}
+   485→              >
+   486→                {loginLoading ? (
+   487→                  <>
+   488→                    <Loader2 className="size-4 animate-spin" />
+   489→                    Signing In...
+   490→                  </>
+   491→                ) : (
+   492→                  <>
+   493→                    <LogIn className="size-4" />
+   494→                    Sign In
+   495→                  </>
+   496→                )}
+   497→              </Button>
+   498→
+   499→              {/* Divider + Google */}
+   500→              <div className="relative py-1">
+   501→                <div className="absolute inset-0 flex items-center">
+   502→                  <Separator className="w-full" />
+   503→                </div>
+   504→                <div className="relative flex justify-center">
+   505→                  <span className="bg-background px-2 text-xs text-muted-foreground uppercase tracking-wider">
+   506→                    or continue with
+   507→                  </span>
+   508→                </div>
+   509→              </div>
+   510→
+   511→              <GoogleButton
+   512→                loading={googleLoading}
+   513→                onClick={handleGoogleSignIn}
+   514→                disabled={loginLoading}
+   515→              />
+   516→
+   517→              <p className="text-center text-sm text-muted-foreground pt-1">
+   518→                Don&apos;t have an account?{' '}
+   519→                <button
+   520→                  type="button"
+   521→                  onClick={() => switchToTab('register')}
+   522→                  className="font-medium text-[#0078D7] hover:text-[#005A9E] transition-colors rounded-sm"
+   523→                >
+   524→                  Sign Up
+   525→                </button>
+   526→              </p>
+   527→            </form>
+   528→          </TabsContent>
+   529→
+   530→          {/* ========== REGISTER TAB ========== */}
+   531→          <TabsContent value="register" className="mt-4">
+   532→            <form onSubmit={handleRegister} noValidate className="space-y-4">
+   533→              <div className="space-y-2">
+   534→                <Label htmlFor="reg-name" className="text-sm font-medium">
+   535→                  Full Name
+   536→                </Label>
+   537→                <div className="relative">
+   538→                  <User className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+   539→                  <Input
+   540→                    id="reg-name"
+   541→                    type="text"
+   542→                    placeholder="Juan Dela Cruz"
+   543→                    value={registerForm.fullName}
+   544→                    onChange={(e) => setRegisterForm((prev) => ({ ...prev, fullName: e.target.value }))}
+   545→                    className="pl-9"
+   546→                    autoComplete="name"
+   547→                  />
+   548→                </div>
+   549→              </div>
+   550→
+   551→              <div className="space-y-2">
+   552→                <Label htmlFor="reg-email" className="text-sm font-medium">
+   553→                  Email Address
+   554→                </Label>
+   555→                <div className="relative">
+   556→                  <Mail className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+   557→                  <Input
+   558→                    id="reg-email"
+   559→                    type="email"
+   560→                    placeholder="you@example.com"
+   561→                    value={registerForm.email}
+   562→                    onChange={(e) => setRegisterForm((prev) => ({ ...prev, email: e.target.value }))}
+   563→                    className="pl-9"
+   564→                    autoComplete="email"
+   565→                  />
+   566→                </div>
+   567→              </div>
+   568→
+   569→              <div className="space-y-2">
+   570→                <Label htmlFor="reg-password" className="text-sm font-medium">
+   571→                  Password
+   572→                </Label>
+   573→                <div className="relative">
+   574→                  <Lock className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+   575→                  <Input
+   576→                    id="reg-password"
+   577→                    type={showRegPassword ? 'text' : 'password'}
+   578→                    placeholder="Min. 6 characters"
+   579→                    value={registerForm.password}
+   580→                    onChange={(e) => setRegisterForm((prev) => ({ ...prev, password: e.target.value }))}
+   581→                    className="pl-9 pr-9"
+   582→                    autoComplete="new-password"
+   583→                  />
+   584→                  <button
+   585→                    type="button"
+   586→                    onClick={() => setShowRegPassword((prev) => !prev)}
+   587→                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors rounded-sm"
+   588→                    aria-label={showRegPassword ? 'Hide password' : 'Show password'}
+   589→                  >
+   590→                    {showRegPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+   591→                  </button>
+   592→                </div>
+   593→                <PasswordStrengthMeter password={registerForm.password} />
+   594→              </div>
+   595→
+   596→              <div className="space-y-2">
+   597→                <Label htmlFor="reg-confirm-password" className="text-sm font-medium">
+   598→                  Confirm Password
+   599→                </Label>
+   600→                <div className="relative">
+   601→                  <Lock className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+   602→                  <Input
+   603→                    id="reg-confirm-password"
+   604→                    type={showConfirmPassword ? 'text' : 'password'}
+   605→                    placeholder="Re-enter your password"
+   606→                    value={registerForm.confirmPassword}
+   607→                    onChange={(e) => setRegisterForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
+   608→                    className="pl-9 pr-9"
+   609→                    autoComplete="new-password"
+   610→                  />
+   611→                  <button
+   612→                    type="button"
+   613→                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+   614→                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors rounded-sm"
+   615→                    aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+   616→                  >
+   617→                    {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+   618→                  </button>
+   619→                </div>
+   620→              </div>
+   621→
+   622→              {/* Terms & Conditions agreement */}
+   623→              <div className="space-y-2">
+   624→                <div className="flex items-start gap-2 rounded-lg border border-border bg-muted/30 p-3">
+   625→                  <Checkbox
+   626→                    id="agree-terms"
+   627→                    checked={agreeToTerms}
+   628→                    onCheckedChange={(checked) => setAgreeToTerms(checked === true)}
+   629→                    className="mt-0.5"
+   630→                  />
+   631→                  <Label htmlFor="agree-terms" className="text-xs leading-relaxed cursor-pointer text-muted-foreground">
+   632→                    I agree to FIRA&apos;s{' '}
+   633→                    <button
+   634→                      type="button"
+   635→                      onClick={() => goToPage('/terms')}
+   636→                      className="font-medium text-[#0078D7] hover:text-[#005A9E] underline"
+   637→                    >
+   638→                      Terms of Service
+   639→                    </button>
+   640→                    {' '}and{' '}
+   641→                    <button
+   642→                      type="button"
+   643→                      onClick={() => goToPage('/privacy-policy')}
+   644→                      className="font-medium text-[#0078D7] hover:text-[#005A9E] underline"
+   645→                    >
+   646→                      Privacy Policy
+   647→                    </button>
+   648→                    , and I consent to the processing of my personal data for recruitment purposes in accordance with the Philippine Data Privacy Act of 2012.
+   649→                  </Label>
+   650→                </div>
+   651→              </div>
+   652→
+   653→              <AnimatePresence>
+   654→                {registerError && (
+   655→                  <motion.div
+   656→                    initial={{ opacity: 0, height: 0 }}
+   657→                    animate={{ opacity: 1, height: 'auto' }}
+   658→                    exit={{ opacity: 0, height: 0 }}
+   659→                    className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3"
+   660→                    role="alert"
+   661→                  >
+   662→                    <AlertCircle className="mt-0.5 size-4 shrink-0 text-red-500" />
+   663→                    <p className="text-sm text-red-700 whitespace-pre-line">{registerError}</p>
+   664→                  </motion.div>
+   665→                )}
+   666→              </AnimatePresence>
+   667→
+   668→              <Button
+   669→                type="submit"
+   670→                className="w-full bg-[#0078D7] font-semibold hover:bg-[#005A9E]"
+   671→                disabled={registerLoading || !agreeToTerms}
+   672→              >
+   673→                {registerLoading ? (
+   674→                  <>
+   675→                    <Loader2 className="size-4 animate-spin" />
+   676→                    Creating Account...
+   677→                  </>
+   678→                ) : (
+   679→                  <>
+   680→                    <UserPlus className="size-4" />
+   681→                    Create Account
+   682→                  </>
+   683→                )}
+   684→              </Button>
+   685→
+   686→              {/* Divider + Google */}
+   687→              <div className="relative py-1">
+   688→                <div className="absolute inset-0 flex items-center">
+   689→                  <Separator className="w-full" />
+   690→                </div>
+   691→                <div className="relative flex justify-center">
+   692→                  <span className="bg-background px-2 text-xs text-muted-foreground uppercase tracking-wider">
+   693→                    or sign up with
+   694→                  </span>
+   695→                </div>
+   696→              </div>
+   697→
+   698→              <GoogleButton
+   699→                loading={googleLoading}
+   700→                onClick={handleGoogleSignIn}
+   701→                disabled={registerLoading}
+   702→              />
+   703→
+   704→              <p className="text-center text-xs text-muted-foreground pt-1">
+   705→                By continuing with Google, you agree to FIRA&apos;s{' '}
+   706→                <button
+   707→                  type="button"
+   708→                  onClick={() => goToPage('/terms')}
+   709→                  className="font-medium text-[#0078D7] hover:text-[#005A9E] underline"
+   710→                >
+   711→                  Terms
+   712→                </button>
+   713→                {' '}and{' '}
+   714→                <button
+   715→                  type="button"
+   716→                  onClick={() => goToPage('/privacy-policy')}
+   717→                  className="font-medium text-[#0078D7] hover:text-[#005A9E] underline"
+   718→                >
+   719→                  Privacy Policy
+   720→                </button>
+   721→                .
+   722→              </p>
+   723→
+   724→              <p className="text-center text-sm text-muted-foreground">
+   725→                Already have an account?{' '}
+   726→                <button
+   727→                  type="button"
+   728→                  onClick={() => switchToTab('login')}
+   729→                  className="font-medium text-[#0078D7] hover:text-[#005A9E] transition-colors rounded-sm"
+   730→                >
+   731→                  Sign In
+   732→                </button>
+   733→              </p>
+   734→            </form>
+   735→          </TabsContent>
+   736→        </Tabs>
+   737→      </DialogContent>
+   738→    </Dialog>
+   739→  );
+   740→}
+   741→

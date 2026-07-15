@@ -1,0 +1,713 @@
+     1→     1→-- ============================================================
+     2→     2→-- FIRA Database Schema (Supabase / PostgreSQL)
+     3→     3→-- Complete migration from Firebase Firestore to Supabase
+     4→     4→-- 
+     5→     5→-- IDEMPOTENT: Safe to re-run multiple times.
+     6→     6→-- ============================================================
+     7→     7→
+     8→     8→-- Enable necessary extensions
+     9→     9→CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+    10→    10→CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+    11→    11→
+    12→    12→-- ============================================================
+    13→    13→-- DROP OLD TABLES THAT HAVE SCHEMA CHANGES
+    14→    14→-- (Only needed if re-running after a previous partial migration)
+    15→    15→-- Comment out the DROP block below if this is a fresh database.
+    16→    16→-- ============================================================
+    17→    17→
+    18→    18→-- Drop tables in dependency order (child → parent)
+    19→    19→DROP TABLE IF EXISTS public.rate_limits CASCADE;
+    20→    20→DROP TABLE IF EXISTS public.saved_opportunities CASCADE;
+    21→    21→DROP TABLE IF EXISTS public.followers CASCADE;
+    22→    22→DROP TABLE IF EXISTS public.user_encryption_keys CASCADE;
+    23→    23→DROP TABLE IF EXISTS public._internal_rate_limits CASCADE;
+    24→    24→DROP TABLE IF EXISTS public.monthly_email_counts CASCADE;
+    25→    25→DROP TABLE IF EXISTS public.daily_email_counts CASCADE;
+    26→    26→DROP TABLE IF EXISTS public.saved_job_descriptions CASCADE;
+    27→    27→DROP TABLE IF EXISTS public.callee_ice_candidates CASCADE;
+    28→    28→DROP TABLE IF EXISTS public.caller_ice_candidates CASCADE;
+    29→    29→DROP TABLE IF EXISTS public.calls CASCADE;
+    30→    30→DROP TABLE IF EXISTS public.notifications CASCADE;
+    31→    31→DROP TABLE IF EXISTS public.chat_messages CASCADE;
+    32→    32→DROP TABLE IF EXISTS public.chats CASCADE;
+    33→    33→DROP TABLE IF EXISTS public.post_comments CASCADE;
+    34→    34→DROP TABLE IF EXISTS public.posts CASCADE;
+    35→    35→DROP TABLE IF EXISTS public.applications CASCADE;
+    36→    36→DROP TABLE IF EXISTS public.opportunities CASCADE;
+    37→    37→DROP TABLE IF EXISTS public.public_profiles CASCADE;
+    38→    38→DROP TABLE IF EXISTS public.users CASCADE;
+    39→    39→
+    40→    40→-- ============================================================
+    41→    41→-- USERS TABLE
+    42→    42→-- Primary key `id` = Supabase Auth UID (auth.users.id)
+    43→    43→-- ============================================================
+    44→    44→CREATE TABLE public.users (
+    45→    45→  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    46→    46→  email TEXT NOT NULL,
+    47→    47→  display_name TEXT,
+    48→    48→  first_name TEXT,
+    49→    49→  last_name TEXT,
+    50→    50→  role TEXT NOT NULL DEFAULT 'employee' CHECK (role IN ('employee', 'employer', 'admin')),
+    51→    51→  company_name TEXT,
+    52→    52→  headline TEXT,
+    53→    53→  photo_url TEXT,
+    54→    54→  cover_photo TEXT,
+    55→    55→  phone TEXT,
+    56→    56→  location TEXT,
+    57→    57→  bio TEXT,
+    58→    58→  skills TEXT[] DEFAULT '{}',
+    59→    59→  experience TEXT,
+    60→    60→  education TEXT,
+    61→    61→  employment_history TEXT,
+    62→    62→  interests TEXT,
+    63→    63→  career_goals TEXT,
+    64→    64→  "references" TEXT,
+    65→    65→  portfolio_link TEXT,
+    66→    66→  linkedin TEXT,
+    67→    67→  github TEXT,
+    68→    68→  website TEXT,
+    69→    69→  resume_url TEXT,
+    70→    70→  cover_letter_url TEXT,
+    71→    71→  plan TEXT DEFAULT 'free' CHECK (plan IN ('free', 'starter', 'pro', 'premium', 'business')),
+    72→    72→  plan_updated_at TIMESTAMPTZ,
+    73→    73→  stripe_customer_id TEXT,
+    74→    74→  stripe_subscription_id TEXT,
+    75→    75→  subscription_status TEXT DEFAULT 'inactive',
+    76→    76→  last_webhook_event_id TEXT,
+    77→    77→  preferences JSONB DEFAULT '{}',
+    78→    78→  first_login_at TIMESTAMPTZ,
+    79→    79→  last_login_at TIMESTAMPTZ,
+    80→    80→  encryption_public_key TEXT,
+    81→    81→  created_at TIMESTAMPTZ DEFAULT NOW(),
+    82→    82→  updated_at TIMESTAMPTZ DEFAULT NOW()
+    83→    83→);
+    84→    84→
+    85→    85→-- ============================================================
+    86→    86→-- PUBLIC PROFILES TABLE
+    87→    87→-- Visible to all users for search/discovery
+    88→    88→-- ============================================================
+    89→    89→CREATE TABLE public.public_profiles (
+    90→    90→  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    91→    91→  display_name TEXT,
+    92→    92→  first_name TEXT,
+    93→    93→  last_name TEXT,
+    94→    94→  role TEXT DEFAULT 'employee',
+    95→    95→  company_name TEXT,
+    96→    96→  company_overview TEXT,
+    97→    97→  company_logo_url TEXT,
+    98→    98→  industry TEXT,
+    99→    99→  company_size TEXT,
+   100→   100→  founded TEXT,
+   101→   101→  benefits TEXT,
+   102→   102→  culture TEXT,
+   103→   103→  support_email TEXT,
+   104→   104→  contact_number TEXT,
+   105→   105→  headline TEXT,
+   106→   106→  photo_url TEXT,
+   107→   107→  cover_photo TEXT,
+   108→   108→  location TEXT,
+   109→   109→  bio TEXT,
+   110→   110→  skills TEXT[] DEFAULT '{}',
+   111→   111→  education TEXT,
+   112→   112→  interests TEXT,
+   113→   113→  career_goals TEXT,
+   114→   114→  employment_history TEXT,
+   115→   115→  portfolio_link TEXT,
+   116→   116→  portfolio_projects JSONB DEFAULT '[]',
+   117→   117→  linkedin TEXT,
+   118→   118→  github TEXT,
+   119→   119→  twitter TEXT,
+   120→   120→  website TEXT,
+   121→   121→  followers TEXT[] DEFAULT '{}',
+   122→   122→  following TEXT[] DEFAULT '{}',
+   123→   123→  encryption_public_key TEXT,
+   124→   124→  created_at TIMESTAMPTZ DEFAULT NOW(),
+   125→   125→  updated_at TIMESTAMPTZ DEFAULT NOW()
+   126→   126→);
+   127→   127→
+   128→   128→-- ============================================================
+   129→   129→-- OPPORTUNITIES (Job Postings) TABLE
+   130→   130→-- ============================================================
+   131→   131→CREATE TABLE public.opportunities (
+   132→   132→  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   133→   133→  title TEXT NOT NULL,
+   134→   134→  description TEXT,
+   135→   135→  company TEXT,
+   136→   136→  company_logo TEXT,
+   137→   137→  company_overview TEXT,
+   138→   138→  employer_id UUID REFERENCES public.users(id),
+   139→   139→  employer_name TEXT,
+   140→   140→  employer_photo_url TEXT,
+   141→   141→  location TEXT,
+   142→   142→  salary TEXT,
+   143→   143→  salary_min INTEGER,
+   144→   144→  salary_max INTEGER,
+   145→   145→  salary_currency TEXT DEFAULT 'PHP',
+   146→   146→  type TEXT,
+   147→   147→  job_type TEXT,
+   148→   148→  category TEXT,
+   149→   149→  experience_level TEXT,
+   150→   150→  skills TEXT[] DEFAULT '{}',
+   151→   151→  requirements TEXT[] DEFAULT '{}',
+   152→   152→  preferred_qualifications TEXT[] DEFAULT '{}',
+   153→   153→  responsibilities TEXT[] DEFAULT '{}',
+   154→   154→  roles_and_responsibilities TEXT,
+   155→   155→  benefits TEXT[] DEFAULT '{}',
+   156→   156→  compensation_and_benefits TEXT,
+   157→   157→  education TEXT,
+   158→   158→  experience TEXT,
+   159→   159→  working_hours TEXT,
+   160→   160→  travel_requirements TEXT,
+   161→   161→  application_instructions TEXT,
+   162→   162→  legal_statement TEXT,
+   163→   163→  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'closed', 'draft', 'paused', 'archived')),
+   164→   164→  is_active BOOLEAN DEFAULT TRUE,
+   165→   165→  is_featured BOOLEAN DEFAULT FALSE,
+   166→   166→  is_remote BOOLEAN DEFAULT FALSE,
+   167→   167→  application_count INTEGER DEFAULT 0,
+   168→   168→  views_count INTEGER DEFAULT 0,
+   169→   169→  deadline DATE,
+   170→   170→  posted_at TIMESTAMPTZ DEFAULT NOW(),
+   171→   171→  updated_at TIMESTAMPTZ DEFAULT NOW(),
+   172→   172→  expires_at TIMESTAMPTZ,
+   173→   173→  created_at TIMESTAMPTZ DEFAULT NOW()
+   174→   174→);
+   175→   175→
+   176→   176→-- ============================================================
+   177→   177→-- APPLICATIONS TABLE
+   178→   178→-- ============================================================
+   179→   179→CREATE TABLE public.applications (
+   180→   180→  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   181→   181→  user_id UUID REFERENCES public.users(id),
+   182→   182→  opportunity_id UUID REFERENCES public.opportunities(id),
+   183→   183→  employer_id UUID REFERENCES public.users(id),
+   184→   184→  status TEXT DEFAULT 'applied' CHECK (status IN ('applied', 'reviewing', 'shortlisted', 'interview', 'offered', 'rejected', 'withdrawn', 'pending', 'reviewed', 'interviewed', 'approved')),
+   185→   185→  cover_letter TEXT,
+   186→   186→  resume_url TEXT,
+   187→   187→  notes TEXT,
+   188→   188→  user_email TEXT,
+   189→   189→  user_name TEXT,
+   190→   190→  column_name TEXT DEFAULT 'applied',
+   191→   191→  is_manual BOOLEAN DEFAULT FALSE,
+   192→   192→  title TEXT,
+   193→   193→  company TEXT,
+   194→   194→  location TEXT,
+   195→   195→  salary TEXT,
+   196→   196→  job_url TEXT,
+   197→   197→  withdrawn_at TIMESTAMPTZ,
+   198→   198→  rating INTEGER,
+   199→   199→  applied_at TIMESTAMPTZ DEFAULT NOW(),
+   200→   200→  submitted_at TIMESTAMPTZ DEFAULT NOW(),
+   201→   201→  updated_at TIMESTAMPTZ DEFAULT NOW(),
+   202→   202→  created_at TIMESTAMPTZ DEFAULT NOW(),
+   203→   203→  UNIQUE(opportunity_id, user_id)
+   204→   204→);
+   205→   205→
+   206→   206→-- ============================================================
+   207→   207→-- POSTS TABLE (Community Feed)
+   208→   208→-- ============================================================
+   209→   209→CREATE TABLE public.posts (
+   210→   210→  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   211→   211→  user_id UUID REFERENCES public.users(id),
+   212→   212→  user_name TEXT,
+   213→   213→  user_photo TEXT,
+   214→   214→  user_role TEXT,
+   215→   215→  user_title TEXT,
+   216→   216→  content TEXT NOT NULL,
+   217→   217→  image_url TEXT,
+   218→   218→  likes TEXT[] DEFAULT '{}',
+   219→   219→  comments JSONB DEFAULT '[]',
+   220→   220→  comments_count INTEGER DEFAULT 0,
+   221→   221→  shares INTEGER DEFAULT 0,
+   222→   222→  created_at TIMESTAMPTZ DEFAULT NOW(),
+   223→   223→  updated_at TIMESTAMPTZ DEFAULT NOW()
+   224→   224→);
+   225→   225→
+   226→   226→-- ============================================================
+   227→   227→-- POST COMMENTS TABLE
+   228→   228→-- ============================================================
+   229→   229→CREATE TABLE public.post_comments (
+   230→   230→  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   231→   231→  post_id UUID NOT NULL REFERENCES public.posts(id) ON DELETE CASCADE,
+   232→   232→  author_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+   233→   233→  content TEXT NOT NULL,
+   234→   234→  created_at TIMESTAMPTZ DEFAULT NOW()
+   235→   235→);
+   236→   236→
+   237→   237→-- ============================================================
+   238→   238→-- CHATS TABLE
+   239→   239→-- ============================================================
+   240→   240→CREATE TABLE public.chats (
+   241→   241→  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   242→   242→  participants UUID[] NOT NULL,
+   243→   243→  participant_details JSONB DEFAULT '[]',
+   244→   244→  participant_names TEXT[] DEFAULT '{}',
+   245→   245→  participant_photos TEXT[] DEFAULT '{}',
+   246→   246→  last_message TEXT,
+   247→   247→  last_message_at TIMESTAMPTZ DEFAULT NOW(),
+   248→   248→  last_sender_id UUID,
+   249→   249→  unread_count JSONB DEFAULT '{}',
+   250→   250→  hidden_for UUID[] DEFAULT '{}',
+   251→   251→  is_group BOOLEAN DEFAULT FALSE,
+   252→   252→  group_name TEXT,
+   253→   253→  type TEXT DEFAULT 'direct',
+   254→   254→  opportunity_id UUID,
+   255→   255→  opportunity_title TEXT,
+   256→   256→  application_id TEXT,
+   257→   257→  created_at TIMESTAMPTZ DEFAULT NOW(),
+   258→   258→  updated_at TIMESTAMPTZ DEFAULT NOW()
+   259→   259→);
+   260→   260→
+   261→   261→-- ============================================================
+   262→   262→-- CHAT MESSAGES TABLE
+   263→   263→-- ============================================================
+   264→   264→CREATE TABLE public.chat_messages (
+   265→   265→  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   266→   266→  chat_id UUID REFERENCES public.chats(id) ON DELETE CASCADE,
+   267→   267→  sender_id UUID REFERENCES public.users(id),
+   268→   268→  content TEXT NOT NULL,
+   269→   269→  message_type TEXT DEFAULT 'text' CHECK (message_type IN ('text', 'image', 'file', 'system')),
+   270→   270→  is_read BOOLEAN DEFAULT FALSE,
+   271→   271→  is_encrypted BOOLEAN DEFAULT FALSE,
+   272→   272→  ciphertext TEXT,
+   273→   273→  iv TEXT,
+   274→   274→  attachments JSONB DEFAULT '[]',
+   275→   275→  created_at TIMESTAMPTZ DEFAULT NOW()
+   276→   276→);
+   277→   277→
+   278→   278→-- ============================================================
+   279→   279→-- NOTIFICATIONS TABLE
+   280→   280→-- ============================================================
+   281→   281→CREATE TABLE public.notifications (
+   282→   282→  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   283→   283→  user_id UUID REFERENCES public.users(id),
+   284→   284→  actor_id UUID REFERENCES public.users(id),
+   285→   285→  actor_name TEXT,
+   286→   286→  actor_photo_url TEXT,
+   287→   287→  type TEXT NOT NULL,
+   288→   288→  title TEXT,
+   289→   289→  message TEXT,
+   290→   290→  link TEXT,
+   291→   291→  is_read BOOLEAN DEFAULT FALSE,
+   292→   292→  metadata JSONB DEFAULT '{}',
+   293→   293→  created_at TIMESTAMPTZ DEFAULT NOW()
+   294→   294→);
+   295→   295→
+   296→   296→-- ============================================================
+   297→   297→-- CALLS TABLE (Video Calls / WebRTC)
+   298→   298→-- ============================================================
+   299→   299→CREATE TABLE public.calls (
+   300→   300→  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   301→   301→  caller_id UUID REFERENCES public.users(id),
+   302→   302→  callee_id UUID REFERENCES public.users(id),
+   303→   303→  caller_name TEXT,
+   304→   304→  callee_name TEXT,
+   305→   305→  status TEXT DEFAULT 'ringing' CHECK (status IN ('ringing', 'connected', 'active', 'ended', 'missed', 'declined')),
+   306→   306→  offer TEXT,
+   307→   307→  answer TEXT,
+   308→   308→  opportunity_id TEXT,
+   309→   309→  opportunity_title TEXT,
+   310→   310→  started_at TIMESTAMPTZ,
+   311→   311→  ended_at TIMESTAMPTZ,
+   312→   312→  created_at TIMESTAMPTZ DEFAULT NOW()
+   313→   313→);
+   314→   314→
+   315→   315→-- ============================================================
+   316→   316→-- ICE CANDIDATES TABLES (WebRTC Signaling)
+   317→   317→-- ============================================================
+   318→   318→CREATE TABLE public.caller_ice_candidates (
+   319→   319→  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   320→   320→  call_id UUID NOT NULL REFERENCES public.calls(id) ON DELETE CASCADE,
+   321→   321→  candidate JSONB NOT NULL,
+   322→   322→  created_at TIMESTAMPTZ DEFAULT NOW()
+   323→   323→);
+   324→   324→
+   325→   325→CREATE TABLE public.callee_ice_candidates (
+   326→   326→  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   327→   327→  call_id UUID NOT NULL REFERENCES public.calls(id) ON DELETE CASCADE,
+   328→   328→  candidate JSONB NOT NULL,
+   329→   329→  created_at TIMESTAMPTZ DEFAULT NOW()
+   330→   330→);
+   331→   331→
+   332→   332→-- ============================================================
+   333→   333→-- SAVED JOB DESCRIPTIONS TABLE
+   334→   334→-- ============================================================
+   335→   335→CREATE TABLE public.saved_job_descriptions (
+   336→   336→  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   337→   337→  user_id UUID REFERENCES public.users(id),
+   338→   338→  title TEXT,
+   339→   339→  description TEXT,
+   340→   340→  original_text TEXT,
+   341→   341→  ai_enhanced_text TEXT,
+   342→   342→  is_enhanced BOOLEAN DEFAULT FALSE,
+   343→   343→  file_name TEXT,
+   344→   344→  text TEXT,
+   345→   345→  created_at TIMESTAMPTZ DEFAULT NOW(),
+   346→   346→  updated_at TIMESTAMPTZ DEFAULT NOW()
+   347→   347→);
+   348→   348→
+   349→   349→-- ============================================================
+   350→   350→-- DAILY EMAIL COUNTS TABLE
+   351→   351→-- ============================================================
+   352→   352→CREATE TABLE public.daily_email_counts (
+   353→   353→  id TEXT PRIMARY KEY,
+   354→   354→  count INTEGER DEFAULT 0,
+   355→   355→  created_at TIMESTAMPTZ DEFAULT NOW(),
+   356→   356→  updated_at TIMESTAMPTZ DEFAULT NOW()
+   357→   357→);
+   358→   358→
+   359→   359→-- ============================================================
+   360→   360→-- MONTHLY EMAIL COUNTS TABLE
+   361→   361→-- ============================================================
+   362→   362→CREATE TABLE public.monthly_email_counts (
+   363→   363→  id TEXT PRIMARY KEY,
+   364→   364→  transactional INTEGER DEFAULT 0,
+   365→   365→  broadcasts INTEGER DEFAULT 0,
+   366→   366→  created_at TIMESTAMPTZ DEFAULT NOW(),
+   367→   367→  updated_at TIMESTAMPTZ DEFAULT NOW()
+   368→   368→);
+   369→   369→
+   370→   370→-- ============================================================
+   371→   371→-- INTERNAL RATE LIMITS TABLE
+   372→   372→-- ============================================================
+   373→   373→CREATE TABLE public._internal_rate_limits (
+   374→   374→  id TEXT PRIMARY KEY,
+   375→   375→  user_id UUID,
+   376→   376→  tool TEXT,
+   377→   377→  count INTEGER DEFAULT 0,
+   378→   378→  max_requests INTEGER,
+   379→   379→  plan_tier TEXT,
+   380→   380→  window_start TIMESTAMPTZ,
+   381→   381→  reset_time TIMESTAMPTZ,
+   382→   382→  expires_at TIMESTAMPTZ,
+   383→   383→  created_at TIMESTAMPTZ DEFAULT NOW(),
+   384→   384→  updated_at TIMESTAMPTZ DEFAULT NOW()
+   385→   385→);
+   386→   386→
+   387→   387→-- ============================================================
+   388→   388→-- USER ENCRYPTION KEYS TABLE
+   389→   389→-- ============================================================
+   390→   390→CREATE TABLE public.user_encryption_keys (
+   391→   391→  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   392→   392→  uid UUID REFERENCES public.users(id) ON DELETE CASCADE,
+   393→   393→  encryption_public_key TEXT,
+   394→   394→  created_at TIMESTAMPTZ DEFAULT NOW(),
+   395→   395→  updated_at TIMESTAMPTZ DEFAULT NOW()
+   396→   396→);
+   397→   397→
+   398→   398→-- ============================================================
+   399→   399→-- FOLLOWERS TABLE
+   400→   400→-- ============================================================
+   401→   401→CREATE TABLE public.followers (
+   402→   402→  follower_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+   403→   403→  following_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+   404→   404→  created_at TIMESTAMPTZ DEFAULT NOW(),
+   405→   405→  PRIMARY KEY (follower_id, following_id),
+   406→   406→  CHECK (follower_id != following_id)
+   407→   407→);
+   408→   408→
+   409→   409→-- ============================================================
+   410→   410→-- SAVED OPPORTUNITIES TABLE
+   411→   411→-- ============================================================
+   412→   412→CREATE TABLE public.saved_opportunities (
+   413→   413→  user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+   414→   414→  opportunity_id UUID NOT NULL REFERENCES public.opportunities(id) ON DELETE CASCADE,
+   415→   415→  created_at TIMESTAMPTZ DEFAULT NOW(),
+   416→   416→  PRIMARY KEY (user_id, opportunity_id)
+   417→   417→);
+   418→   418→
+   419→   419→-- ============================================================
+   420→   420→-- RATE LIMITS TABLE
+   421→   421→-- ============================================================
+   422→   422→CREATE TABLE public.rate_limits (
+   423→   423→  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+   424→   424→  identifier TEXT NOT NULL,
+   425→   425→  action TEXT NOT NULL,
+   426→   426→  count INTEGER DEFAULT 1,
+   427→   427→  window_start TIMESTAMPTZ DEFAULT NOW(),
+   428→   428→  UNIQUE(identifier, action)
+   429→   429→);
+   430→   430→
+   431→   431→-- ============================================================
+   432→   432→-- ROW LEVEL SECURITY (RLS)
+   433→   433→-- ============================================================
+   434→   434→
+   435→   435→-- Enable RLS on all tables
+   436→   436→ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
+   437→   437→ALTER TABLE public.public_profiles ENABLE ROW LEVEL SECURITY;
+   438→   438→ALTER TABLE public.opportunities ENABLE ROW LEVEL SECURITY;
+   439→   439→ALTER TABLE public.applications ENABLE ROW LEVEL SECURITY;
+   440→   440→ALTER TABLE public.posts ENABLE ROW LEVEL SECURITY;
+   441→   441→ALTER TABLE public.post_comments ENABLE ROW LEVEL SECURITY;
+   442→   442→ALTER TABLE public.chats ENABLE ROW LEVEL SECURITY;
+   443→   443→ALTER TABLE public.chat_messages ENABLE ROW LEVEL SECURITY;
+   444→   444→ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
+   445→   445→ALTER TABLE public.calls ENABLE ROW LEVEL SECURITY;
+   446→   446→ALTER TABLE public.caller_ice_candidates ENABLE ROW LEVEL SECURITY;
+   447→   447→ALTER TABLE public.callee_ice_candidates ENABLE ROW LEVEL SECURITY;
+   448→   448→ALTER TABLE public.saved_job_descriptions ENABLE ROW LEVEL SECURITY;
+   449→   449→ALTER TABLE public.user_encryption_keys ENABLE ROW LEVEL SECURITY;
+   450→   450→ALTER TABLE public.followers ENABLE ROW LEVEL SECURITY;
+   451→   451→ALTER TABLE public.saved_opportunities ENABLE ROW LEVEL SECURITY;
+   452→   452→ALTER TABLE public.rate_limits ENABLE ROW LEVEL SECURITY;
+   453→   453→
+   454→   454→-- Users: can read all, update own
+   455→   455→DROP POLICY IF EXISTS "Users are viewable by everyone" ON public.users;
+   456→   456→DROP POLICY IF EXISTS "Users can update own profile" ON public.users;
+   457→   457→DROP POLICY IF EXISTS "Users can insert own profile" ON public.users;
+   458→   458→CREATE POLICY "Users are viewable by everyone" ON public.users FOR SELECT USING (true);
+   459→   459→CREATE POLICY "Users can update own profile" ON public.users FOR UPDATE USING (auth.uid() = id);
+   460→   460→CREATE POLICY "Users can insert own profile" ON public.users FOR INSERT WITH CHECK (auth.uid() = id);
+   461→   461→
+   462→   462→-- Public Profiles: readable by all, writable by owner
+   463→   463→DROP POLICY IF EXISTS "Public profiles are viewable by everyone" ON public.public_profiles;
+   464→   464→DROP POLICY IF EXISTS "Users can update own public profile" ON public.public_profiles;
+   465→   465→DROP POLICY IF EXISTS "Users can insert own public profile" ON public.public_profiles;
+   466→   466→CREATE POLICY "Public profiles are viewable by everyone" ON public.public_profiles FOR SELECT USING (true);
+   467→   467→CREATE POLICY "Users can update own public profile" ON public.public_profiles FOR UPDATE USING (auth.uid() = id);
+   468→   468→CREATE POLICY "Users can insert own public profile" ON public.public_profiles FOR INSERT WITH CHECK (auth.uid() = id);
+   469→   469→
+   470→   470→-- Opportunities: readable by all, writable by employer
+   471→   471→DROP POLICY IF EXISTS "Opportunities are viewable by everyone" ON public.opportunities;
+   472→   472→DROP POLICY IF EXISTS "Employers can create opportunities" ON public.opportunities;
+   473→   473→DROP POLICY IF EXISTS "Employers can update own opportunities" ON public.opportunities;
+   474→   474→DROP POLICY IF EXISTS "Employers can delete own opportunities" ON public.opportunities;
+   475→   475→CREATE POLICY "Opportunities are viewable by everyone" ON public.opportunities FOR SELECT USING (true);
+   476→   476→CREATE POLICY "Employers can create opportunities" ON public.opportunities FOR INSERT WITH CHECK (auth.uid() = employer_id);
+   477→   477→CREATE POLICY "Employers can update own opportunities" ON public.opportunities FOR UPDATE USING (auth.uid() = employer_id);
+   478→   478→CREATE POLICY "Employers can delete own opportunities" ON public.opportunities FOR DELETE USING (auth.uid() = employer_id);
+   479→   479→
+   480→   480→-- Applications: readable by applicant or employer, writable by applicant
+   481→   481→DROP POLICY IF EXISTS "Users can view own applications" ON public.applications;
+   482→   482→DROP POLICY IF EXISTS "Users can create applications" ON public.applications;
+   483→   483→DROP POLICY IF EXISTS "Users can update own applications" ON public.applications;
+   484→   484→DROP POLICY IF EXISTS "Users can delete own applications" ON public.applications;
+   485→   485→CREATE POLICY "Users can view own applications" ON public.applications FOR SELECT USING (auth.uid() = user_id OR auth.uid() = employer_id);
+   486→   486→CREATE POLICY "Users can create applications" ON public.applications FOR INSERT WITH CHECK (auth.uid() = user_id);
+   487→   487→CREATE POLICY "Users can update own applications" ON public.applications FOR UPDATE USING (auth.uid() = user_id OR auth.uid() = employer_id);
+   488→   488→CREATE POLICY "Users can delete own applications" ON public.applications FOR DELETE USING (auth.uid() = user_id);
+   489→   489→
+   490→   490→-- Posts: readable by all, writable by author
+   491→   491→DROP POLICY IF EXISTS "Posts are viewable by everyone" ON public.posts;
+   492→   492→DROP POLICY IF EXISTS "Users can create posts" ON public.posts;
+   493→   493→DROP POLICY IF EXISTS "Users can update own posts" ON public.posts;
+   494→   494→DROP POLICY IF EXISTS "Users can delete own posts" ON public.posts;
+   495→   495→CREATE POLICY "Posts are viewable by everyone" ON public.posts FOR SELECT USING (true);
+   496→   496→CREATE POLICY "Users can create posts" ON public.posts FOR INSERT WITH CHECK (auth.uid() = user_id);
+   497→   497→CREATE POLICY "Users can update own posts" ON public.posts FOR UPDATE USING (auth.uid() = user_id);
+   498→   498→CREATE POLICY "Users can delete own posts" ON public.posts FOR DELETE USING (auth.uid() = user_id);
+   499→   499→
+   500→   500→-- Post Comments: readable by all, writable by author
+   501→   501→DROP POLICY IF EXISTS "Post comments are viewable by everyone" ON public.post_comments;
+   502→   502→DROP POLICY IF EXISTS "Users can create post comments" ON public.post_comments;
+   503→   503→CREATE POLICY "Post comments are viewable by everyone" ON public.post_comments FOR SELECT USING (true);
+   504→   504→CREATE POLICY "Users can create post comments" ON public.post_comments FOR INSERT WITH CHECK (auth.uid() = author_id);
+   505→   505→
+   506→   506→-- Chats: readable by participants
+   507→   507→DROP POLICY IF EXISTS "Users can view own chats" ON public.chats;
+   508→   508→DROP POLICY IF EXISTS "Users can create chats" ON public.chats;
+   509→   509→DROP POLICY IF EXISTS "Users can update own chats" ON public.chats;
+   510→   510→DROP POLICY IF EXISTS "Users can delete own chats" ON public.chats;
+   511→   511→CREATE POLICY "Users can view own chats" ON public.chats FOR SELECT USING (auth.uid() = ANY(participants));
+   512→   512→CREATE POLICY "Users can create chats" ON public.chats FOR INSERT WITH CHECK (auth.uid() = ANY(participants));
+   513→   513→CREATE POLICY "Users can update own chats" ON public.chats FOR UPDATE USING (auth.uid() = ANY(participants));
+   514→   514→CREATE POLICY "Users can delete own chats" ON public.chats FOR DELETE USING (auth.uid() = ANY(participants));
+   515→   515→
+   516→   516→-- Chat Messages: readable by chat participants
+   517→   517→DROP POLICY IF EXISTS "Users can view messages in own chats" ON public.chat_messages;
+   518→   518→DROP POLICY IF EXISTS "Users can send messages in own chats" ON public.chat_messages;
+   519→   519→CREATE POLICY "Users can view messages in own chats" ON public.chat_messages FOR SELECT USING (
+   520→   520→  EXISTS (SELECT 1 FROM public.chats WHERE chats.id = chat_messages.chat_id AND auth.uid() = ANY(chats.participants))
+   521→   521→);
+   522→   522→CREATE POLICY "Users can send messages in own chats" ON public.chat_messages FOR INSERT WITH CHECK (
+   523→   523→  EXISTS (SELECT 1 FROM public.chats WHERE chats.id = chat_messages.chat_id AND auth.uid() = ANY(chats.participants))
+   524→   524→);
+   525→   525→
+   526→   526→-- Notifications: readable by owner
+   527→   527→DROP POLICY IF EXISTS "Users can view own notifications" ON public.notifications;
+   528→   528→DROP POLICY IF EXISTS "Users can create own notifications" ON public.notifications;
+   529→   529→DROP POLICY IF EXISTS "Users can update own notifications" ON public.notifications;
+   530→   530→CREATE POLICY "Users can view own notifications" ON public.notifications FOR SELECT USING (auth.uid() = user_id);
+   531→   531→CREATE POLICY "Users can create own notifications" ON public.notifications FOR INSERT WITH CHECK (auth.uid() = user_id);
+   532→   532→CREATE POLICY "Users can update own notifications" ON public.notifications FOR UPDATE USING (auth.uid() = user_id);
+   533→   533→
+   534→   534→-- Calls: readable by participants
+   535→   535→DROP POLICY IF EXISTS "Users can view own calls" ON public.calls;
+   536→   536→DROP POLICY IF EXISTS "Users can create calls" ON public.calls;
+   537→   537→DROP POLICY IF EXISTS "Users can update own calls" ON public.calls;
+   538→   538→CREATE POLICY "Users can view own calls" ON public.calls FOR SELECT USING (auth.uid() = caller_id OR auth.uid() = callee_id);
+   539→   539→CREATE POLICY "Users can create calls" ON public.calls FOR INSERT WITH CHECK (auth.uid() = caller_id);
+   540→   540→CREATE POLICY "Users can update own calls" ON public.calls FOR UPDATE USING (auth.uid() = caller_id OR auth.uid() = callee_id);
+   541→   541→
+   542→   542→-- ICE Candidates: readable by call participants
+   543→   543→DROP POLICY IF EXISTS "Users can view caller ice candidates" ON public.caller_ice_candidates;
+   544→   544→DROP POLICY IF EXISTS "Users can insert caller ice candidates" ON public.caller_ice_candidates;
+   545→   545→DROP POLICY IF EXISTS "Users can view callee ice candidates" ON public.callee_ice_candidates;
+   546→   546→DROP POLICY IF EXISTS "Users can insert callee ice candidates" ON public.callee_ice_candidates;
+   547→   547→CREATE POLICY "Users can view caller ice candidates" ON public.caller_ice_candidates FOR SELECT USING (
+   548→   548→  EXISTS (SELECT 1 FROM public.calls WHERE calls.id = caller_ice_candidates.call_id AND (auth.uid() = calls.caller_id OR auth.uid() = calls.callee_id))
+   549→   549→);
+   550→   550→CREATE POLICY "Users can insert caller ice candidates" ON public.caller_ice_candidates FOR INSERT WITH CHECK (
+   551→   551→  EXISTS (SELECT 1 FROM public.calls WHERE calls.id = caller_ice_candidates.call_id AND auth.uid() = calls.caller_id)
+   552→   552→);
+   553→   553→CREATE POLICY "Users can view callee ice candidates" ON public.callee_ice_candidates FOR SELECT USING (
+   554→   554→  EXISTS (SELECT 1 FROM public.calls WHERE calls.id = callee_ice_candidates.call_id AND (auth.uid() = calls.caller_id OR auth.uid() = calls.callee_id))
+   555→   555→);
+   556→   556→CREATE POLICY "Users can insert callee ice candidates" ON public.callee_ice_candidates FOR INSERT WITH CHECK (
+   557→   557→  EXISTS (SELECT 1 FROM public.calls WHERE calls.id = callee_ice_candidates.call_id AND auth.uid() = calls.callee_id)
+   558→   558→);
+   559→   559→
+   560→   560→-- Saved Job Descriptions: readable by owner
+   561→   561→DROP POLICY IF EXISTS "Users can view own saved job descriptions" ON public.saved_job_descriptions;
+   562→   562→DROP POLICY IF EXISTS "Users can create own saved job descriptions" ON public.saved_job_descriptions;
+   563→   563→DROP POLICY IF EXISTS "Users can update own saved job descriptions" ON public.saved_job_descriptions;
+   564→   564→DROP POLICY IF EXISTS "Users can delete own saved job descriptions" ON public.saved_job_descriptions;
+   565→   565→CREATE POLICY "Users can view own saved job descriptions" ON public.saved_job_descriptions FOR SELECT USING (auth.uid() = user_id);
+   566→   566→CREATE POLICY "Users can create own saved job descriptions" ON public.saved_job_descriptions FOR INSERT WITH CHECK (auth.uid() = user_id);
+   567→   567→CREATE POLICY "Users can update own saved job descriptions" ON public.saved_job_descriptions FOR UPDATE USING (auth.uid() = user_id);
+   568→   568→CREATE POLICY "Users can delete own saved job descriptions" ON public.saved_job_descriptions FOR DELETE USING (auth.uid() = user_id);
+   569→   569→
+   570→   570→-- Encryption Keys: readable by owner
+   571→   571→DROP POLICY IF EXISTS "Users can view own encryption keys" ON public.user_encryption_keys;
+   572→   572→DROP POLICY IF EXISTS "Users can insert own encryption keys" ON public.user_encryption_keys;
+   573→   573→DROP POLICY IF EXISTS "Users can update own encryption keys" ON public.user_encryption_keys;
+   574→   574→CREATE POLICY "Users can view own encryption keys" ON public.user_encryption_keys FOR SELECT USING (auth.uid() = uid);
+   575→   575→CREATE POLICY "Users can insert own encryption keys" ON public.user_encryption_keys FOR INSERT WITH CHECK (auth.uid() = uid);
+   576→   576→CREATE POLICY "Users can update own encryption keys" ON public.user_encryption_keys FOR UPDATE USING (auth.uid() = uid);
+   577→   577→
+   578→   578→-- Followers: readable by all, follow/unfollow own
+   579→   579→DROP POLICY IF EXISTS "Followers are viewable by everyone" ON public.followers;
+   580→   580→DROP POLICY IF EXISTS "Users can follow" ON public.followers;
+   581→   581→DROP POLICY IF EXISTS "Users can unfollow" ON public.followers;
+   582→   582→CREATE POLICY "Followers are viewable by everyone" ON public.followers FOR SELECT USING (true);
+   583→   583→CREATE POLICY "Users can follow" ON public.followers FOR INSERT WITH CHECK (auth.uid() = follower_id);
+   584→   584→CREATE POLICY "Users can unfollow" ON public.followers FOR DELETE USING (auth.uid() = follower_id);
+   585→   585→
+   586→   586→-- Saved Opportunities: readable by owner
+   587→   587→DROP POLICY IF EXISTS "Users can view own saved opportunities" ON public.saved_opportunities;
+   588→   588→DROP POLICY IF EXISTS "Users can save opportunities" ON public.saved_opportunities;
+   589→   589→DROP POLICY IF EXISTS "Users can unsave opportunities" ON public.saved_opportunities;
+   590→   590→CREATE POLICY "Users can view own saved opportunities" ON public.saved_opportunities FOR SELECT USING (auth.uid() = user_id);
+   591→   591→CREATE POLICY "Users can save opportunities" ON public.saved_opportunities FOR INSERT WITH CHECK (auth.uid() = user_id);
+   592→   592→CREATE POLICY "Users can unsave opportunities" ON public.saved_opportunities FOR DELETE USING (auth.uid() = user_id);
+   593→   593→
+   594→   594→-- Rate Limits: allow all (server-side managed)
+   595→   595→DROP POLICY IF EXISTS "Rate limits readable" ON public.rate_limits;
+   596→   596→DROP POLICY IF EXISTS "Rate limits insertable" ON public.rate_limits;
+   597→   597→DROP POLICY IF EXISTS "Rate limits updatable" ON public.rate_limits;
+   598→   598→CREATE POLICY "Rate limits readable" ON public.rate_limits FOR SELECT USING (true);
+   599→   599→CREATE POLICY "Rate limits insertable" ON public.rate_limits FOR INSERT WITH CHECK (true);
+   600→   600→CREATE POLICY "Rate limits updatable" ON public.rate_limits FOR UPDATE USING (true);
+   601→   601→
+   602→   602→-- ============================================================
+   603→   603→-- INDEXES
+   604→   604→-- ============================================================
+   605→   605→CREATE INDEX IF NOT EXISTS idx_users_email ON public.users(email);
+   606→   606→CREATE INDEX IF NOT EXISTS idx_users_role ON public.users(role);
+   607→   607→CREATE INDEX IF NOT EXISTS idx_users_plan ON public.users(plan);
+   608→   608→CREATE INDEX IF NOT EXISTS idx_opportunities_employer_id ON public.opportunities(employer_id);
+   609→   609→CREATE INDEX IF NOT EXISTS idx_opportunities_status ON public.opportunities(status);
+   610→   610→CREATE INDEX IF NOT EXISTS idx_opportunities_is_active ON public.opportunities(is_active);
+   611→   611→CREATE INDEX IF NOT EXISTS idx_opportunities_type ON public.opportunities(type);
+   612→   612→CREATE INDEX IF NOT EXISTS idx_opportunities_posted_at ON public.opportunities(posted_at DESC);
+   613→   613→CREATE INDEX IF NOT EXISTS idx_applications_user_id ON public.applications(user_id);
+   614→   614→CREATE INDEX IF NOT EXISTS idx_applications_opportunity_id ON public.applications(opportunity_id);
+   615→   615→CREATE INDEX IF NOT EXISTS idx_applications_employer_id ON public.applications(employer_id);
+   616→   616→CREATE INDEX IF NOT EXISTS idx_applications_status ON public.applications(status);
+   617→   617→CREATE INDEX IF NOT EXISTS idx_posts_user_id ON public.posts(user_id);
+   618→   618→CREATE INDEX IF NOT EXISTS idx_posts_created_at ON public.posts(created_at DESC);
+   619→   619→CREATE INDEX IF NOT EXISTS idx_post_comments_post_id ON public.post_comments(post_id);
+   620→   620→CREATE INDEX IF NOT EXISTS idx_chats_participants ON public.chats USING GIN(participants);
+   621→   621→CREATE INDEX IF NOT EXISTS idx_chat_messages_chat_id ON public.chat_messages(chat_id);
+   622→   622→CREATE INDEX IF NOT EXISTS idx_chat_messages_created_at ON public.chat_messages(created_at);
+   623→   623→CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON public.notifications(user_id);
+   624→   624→CREATE INDEX IF NOT EXISTS idx_notifications_is_read ON public.notifications(user_id, is_read);
+   625→   625→CREATE INDEX IF NOT EXISTS idx_calls_participants ON public.calls(caller_id, callee_id);
+   626→   626→CREATE INDEX IF NOT EXISTS idx_caller_ice_call_id ON public.caller_ice_candidates(call_id);
+   627→   627→CREATE INDEX IF NOT EXISTS idx_callee_ice_call_id ON public.callee_ice_candidates(call_id);
+   628→   628→CREATE INDEX IF NOT EXISTS idx_saved_jd_user_id ON public.saved_job_descriptions(user_id);
+   629→   629→CREATE INDEX IF NOT EXISTS idx_saved_opps_user_id ON public.saved_opportunities(user_id);
+   630→   630→CREATE INDEX IF NOT EXISTS idx_followers_follower ON public.followers(follower_id);
+   631→   631→CREATE INDEX IF NOT EXISTS idx_followers_following ON public.followers(following_id);
+   632→   632→
+   633→   633→-- ============================================================
+   634→   634→-- FUNCTIONS
+   635→   635→-- ============================================================
+   636→   636→
+   637→   637→-- Auto-update updated_at timestamp
+   638→   638→CREATE OR REPLACE FUNCTION public.update_updated_at()
+   639→   639→RETURNS TRIGGER AS $$
+   640→   640→BEGIN
+   641→   641→  NEW.updated_at = NOW();
+   642→   642→  RETURN NEW;
+   643→   643→END;
+   644→   644→$$ LANGUAGE plpgsql;
+   645→   645→
+   646→   646→-- Apply updated_at trigger to relevant tables
+   647→   647→DROP TRIGGER IF EXISTS update_users_updated_at ON public.users;
+   648→   648→CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON public.users FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+   649→   649→
+   650→   650→DROP TRIGGER IF EXISTS update_public_profiles_updated_at ON public.public_profiles;
+   651→   651→CREATE TRIGGER update_public_profiles_updated_at BEFORE UPDATE ON public.public_profiles FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+   652→   652→
+   653→   653→DROP TRIGGER IF EXISTS update_opportunities_updated_at ON public.opportunities;
+   654→   654→CREATE TRIGGER update_opportunities_updated_at BEFORE UPDATE ON public.opportunities FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+   655→   655→
+   656→   656→DROP TRIGGER IF EXISTS update_applications_updated_at ON public.applications;
+   657→   657→CREATE TRIGGER update_applications_updated_at BEFORE UPDATE ON public.applications FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+   658→   658→
+   659→   659→DROP TRIGGER IF EXISTS update_posts_updated_at ON public.posts;
+   660→   660→CREATE TRIGGER update_posts_updated_at BEFORE UPDATE ON public.posts FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+   661→   661→
+   662→   662→DROP TRIGGER IF EXISTS update_chats_updated_at ON public.chats;
+   663→   663→CREATE TRIGGER update_chats_updated_at BEFORE UPDATE ON public.chats FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+   664→   664→
+   665→   665→DROP TRIGGER IF EXISTS update_saved_jd_updated_at ON public.saved_job_descriptions;
+   666→   666→CREATE TRIGGER update_saved_jd_updated_at BEFORE UPDATE ON public.saved_job_descriptions FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+   667→   667→
+   668→   668→DROP TRIGGER IF EXISTS update_encryption_keys_updated_at ON public.user_encryption_keys;
+   669→   669→CREATE TRIGGER update_encryption_keys_updated_at BEFORE UPDATE ON public.user_encryption_keys FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+   670→   670→
+   671→   671→DROP TRIGGER IF EXISTS update_daily_email_counts_updated_at ON public.daily_email_counts;
+   672→   672→CREATE TRIGGER update_daily_email_counts_updated_at BEFORE UPDATE ON public.daily_email_counts FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+   673→   673→
+   674→   674→DROP TRIGGER IF EXISTS update_monthly_email_counts_updated_at ON public.monthly_email_counts;
+   675→   675→CREATE TRIGGER update_monthly_email_counts_updated_at BEFORE UPDATE ON public.monthly_email_counts FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+   676→   676→
+   677→   677→-- Auto-create user profile on auth user creation
+   678→   678→CREATE OR REPLACE FUNCTION public.handle_new_user()
+   679→   679→RETURNS TRIGGER AS $$
+   680→   680→BEGIN
+   681→   681→  INSERT INTO public.users (id, email, display_name, first_name, last_name, role)
+   682→   682→  VALUES (
+   683→   683→    NEW.id,
+   684→   684→    NEW.email,
+   685→   685→    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email),
+   686→   686→    COALESCE(NEW.raw_user_meta_data->>'full_name', split_part(NEW.email, '@', 1)),
+   687→   687→    '',
+   688→   688→    COALESCE(NEW.raw_user_meta_data->>'role', 'employee')
+   689→   689→  );
+   690→   690→  INSERT INTO public.public_profiles (id, display_name, first_name, last_name, role)
+   691→   691→  VALUES (
+   692→   692→    NEW.id,
+   693→   693→    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email),
+   694→   694→    COALESCE(NEW.raw_user_meta_data->>'full_name', split_part(NEW.email, '@', 1)),
+   695→   695→    '',
+   696→   696→    COALESCE(NEW.raw_user_meta_data->>'role', 'employee')
+   697→   697→  );
+   698→   698→  RETURN NEW;
+   699→   699→END;
+   700→   700→$$ LANGUAGE plpgsql SECURITY DEFINER;
+   701→   701→
+   702→   702→-- Trigger for auto-creating user profile
+   703→   703→DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+   704→   704→CREATE TRIGGER on_auth_user_created
+   705→   705→  AFTER INSERT ON auth.users
+   706→   706→  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+   707→   707→
+   708→   708→-- ============================================================
+   709→   709→-- REALTIME PUBLICATIONS
+   710→   710→-- (Use ALTER ... SET to add tables idempotently)
+   711→   711→-- ============================================================
+   712→   712→ALTER PUBLICATION supabase_realtime SET TABLE public.chat_messages, public.notifications, public.chats, public.calls, public.caller_ice_candidates, public.callee_ice_candidates;
+   713→   713→

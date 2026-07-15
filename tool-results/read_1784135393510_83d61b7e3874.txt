@@ -1,0 +1,914 @@
+     1→"use client";
+     2→
+     3→import { Button } from "@/components/ui/button";
+     4→import {
+     5→  Card,
+     6→  CardContent,
+     7→  CardDescription,
+     8→  CardHeader,
+     9→  CardTitle,
+    10→} from "@/components/ui/card";
+    11→import {
+    12→  ArrowLeft,
+    13→  Users,
+    14→  UserSearch,
+    15→  Loader2,
+    16→  Send,
+    17→  Check,
+    18→  X,
+    19→  Eye,
+    20→  MessageSquare,
+    21→  Video,
+    22→  Kanban,
+    23→} from "lucide-react";
+    24→import Link from "next/link";
+    25→import { useParams } from "next/navigation";
+    26→import { useState, useEffect, useMemo } from "react";
+    27→import { supabase } from "@/lib/supabase";
+    28→import { useToast } from "@/hooks/use-toast";
+    29→import { useAuth } from "@/context/AuthContext";
+    30→import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+    31→import { Badge } from "@/components/ui/badge";
+    32→import { format } from "date-fns";
+    33→import {
+    34→  Dialog,
+    35→  DialogContent,
+    36→  DialogDescription,
+    37→  DialogHeader,
+    38→  DialogTitle,
+    39→  DialogTrigger,
+    40→} from "@/components/ui/dialog";
+    41→import { Separator } from "@/components/ui/separator";
+    42→import {
+    43→  Select,
+    44→  SelectContent,
+    45→  SelectItem,
+    46→  SelectTrigger,
+    47→  SelectValue,
+    48→} from "@/components/ui/select";
+    49→import { Slider } from "@/components/ui/slider";
+    50→import { Label } from "@/components/ui/label";
+    51→import { useRouter } from "next/navigation";
+    52→import { ComprehensiveATSScorer } from "@/lib/comprehensiveAtsScorer";
+    53→import { createNotification } from "@/lib/notifications";
+    54→
+    55→// Safe date parser handling string | Date | Firestore Timestamp-like shapes.
+    56→function toDate(v: any): Date | null {
+    57→  if (!v) return null;
+    58→  if (v instanceof Date) return v;
+    59→  if (typeof v === "string" || typeof v === "number") {
+    60→    const d = new Date(v);
+    61→    return isNaN(d.getTime()) ? null : d;
+    62→  }
+    63→  if (v?.toDate) {
+    64→    try { return v.toDate(); } catch { return null; }
+    65→  }
+    66→  if (v?.seconds != null) return new Date(v.seconds * 1000);
+    67→  return null;
+    68→}
+    69→
+    70→interface Applicant {
+    71→  id: string;
+    72→  userId: string;
+    73→  userName: string;
+    74→  userEmail: string;
+    75→  photoURL?: string;
+    76→  submittedAt: any;
+    77→  status: string;
+    78→  coverLetter: string;
+    79→  employmentHistory: string;
+    80→  references: string;
+    81→  portfolioLink: string;
+    82→  linkedinLink: string;
+    83→  education: string;
+    84→  skills: string;
+    85→  employability?: string;
+    86→  [key: string]: any;
+    87→}
+    88→
+    89→interface Opportunity {
+    90→  id: string;
+    91→  title: string;
+    92→  employerName: string;
+    93→  description?: string;
+    94→  rolesAndResponsibilities?: string;
+    95→  skills?: string | string[];
+    96→  education?: string;
+    97→  experience?: string;
+    98→}
+    99→
+   100→// Loose type for AI-flow candidate (kept loose since the flow may fail).
+   101→type PotentialCandidate = {
+   102→  uid: string;
+   103→  displayName: string;
+   104→  email?: string;
+   105→  photoURL?: string;
+   106→  skills?: string;
+   107→  matchPercentage?: number;
+   108→  justification?: string;
+   109→  applicationStatus?: string;
+   110→};
+   111→
+   112→export default function ApplicantsPage() {
+   113→  const params = useParams();
+   114→  const id = params?.id as string;
+   115→  const { toast } = useToast();
+   116→  const { user } = useAuth();
+   117→  const router = useRouter();
+   118→  const [potentialCandidates, setPotentialCandidates] = useState<PotentialCandidate[]>([]);
+   119→  const [applicants, setApplicants] = useState<Applicant[]>([]);
+   120→  const [opportunity, setOpportunity] = useState<Opportunity | null>(null);
+   121→  const [loading, setLoading] = useState(true);
+   122→  const [candidatesLoading, setCandidatesLoading] = useState(false);
+   123→
+   124→  const [applicantStatusFilter, setApplicantStatusFilter] = useState("all");
+   125→  const [matchPercentageFilter, setMatchPercentageFilter] = useState([0]);
+   126→
+   127→  const startChatWithApplicant = (applicant: Applicant) => {
+   128→    if (!user || !opportunity) return;
+   129→    const qp = new URLSearchParams({
+   130→      userId: applicant.userId,
+   131→      userName: applicant.userName,
+   132→      userPhoto: applicant.photoURL || "",
+   133→      opportunityId: id as string,
+   134→      opportunityTitle: opportunity.title,
+   135→      applicationId: applicant.id,
+   136→    });
+   137→    router.push(`/chat/new?${qp.toString()}`);
+   138→  };
+   139→
+   140→  const startVideoCallWithApplicant = (applicant: Applicant) => {
+   141→    if (!user || !opportunity) return;
+   142→    const qp = new URLSearchParams({
+   143→      recipientId: applicant.userId,
+   144→      recipientName: applicant.userName,
+   145→      opportunityId: id as string,
+   146→      opportunityTitle: opportunity.title,
+   147→      applicationId: applicant.id,
+   148→    });
+   149→    router.push(`/video-call?${qp.toString()}`);
+   150→  };
+   151→
+   152→  useEffect(() => {
+   153→    if (!id) return;
+   154→
+   155→    const fetchPageData = async () => {
+   156→      setLoading(true);
+   157→      try {
+   158→        // Fetch opportunity details.
+   159→        const { data: opp, error: oppError } = await supabase
+   160→          .from("opportunities")
+   161→          .select("*")
+   162→          .eq("id", id)
+   163→          .single();
+   164→
+   165→        if (!oppError && opp) {
+   166→          const skills = Array.isArray(opp.skills) ? opp.skills.join(", ") : opp.skills || "";
+   167→          setOpportunity({
+   168→            id: opp.id,
+   169→            title: opp.title,
+   170→            employerName: opp.employer_name || opp.company || "",
+   171→            description: opp.description || "",
+   172→            rolesAndResponsibilities: opp.roles_and_responsibilities || "",
+   173→            skills,
+   174→            education: opp.education || "",
+   175→            experience: opp.experience || "",
+   176→          });
+   177→        }
+   178→
+   179→        // Fetch applications for this opportunity.
+   180→        const { data: apps, error: appsError } = await supabase
+   181→          .from("applications")
+   182→          .select("id, user_id, status, cover_letter, applied_at, created_at, submitted_at, user_email, user_name")
+   183→          .eq("opportunity_id", id)
+   184→          .order("applied_at", { ascending: false, nullsFirst: false });
+   185→
+   186→        if (appsError) throw appsError;
+   187→
+   188→        const appsList = (apps || []) as any[];
+   189→        const userIds = appsList.map((a) => a.user_id).filter(Boolean);
+   190→
+   191→        // Fetch applicant profile details (skills, education, employment_history, references, portfolio_link, linkedin) from users.
+   192→        const profileMap: Record<string, any> = {};
+   193→        if (userIds.length > 0) {
+   194→          const { data: users, error: usersError } = await supabase
+   195→            .from("users")
+   196→            .select("id, display_name, photo_url, skills, education, employment_history, references, portfolio_link, linkedin, bio")
+   197→            .in("id", userIds);
+   198→          if (!usersError && users) {
+   199→            for (const u of users as any[]) {
+   200→              profileMap[u.id] = u;
+   201→            }
+   202→          }
+   203→        }
+   204→
+   205→        const applicantsData: Applicant[] = appsList.map((a) => {
+   206→          const profile = profileMap[a.user_id] || {};
+   207→          const skillsArr = Array.isArray(profile.skills) ? profile.skills : [];
+   208→          return {
+   209→            id: a.id,
+   210→            userId: a.user_id,
+   211→            userName: a.user_name || profile.display_name || "Applicant",
+   212→            userEmail: a.user_email || "",
+   213→            photoURL: profile.photo_url || "",
+   214→            submittedAt: a.applied_at || a.submitted_at || a.created_at,
+   215→            status: a.status || "applied",
+   216→            coverLetter: a.cover_letter || "",
+   217→            employmentHistory: profile.employment_history || "",
+   218→            references: profile.references || "",
+   219→            portfolioLink: profile.portfolio_link || "",
+   220→            linkedinLink: profile.linkedin || "",
+   221→            education: profile.education || "",
+   222→            skills: typeof skillsArr === "string" ? skillsArr : skillsArr.join(", "),
+   223→            employability: profile.employability || undefined,
+   224→          };
+   225→        });
+   226→        setApplicants(applicantsData);
+   227→
+   228→        // Best-effort: fetch potential candidates via AI flow. Wrapped in try/catch.
+   229→        if (user) {
+   230→          setCandidatesLoading(true);
+   231→          try {
+   232→            const { findAndRankCandidates }: any = await import(
+   233→              "@/ai/flows/find-and-rank-candidates"
+   234→            );
+   235→            const result = await findAndRankCandidates({ employerId: user.id });
+   236→            const candidates: PotentialCandidate[] = (result?.candidates || []).map((c: any) => ({
+   237→              uid: c.uid,
+   238→              displayName: c.displayName,
+   239→              email: c.email,
+   240→              photoURL: c.photoURL,
+   241→              skills: c.skills,
+   242→              matchPercentage: c.matchPercentage,
+   243→              justification: c.justification,
+   244→              applicationStatus: c.applicationStatus,
+   245→            }));
+   246→            setPotentialCandidates(candidates);
+   247→          } catch (aiErr) {
+   248→            console.warn("findAndRankCandidates flow skipped/failed:", aiErr);
+   249→            setPotentialCandidates([]);
+   250→            toast({
+   251→              title: "Candidate Ranking Unavailable",
+   252→              description:
+   253→                "The AI candidate ranking service is currently unavailable. You can still see your existing applicants below.",
+   254→            });
+   255→          } finally {
+   256→            setCandidatesLoading(false);
+   257→          }
+   258→        }
+   259→      } catch (error) {
+   260→        console.error("Error fetching page data:", error);
+   261→        toast({
+   262→          title: "Error",
+   263→          description: "Could not fetch applicant data.",
+   264→          variant: "destructive",
+   265→        });
+   266→      } finally {
+   267→        setLoading(false);
+   268→      }
+   269→    };
+   270→
+   271→    fetchPageData();
+   272→    // eslint-disable-next-line react-hooks/exhaustive-deps
+   273→  }, [id]);
+   274→
+   275→  const filteredApplicants = useMemo(() => {
+   276→    if (applicantStatusFilter === "all") return applicants;
+   277→    return applicants.filter((a) => (a.status || "").toLowerCase() === applicantStatusFilter);
+   278→  }, [applicants, applicantStatusFilter]);
+   279→
+   280→  const filteredPotentialCandidates = useMemo(() => {
+   281→    return potentialCandidates.filter(
+   282→      (c) => (c.matchPercentage || 0) >= matchPercentageFilter[0]
+   283→    );
+   284→  }, [potentialCandidates, matchPercentageFilter]);
+   285→
+   286→  const handleNotify = () => {
+   287→    toast({
+   288→      title: "Notifications Simulated",
+   289→      description: `If configured, emails would be sent to ${filteredPotentialCandidates.length} candidates.`,
+   290→    });
+   291→  };
+   292→
+   293→  const handleDismissPotential = (uid: string) => {
+   294→    setPotentialCandidates((prev) => prev.filter((c) => c.uid !== uid));
+   295→    toast({
+   296→      title: "Candidate Dismissed",
+   297→      description: "The potential candidate has been removed from this list.",
+   298→    });
+   299→  };
+   300→
+   301→  const handleInvitePotential = async (uid: string) => {
+   302→    const candidate = potentialCandidates.find((c) => c.uid === uid);
+   303→    if (!candidate || !opportunity || !id || !uid) {
+   304→      toast({
+   305→        title: "Error",
+   306→        description: "Missing candidate, opportunity, or ID.",
+   307→        variant: "destructive",
+   308→      });
+   309→      return;
+   310→    }
+   311→
+   312→    // Update UI optimistically.
+   313→    setPotentialCandidates((prev) =>
+   314→      prev.map((c) => (c.uid === uid ? { ...c, applicationStatus: "invited" } : c))
+   315→    );
+   316→
+   317→    try {
+   318→      // Try to upsert an "invited" application row. Use insert with onConflict to skip if already exists.
+   319→      const { error: inviteError } = await supabase
+   320→        .from("applications")
+   321→        .upsert(
+   322→          {
+   323→            opportunity_id: id,
+   324→            user_id: uid,
+   325→            employer_id: user?.id || null,
+   326→            status: "pending",
+   327→            user_email: candidate.email || null,
+   328→            user_name: candidate.displayName || null,
+   329→            is_manual: true,
+   330→            applied_at: new Date().toISOString(),
+   331→            submitted_at: new Date().toISOString(),
+   332→            updated_at: new Date().toISOString(),
+   333→          },
+   334→          { onConflict: "opportunity_id,user_id" }
+   335→        );
+   336→
+   337→      if (inviteError) throw inviteError;
+   338→
+   339→      toast({
+   340→        title: "Invitation Sent",
+   341→        description: "The candidate has been invited to apply.",
+   342→      });
+   343→    } catch (e: any) {
+   344→      console.error("Failed to invite candidate:", e);
+   345→      toast({
+   346→        title: "Error",
+   347→        description: e?.message || "Failed to invite candidate.",
+   348→        variant: "destructive",
+   349→      });
+   350→      // Revert UI on error.
+   351→      setPotentialCandidates((prev) =>
+   352→        prev.map((c) => (c.uid === uid ? { ...c, applicationStatus: "not_applied" } : c))
+   353→      );
+   354→    }
+   355→  };
+   356→
+   357→  const handleUpdateStatus = async (
+   358→    applicant: Applicant,
+   359→    status: "approved" | "rejected"
+   360→  ) => {
+   361→    try {
+   362→      const { error } = await supabase
+   363→        .from("applications")
+   364→        .update({ status, updated_at: new Date().toISOString() })
+   365→        .eq("id", applicant.id);
+   366→      if (error) throw error;
+   367→
+   368→      setApplicants((prev) =>
+   369→        prev.map((a) => (a.id === applicant.id ? { ...a, status } : a))
+   370→      );
+   371→
+   372→      toast({
+   373→        title: `Application ${status === "approved" ? "Approved" : "Rejected"}`,
+   374→        description: `The candidate has been notified of their application status.`,
+   375→      });
+   376→
+   377→      // Best-effort notification + email; failures are logged but do not block UI.
+   378→      try {
+   379→        await createNotification({
+   380→          userId: applicant.userId,
+   381→          type: "application_update" as any,
+   382→          title: `Application ${status === "approved" ? "Approved" : "Rejected"}`,
+   383→          message: `Your application for ${opportunity?.title || "a position"} has been ${status}.`,
+   384→          link: "/applications",
+   385→          actorId: user?.id,
+   386→          actorName: opportunity?.employerName,
+   387→          metadata: {
+   388→            applicationId: applicant.id,
+   389→            opportunityId: id as string,
+   390→          },
+   391→        });
+   392→      } catch (nErr) {
+   393→        console.warn("Notification creation failed:", nErr);
+   394→      }
+   395→    } catch (error: any) {
+   396→      console.error("Error updating status:", error);
+   397→      toast({
+   398→        title: "Error",
+   399→        description: error?.message || "Could not update the application status.",
+   400→        variant: "destructive",
+   401→      });
+   402→    }
+   403→  };
+   404→
+   405→  const getInitials = (name: string) =>
+   406→    name
+   407→      ?.split(" ")
+   408→      .map((n) => n[0])
+   409→      .join("") || "";
+   410→
+   411→  const renderApplicationDetail = (applicant: Applicant) => {
+   412→    const resumeText = [
+   413→      applicant.education,
+   414→      applicant.skills,
+   415→      applicant.employmentHistory,
+   416→      applicant.coverLetter,
+   417→      applicant.references,
+   418→    ]
+   419→      .filter(Boolean)
+   420→      .join(" ");
+   421→
+   422→    const oppSkillsStr = Array.isArray(opportunity?.skills)
+   423→      ? opportunity.skills.join(", ")
+   424→      : opportunity?.skills || "";
+   425→
+   426→    const jobDesc = [
+   427→      opportunity?.title,
+   428→      opportunity?.description,
+   429→      opportunity?.rolesAndResponsibilities,
+   430→      oppSkillsStr,
+   431→      opportunity?.education,
+   432→      opportunity?.experience,
+   433→    ]
+   434→      .filter(Boolean)
+   435→      .join(" ");
+   436→
+   437→    let atsResult: any = null;
+   438→    if (resumeText && jobDesc) {
+   439→      try {
+   440→        const scorer = new ComprehensiveATSScorer();
+   441→        atsResult = scorer.calculateComprehensiveScore(resumeText, jobDesc);
+   442→      } catch (e) {
+   443→        // ignore
+   444→      }
+   445→    }
+   446→
+   447→    return (
+   448→      <div className="space-y-4">
+   449→        <div>
+   450→          <h4 className="font-semibold text-sm mb-1">Cover Letter</h4>
+   451→          <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+   452→            {applicant.coverLetter || "Not provided"}
+   453→          </p>
+   454→        </div>
+   455→        {applicant.employability && (
+   456→          <div>
+   457→            <Badge variant="outline" className="mb-2">
+   458→              {applicant.employability}
+   459→            </Badge>
+   460→          </div>
+   461→        )}
+   462→        <Separator />
+   463→        <div>
+   464→          <h4 className="font-semibold text-sm mb-1">Skills</h4>
+   465→          <div className="flex flex-wrap gap-1">
+   466→            {(applicant.skills || "")
+   467→              .split(",")
+   468→              .map((skill, i) =>
+   469→                skill && skill.trim() ? (
+   470→                  <Badge key={i} variant="secondary">
+   471→                    {skill.trim()}
+   472→                  </Badge>
+   473→                ) : null
+   474→              )}
+   475→          </div>
+   476→        </div>
+   477→        <Separator />
+   478→        <div>
+   479→          <h4 className="font-semibold text-sm mb-1">Employment History</h4>
+   480→          <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+   481→            {applicant.employmentHistory || "Not provided"}
+   482→          </p>
+   483→        </div>
+   484→        <Separator />
+   485→        <div>
+   486→          <h4 className="font-semibold text-sm mb-1">References</h4>
+   487→          <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+   488→            {applicant.references || "Not provided"}
+   489→          </p>
+   490→        </div>
+   491→        {(applicant.portfolioLink || applicant.linkedinLink) && <Separator />}
+   492→        {applicant.portfolioLink && (
+   493→          <div>
+   494→            <h4 className="font-semibold text-sm mb-1">Portfolio</h4>
+   495→            <Link
+   496→              href={applicant.portfolioLink}
+   497→              target="_blank"
+   498→              className="text-sm text-primary hover:underline break-all"
+   499→            >
+   500→              {applicant.portfolioLink}
+   501→            </Link>
+   502→          </div>
+   503→        )}
+   504→        {applicant.linkedinLink && (
+   505→          <div>
+   506→            <h4 className="font-semibold text-sm mb-1">LinkedIn Profile</h4>
+   507→            <Link
+   508→              href={applicant.linkedinLink}
+   509→              target="_blank"
+   510→              className="text-sm text-primary hover:underline break-all"
+   511→            >
+   512→              {applicant.linkedinLink}
+   513→            </Link>
+   514→          </div>
+   515→        )}
+   516→        <Separator />
+   517→        <div>
+   518→          <h4 className="font-semibold text-sm mb-1">ATS Score Checker</h4>
+   519→          {!resumeText || !jobDesc ? (
+   520→            <div className="text-xs text-muted-foreground">
+   521→              Not enough data to compute ATS score.
+   522→            </div>
+   523→          ) : atsResult ? (
+   524→            <div className="text-xs">
+   525→              <div className="mb-1">
+   526→                <b>ATS Score:</b>{" "}
+   527→                <span className="text-primary font-semibold">
+   528→                  {atsResult.overallScore}%
+   529→                </span>{" "}
+   530→                <span className="ml-2 text-muted-foreground">
+   531→                  ({atsResult.confidenceLevel} match)
+   532→                </span>
+   533→              </div>
+   534→              <div className="mb-1">
+   535→                <b>Category Breakdown:</b>
+   536→                <ul className="ml-2">
+   537→                  {Object.entries(atsResult.categoryScores || {}).map(
+   538→                    ([cat, val]: any) => (
+   539→                      <li key={cat}>
+   540→                        {cat}: {Math.round(val as number)}%
+   541→                      </li>
+   542→                    )
+   543→                  )}
+   544→                </ul>
+   545→              </div>
+   546→              <div className="mb-1 text-green-700">
+   547→                <b>Matched:</b>
+   548→                <ul className="ml-2">
+   549→                  {Object.entries(atsResult.matched || {}).map(([cat, arr]: any) =>
+   550→                    Array.isArray(arr) && arr.length > 0 ? (
+   551→                      <li key={cat}>
+   552→                        {cat}: {arr.slice(0, 8).join(", ")}
+   553→                        {arr.length > 8 ? "..." : ""}
+   554→                      </li>
+   555→                    ) : null
+   556→                  )}
+   557→                </ul>
+   558→              </div>
+   559→              <div className="mb-1 text-red-700">
+   560→                <b>Missing:</b>
+   561→                <ul className="ml-2">
+   562→                  {Object.entries(atsResult.missing || {}).map(([cat, arr]: any) =>
+   563→                    Array.isArray(arr) && arr.length > 0 ? (
+   564→                      <li key={cat}>
+   565→                        {cat}: {arr.slice(0, 8).join(", ")}
+   566→                        {arr.length > 8 ? "..." : ""}
+   567→                      </li>
+   568→                    ) : null
+   569→                  )}
+   570→                </ul>
+   571→              </div>
+   572→              <div className="mb-1 text-muted-foreground">
+   573→                <b>Suggestions:</b>
+   574→                <ul className="ml-2">
+   575→                  {(atsResult.suggestions || []).map((s: any, i: number) => (
+   576→                    <li key={i}>{s}</li>
+   577→                  ))}
+   578→                </ul>
+   579→              </div>
+   580→            </div>
+   581→          ) : (
+   582→            <div className="text-xs text-muted-foreground">
+   583→              Could not compute ATS score.
+   584→            </div>
+   585→          )}
+   586→        </div>
+   587→      </div>
+   588→    );
+   589→  };
+   590→
+   591→  return (
+   592→    <div className="container mx-auto">
+   593→      <div className="mb-6">
+   594→        <Button variant="ghost" asChild>
+   595→          <Link href="/employer/dashboard">
+   596→            <ArrowLeft className="mr-2 h-4 w-4" />
+   597→            Back to Dashboard
+   598→          </Link>
+   599→        </Button>
+   600→      </div>
+   601→      <div className="grid gap-8 lg:grid-cols-2">
+   602→        <Card className="rounded-3xl">
+   603→          <CardHeader>
+   604→            <div className="flex justify-between items-start gap-4">
+   605→              <div>
+   606→                <CardTitle>Top-Ranked Candidates</CardTitle>
+   607→                <CardDescription>
+   608→                  Users with skills matching your active opportunities.
+   609→                </CardDescription>
+   610→              </div>
+   611→              <Button
+   612→                size="sm"
+   613→                className="rounded-3xl"
+   614→                onClick={handleNotify}
+   615→                disabled={filteredPotentialCandidates.length === 0}
+   616→              >
+   617→                <Send className="mr-2 h-4 w-4" />
+   618→                Notify All
+   619→              </Button>
+   620→            </div>
+   621→          </CardHeader>
+   622→          <CardContent>
+   623→            <div className="mb-4 space-y-2">
+   624→              <Label htmlFor="match-slider">
+   625→                Minimum Match: {matchPercentageFilter[0]}%
+   626→              </Label>
+   627→              <Slider
+   628→                id="match-slider"
+   629→                min={0}
+   630→                max={100}
+   631→                step={10}
+   632→                value={matchPercentageFilter}
+   633→                onValueChange={setMatchPercentageFilter}
+   634→              />
+   635→            </div>
+   636→
+   637→            {candidatesLoading ? (
+   638→              <div className="flex justify-center items-center py-20">
+   639→                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+   640→              </div>
+   641→            ) : filteredPotentialCandidates.length === 0 ? (
+   642→              <div className="text-center py-20 text-muted-foreground">
+   643→                <UserSearch className="h-12 w-12 mx-auto mb-4" />
+   644→                <h3 className="text-lg font-semibold">No new matches found</h3>
+   645→                <p>
+   646→                  No top-ranked candidates match your criteria, or the AI matching
+   647→                  service is unavailable.
+   648→                </p>
+   649→              </div>
+   650→            ) : (
+   651→              <div className="space-y-2">
+   652→                {filteredPotentialCandidates.map((candidate) => (
+   653→                  <div
+   654→                    key={candidate.uid}
+   655→                    className="flex items-center gap-2 p-2 rounded-3xl hover:bg-accent"
+   656→                  >
+   657→                    <Link
+   658→                      href={`/users/${candidate.uid}`}
+   659→                      className="flex items-center gap-4 flex-1"
+   660→                    >
+   661→                      <Avatar className="h-10 w-10">
+   662→                        <AvatarImage
+   663→                          src={candidate.photoURL}
+   664→                          alt={candidate.displayName}
+   665→                          data-ai-hint="profile avatar"
+   666→                        />
+   667→                        <AvatarFallback>
+   668→                          {getInitials(candidate.displayName)}
+   669→                        </AvatarFallback>
+   670→                      </Avatar>
+   671→                      <div className="flex-1">
+   672→                        <div className="flex items-center gap-2">
+   673→                          <p className="text-sm font-medium leading-none">
+   674→                            {candidate.displayName}
+   675→                          </p>
+   676→                          <Badge
+   677→                            variant="outline"
+   678→                            className="text-primary border-primary/50"
+   679→                          >
+   680→                            {candidate.matchPercentage ?? 0}%
+   681→                          </Badge>
+   682→                        </div>
+   683→                        {opportunity?.title && (
+   684→                          <span className="inline-block text-xs bg-muted px-2 py-0.5 rounded-3xl mb-1 mt-1 text-muted-foreground">
+   685→                            Matched for:{" "}
+   686→                            <span className="font-medium text-primary">
+   687→                              {opportunity.title}
+   688→                            </span>
+   689→                          </span>
+   690→                        )}
+   691→                        <p className="text-xs text-muted-foreground mt-1">
+   692→                          {candidate.justification}
+   693→                        </p>
+   694→                      </div>
+   695→                    </Link>
+   696→                    <div className="flex gap-2">
+   697→                      <Button
+   698→                        size="sm"
+   699→                        variant="outline"
+   700→                        className="rounded-3xl"
+   701→                        disabled={
+   702→                          candidate.applicationStatus === "invited" ||
+   703→                          candidate.applicationStatus === "applied"
+   704→                        }
+   705→                        onClick={() => handleInvitePotential(candidate.uid)}
+   706→                      >
+   707→                        {candidate.applicationStatus === "invited"
+   708→                          ? "Invited"
+   709→                          : candidate.applicationStatus === "applied"
+   710→                          ? "Already Applied"
+   711→                          : "Invite"}
+   712→                      </Button>
+   713→                      <Button
+   714→                        size="sm"
+   715→                        variant="ghost"
+   716→                        className="rounded-3xl"
+   717→                        onClick={() => handleDismissPotential(candidate.uid)}
+   718→                      >
+   719→                        Dismiss
+   720→                      </Button>
+   721→                    </div>
+   722→                  </div>
+   723→                ))}
+   724→              </div>
+   725→            )}
+   726→          </CardContent>
+   727→        </Card>
+   728→        <Card className="rounded-3xl">
+   729→          <CardHeader className="flex flex-row items-center justify-between">
+   730→            <div>
+   731→              <CardTitle>Applicants</CardTitle>
+   732→              <CardDescription>
+   733→                People who have applied for this posting.
+   734→              </CardDescription>
+   735→            </div>
+   736→            <Link href={`/employer/postings/${params.id}/pipeline`}>
+   737→              <Button variant="outline" size="sm" className="rounded-full gap-1.5">
+   738→                <Kanban className="h-3.5 w-3.5" />
+   739→                Pipeline View
+   740→              </Button>
+   741→            </Link>
+   742→          </CardHeader>
+   743→          <CardContent>
+   744→            <div className="mb-4">
+   745→              <Select
+   746→                value={applicantStatusFilter}
+   747→                onValueChange={setApplicantStatusFilter}
+   748→              >
+   749→                <SelectTrigger className="w-[180px] rounded-3xl">
+   750→                  <SelectValue placeholder="Filter by status" />
+   751→                </SelectTrigger>
+   752→                <SelectContent className="rounded-3xl">
+   753→                  <SelectItem className="rounded-3xl" value="all">
+   754→                    All Statuses
+   755→                  </SelectItem>
+   756→                  <SelectItem className="rounded-3xl" value="applied">
+   757→                    Submitted
+   758→                  </SelectItem>
+   759→                  <SelectItem className="rounded-3xl" value="approved">
+   760→                    Approved
+   761→                  </SelectItem>
+   762→                  <SelectItem className="rounded-3xl" value="rejected">
+   763→                    Rejected
+   764→                  </SelectItem>
+   765→                  <SelectItem className="rounded-3xl" value="interview">
+   766→                    Interview
+   767→                  </SelectItem>
+   768→                  <SelectItem className="rounded-3xl" value="offered">
+   769→                    Offered
+   770→                  </SelectItem>
+   771→                </SelectContent>
+   772→              </Select>
+   773→            </div>
+   774→            {loading ? (
+   775→              <div className="flex justify-center items-center py-20">
+   776→                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+   777→              </div>
+   778→            ) : filteredApplicants.length === 0 ? (
+   779→              <div className="text-center py-20 text-muted-foreground">
+   780→                <Users className="h-12 w-12 mx-auto mb-4" />
+   781→                <h3 className="text-lg font-semibold">No applicants yet</h3>
+   782→                <p>Check back later to see who has applied for this role.</p>
+   783→              </div>
+   784→            ) : (
+   785→              <div className="space-y-2">
+   786→                {filteredApplicants.map((applicant) => {
+   787→                  const d = toDate(applicant.submittedAt);
+   788→                  const statusLower = (applicant.status || "").toLowerCase();
+   789→                  const isApproved = statusLower === "approved";
+   790→                  const isRejected = statusLower === "rejected";
+   791→                  const showChatActions =
+   792→                    isApproved ||
+   793→                    statusLower === "interview" ||
+   794→                    statusLower === "offered" ||
+   795→                    statusLower === "shortlisted";
+   796→                  return (
+   797→                    <div
+   798→                      key={applicant.id}
+   799→                      className="flex items-center gap-2 p-2 rounded-3xl hover:bg-accent"
+   800→                    >
+   801→                      <Link
+   802→                        href={`/users/${applicant.userId}`}
+   803→                        className="flex items-center gap-4 flex-1"
+   804→                      >
+   805→                        <Avatar className="h-10 w-10">
+   806→                          <AvatarImage
+   807→                            src={applicant.photoURL}
+   808→                            alt={applicant.userName}
+   809→                            data-ai-hint="profile avatar"
+   810→                          />
+   811→                          <AvatarFallback>
+   812→                            {getInitials(applicant.userName)}
+   813→                          </AvatarFallback>
+   814→                        </Avatar>
+   815→                        <div className="flex-1">
+   816→                          <div className="flex items-center gap-2">
+   817→                            <p className="text-sm font-medium leading-none">
+   818→                              {applicant.userName}
+   819→                            </p>
+   820→                            <Badge
+   821→                              variant={
+   822→                                isApproved
+   823→                                  ? "secondary"
+   824→                                  : isRejected
+   825→                                  ? "destructive"
+   826→                                  : "outline"
+   827→                              }
+   828→                              className="capitalize"
+   829→                            >
+   830→                              {applicant.status}
+   831→                            </Badge>
+   832→                          </div>
+   833→                          <p className="text-xs text-muted-foreground">
+   834→                            Applied on {d ? format(d, "PPP") : "—"}
+   835→                          </p>
+   836→                        </div>
+   837→                      </Link>
+   838→                      <div className="flex gap-2">
+   839→                        <Dialog>
+   840→                          <DialogTrigger asChild>
+   841→                            <Button
+   842→                              size="icon"
+   843→                              variant="outline"
+   844→                              className="h-8 w-8 rounded-3xl"
+   845→                            >
+   846→                              <Eye className="h-4 w-4" />
+   847→                            </Button>
+   848→                          </DialogTrigger>
+   849→                          <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+   850→                            <DialogHeader>
+   851→                              <DialogTitle>Application Details</DialogTitle>
+   852→                              <DialogDescription>
+   853→                                Submitted by {applicant.userName} for the{" "}
+   854→                                {opportunity?.title} position.
+   855→                              </DialogDescription>
+   856→                            </DialogHeader>
+   857→                            {renderApplicationDetail(applicant)}
+   858→                          </DialogContent>
+   859→                        </Dialog>
+   860→
+   861→                        {showChatActions && (
+   862→                          <>
+   863→                            <Button
+   864→                              size="icon"
+   865→                              variant="outline"
+   866→                              className="h-8 w-8 rounded-3xl text-primary hover:text-primary border-primary/20 hover:bg-primary/10"
+   867→                              onClick={() => startChatWithApplicant(applicant)}
+   868→                              title="Chat with applicant"
+   869→                            >
+   870→                              <MessageSquare className="h-4 w-4" />
+   871→                            </Button>
+   872→                            <Button
+   873→                              size="icon"
+   874→                              variant="outline"
+   875→                              className="h-8 w-8 rounded-3xl text-emerald-600 hover:text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+   876→                              onClick={() => startVideoCallWithApplicant(applicant)}
+   877→                              title="Video call with applicant"
+   878→                            >
+   879→                              <Video className="h-4 w-4" />
+   880→                            </Button>
+   881→                          </>
+   882→                        )}
+   883→
+   884→                        <Button
+   885→                          size="icon"
+   886→                          variant="outline"
+   887→                          className="h-8 w-8 rounded-3xl text-green-600 hover:text-green-600 border-green-200 hover:bg-green-50"
+   888→                          onClick={() => handleUpdateStatus(applicant, "approved")}
+   889→                          disabled={isApproved || isRejected}
+   890→                        >
+   891→                          <Check className="h-4 w-4" />
+   892→                        </Button>
+   893→                        <Button
+   894→                          size="icon"
+   895→                          variant="outline"
+   896→                          className="h-8 w-8 rounded-3xl text-red-600 hover:text-red-600 border-red-200 hover:bg-red-50"
+   897→                          onClick={() => handleUpdateStatus(applicant, "rejected")}
+   898→                          disabled={isApproved || isRejected}
+   899→                        >
+   900→                          <X className="h-4 w-4" />
+   901→                        </Button>
+   902→                      </div>
+   903→                    </div>
+   904→                  );
+   905→                })}
+   906→              </div>
+   907→            )}
+   908→          </CardContent>
+   909→        </Card>
+   910→      </div>
+   911→    </div>
+   912→  );
+   913→}
+   914→
