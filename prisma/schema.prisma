@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,20 +7,387 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ============ USERS & AUTH ============
+
 model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String
+  role          String    // applicant, agency_admin, agency_member, fira, employer
+  avatarUrl     String?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  applicantProfile   ApplicantProfile?
+  agencyMember       AgencyMember?
+  employerProfile    EmployerProfile?
+  jobOrdersCreated   JobOrder[]      @relation("JobOrderCreator")
+  applications       Application[]
+  atsHistory         ATSStageHistory[]
+  endorsementsFrom   Endorsement[]   @relation("EndorsementFrom")
+  agencyOwned        Agency[]        @relation("AgencyOwner")
+}
+
+// ============ AGENCIES (Local Agency - PH Based) ============
+
+model Agency {
+  id          String   @id @default(cuid())
+  name        String
+  licenseNo   String?
+  address     String?
+  phone       String?
+  email       String?
+  logoUrl     String?
+  isApproved  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  ownerId String  @unique
+  owner   User    @relation("AgencyOwner", fields: [ownerId], references: [id])
+  members AgencyMember[]
+  applicants ApplicantProfile[]
+  jobOrders  JobOrder[]
+}
+
+model AgencyMember {
   id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
+  role      String   @default("member") // admin, recruiter, coordinator
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  agencyId  String
+  agency    Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Post {
-  id        String   @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// ============ EMPLOYERS (Foreign) ============
+
+model EmployerProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+  companyName     String
+  companyAddress  String?
+  country         String
+  contactPerson   String?
+  contactPhone    String?
+  contactEmail    String?
+  industry        String?
+  isApproved      Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  jobOrders JobOrder[]
+  endorsements Endorsement[]
+}
+
+// ============ APPLICANT PROFILE ============
+
+model ApplicantProfile {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id])
+  agencyId            String?
+  agency              Agency?  @relation(fields: [agencyId], references: [id])
+  
+  // Personal Info
+  firstName           String
+  middleName          String?
+  lastName            String
+  suffix              String?
+  nickname            String?
+  birthDate           DateTime?
+  gender              String?   // male, female
+  civilStatus         String?   // single, married, widowed, separated
+  nationality         String   @default("Filipino")
+  religion            String?
+  heightCm            Float?
+  weightKg            Float?
+  bloodType           String?
+  
+  // Contact
+  mobileNumber        String?
+  telephoneNumber     String?
+  emailAddress        String?
+  presentAddress      String?
+  permanentAddress    String?
+  
+  // Emergency Contact
+  emergencyName       String?
+  emergencyRelation   String?
+  emergencyPhone      String?
+  
+  // Identification
+  passportNumber      String?
+  passportExpiry      DateTime?
+  sssNumber           String?
+  pagibigNumber       String?
+  philhealthNumber    String?
+  tinNumber           String?
+  
+  // Preferences
+  preferredCountry    String?
+  preferredJobCategory String?
+  salaryExpectation   Float?
+  availabilityDate    DateTime?
+  isProfileComplete   Boolean  @default(false)
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  education    ApplicantEducation[]
+  experience   ApplicantExperience[]
+  skills       ApplicantSkill[]
+  languages    ApplicantLanguage[]
+  certifications ApplicantCertification[]
+  references   ApplicantReference[]
+  documents    ApplicantDocument[]
+}
+
+model ApplicantEducation {
+  id              String   @id @default(cuid())
+  profileId       String
+  profile         ApplicantProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  level           String   // elementary, highschool, college, vocational, graduate
+  schoolName      String
+  course          String?
+  fromYear        Int?
+  toYear          Int?
+  isGraduated     Boolean  @default(false)
+  honors          String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ApplicantExperience {
+  id              String   @id @default(cuid())
+  profileId       String
+  profile         ApplicantProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  employerName    String
+  country         String?
+  position        String
+  fromDate        DateTime?
+  toDate          DateTime?
+  isCurrent       Boolean  @default(false)
+  duties          String?
+  salary          Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ApplicantSkill {
+  id              String   @id @default(cuid())
+  profileId       String
+  profile         ApplicantProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  category        String
+  name            String
+  proficiency     String?  // basic, intermediate, advanced, expert
+  yearsExperience Int?
+  isCustom        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ApplicantLanguage {
+  id              String   @id @default(cuid())
+  profileId       String
+  profile         ApplicantProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  language        String
+  proficiency     String   // basic, conversational, fluent, native
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ApplicantCertification {
+  id              String   @id @default(cuid())
+  profileId       String
+  profile         ApplicantProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  name            String
+  issuer          String?
+  issuedDate      DateTime?
+  expiryDate      DateTime?
+  certificateNo   String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ApplicantReference {
+  id              String   @id @default(cuid())
+  profileId       String
+  profile         ApplicantProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  name            String
+  company         String?
+  position        String?
+  phone           String?
+  email           String?
+  relationship    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ApplicantDocument {
+  id              String   @id @default(cuid())
+  profileId       String
+  profile         ApplicantProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  type            String   // resume, passport, nbi_clearance, medical, certificate, training, other
+  name            String
+  fileUrl         String
+  fileSize        Int?
+  mimeType        String?
+  isVerified      Boolean  @default(false)
+  verifiedBy      String?
+  verifiedAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ============ JOB ORDERS ============
+
+model JobOrder {
+  id              String   @id @default(cuid())
+  title           String
+  description     String?
+  country         String
+  jobCategory     String
+  salaryMin       Float?
+  salaryMax       Float?
+  currency        String   @default("USD")
+  contractDuration String?
+  vacancies       Int      @default(1)
+  filledSlots     Int      @default(0)
+  requirements    String?  // JSON string for flexible requirements
+  benefits        String?  // JSON string
+  status          String   @default("open") // open, closed, filled, cancelled
+  isUrgent        Boolean  @default(false)
+  
+  employerId      String
+  employer        EmployerProfile @relation(fields: [employerId], references: [id])
+  agencyId        String?
+  agency          Agency?  @relation(fields: [agencyId], references: [id])
+  createdById     String
+  createdBy       User     @relation("JobOrderCreator", fields: [createdById], references: [id])
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  applications  Application[]
+  customFields  ATSCustomField[]
+  atsStages     ATSStage[]
+  endorsements  Endorsement[]
+}
+
+// ============ APPLICATIONS ============
+
+model Application {
+  id              String   @id @default(cuid())
+  applicantId     String
+  applicant       User     @relation(fields: [applicantId], references: [id])
+  jobOrderId      String
+  jobOrder        JobOrder @relation(fields: [jobOrderId], references: [id])
+  status          String   @default("pending") // pending, accepted, rejected, withdrawn, hired
+  coverLetter     String?
+  customResponses String?  // JSON string
+  matchScore      Float?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  atsHistory      ATSStageHistory[]
+  endorsement     Endorsement?
+}
+
+// ============ ATS (Applicant Tracking System) ============
+
+model ATSStage {
+  id          String   @id @default(cuid())
+  jobOrderId  String
+  jobOrder    JobOrder @relation(fields: [jobOrderId], references: [id], onDelete: Cascade)
+  name        String
+  order       Int
+  color       String?  // for UI display
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  history     ATSStageHistory[]
+}
+
+model ATSStageHistory {
+  id          String   @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  stageId       String
+  stage         ATSStage    @relation(fields: [stageId], references: [id])
+  movedById     String
+  movedBy       User        @relation(fields: [movedById], references: [id])
+  notes         String?
+  createdAt     DateTime    @default(now())
+
+  @@index([applicationId])
+  @@index([stageId])
+}
+
+// ============ ENDORSEMENTS ============
+
+model Endorsement {
+  id              String   @id @default(cuid())
+  applicationId   String   @unique
+  application     Application @relation(fields: [applicationId], references: [id])
+  jobOrderId      String
+  jobOrder        JobOrder @relation(fields: [jobOrderId], references: [id])
+  employerId      String
+  employer        EmployerProfile @relation(fields: [employerId], references: [id])
+  endorsedById    String
+  endorsedBy      User     @relation("EndorsementFrom", fields: [endorsedById], references: [id])
+  
+  // Workflow
+  agencyStatus    String   @default("pending") // pending, endorsed, rejected
+  firaStatus      String   @default("pending") // pending, approved, rejected
+  employerStatus  String   @default("pending") // pending, accepted, declined, interviewed
+  
+  agencyNotes     String?
+  firaNotes       String?
+  employerNotes   String?
+  
+  endorsedAt      DateTime @default(now())
+  agencyActionedAt DateTime?
+  firaActionedAt  DateTime?
+  employerActionedAt DateTime?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ============ NOTIFICATIONS ============
+
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  message     String
+  type        String   @default("info") // info, success, warning, error
+  isRead      Boolean  @default(false)
+  link        String?  // client-side view to navigate to
+  data        String?  // JSON string for extra data
+  createdAt   DateTime @default(now())
+
+  @@index([userId, isRead])
+}
+
+// ============ CUSTOM ATS FIELDS (Google Forms-like) ============
+
+model ATSCustomField {
+  id          String   @id @default(cuid())
+  jobOrderId  String
+  jobOrder    JobOrder @relation(fields: [jobOrderId], references: [id], onDelete: Cascade)
+  label       String
+  fieldType   String   // text, textarea, select, multiselect, checkbox, date, number, file
+  options     String?  // JSON string for select/multiselect options
+  isRequired  Boolean  @default(false)
+  order       Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
