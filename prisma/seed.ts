@@ -44,18 +44,20 @@ async function hashPassword(password: string): Promise<string> {
 async function main() {
   console.log('🌱 Seeding FIRA database...');
 
-  // Clean existing data in correct order
+  // Clean existing data in correct order (respect foreign keys)
   console.log('🗑️ Cleaning existing data...');
+  // Delete tables that reference Application first
   await db.applicationCustomResponse.deleteMany();
-  await db.jobCustomField.deleteMany();
   await db.aIAnalysisResult.deleteMany();
-  await db.resumeEnhancement.deleteMany();
   await db.aTSStageHistory.deleteMany();
-  await db.application.deleteMany();
   await db.endorsement.deleteMany();
+  // Now delete Application
+  await db.application.deleteMany();
+  // Delete tables that reference JobOrder
+  await db.jobCustomField.deleteMany();
   await db.aTSStage.deleteMany();
   await db.jobOrder.deleteMany();
-  await db.notification.deleteMany();
+  // Delete tables that reference ApplicantProfile
   await db.applicantTraining.deleteMany();
   await db.applicantDocument.deleteMany();
   await db.applicantReference.deleteMany();
@@ -65,6 +67,10 @@ async function main() {
   await db.applicantExperience.deleteMany();
   await db.applicantEducation.deleteMany();
   await db.applicantProfile.deleteMany();
+  // Delete tables that reference User
+  await db.resumeEnhancement.deleteMany();
+  await db.notification.deleteMany();
+  // Delete org-level tables
   await db.agencyMember.deleteMany();
   await db.agency.deleteMany();
   await db.employerProfile.deleteMany();
