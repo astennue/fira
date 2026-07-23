@@ -1,16 +1,16 @@
 'use client'
 
+import React from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import {
   User, FileText, GraduationCap, Briefcase, Globe, Award,
-  Languages, Heart, FolderOpen, AlertTriangle, CheckCircle, XCircle,
-  Shield, Stamp, Stethoscope, ChevronRight, Edit, Camera, Phone, Mail,
+  Languages, FolderOpen, AlertTriangle, CheckCircle, XCircle,
+  Shield, Stamp, Stethoscope, Clock, Edit,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore } from '@/store/app-store'
 
@@ -51,9 +51,9 @@ export function ApplicantProfilePage() {
   }
 
   let householdTasks: string[] = []
-  try { householdTasks = JSON.parse(profile.householdTasks || '[]') } catch {}
+  try { householdTasks = JSON.parse(profile.householdTasks || '[]') } catch (_e) { /* ignore */ }
 
-  const statusIcons: Record<string, { icon: React.ComponentType<any>; color: string; label: string }> = {
+  const statusIcons: Record<string, { icon: any; color: string; label: string }> = {
     valid: { icon: CheckCircle, color: 'text-emerald-600', label: 'Valid' },
     expired: { icon: XCircle, color: 'text-red-500', label: 'Expired' },
     processing: { icon: Clock, color: 'text-amber-500', label: 'Processing' },
@@ -187,7 +187,7 @@ export function ApplicantProfilePage() {
                   {renderStatusBadge(profile.medicalStatus || 'none')}
                   {profile.medicalExpiry ? (
                     <p className="text-xs text-muted-foreground mt-1">Expires: {new Date(profile.medicalExpiry).toLocaleDateString()}</p>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </div>

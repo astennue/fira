@@ -50,10 +50,10 @@ async function main() {
   await db.jobCustomField.deleteMany();
   await db.aIAnalysisResult.deleteMany();
   await db.resumeEnhancement.deleteMany();
-  await db.ATSStageHistory.deleteMany();
+  await db.aTSStageHistory.deleteMany();
   await db.application.deleteMany();
   await db.endorsement.deleteMany();
-  await db.ATSStage.deleteMany();
+  await db.aTSStage.deleteMany();
   await db.jobOrder.deleteMany();
   await db.notification.deleteMany();
   await db.applicantTraining.deleteMany();

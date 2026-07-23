@@ -74,8 +74,8 @@ export async function PUT(request: NextRequest) {
 
     const profile = await db.applicantProfile.upsert({
       where: { userId },
-      update: profileFields,
-      create: { userId, ...profileFields },
+      update: profileFields as any,
+      create: { userId, ...profileFields } as any,
     })
 
     // Handle nested arrays: education, experience, skills, languages, certifications, documents, references, trainings
