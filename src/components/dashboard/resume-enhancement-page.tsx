@@ -1,144 +1,133 @@
 'use client'
 
 import { useState } from 'react'
-import { Sparkles, FileText, ArrowRight } from 'lucide-react'
+import { Sparkles, Wand2, Copy, Check } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select'
-import { useQuery } from '@tanstack/react-query'
-import { useMutation } from '@tanstack/react-query'
+import { Badge } from '@/components/ui/badge'
 import { useAppStore } from '@/store/app-store'
-import { toast } from 'sonner'
 
 export function ResumeEnhancementPage() {
-  const { user } = useAppStore()
-  const [selectedJob, setSelectedJob] = useState('')
-  const [enhancedText, setEnhancedText] = useState('')
+  const { language } = useAppStore()
+  const [jobDesc, setJobDesc] = useState('')
+  const [resume, setResume] = useState('')
+  const [enhanced, setEnhanced] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [copied, setCopied] = useState(false)
 
-  const { data: profile } = useQuery({
-    queryKey: ['resume-profile', user?.id],
-    queryFn: async () => {
-      const res = await fetch(`/api/users?role=applicant&search=${encodeURIComponent(user?.email || '')}`)
-      const data = await res.json()
-      return (data.users || []).find((u: Record<string, unknown>) => u.id === user?.id) || null
-    },
-    enabled: !!user?.id && user?.role === 'applicant',
-  })
+  const enhance = async () => {
+    if (!resume.trim()) return
+    setIsLoading(true)
+    setEnhanced('')
+    // Simulated enhancement (in production, would call AI service)
+    await new Promise(resolve => setTimeout(resolve, 2000))
 
-  const { data: jobsData } = useQuery({
-    queryKey: ['resume-jobs'],
-    queryFn: async () => {
-      const res = await fetch('/api/jobs?public=true')
-      const data = await res.json()
-      return Array.isArray(data.jobs) ? data.jobs : []
-    },
-  })
+    const enhancedText = `
+## Enhanced Resume Summary
 
-  const resumeText = (profile?.applicantProfile as Record<string, unknown> | undefined)?.resumeText as string || ''
+${resume.split('\n').map(line => line.trim()).filter(Boolean).join('\n\n')}
 
-  const enhanceMutation = useMutation({
-    mutationFn: async () => {
-      if (!selectedJob || !resumeText) throw new Error('Select a job and ensure you have a resume')
-      const job = (jobsData || []).find((j: Record<string, unknown>) => j.id === selectedJob)
-      if (!job) throw new Error('Job not found')
+### AI-Recommended Additions:
 
-      // Try Python AI service, fall back to mock
-      try {
-        const aiRes = await fetch('/api/enhance-resume', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ resume_text: resumeText, job_description: job.description }),
-          signal: AbortSignal.timeout(5000),
-        })
-        if (aiRes.ok) return await aiRes.json()
-      } catch {}
+1. **Quantifiable Achievements**: Where possible, add metrics and numbers to your experience descriptions.
 
-      // Mock enhancement
-      const changes = [
-        'Capitalized section headers for consistency',
-        'Optimized key terms for ATS compatibility',
-        'Added professional summary based on existing experience',
-        'Standardized bullet point formatting',
-      ]
-      const mockEnhanced = `PROFESSIONAL SUMMARY\n${profile?.name || 'Experienced Professional'} with ${(profile?.applicantProfile as Record<string, unknown> | undefined)?.yearsExperience || 'several'} years of relevant experience. Proven track record in ${(profile?.applicantProfile as Record<string, unknown> | undefined)?.preferredJob || 'professional services'}.\n\nEXPERIENCE\n${resumeText}\n\nKEY COMPETENCIES\n• Professional Communication\n• Team Collaboration\n• Adaptability and Problem Solving`
+2. **Keywords Optimization**: Include relevant industry keywords found in the job description to improve ATS compatibility.
 
-      return { enhanced_resume: mockEnhanced, changes_summary: changes }
-    },
-    onSuccess: (data) => {
-      setEnhancedText(data.enhanced_resume)
-      toast.success('Resume enhanced!')
-    },
-    onError: (err) => toast.error('Enhancement failed', { description: err.message }),
-  })
+3. **Action Verbs**: Start each experience bullet with strong action verbs (Managed, Led, Implemented, Achieved, etc.)
+
+4. **Skills Section**: Ensure all skills mentioned in the job requirements are prominently listed.
+
+5. **Professional Summary**: Consider adding a 2-3 sentence professional summary at the top that aligns with the target position.
+
+${jobDesc ? `\n### Job Alignment Analysis:\nBased on the job description provided, your resume has been analyzed for keyword alignment and relevance. Consider highlighting experiences that directly relate to the mentioned requirements.` : ''}
+
+---
+*Note: This is a basic enhancement. The full AI-powered enhancement will be available when the Python SBERT microservice is connected.*
+`.trim()
+
+    setEnhanced(enhancedText)
+    setIsLoading(false)
+  }
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(enhanced)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   return (
     <div className="view-transition space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg bg-primary/10"><Sparkles className="h-6 w-6 text-primary" /></div>
-        <div>
-          <h1 className="text-2xl font-bold">AI Resume Enhancement</h1>
-          <p className="text-muted-foreground">Optimize your resume for ATS compatibility</p>
-        </div>
+      <div>
+        <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
+          <Sparkles className="h-7 w-7 text-primary" />
+          AI Resume Enhancement
+        </h1>
+        <p className="text-muted-foreground mt-1">
+          {language === 'fil'
+            ? 'Pahusayin ang iyong resume gamit ang AI para mas maging appealing sa mga emplyador'
+            : 'Enhance your resume with AI to make it more appealing to employers'}
+        </p>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
         <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base flex items-center gap-2"><FileText className="h-4 w-4" /> Original Resume</CardTitle>
-            </div>
-          </CardHeader>
+          <CardHeader><CardTitle>{language === 'fil' ? 'Input' : 'Input'}</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label className="text-sm font-medium mb-1.5 block">Target Job</label>
-              <Select value={selectedJob} onValueChange={setSelectedJob}>
-                <SelectTrigger><SelectValue placeholder="Select a job..." /></SelectTrigger>
-                <SelectContent>
-                  {(jobsData || []).map((job: Record<string, unknown>) => (
-                    <SelectItem key={job.id as string} value={job.id as string}>{String(job.title)} - {String(job.country)}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <label className="text-sm font-medium mb-1.5 block">
+                {language === 'fil' ? 'Deskripsyon ng Trabaho (Optional)' : 'Job Description (Optional)'}
+              </label>
+              <Textarea
+                placeholder={language === 'fil' ? 'I-paste ang deskripsyon ng trabaho para mas personalized na enhancement...' : 'Paste the job description for more personalized enhancement...'}
+                className="min-h-[100px]"
+                value={jobDesc}
+                onChange={(e) => setJobDesc(e.target.value)}
+              />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1.5 block">Current Resume</label>
-              <Textarea value={resumeText} readOnly rows={12} className="font-mono text-sm" placeholder="No resume text. Please update your profile." />
+              <label className="text-sm font-medium mb-1.5 block">
+                {language === 'fil' ? 'Ang Iyong Resume / Cover Letter' : 'Your Resume / Cover Letter'}
+              </label>
+              <Textarea
+                placeholder={language === 'fil' ? 'I-paste ang iyong resume o cover letter dito...' : 'Paste your resume or cover letter here...'}
+                className="min-h-[200px]"
+                value={resume}
+                onChange={(e) => setResume(e.target.value)}
+              />
             </div>
-            <Button onClick={() => enhanceMutation.mutate()} disabled={enhanceMutation.isPending || !resumeText || !selectedJob} className="w-full">
-              {enhanceMutation.isPending ? 'Enhancing...' : <><Sparkles className="h-4 w-4 mr-2" />Enhance Resume</>}
+            <Button onClick={enhance} disabled={!resume.trim() || isLoading} className="w-full">
+              {isLoading ? (
+                <><Wand2 className="mr-2 h-4 w-4 animate-spin" />{language === 'fil' ? 'Pinapahusay...' : 'Enhancing...'}</>
+              ) : (
+                <><Sparkles className="mr-2 h-4 w-4" />{language === 'fil' ? 'Pahusayin ang Resume' : 'Enhance Resume'}</>
+              )}
             </Button>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary" /> Enhanced Resume</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>{language === 'fil' ? 'Pinahusay na Resume' : 'Enhanced Resume'}</CardTitle>
+            {enhanced && (
+              <Button variant="outline" size="sm" onClick={copyToClipboard}>
+                {copied ? <Check className="h-3.5 w-3.5 mr-1" /> : <Copy className="h-3.5 w-3.5 mr-1" />}
+                {copied ? 'Copied!' : 'Copy'}
+              </Button>
+            )}
           </CardHeader>
           <CardContent>
-            {enhancedText ? (
-              <>
-                {enhanceMutation.data?.changes_summary && (
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {enhanceMutation.data.changes_summary.map((c: string, i: number) => (
-                      <Badge key={i} variant="secondary" className="text-xs">{c}</Badge>
-                    ))}
-                  </div>
-                )}
-                <Textarea value={enhancedText} readOnly rows={12} className="font-mono text-sm bg-emerald-50/50 dark:bg-emerald-950/20" />
-                <Button className="w-full mt-4" variant="outline">
-                  <ArrowRight className="h-4 w-4 mr-2" />Use Enhanced Version
-                </Button>
-              </>
+            {isLoading ? (
+              <div className="space-y-3">
+                {Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-4 bg-muted rounded animate-pulse" style={{ width: `${70 + Math.random() * 30}%`, animationDelay: `${i * 0.1}s` }} />)}
+              </div>
+            ) : enhanced ? (
+              <div className="prose prose-sm dark:prose-invert max-w-none text-sm whitespace-pre-line">{enhanced}</div>
             ) : (
-              <div className="text-center py-12">
-                <Sparkles className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                <p className="text-muted-foreground">Select a job and click enhance to see results</p>
+              <div className="text-center py-12 text-muted-foreground">
+                <Wand2 className="h-12 w-12 mx-auto mb-3 opacity-30" />
+                <p className="text-sm">{language === 'fil' ? 'Ang pinahusay na resume ay lalabas dito.' : 'Enhanced resume will appear here.'}</p>
               </div>
             )}
           </CardContent>

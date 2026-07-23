@@ -1,48 +1,42 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { Briefcase, Users, UserCheck, FileText, ArrowRight, Sparkles } from 'lucide-react'
+import { Briefcase, UserCheck, CheckCircle, ArrowRight, Eye } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore } from '@/store/app-store'
 
 export function EmployerDashboard() {
-  const { navigate } = useAppStore()
+  const { user, navigate, language } = useAppStore()
 
-  const { data: jobsData } = useQuery({
-    queryKey: ['employer-jobs'],
+  const { data: endorseData } = useQuery({
+    queryKey: ['employer-endorsements'],
     queryFn: async () => {
-      const res = await fetch(`/api/jobs?userRole=employer`)
+      const res = await fetch('/api/endorsements')
+      if (!res.ok) return { endorsements: [] }
       return res.json()
     },
   })
 
-  const { data: endorsedData } = useQuery({
-    queryKey: ['employer-endorsed'],
-    queryFn: async () => {
-      const res = await fetch('/api/endorsements?status=employer_accepted,fira_approved')
-      return res.json()
-    },
-  })
-
-  const jobs = Array.isArray(jobsData?.jobs) ? jobsData.jobs : []
-  const endorsements = Array.isArray(endorsedData?.endorsements) ? endorsedData.endorsements : []
+  const endorsements = Array.isArray(endorseData?.endorsements) ? endorseData.endorsements : []
+  const pending = endorsements.filter((e: any) => ['pending_employer_review'].includes(e.status)).length
+  const accepted = endorsements.filter((e: any) => ['employer_accepted'].includes(e.status)).length
 
   return (
     <div className="view-transition space-y-6">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold">Employer Dashboard</h1>
-        <p className="text-muted-foreground mt-1">Manage your job listings and endorsed candidates</p>
+        <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Dashboard ng Empleyador' : 'Employer Dashboard'}</h1>
+        <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Pamahalaan ang mga endorsed na kandidato' : 'Manage endorsed candidates'}</p>
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         {[
-          { label: 'Active Jobs', value: jobs.filter((j: Record<string, unknown>) => j.status === 'open').length, icon: Briefcase, color: 'text-blue-600' },
-          { label: 'Total Applicants', value: jobs.reduce((sum: number, j: Record<string, unknown>) => sum + ((j as Record<string, Record<string, number>>)._count?.applications || 0), 0), icon: Users, color: 'text-emerald-600' },
-          { label: 'Endorsed Candidates', value: endorsements.length, icon: UserCheck, color: 'text-amber-600' },
-          { label: 'Pending Review', value: endorsements.filter((e: Record<string, unknown>) => e.status === 'fira_approved').length, icon: FileText, color: 'text-purple-600' },
+          { label: language === 'fil' ? 'Pending' : 'Pending Review', value: pending, icon: Eye, color: 'text-amber-600' },
+          { label: language === 'fil' ? 'Na-accept' : 'Accepted', value: accepted, icon: CheckCircle, color: 'text-emerald-600' },
+          { label: language === 'fil' ? 'Kabuuang Endorso' : 'Total Endorsements', value: endorsements.length, icon: UserCheck, color: 'text-blue-600' },
         ].map((stat, i) => (
           <motion.div key={stat.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
             <Card>
@@ -60,29 +54,27 @@ export function EmployerDashboard() {
 
       <div className="grid lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Endorsed Candidates</CardTitle>
-            <Button variant="ghost" size="sm" onClick={() => navigate('employer-endorsed')}>View All <ArrowRight className="h-4 w-4 ml-1" /></Button>
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <CardTitle>{language === 'fil' ? 'Mga Inindorso na Kandidato' : 'Endorsed Candidates'}</CardTitle>
+            <Button variant="ghost" size="sm" onClick={() => navigate('employer-endorsed')}>
+              {language === 'fil' ? 'Lahat' : 'All'} <ArrowRight className="h-4 w-4 ml-1" />
+            </Button>
           </CardHeader>
           <CardContent>
             {endorsements.length === 0 ? (
-              <div className="text-center py-8">
-                <UserCheck className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">No endorsed candidates yet</p>
-              </div>
+              <div className="text-center py-8"><UserCheck className="h-10 w-10 text-muted-foreground mx-auto mb-2" /><p className="text-sm text-muted-foreground">{language === 'fil' ? 'Wala pang endorsement.' : 'No endorsements yet.'}</p></div>
             ) : (
-              <div className="space-y-3">
-                {endorsements.slice(0, 5).map((e: Record<string, unknown>) => {
-                  const app = e.application as Record<string, unknown> | undefined
-                  const applicant = app?.applicant as Record<string, unknown> | undefined
-                  const job = app?.jobOrder as Record<string, unknown> | undefined
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {endorsements.slice(0, 8).map((e: any) => {
+                  const applicant = e.application?.applicant
+                  const job = e.application?.jobOrder
                   return (
-                    <div key={e.id as string} className="flex items-center justify-between p-3 rounded-lg border">
-                      <div>
-                        <p className="font-medium text-sm">{applicant?.name || 'Unknown'}</p>
-                        <p className="text-xs text-muted-foreground">{job?.title as string}</p>
+                    <div key={e.id} className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent/50 transition-colors">
+                      <div className="min-w-0">
+                        <p className="font-medium text-sm truncate">{applicant?.name || 'Unknown'}</p>
+                        <p className="text-xs text-muted-foreground">{job?.title || ''} &middot; {job?.country || ''}</p>
                       </div>
-                      <Badge variant="outline" className="capitalize text-xs">{(e.status as string).replace(/_/g, ' ')}</Badge>
+                      <Badge variant="outline" className="text-xs capitalize shrink-0 ml-2">{e.status?.replace(/_/g, ' ')}</Badge>
                     </div>
                   )
                 })}
@@ -90,13 +82,11 @@ export function EmployerDashboard() {
             )}
           </CardContent>
         </Card>
-
         <Card>
-          <CardHeader><CardTitle>Quick Actions</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{language === 'fil' ? 'Mabilis na Aksyon' : 'Quick Actions'}</CardTitle></CardHeader>
           <CardContent className="space-y-2">
-            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('employer-jobs')}><Briefcase className="mr-2 h-4 w-4" /> My Jobs</Button>
-            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('employer-endorsed')}><UserCheck className="mr-2 h-4 w-4" /> Endorsed</Button>
-            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('ai-matching')}><Sparkles className="mr-2 h-4 w-4" /> AI Matching</Button>
+            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('employer-endorsed')}><UserCheck className="mr-2 h-4 w-4" />{language === 'fil' ? 'Mga Inindorso' : 'Endorsed Candidates'}</Button>
+            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('employer-jobs')}><Briefcase className="mr-2 h-4 w-4" />{language === 'fil' ? 'Mga Trabaho' : 'My Jobs'}</Button>
           </CardContent>
         </Card>
       </div>

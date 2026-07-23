@@ -1,88 +1,111 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
-import { useMutation } from '@tanstack/react-query'
-import { UserCheck, CheckCircle, XCircle, Sparkles } from 'lucide-react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { motion } from 'framer-motion'
+import { CheckCircle, XCircle, UserCheck, Eye, ArrowRight, Building2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
 
 export function EmployerEndorsedPage() {
-  const { user } = useAppStore()
+  const { language } = useAppStore()
+  const queryClient = useQueryClient()
 
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ['employer-endorsed'],
+  const { data, isLoading } = useQuery({
+    queryKey: ['employer-endorsements-list'],
     queryFn: async () => {
-      const res = await fetch('/api/endorsements?status=fira_approved,employer_accepted')
+      const res = await fetch('/api/endorsements')
+      if (!res.ok) return { endorsements: [] }
       return res.json()
     },
-  })
-
-  const updateMutation = useMutation({
-    mutationFn: async ({ id, action }: { id: string; action: string }) => {
-      const res = await fetch('/api/endorsements', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ endorsementId: id, action }),
-      })
-      if (!res.ok) throw new Error('Failed')
-      return res.json()
-    },
-    onSuccess: (_, variables) => {
-      toast.success(variables.action === 'employer_accept' ? 'Candidate accepted!' : 'Candidate declined')
-      refetch()
-    },
-    onError: () => toast.error('Action failed'),
   })
 
   const endorsements = Array.isArray(data?.endorsements) ? data.endorsements : []
 
+  const updateMutation = useMutation({
+    mutationFn: async ({ endorsementId, action }: { endorsementId: string; action: string }) => {
+      const res = await fetch('/api/endorsements', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ endorsementId, action }),
+      })
+      if (!res.ok) throw new Error('Failed')
+      return res.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employer-endorsements-list'] })
+      toast.success(language === 'fil' ? 'Matagumpay na na-update!' : 'Updated successfully!')
+    },
+    onError: () => {
+      toast.error(language === 'fil' ? 'Hindi matagumpay.' : 'Failed to update.')
+    },
+  })
+
   return (
     <div className="view-transition space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Endorsed Candidates</h1>
-        <p className="text-muted-foreground">Review and accept/decline endorsed candidates</p>
+        <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Mga Inindorso na Kandidato' : 'Endorsed Candidates'}</h1>
+        <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Review at magdesisyon sa mga kandidato' : 'Review and decide on candidates'}</p>
       </div>
 
       {isLoading ? (
-        <div className="space-y-3">{Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-lg" />)}</div>
+        <div className="space-y-3">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-28 rounded-xl" />)}</div>
       ) : endorsements.length === 0 ? (
-        <Card className="p-12 text-center"><UserCheck className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">No endorsed candidates yet</p></Card>
+        <Card className="p-8 text-center"><UserCheck className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">{language === 'fil' ? 'Wala pang endorsed na kandidato.' : 'No endorsed candidates yet.'}</p></Card>
       ) : (
-        <div className="space-y-4">
-          {endorsements.map((e: Record<string, unknown>) => {
-            const app = e.application as Record<string, unknown> | undefined
-            const applicant = app?.applicant as Record<string, unknown> | undefined
-            const job = app?.jobOrder as Record<string, unknown> | undefined
-            const profile = applicant?.applicantProfile as Record<string, unknown> | undefined
+        <div className="space-y-3 max-h-[calc(100vh-16rem)] overflow-y-auto">
+          {endorsements.map((e: any, i: number) => {
+            const applicant = e.application?.applicant
+            const job = e.application?.jobOrder
+            const profile = applicant?.applicantProfile
+            const isPending = e.status === 'pending_employer_review'
+
             return (
-              <Card key={e.id as string}>
-                <CardContent className="p-5">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold">{applicant?.name || 'Unknown'}</h3>
-                        <Badge variant="outline" className="capitalize">{String(e.status).replace(/_/g, ' ')}</Badge>
+              <motion.div key={e.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-start justify-between">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="font-semibold text-sm">{applicant?.name || 'Unknown'}</h3>
+                            <ArrowRight className="h-3 w-3 text-muted-foreground" />
+                            <span className="text-sm text-muted-foreground">{job?.title}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                            {profile?.preferredCountry && <span>{profile.preferredCountry}</span>}
+                            {profile?.yearsExperience && <span>{profile.yearsExperience}yr {language === 'fil' ? 'karanasan' : 'experience'}</span>}
+                          </div>
+                          {e.coverNote && <p className="text-xs text-muted-foreground mt-1 italic">&quot;{e.coverNote}&quot;</p>}
+                        </div>
+                        <Badge variant="outline" className="text-xs capitalize shrink-0">{e.status?.replace(/_/g, ' ')}</Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground">{job?.title || ''} &middot; {profile?.preferredCountry || ''}</p>
+                      {/* Profile Summary (limited info) */}
+                      {profile && (
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                          {profile.applicantType && <div className="p-2 rounded bg-muted"><span className="text-muted-foreground">{language === 'fil' ? 'Uri' : 'Type'}</span><br /><span className="font-medium">{profile.applicantType?.replace('_', ' ')}</span></div>}
+                          {profile.highestEducation && <div className="p-2 rounded bg-muted"><span className="text-muted-foreground">{language === 'fil' ? 'Edukasyon' : 'Education'}</span><br /><span className="font-medium capitalize">{profile.highestEducation}</span></div>}
+                          {profile.passportStatus && <div className="p-2 rounded bg-muted"><span className="text-muted-foreground">Passport</span><br /><span className="font-medium capitalize">{profile.passportStatus}</span></div>}
+                          {profile.medicalStatus && profile.medicalStatus !== 'none' && <div className="p-2 rounded bg-muted"><span className="text-muted-foreground">Medical</span><br /><span className="font-medium capitalize">{profile.medicalStatus}</span></div>}
+                        </div>
+                      )}
+                      {isPending && (
+                        <div className="flex gap-2 pt-2 border-t">
+                          <Button size="sm" className="flex-1" onClick={() => updateMutation.mutate({ endorsementId: e.id, action: 'employer_accept' })} disabled={updateMutation.isPending}>
+                            <CheckCircle className="h-4 w-4 mr-1" />{language === 'fil' ? 'Accept' : 'Accept'}
+                          </Button>
+                          <Button size="sm" variant="outline" className="flex-1" onClick={() => updateMutation.mutate({ endorsementId: e.id, action: 'employer_decline' })} disabled={updateMutation.isPending}>
+                            <XCircle className="h-4 w-4 mr-1" />{language === 'fil' ? 'Decline' : 'Decline'}
+                          </Button>
+                        </div>
+                      )}
                     </div>
-                    {e.status === 'fira_approved' && (
-                      <div className="flex items-center gap-2">
-                        <Button size="sm" onClick={() => updateMutation.mutate({ id: e.id as string, action: 'employer_accept' })} disabled={updateMutation.isPending}>
-                          <CheckCircle className="h-4 w-4 mr-1.5 text-emerald-600" /> Accept
-                        </Button>
-                        <Button size="sm" variant="outline" onClick={() => updateMutation.mutate({ id: e.id as string, action: 'employer_decline' })} disabled={updateMutation.isPending}>
-                          <XCircle className="h-4 w-4 mr-1.5 text-red-600" /> Decline
-                        </Button>
-                      </div>
-                    )}
-                    {e.status === 'employer_accepted' && <Badge className="bg-emerald-100 text-emerald-800">Accepted</Badge>}
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </motion.div>
             )
           })}
         </div>

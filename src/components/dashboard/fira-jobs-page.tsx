@@ -1,65 +1,83 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { Briefcase, Search, MapPin } from 'lucide-react'
+import { Briefcase, MapPin, Filter } from 'lucide-react'
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useState } from 'react'
-import { formatDistanceToNow } from 'date-fns'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useAppStore } from '@/store/app-store'
 
 export function FiraJobsPage() {
-  const [search, setSearch] = useState('')
+  const { navigate, language } = useAppStore()
+  const [status, setStatus] = useState('all')
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['fira-jobs', search],
+  const queryParams = new URLSearchParams()
+  if (status !== 'all') queryParams.set('status', status)
+
+  const { data: jobsData, isLoading } = useQuery({
+    queryKey: ['fira-jobs-list', status],
     queryFn: async () => {
-      const params = new URLSearchParams({ userRole: 'fira' })
-      if (search) params.set('search', search)
-      const res = await fetch(`/api/jobs?${params}`)
+      const res = await fetch(`/api/jobs?${queryParams}`)
+      if (!res.ok) return { jobs: [] }
       return res.json()
     },
   })
 
-  const jobs = Array.isArray(data?.jobs) ? data.jobs : []
-
-  const visColor: Record<string, string> = { public: 'bg-emerald-100 text-emerald-800', agency_only: 'bg-blue-100 text-blue-800', private: 'bg-purple-100 text-purple-800' }
+  const jobs = Array.isArray(jobsData?.jobs) ? jobsData.jobs : []
 
   return (
     <div className="view-transition space-y-6">
-      <div className="flex items-center justify-between flex-wrap gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">All Jobs</h1>
-          <p className="text-muted-foreground">{jobs.length} total job listings</p>
+          <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Lahat ng Trabaho' : 'All Jobs'}</h1>
+          <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Pamahalaan ang lahat ng job order' : 'Manage all job orders'}</p>
         </div>
-        <div className="relative"><Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" /><Input placeholder="Search jobs..." className="pl-9 w-64" value={search} onChange={e => setSearch(e.target.value)} /></div>
       </div>
 
+      <Select value={status} onValueChange={setStatus}>
+        <SelectTrigger className="w-full sm:w-48 h-10">
+          <Filter className="h-4 w-4 mr-1.5 text-muted-foreground" />
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">{language === 'fil' ? 'Lahat ng Status' : 'All Status'}</SelectItem>
+          <SelectItem value="open">Open</SelectItem>
+          <SelectItem value="closed">Closed</SelectItem>
+          <SelectItem value="filled">Filled</SelectItem>
+        </SelectContent>
+      </Select>
+
       {isLoading ? (
-        <div className="space-y-3">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-16 rounded-lg" />)}</div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-40 rounded-xl" />)}</div>
+      ) : jobs.length === 0 ? (
+        <Card className="p-8 text-center"><Briefcase className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">{language === 'fil' ? 'Walang trabaho.' : 'No jobs found.'}</p></Card>
       ) : (
-        <Card>
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead><tr className="border-b bg-muted/50"><th className="text-left p-3 text-xs font-medium text-muted-foreground">Job Title</th><th className="text-left p-3 text-xs font-medium text-muted-foreground hidden sm:table-cell">Country</th><th className="text-left p-3 text-xs font-medium text-muted-foreground hidden md:table-cell">Category</th><th className="text-left p-3 text-xs font-medium text-muted-foreground hidden lg:table-cell">Applicants</th><th className="text-left p-3 text-xs font-medium text-muted-foreground">Visibility</th><th className="text-left p-3 text-xs font-medium text-muted-foreground">Status</th></tr></thead>
-                <tbody>
-                  {jobs.map((job: Record<string, unknown>) => (
-                    <tr key={job.id as string} className="border-b hover:bg-accent/50">
-                      <td className="p-3"><div className="flex items-center gap-2"><Briefcase className="h-4 w-4 text-primary flex-shrink-0" /><p className="text-sm font-medium truncate max-w-[200px]">{job.title as string}</p></div></td>
-                      <td className="p-3 text-sm hidden sm:table-cell">{job.country as string}</td>
-                      <td className="p-3 text-sm hidden md:table-cell capitalize">{job.category as string}</td>
-                      <td className="p-3 text-sm hidden lg:table-cell">{((job as Record<string, Record<string, number>>)._count?.applications || 0)}</td>
-                      <td className="p-3"><span className={`text-xs px-2 py-0.5 rounded-full font-medium ${visColor[job.visibility as string] || 'bg-gray-100'}`}>{String(job.visibility).replace('_', ' ')}</span></td>
-                      <td className="p-3"><Badge variant="secondary" className="capitalize text-xs">{String(job.status)}</Badge></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[calc(100vh-18rem)] overflow-y-auto">
+          {jobs.map((job: any, i: number) => (
+            <motion.div key={job.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.02, 0.3) }}>
+              <Card className="hover:shadow-sm transition-shadow cursor-pointer" onClick={() => navigate('ats-pipeline', { jobId: job.id })}>
+                <CardContent className="p-5">
+                  <div className="flex items-start justify-between mb-2">
+                    <Badge variant="secondary" className="text-xs">{job.category?.replace(/_/g, ' ')}</Badge>
+                    <Badge className="text-xs capitalize">{job.status}</Badge>
+                  </div>
+                  <h3 className="font-semibold text-sm mb-1">{job.title}</h3>
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
+                    <MapPin className="h-3.5 w-3.5" />{job.city ? `${job.city}, ` : ''}{job.country}
+                  </div>
+                  <div className="flex items-center justify-between pt-2 border-t">
+                    <span className="text-xs text-muted-foreground">{job._count?.applications || 0} applicants</span>
+                    <span className="text-sm font-semibold text-primary">${job.salaryMin ?? '?'}-${job.salaryMax ?? '?'}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
       )}
     </div>
   )

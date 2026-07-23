@@ -1,50 +1,69 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { Briefcase, FileText, Clock, Sparkles, ArrowRight, Building2, Users, UserCheck, BarChart3 } from 'lucide-react'
+import { Briefcase, Users, FileText, UserCheck, ArrowRight, Building, Send, Columns } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore } from '@/store/app-store'
-import { formatDistanceToNow } from 'date-fns'
 
 export function AgencyDashboard() {
-  const { user, navigate } = useAppStore()
+  const { user, navigate, language } = useAppStore()
 
   const { data: jobsData } = useQuery({
     queryKey: ['agency-jobs'],
     queryFn: async () => {
-      const res = await fetch(`/api/jobs?userRole=agency_admin`)
+      const res = await fetch('/api/jobs?userRole=local_agency')
+      if (!res.ok) return { jobs: [] }
       return res.json()
     },
   })
 
-  const { data: endorsementsData } = useQuery({
+  const { data: endorseData } = useQuery({
     queryKey: ['agency-endorsements'],
     queryFn: async () => {
       const res = await fetch('/api/endorsements')
+      if (!res.ok) return { endorsements: [] }
+      return res.json()
+    },
+  })
+
+  const { data: usersData } = useQuery({
+    queryKey: ['applicants-list'],
+    queryFn: async () => {
+      const res = await fetch('/api/users?role=applicant')
+      if (!res.ok) return { users: [], total: 0 }
       return res.json()
     },
   })
 
   const jobs = Array.isArray(jobsData?.jobs) ? jobsData.jobs : []
-  const endorsements = Array.isArray(endorsementsData?.endorsements) ? endorsementsData.endorsements : []
+  const endorsements = Array.isArray(endorseData?.endorsements) ? endorseData.endorsements : []
+  const applicantCount = usersData?.total || 0
+
+  const openJobs = jobs.filter((j: any) => j.status === 'open').length
+  const pendingEndorse = endorsements.filter((e: any) => e.status === 'pending_fira_review').length
+  const approvedEndorse = endorsements.filter((e: any) => ['fira_approved', 'employer_accepted'].includes(e.status)).length
 
   return (
     <div className="view-transition space-y-6">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold">Agency Dashboard</h1>
-        <p className="text-muted-foreground mt-1">Manage your recruitment pipeline</p>
+        <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Dashboard ng Ahensya' : 'Agency Dashboard'}</h1>
+        <p className="text-muted-foreground mt-1">
+          {user?.agencyName
+            ? (language === 'fil' ? `Welcome, ${user.agencyName}` : `Welcome, ${user.agencyName}`)
+            : (language === 'fil' ? 'Pamahalaan ang iyong recruitment pipeline' : 'Manage your recruitment pipeline')}
+        </p>
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Active Jobs', value: jobs.filter(j => j.status === 'open').length, icon: Briefcase, color: 'text-blue-600' },
-          { label: 'Total Applicants', value: jobs.reduce((sum: number, j: Record<string, unknown>) => sum + ((j as Record<string, Record<string, number>>)._count?.applications || 0), 0), icon: Users, color: 'text-emerald-600' },
-          { label: 'Pending Endorsements', value: endorsements.filter(e => e.status === 'agency_endorsed').length, icon: FileText, color: 'text-amber-600' },
-          { label: 'FIRA Approved', value: endorsements.filter(e => e.status === 'fira_approved').length, icon: UserCheck, color: 'text-purple-600' },
+          { label: language === 'fil' ? 'Aktibong Trabaho' : 'Open Jobs', value: openJobs, icon: Briefcase, color: 'text-blue-600' },
+          { label: language === 'fil' ? 'Aplikante' : 'Applicants', value: applicantCount, icon: Users, color: 'text-emerald-600' },
+          { label: language === 'fil' ? 'Pending Endorso' : 'Pending Endorsements', value: pendingEndorse, icon: FileText, color: 'text-amber-600' },
+          { label: language === 'fil' ? 'Naaprubahan' : 'Approved', value: approvedEndorse, icon: UserCheck, color: 'text-purple-600' },
         ].map((stat, i) => (
           <motion.div key={stat.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
             <Card>
@@ -62,27 +81,28 @@ export function AgencyDashboard() {
 
       <div className="grid lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Your Jobs</CardTitle>
-            <Button variant="ghost" size="sm" onClick={() => navigate('agency-jobs')}>View All <ArrowRight className="h-4 w-4 ml-1" /></Button>
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <CardTitle>{language === 'fil' ? 'Mga Trabaho' : 'Your Jobs'}</CardTitle>
+            <Button variant="ghost" size="sm" onClick={() => navigate('agency-jobs')}>
+              {language === 'fil' ? 'Lahat' : 'All'} <ArrowRight className="h-4 w-4 ml-1" />
+            </Button>
           </CardHeader>
           <CardContent>
             {jobs.length === 0 ? (
               <div className="text-center py-8">
                 <Briefcase className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">No jobs posted yet</p>
+                <p className="text-sm text-muted-foreground">{language === 'fil' ? 'Wala pang trabaho.' : 'No jobs posted yet.'}</p>
               </div>
             ) : (
-              <div className="space-y-3">
-                {jobs.slice(0, 5).map((job: Record<string, unknown>) => (
-                  <div key={job.id as string} className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent/50 transition-colors">
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {jobs.slice(0, 8).map((job: any) => (
+                  <div key={job.id} className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer" onClick={() => navigate('ats-pipeline', { jobId: job.id })}>
                     <div className="min-w-0">
-                      <p className="font-medium text-sm truncate">{job.title as string}</p>
-                      <p className="text-xs text-muted-foreground">{job.country as string} &middot; {((job as Record<string, Record<string, number>>)._count?.applications || 0)} applicants</p>
+                      <p className="font-medium text-sm truncate">{job.title}</p>
+                      <p className="text-xs text-muted-foreground">{job.country} &middot; {job._count?.applications || 0} {language === 'fil' ? 'aplikante' : 'applicants'}</p>
                     </div>
-                    <div className="flex items-center gap-2 ml-3">
-                      <Badge variant="outline" className="text-xs capitalize">{job.visibility as string}</Badge>
-                      <Badge variant="secondary" className="text-xs capitalize">{job.status as string}</Badge>
+                    <div className="flex items-center gap-2 ml-3 shrink-0">
+                      <Badge variant="secondary" className="text-xs capitalize">{job.status}</Badge>
                     </div>
                   </div>
                 ))}
@@ -92,14 +112,12 @@ export function AgencyDashboard() {
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-          </CardHeader>
+          <CardHeader><CardTitle>{language === 'fil' ? 'Mabilis na Aksyon' : 'Quick Actions'}</CardTitle></CardHeader>
           <CardContent className="space-y-2">
-            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('agency-jobs')}><Briefcase className="mr-2 h-4 w-4" /> Manage Jobs</Button>
-            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('agency-applicants')}><Users className="mr-2 h-4 w-4" /> View Applicants</Button>
-            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('agency-endorsements')}><FileText className="mr-2 h-4 w-4" /> Endorsements</Button>
-            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('ats-pipeline')}><BarChart3 className="mr-2 h-4 w-4" /> ATS Pipeline</Button>
+            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('agency-jobs')}><Briefcase className="mr-2 h-4 w-4" />{language === 'fil' ? 'Mga Trabaho' : 'Manage Jobs'}</Button>
+            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('agency-applicants')}><Users className="mr-2 h-4 w-4" />{language === 'fil' ? 'Mga Aplikante' : 'Applicants'}</Button>
+            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('agency-endorsements')}><Send className="mr-2 h-4 w-4" />{language === 'fil' ? 'Mga Endorso' : 'Endorsements'}</Button>
+            <Button variant="outline" className="w-full justify-start" onClick={() => navigate('ats-pipeline')}><Columns className="mr-2 h-4 w-4" />ATS Pipeline</Button>
           </CardContent>
         </Card>
       </div>

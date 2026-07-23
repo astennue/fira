@@ -1,96 +1,86 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
-import { Send, ArrowRight } from 'lucide-react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { motion } from 'framer-motion'
+import { Send, CheckCircle, XCircle, Clock, User, Building2, ArrowRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore } from '@/store/app-store'
-
-const statusLabel: Record<string, string> = {
-  pending_agency: 'Pending Agency',
-  agency_endorsed: 'Agency Endorsed',
-  fira_approved: 'FIRA Approved',
-  fira_rejected: 'FIRA Rejected',
-  employer_accepted: 'Employer Accepted',
-  employer_declined: 'Employer Declined',
-}
-
-const statusColor: Record<string, string> = {
-  pending_agency: 'bg-gray-100 text-gray-800',
-  agency_endorsed: 'bg-blue-100 text-blue-800',
-  fira_approved: 'bg-emerald-100 text-emerald-800',
-  fira_rejected: 'bg-red-100 text-red-800',
-  employer_accepted: 'bg-green-100 text-green-800',
-  employer_declined: 'bg-amber-100 text-amber-800',
-}
+import { toast } from 'sonner'
 
 export function AgencyEndorsementsPage() {
-  const navigate = useAppStore(s => s.navigate)
+  const { language } = useAppStore()
+  const queryClient = useQueryClient()
 
   const { data: data, isLoading } = useQuery({
     queryKey: ['agency-endorsements'],
     queryFn: async () => {
       const res = await fetch('/api/endorsements')
-      if (!res.ok) throw new Error('Failed')
+      if (!res.ok) return { endorsements: [] }
       return res.json()
     },
   })
 
   const endorsements = Array.isArray(data?.endorsements) ? data.endorsements : []
 
+  const statusConfig: Record<string, { color: string; icon: any; label: string }> = {
+    pending_fira_review: { color: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400', icon: Clock, label: 'Pending FIRA Review' },
+    fira_approved: { color: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400', icon: CheckCircle, label: 'FIRA Approved' },
+    fira_rejected: { color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400', icon: XCircle, label: 'FIRA Rejected' },
+    pending_employer_review: { color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400', icon: Clock, label: 'Pending Employer' },
+    employer_accepted: { color: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400', icon: CheckCircle, label: 'Accepted by Employer' },
+    employer_declined: { color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400', icon: XCircle, label: 'Declined by Employer' },
+  }
+
   return (
     <div className="view-transition space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Endorsements</h1>
-          <p className="text-muted-foreground">Track candidate endorsements</p>
-        </div>
-        <Button><Send className="h-4 w-4 mr-2" /> New Endorsement</Button>
+      <div>
+        <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Mga Endorso' : 'Endorsements'}</h1>
+        <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Subaybayan ang mga endorsement' : 'Track endorsement progress'}</p>
       </div>
 
       {isLoading ? (
-        <div className="space-y-3">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-lg" />)}</div>
+        <div className="space-y-3">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-xl" />)}</div>
       ) : endorsements.length === 0 ? (
-        <Card className="p-12 text-center"><Send className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">No endorsements yet</p></Card>
+        <Card className="p-8 text-center"><Send className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">{language === 'fil' ? 'Wala pang endorsement.' : 'No endorsements yet.'}</p></Card>
       ) : (
-        <Card>
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b bg-muted/50">
-                    <th className="text-left p-3 text-xs font-medium text-muted-foreground">Candidate</th>
-                    <th className="text-left p-3 text-xs font-medium text-muted-foreground">Job</th>
-                    <th className="text-left p-3 text-xs font-medium text-muted-foreground">Employer</th>
-                    <th className="text-left p-3 text-xs font-medium text-muted-foreground">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {endorsements.map((e: Record<string, unknown>) => {
-                    const app = e.application as Record<string, unknown> | undefined
-                    const applicant = app?.applicant as Record<string, unknown> | undefined
-                    const job = app?.jobOrder as Record<string, unknown> | undefined
-                    const employer = e.employer as Record<string, unknown> | undefined
-                    return (
-                      <tr key={e.id as string} className="border-b hover:bg-accent/50">
-                        <td className="p-3 text-sm font-medium">{applicant?.name || '-'}</td>
-                        <td className="p-3 text-sm">{job?.title || '-'}</td>
-                        <td className="p-3 text-sm">{employer?.companyName || '-'}</td>
-                        <td className="p-3">
-                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${statusColor[e.status as string] || 'bg-gray-100'}`}>
-                            {statusLabel[e.status as string] || (e.status as string)}
-                          </span>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="space-y-3 max-h-[calc(100vh-16rem)] overflow-y-auto">
+          {endorsements.map((e: any, i: number) => {
+            const cfg = statusConfig[e.status] || statusConfig.pending_fira_review
+            const StatusIcon = cfg.icon
+            const applicant = e.application?.applicant
+            const job = e.application?.jobOrder
+            const employer = e.employer
+            return (
+              <motion.div key={e.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <p className="font-medium text-sm">{applicant?.name || 'Unknown'}</p>
+                          <ArrowRight className="h-3 w-3 text-muted-foreground" />
+                          <p className="text-sm text-muted-foreground">{job?.title || 'Unknown Job'}</p>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <Building2 className="h-3 w-3" />{employer?.companyName || 'Unknown Employer'}
+                        </div>
+                        {e.coverNote && <p className="text-xs text-muted-foreground mt-1 line-clamp-1">&quot;{e.coverNote}&quot;</p>}
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Badge className={`text-xs ${cfg.color}`}>
+                          <StatusIcon className="h-3 w-3 mr-1" />{cfg.label}
+                        </Badge>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )
+          })}
+        </div>
       )}
     </div>
   )

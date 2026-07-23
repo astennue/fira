@@ -1,86 +1,103 @@
 'use client'
 
-import { useQuery, useMutation } from '@tanstack/react-query'
-import { Search, MapPin, Briefcase, ArrowRight, Send } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Search, MapPin, Filter, Briefcase, ArrowRight, Clock, Heart, FileText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAppStore } from '@/store/app-store'
-import { toast } from 'sonner'
+
+const COUNTRIES = [
+  { value: 'all', label: 'All Countries' },
+  { value: 'Saudi Arabia', label: 'Saudi Arabia' },
+  { value: 'Singapore', label: 'Singapore' },
+  { value: 'Japan', label: 'Japan' },
+  { value: 'Taiwan', label: 'Taiwan' },
+  { value: 'UAE', label: 'UAE' },
+  { value: 'Qatar', label: 'Qatar' },
+]
 
 export function ApplicantJobsPage() {
-  const { user, navigate } = useAppStore()
+  const { navigate, language } = useAppStore()
+  const [country, setCountry] = useState('all')
+  const [search, setSearch] = useState('')
+
+  const queryParams = new URLSearchParams()
+  queryParams.set('public', 'true')
+  if (country !== 'all') queryParams.set('country', country)
+  if (search) queryParams.set('search', search)
 
   const { data: jobsData, isLoading } = useQuery({
-    queryKey: ['applicant-jobs'],
+    queryKey: ['applicant-jobs', country, search],
     queryFn: async () => {
-      const res = await fetch('/api/jobs?public=true&userRole=applicant')
-      if (!res.ok) throw new Error('Failed to fetch')
+      const res = await fetch(`/api/jobs?${queryParams}`)
+      if (!res.ok) return { jobs: [] }
       return res.json()
     },
-  })
-
-  const applyMutation = useMutation({
-    mutationFn: async (jobId: string) => {
-      if (!user) throw new Error('Not authenticated')
-      const res = await fetch('/api/applications', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ applicantId: user.id, jobOrderId: jobId }),
-      })
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: 'Failed' }))
-        throw new Error(err.error)
-      }
-      return res.json()
-    },
-    onSuccess: () => toast.success('Application submitted!'),
-    onError: (err) => toast.error(err.message),
   })
 
   const jobs = Array.isArray(jobsData?.jobs) ? jobsData.jobs : []
 
+  const categoryColors: Record<string, string> = {
+    domestic_helper: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400',
+    caregiver: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
+    nurse: 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-400',
+    factory: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
+    hospitality: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400',
+  }
+
   return (
     <div className="view-transition space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Find Jobs</h1>
-          <p className="text-muted-foreground">Browse available positions</p>
+      <div>
+        <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Maghanap ng Trabaho' : 'Find Jobs'}</h1>
+        <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Mag-browse at mag-apply sa mga trabaho' : 'Browse and apply for job openings'}</p>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input placeholder={language === 'fil' ? 'Maghanap...' : 'Search...'} className="pl-9 h-10" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
-        <Button variant="outline" onClick={() => navigate('job-listing')}>
-          <Search className="h-4 w-4 mr-2" /> Advanced Search
-        </Button>
+        <Select value={country} onValueChange={setCountry}>
+          <SelectTrigger className="w-full sm:w-48 h-10">
+            <MapPin className="h-4 w-4 mr-1.5 text-muted-foreground" />
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>{COUNTRIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
+        </Select>
       </div>
 
       {isLoading ? (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-48" />)}</div>
+        <div className="grid sm:grid-cols-2 gap-4">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-48 rounded-xl" />)}</div>
+      ) : jobs.length === 0 ? (
+        <Card className="p-8 text-center"><Briefcase className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">{language === 'fil' ? 'Walang trabaho ngayon.' : 'No jobs available right now.'}</p></Card>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {jobs.map((job: Record<string, unknown>) => (
-            <Card key={job.id as string} className="hover:shadow-md transition-all">
-              <CardContent className="p-5">
-                <div className="flex items-start justify-between mb-3">
-                  <Badge variant="secondary">{String(job.category)}</Badge>
-                  <span className="text-xs text-muted-foreground">{job.slots} slots</span>
-                </div>
-                <h3 className="font-semibold mb-2">{String(job.title)}</h3>
-                <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-1">
-                  <MapPin className="h-3.5 w-3.5" />{job.city ? `${job.city}, ` : ''}{String(job.country)}
-                </div>
-                <div className="text-sm font-semibold text-primary mb-4">
-                  ${(job.salaryMin ?? '?')} - ${(job.salaryMax ?? '?')} {String(job.salaryCurrency)}
-                </div>
-                <div className="flex gap-2">
-                  <Button size="sm" className="flex-1" onClick={() => navigate('job-detail', { jobId: job.id as string })}>
-                    <Briefcase className="h-3.5 w-3.5 mr-1.5" /> Details
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => applyMutation.mutate(job.id as string)} disabled={applyMutation.isPending}>
-                    <Send className="h-3.5 w-3.5 mr-1.5" /> Apply
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+        <div className="grid sm:grid-cols-2 gap-4">
+          {jobs.map((job: any, i: number) => (
+            <motion.div key={job.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.03, 0.2) }}>
+              <Card className="hover:shadow-md hover:border-primary/30 transition-all h-full" onClick={() => navigate('job-detail', { jobId: job.id })}>
+                <CardContent className="p-5">
+                  <div className="flex items-start justify-between mb-3">
+                    <Badge className={`text-xs ${categoryColors[job.category] || 'bg-gray-100 text-gray-800'}`}>{job.category?.replace(/_/g, ' ')}</Badge>
+                    <Heart className="h-4 w-4 text-muted-foreground hover:text-red-500 cursor-pointer" />
+                  </div>
+                  <h3 className="font-semibold mb-2 line-clamp-2">{job.title}</h3>
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-3">
+                    <MapPin className="h-3.5 w-3.5 shrink-0" />{job.city ? `${job.city}, ` : ''}{job.country}
+                  </div>
+                  <div className="flex items-center justify-between pt-3 border-t">
+                    <span className="text-sm font-semibold text-primary">${job.salaryMin ?? '?'} - ${job.salaryMax ?? '?'}</span>
+                    <Button size="sm" variant="outline">{language === 'fil' ? 'Tingnan' : 'View'}</Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
         </div>
       )}
