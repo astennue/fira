@@ -3,76 +3,37 @@
 import { useTheme } from 'next-themes'
 import { useQuery } from '@tanstack/react-query'
 import {
-  Menu,
-  Search,
-  Bell,
-  Moon,
-  Sun,
-  LogOut,
-  User,
-  Settings,
-  LayoutDashboard,
-  Briefcase,
-  Users,
-  FileText,
-  Sparkles,
-  Send,
-  Columns,
-  Building,
-  Building2,
-  UserCheck,
-  ChevronDown,
+  Menu, Search, Bell, Moon, Sun, LogOut, User, LayoutDashboard,
+  Briefcase, Users, FileText, Sparkles, Send, Columns, Building,
+  Building2, UserCheck, ChevronDown, UserCog, Globe, Languages,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
+  Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger,
 } from '@/components/ui/sheet'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Separator } from '@/components/ui/separator'
-import { useAppStore, getNavItems, type ViewName } from '@/store/app-store'
+import { useAppStore, getNavItems, type ViewName, roleDisplayNames } from '@/store/app-store'
 import { cn } from '@/lib/utils'
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  LayoutDashboard,
-  Search,
-  FileText,
-  User,
-  Briefcase,
-  Users,
-  Sparkles,
-  Send,
-  Columns,
-  Building,
-  Building2,
-  UserCheck,
+  LayoutDashboard, Search, FileText, User, Briefcase, Users, Sparkles,
+  Send, Columns, Building, Building2, UserCheck, UserCog,
 }
 
 export function AppNav() {
   const {
-    user,
-    setUser,
-    logout,
-    navigate,
-    authModalOpen,
-    setAuthModalOpen,
-    sidebarOpen,
-    setSidebarOpen,
-    searchQuery,
-    setSearchQuery,
+    user, setUser, logout, navigate,
+    authModalOpen, setAuthModalOpen,
+    sidebarOpen, setSidebarOpen,
+    searchQuery, setSearchQuery,
+    language, setLanguage,
   } = useAppStore()
   const { theme, setTheme } = useTheme()
 
@@ -97,22 +58,23 @@ export function AppNav() {
   }
 
   const initials = user?.name
-    ? user.name
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2)
-    : 'U'
+    ? user.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
+    : 'F'
+
+  const getRoleBadge = () => {
+    if (!user) return null
+    const roleInfo = roleDisplayNames[user.role]
+    return roleInfo[language]
+  }
 
   return (
     <>
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-14 items-center gap-4 px-4 md:px-6">
+        <div className="flex h-14 items-center gap-3 px-4 md:px-6">
           {/* Mobile hamburger */}
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
+              <Button variant="ghost" size="icon" className="md:hidden shrink-0">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
@@ -123,25 +85,42 @@ export function AppNav() {
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm">
                     F
                   </div>
-                  <span className="text-lg font-bold">
-                    <span className="text-primary">FIRA</span>
-                  </span>
+                  <span className="text-lg font-bold text-primary">FIRA</span>
                 </SheetTitle>
               </SheetHeader>
-              <ScrollArea className="flex-1 h-[calc(100vh-4rem)]">
+              {user && (
+                <div className="px-4 py-3 border-b">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-9 w-9">
+                      <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
+                        {initials}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">{user.name}</p>
+                      <p className="text-xs text-muted-foreground">{getRoleBadge()}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <ScrollArea className="flex-1 h-[calc(100vh-8rem)]">
                 <nav className="flex flex-col gap-1 p-3">
                   {user && navItems.map((item) => {
                     const Icon = iconMap[item.icon] || LayoutDashboard
+                    const isActive = useAppStore.getState().currentView === item.view
                     return (
                       <button
                         key={item.view}
                         onClick={() => navigate(item.view)}
                         className={cn(
-                          'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground w-full text-left',
+                          'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors w-full text-left',
+                          isActive
+                            ? 'bg-primary/10 text-primary'
+                            : 'hover:bg-accent hover:text-accent-foreground',
                         )}
                       >
-                        <Icon className="h-4 w-4" />
-                        {item.label}
+                        <Icon className="h-4 w-4 shrink-0" />
+                        <span>{language === 'fil' ? item.labelFil : item.label}</span>
                       </button>
                     )
                   })}
@@ -153,14 +132,12 @@ export function AppNav() {
           {/* Logo */}
           <button
             onClick={() => navigate('landing')}
-            className="flex items-center gap-2 mr-4"
+            className="flex items-center gap-2 shrink-0"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm">
               F
             </div>
-            <span className="hidden sm:inline text-lg font-bold">
-              <span className="text-primary">FIRA</span>
-            </span>
+            <span className="hidden sm:inline text-lg font-bold text-primary">FIRA</span>
           </button>
 
           {/* Search */}
@@ -169,7 +146,7 @@ export function AppNav() {
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search jobs..."
+                placeholder={language === 'fil' ? 'Maghanap ng trabaho...' : 'Search jobs...'}
                 className="pl-9 h-9"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -177,15 +154,21 @@ export function AppNav() {
             </div>
           </form>
 
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="flex items-center gap-1.5 ml-auto">
+            {/* Language toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hidden sm:flex gap-1 text-xs"
+              onClick={() => setLanguage(language === 'en' ? 'fil' : 'en')}
+            >
+              <Globe className="h-3.5 w-3.5" />
+              {language === 'en' ? 'EN' : 'FIL'}
+            </Button>
+
             {/* Notifications */}
             {user && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="relative"
-                onClick={() => navigate(user.role === 'fira' ? 'fira-dashboard' : `${user.role}-dashboard` as ViewName)}
-              >
+              <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">
@@ -196,18 +179,13 @@ export function AppNav() {
             )}
 
             {/* Theme toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            >
+            <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
               <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
               <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
               <span className="sr-only">Toggle theme</span>
             </Button>
 
             {user ? (
-              /* User menu */
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="gap-2 pl-2 pr-1">
@@ -225,18 +203,18 @@ export function AppNav() {
                 <DropdownMenuContent align="end" className="w-56">
                   <div className="px-2 py-1.5">
                     <p className="text-sm font-medium">{user.name}</p>
-                    <p className="text-xs text-muted-foreground capitalize">{user.role.replace('_', ' ')}</p>
+                    <p className="text-xs text-muted-foreground">{getRoleBadge()}</p>
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => navigate(`${user.role}-dashboard` as ViewName)}>
                     <LayoutDashboard className="mr-2 h-4 w-4" />
-                    Dashboard
+                    {language === 'fil' ? 'Dashboard' : 'Dashboard'}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => {
                     if (user.role === 'applicant') navigate('applicant-profile')
                   }}>
                     <User className="mr-2 h-4 w-4" />
-                    Profile
+                    {language === 'fil' ? 'Profile' : 'Profile'}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
@@ -244,29 +222,17 @@ export function AppNav() {
                     className="text-destructive focus:text-destructive"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
-                    Sign Out
+                    {language === 'fil' ? 'Mag-logout' : 'Sign Out'}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              /* Auth buttons */
               <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setAuthModalOpen(true)
-                  }}
-                >
-                  Sign In
+                <Button variant="ghost" size="sm" onClick={() => setAuthModalOpen(true)}>
+                  {language === 'fil' ? 'Mag-sign In' : 'Sign In'}
                 </Button>
-                <Button
-                  size="sm"
-                  onClick={() => {
-                    setAuthModalOpen(true)
-                  }}
-                >
-                  Register
+                <Button size="sm" onClick={() => setAuthModalOpen(true)}>
+                  {language === 'fil' ? 'Magparehistro' : 'Register'}
                 </Button>
               </div>
             )}

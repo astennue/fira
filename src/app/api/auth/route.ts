@@ -8,11 +8,10 @@ type UserPayload = {
   name: string;
   role: string;
   phone?: string;
+  agencyName?: string;
 };
 
-function excludePassword<T extends Record<string, unknown>>(
-  user: T
-): Omit<T, 'password'> {
+function excludePassword<T extends Record<string, unknown>>(user: T): Omit<T, 'password'> {
   const { password: _pw, ...rest } = user as T & { password: unknown };
   return rest;
 }
@@ -30,50 +29,53 @@ export async function POST(request: NextRequest) {
       const { email, password } = body as { email: string; password: string };
 
       if (!email || !password) {
-        return NextResponse.json(
-          { error: 'Email and password are required' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
       }
 
       const user = await db.user.findUnique({ where: { email } });
 
       if (!user) {
-        return NextResponse.json(
-          { error: 'Invalid email or password' },
-          { status: 401 }
-        );
+        return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
       }
 
       const isValid = await bcrypt.compare(password, user.password);
       if (!isValid) {
-        return NextResponse.json(
-          { error: 'Invalid email or password' },
-          { status: 401 }
-        );
+        return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
       }
 
       if (!user.isActive) {
-        return NextResponse.json(
-          { error: 'Account is deactivated' },
-          { status: 401 }
-        );
+        return NextResponse.json({ error: 'Account is deactivated' }, { status: 401 });
       }
 
-      if (!user.isApproved) {
-        return NextResponse.json(
-          { error: 'Account is pending approval' },
-          { status: 401 }
-        );
+      if (!user.isApproved && user.role !== 'applicant') {
+        return NextResponse.json({ error: 'Account is pending approval. Please wait for FIRA to approve your account.' }, { status: 401 });
+      }
+
+      // Get agency info if applicable
+      let agencyId: string | undefined;
+      let agencyName: string | undefined;
+      if (user.role === 'local_agency') {
+        const member = await db.agencyMember.findFirst({
+          where: { userId: user.id },
+          include: { agency: { select: { id: true, name: true } } },
+        });
+        if (member) {
+          agencyId = member.agency.id;
+          agencyName = member.agency.name;
+        }
       }
 
       return NextResponse.json({
-        user: excludePassword(user),
+        user: {
+          ...excludePassword(user),
+          agencyId,
+          agencyName,
+        },
       });
     }
 
     if (action === 'register') {
-      const { email, password, name, role, phone } = body as UserPayload;
+      const { email, password, name, role, phone, agencyName } = body as UserPayload;
 
       if (!email || !password || !name || !role) {
         return NextResponse.json(
@@ -82,23 +84,18 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const validRoles = ['applicant', 'agency_admin', 'agency_member', 'fira', 'employer'];
+      const validRoles = ['applicant', 'local_agency', 'international_agency', 'employer'];
       if (!validRoles.includes(role)) {
-        return NextResponse.json(
-          { error: 'Invalid role. Must be one of: ' + validRoles.join(', ') },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
       }
 
       const existing = await db.user.findUnique({ where: { email } });
       if (existing) {
-        return NextResponse.json(
-          { error: 'Email already registered' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Email already registered' }, { status: 400 });
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
+      // Only applicants are auto-approved; others need FIRA approval
       const isApproved = role === 'applicant';
 
       const user = await db.user.create({
@@ -113,6 +110,39 @@ export async function POST(request: NextRequest) {
         },
       });
 
+      // If agency role, create the agency and membership
+      if ((role === 'local_agency' || role === 'international_agency') && agencyName) {
+        const agencyType = role === 'local_agency' ? 'local' : 'international';
+
+        const agency = await db.agency.create({
+          data: {
+            name: agencyName,
+            agencyType,
+            isActive: true,
+            isApproved: false, // FIRA must approve the agency
+          },
+        });
+
+        await db.agencyMember.create({
+          data: {
+            userId: user.id,
+            agencyId: agency.id,
+            role: 'admin',
+          },
+        });
+      }
+
+      // If employer, create employer profile placeholder
+      if (role === 'employer') {
+        await db.employerProfile.create({
+          data: {
+            userId: user.id,
+            companyName: name,
+            country: '',
+          },
+        });
+      }
+
       return NextResponse.json(
         { user: excludePassword(user) },
         { status: 201 }
@@ -125,9 +155,6 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error('Auth error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -14,7 +14,7 @@ model User {
   email         String   @unique
   password      String
   name          String
-  role          String   // applicant, agency_admin, agency_member, fira, employer
+  role          String   // applicant, local_agency, international_agency, employer
   phone         String?
   avatar        String?
   isActive      Boolean  @default(true)
@@ -29,6 +29,7 @@ model User {
   endorsementsAsEndorser Endorsement[] @relation("EndorserUser")
   notifications        Notification[]
   resumeEnhancements  ResumeEnhancement[]
+  createdJobOrders    JobOrder[] @relation("CreatedByUser")
 
   @@index([email])
   @@index([role])
@@ -37,6 +38,7 @@ model User {
 model Agency {
   id          String   @id @default(cuid())
   name        String
+  agencyType  String   @default("local") // local or international
   address     String?
   city        String?
   country     String?
@@ -45,6 +47,7 @@ model Agency {
   email       String?
   website     String?
   isActive    Boolean  @default(true)
+  isApproved  Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -56,7 +59,7 @@ model AgencyMember {
   id          String   @id @default(cuid())
   userId      String
   agencyId    String
-  role        String   @default("member")
+  role        String   @default("member") // admin, recruiter, processor, deployment_officer, member
   joinedAt    DateTime @default(now())
 
   user        User     @relation(fields: [userId], references: [id])
@@ -93,18 +96,55 @@ model ApplicantProfile {
   firstName       String
   middleName      String?
   lastName        String
+  suffixName      String?
   gender          String?
   birthDate       DateTime?
+  birthPlace      String?
   nationality     String   @default("Filipino")
+  civilStatus     String?  // Single, Married, Widowed, Separated
+  religion        String?
+  height          String?  // in cm
+  weight          String?  // in kg
   address         String?
   city            String?
   province        String?
-  civilStatus     String?
+  region          String?
+  zipCode         String?
+  phone           String?
+  altPhone        String?
+  email           String?
+  // Applicant Type
+  applicantType   String?  // domestic_helper, skills_professional
+  // For Domestic Helpers
+  householdTasks  String?  // JSON array of task categories
+  // Passport & Travel
   passportNo      String?
+  passportExpiry  DateTime?
+  passportStatus  String?  // none, valid, expired, processing, renewal
+  // Visa
+  hasVisa         Boolean  @default(false)
+  visaCountry     String?
+  visaType        String?
+  visaStatus      String?  // none, valid, expired, processing
+  visaExpiry      DateTime?
+  // Medical
+  medicalStatus   String?  // none, scheduled, in_progress, passed, failed, expired
+  medicalExpiry   DateTime?
+  // Education & Career
+  highestEducation String?  // elementary, high_school, college_vocational, bachelors, masters, doctorate
+  yearsExperience Int?
   preferredCountry String?
   preferredJob    String?
+  salaryExpectation String?
+  availabilityDate String?  // when can they start
   resumeText      String?
-  yearsExperience Int?
+  // Emergency Contact
+  emergencyName   String?
+  emergencyRelation String?
+  emergencyPhone  String?
+  // Form completion
+  formStep        Int      @default(0)
+  isComplete      Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -116,8 +156,10 @@ model ApplicantProfile {
   certifications  ApplicantCertification[]
   references      ApplicantReference[]
   documents       ApplicantDocument[]
+  trainings       ApplicantTraining[]
 
   @@index([userId])
+  @@index([applicantType])
 }
 
 model ApplicantEducation {
@@ -146,6 +188,8 @@ model ApplicantExperience {
   endDate         DateTime?
   isCurrent       Boolean  @default(false)
   description     String?
+  monthlySalary   String?
+  employerContact String?
   createdAt       DateTime @default(now())
 
   applicant       ApplicantProfile @relation(fields: [applicantId], references: [id], onDelete: Cascade)
@@ -170,7 +214,10 @@ model ApplicantLanguage {
   id              String   @id @default(cuid())
   applicantId     String
   language        String
-  proficiency     String   @default("conversational")
+  proficiency     String   @default("conversational") // basic, conversational, intermediate, advanced, fluent, native
+  speaking        String?  // basic, intermediate, advanced, fluent, native
+  reading         String?  // basic, intermediate, advanced, fluent, native
+  writing         String?  // basic, intermediate, advanced, fluent, native
   createdAt       DateTime @default(now())
 
   applicant       ApplicantProfile @relation(fields: [applicantId], references: [id], onDelete: Cascade)
@@ -202,6 +249,7 @@ model ApplicantReference {
   phone           String?
   email           String?
   relationship    String?
+  yearsKnown      String?
   createdAt       DateTime @default(now())
 
   applicant       ApplicantProfile @relation(fields: [applicantId], references: [id], onDelete: Cascade)
@@ -212,13 +260,28 @@ model ApplicantReference {
 model ApplicantDocument {
   id              String   @id @default(cuid())
   applicantId     String
-  documentType    String
+  documentType    String   // nso_birth_cert, valid_id, nbi_clearance, passport, medical_cert, etc.
   fileName        String
   filePath        String?
   fileSize        Int?
   mimeType        String?
   isVerified      Boolean  @default(false)
   uploadedAt      DateTime @default(now())
+
+  applicant       ApplicantProfile @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+
+  @@index([applicantId])
+}
+
+model ApplicantTraining {
+  id              String   @id @default(cuid())
+  applicantId     String
+  trainingName    String
+  institution     String?
+  startDate       DateTime?
+  endDate         DateTime?
+  hours           Int?
+  createdAt       DateTime @default(now())
 
   applicant       ApplicantProfile @relation(fields: [applicantId], references: [id], onDelete: Cascade)
 
@@ -233,20 +296,24 @@ model JobOrder {
   description     String
   country         String
   city            String?
-  category        String
+  category        String   // domestic_helper, caregiver, nurse, engineer, factory, hospitality, etc.
+  jobType         String?  // domestic_helper or skills_professional (set by FIRA/international)
   salaryMin       Float?
   salaryMax       Float?
   salaryCurrency  String   @default("USD")
+  salaryPeriod    String?  // monthly, weekly, daily, hourly
   contractType    String   @default("full_time")
   duration        String?
   slots           Int      @default(1)
+  filledSlots     Int      @default(0)
   requirements    String
   benefits        String?
   requiredSkills  String
-  status          String   @default("open")
-  visibility      String   @default("public")
+  status          String   @default("open") // open, closed, filled, cancelled
+  visibility      String   @default("public") // public, agency_only, private
   employerId      String?
   agencyId        String?
+  createdBy       String?  // who created this job order
   postedDate      DateTime @default(now())
   deadline        DateTime?
   createdAt       DateTime @default(now())
@@ -254,22 +321,39 @@ model JobOrder {
 
   employer        EmployerProfile? @relation(fields: [employerId], references: [id])
   agency          Agency?          @relation(fields: [agencyId], references: [id])
+  createdByUser   User?            @relation("CreatedByUser", fields: [createdBy], references: [id])
   applications    Application[]
   atsStages       ATSStage[]
-  endorsements    Endorsement[]
+  customFields    JobCustomField[]
 
   @@index([status])
   @@index([visibility])
   @@index([country])
   @@index([category])
   @@index([employerId])
+  @@index([agencyId])
+}
+
+model JobCustomField {
+  id              String   @id @default(cuid())
+  jobOrderId      String
+  label           String
+  fieldType       String   @default("text") // text, textarea, select, multiselect, checkbox, date, number, file
+  options         String?  // JSON array for select/multiselect
+  isRequired      Boolean  @default(false)
+  order           Int      @default(0)
+  createdAt       DateTime @default(now())
+
+  jobOrder        JobOrder @relation(fields: [jobOrderId], references: [id], onDelete: Cascade)
+
+  @@index([jobOrderId])
 }
 
 model Application {
   id              String   @id @default(cuid())
   applicantId     String
   jobOrderId      String
-  status          String   @default("applied")
+  status          String   @default("applied") // applied, screening, shortlisted, interview, offered, hired, rejected, withdrawn, deployed
   coverLetter     String?
   matchScore      Float?
   currentStageId  String?
@@ -282,11 +366,24 @@ model Application {
   atsHistory      ATSStageHistory[]
   endorsements    Endorsement[]
   aiAnalysis      AIAnalysisResult?
+  customResponses ApplicationCustomResponse[]
 
   @@unique([applicantId, jobOrderId])
   @@index([applicantId])
   @@index([jobOrderId])
   @@index([status])
+}
+
+model ApplicationCustomResponse {
+  id              String   @id @default(cuid())
+  applicationId   String
+  fieldId         String
+  value           String?
+  createdAt       DateTime @default(now())
+
+  application     Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
 }
 
 model ATSStage {
@@ -295,6 +392,7 @@ model ATSStage {
   name            String
   order           Int
   color           String   @default("#10b981")
+  isDefault       Boolean  @default(true)
   createdAt       DateTime @default(now())
 
   jobOrder        JobOrder    @relation(fields: [jobOrderId], references: [id], onDelete: Cascade)
@@ -321,27 +419,15 @@ model ATSStageHistory {
   @@index([stageId])
 }
 
-model ATSCustomField {
-  id              String   @id @default(cuid())
-  name            String
-  label           String
-  fieldType       String   @default("text")
-  options         String?
-  isRequired      Boolean  @default(false)
-  order           Int      @default(0)
-  createdAt       DateTime @default(now())
-
-  @@index([name])
-}
-
 // ============ ENDORSEMENT MODEL ============
+// Flow: Local Agency → FIRA (International) → Employer
 
 model Endorsement {
   id              String   @id @default(cuid())
   applicationId   String
   endorsedById    String
   employerId      String
-  status          String   @default("pending_agency")
+  status          String   @default("pending_fira_review") // pending_fira_review, fira_approved, fira_rejected, pending_employer_review, employer_accepted, employer_declined
   coverNote       String?
   agencyNote      String?
   firaNote        String?
@@ -352,7 +438,6 @@ model Endorsement {
   application     Application    @relation(fields: [applicationId], references: [id])
   endorser        User           @relation("EndorserUser", fields: [endorsedById], references: [id])
   employer        EmployerProfile @relation(fields: [employerId], references: [id])
-  jobOrder        JobOrder       @relation(fields: [applicationId], references: [id])
 
   @@index([applicationId])
   @@index([employerId])
@@ -366,7 +451,7 @@ model Notification {
   userId          String
   title           String
   message         String
-  type            String   @default("info")
+  type            String   @default("info") // info, success, warning, error
   isRead          Boolean  @default(false)
   link            String?
   createdAt       DateTime @default(now())
@@ -384,8 +469,8 @@ model AIAnalysisResult {
   applicationId   String   @unique
   matchScore      Float
   semanticScore   Float
-  matchedSkills   String
-  missingSkills   String
+  matchedSkills   String   // JSON array
+  missingSkills   String   // JSON array
   explanation     String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -398,7 +483,7 @@ model AIAnalysisResult {
 model ResumeEnhancement {
   id              String   @id @default(cuid())
   applicantId     String
-  jobOrderId      String
+  jobOrderId      String?
   originalText    String
   enhancedText    String
   changesSummary  String
@@ -408,5 +493,4 @@ model ResumeEnhancement {
   applicant       User     @relation(fields: [applicantId], references: [id])
 
   @@index([applicantId])
-  @@index([jobOrderId])
 }
