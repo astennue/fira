@@ -53,3 +53,4 @@ server.log
 # Skills directory
 /skills/.fira-credentials
 agent-ctx/credentials*
+tool-results/.*
