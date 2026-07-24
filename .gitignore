@@ -54,3 +54,8 @@ server.log
 /skills/.fira-credentials
 agent-ctx/credentials*
 tool-results/.*
+
+# Database files
+*.db
+prisma/db/
+db/

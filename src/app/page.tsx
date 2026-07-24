@@ -2,9 +2,17 @@
 
 import { lazy, Suspense } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useAppStore, type ViewName } from '@/store/app-store'
+import { useAppStore, type ViewName, getNavItems } from '@/store/app-store'
 import { AppNav } from '@/components/shared/app-nav'
 import { AuthModal } from '@/components/auth/auth-modal'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { cn } from '@/lib/utils'
+import {
+  LayoutDashboard, Users, FileText, HelpCircle, MessageSquareQuote,
+  Share2, Network, ScrollText, LayoutList, Settings, Search,
+  Briefcase, Send, Columns, UserCog, Sparkles, User, Building, Building2,
+  ChevronLeft, ChevronRight, Home as HomeIcon
+} from 'lucide-react'
 
 // Lazy load all view components to reduce initial bundle
 const LandingPage = lazy(() => import('@/components/landing/landing-page').then(m => ({ default: m.LandingPage })))
@@ -54,6 +62,98 @@ function LoadingSpinner() {
         <p className="text-sm text-muted-foreground">Loading...</p>
       </div>
     </div>
+  )
+}
+
+const iconMap: Record<string, any> = {
+  LayoutDashboard, Users, FileText, HelpCircle, MessageSquareQuote,
+  Share2, Network, ScrollText, LayoutList, Settings, Search,
+  Briefcase, Send, Columns, UserCog, Sparkles, User, Building, Building2, Home: HomeIcon,
+}
+
+function DesktopSidebar() {
+  const { user, currentView, navigate, sidebarOpen, setSidebarOpen, language } = useAppStore()
+  const navItems = user ? getNavItems(user.role) : []
+
+  if (!user) return null
+
+  return (
+    <>
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-40 bg-black/50 lg:hidden" onClick={() => setSidebarOpen(false)} />
+      )}
+      {/* Sidebar */}
+      <aside className={cn(
+        'fixed left-0 top-14 z-40 h-[calc(100vh-3.5rem)] w-64 border-r bg-card transition-transform duration-300 lg:translate-x-0',
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      )}>
+        <ScrollArea className="h-full">
+          <div className="flex flex-col gap-1 p-3">
+            {/* User info */}
+            <div className="mb-3 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 p-3 dark:from-blue-950/50 dark:to-blue-900/50">
+              <p className="text-sm font-semibold text-blue-900 dark:text-blue-100 truncate">{user.name}</p>
+              <p className="text-xs text-blue-600 dark:text-blue-300 capitalize">
+                {user.role.replace(/_/g, ' ')}
+              </p>
+            </div>
+
+            {/* Nav items */}
+            {navItems.map((item) => {
+              const Icon = iconMap[item.icon] || LayoutDashboard
+              const isActive = currentView === item.view
+              return (
+                <button
+                  key={item.view}
+                  onClick={() => navigate(item.view)}
+                  className={cn(
+                    'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 w-full text-left',
+                    isActive
+                      ? 'bg-blue-600 text-white shadow-md shadow-blue-600/25'
+                      : 'hover:bg-blue-50 text-gray-700 hover:text-blue-700 dark:hover:bg-blue-950/50 dark:text-gray-300'
+                  )}
+                >
+                  <Icon className={cn('h-4 w-4 shrink-0', isActive ? 'text-white' : 'text-gray-400')} />
+                  <span>{language === 'fil' ? item.labelFil : item.label}</span>
+                </button>
+              )
+            })}
+
+            {/* Extra links */}
+            <div className="mt-2 pt-2 border-t">
+              <button
+                onClick={() => navigate('landing')}
+                className={cn(
+                  'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 w-full text-left',
+                  'hover:bg-blue-50 text-gray-500 hover:text-blue-700 dark:hover:bg-blue-950/50 dark:text-gray-400'
+                )}
+              >
+                <HomeIcon className="h-4 w-4 shrink-0 text-gray-400" />
+                <span>{language === 'fil' ? 'Bumalik sa Home' : 'Back to Website'}</span>
+              </button>
+              <button
+                onClick={() => navigate('user-settings')}
+                className={cn(
+                  'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 w-full text-left',
+                  'hover:bg-blue-50 text-gray-500 hover:text-blue-700 dark:hover:bg-blue-950/50 dark:text-gray-400'
+                )}
+              >
+                <User className="h-4 w-4 shrink-0 text-gray-400" />
+                <span>{language === 'fil' ? 'Settings' : 'Account Settings'}</span>
+              </button>
+            </div>
+          </div>
+        </ScrollArea>
+
+        {/* Collapse button */}
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="absolute -right-3 top-20 z-50 hidden lg:flex h-6 w-6 items-center justify-center rounded-full border bg-card shadow-sm hover:bg-muted"
+        >
+          <ChevronLeft className={cn('h-3 w-3 transition-transform', !sidebarOpen && 'rotate-180')} />
+        </button>
+      </aside>
+    </>
   )
 }
 
@@ -119,7 +219,7 @@ function ViewRenderer({ view }: { view: ViewName }) {
       <AnimatePresence mode="wait">
         <motion.div
           key={view}
-          className="flex-1 overflow-y-auto"
+          className="flex-1 overflow-y-auto lg:ml-64"
           initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -10 }}
@@ -142,6 +242,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-background" data-font-size={fontSize}>
       <AppNav />
+      <DesktopSidebar />
       <main className="flex-1">
         <ViewRenderer view={currentView} />
       </main>

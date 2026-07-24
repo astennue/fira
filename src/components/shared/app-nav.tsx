@@ -63,7 +63,7 @@ export function AppNav() {
       const res = await fetch(`/api/notifications?userId=${user.id}`)
       if (!res.ok) return []
       const data = await res.json()
-      return data as Array<{ id: string; title: string; read: boolean }>
+      return (data.notifications || data || []) as Array<{ id: string; title: string; read: boolean }>
     },
     enabled: !!user?.id,
   })
