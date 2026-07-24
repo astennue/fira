@@ -1,0 +1,91 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+
+export async function GET() {
+  try {
+    const fields = await db.cmsFormField.findMany({
+      orderBy: { order: 'asc' },
+    })
+
+    return NextResponse.json(fields)
+  } catch (error) {
+    console.error('CMS Form Fields GET error:', error)
+    return NextResponse.json({ error: 'Failed to fetch form fields' }, { status: 500 })
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { label, fieldType, options, isRequired, order, section, isActive } = body
+
+    if (!label || !fieldType) {
+      return NextResponse.json({ error: 'Label and field type are required' }, { status: 400 })
+    }
+
+    const field = await db.cmsFormField.create({
+      data: {
+        label,
+        fieldType,
+        options: options || null,
+        isRequired: isRequired || false,
+        order: order || 0,
+        section: section || 'Personal Information',
+        isActive: isActive !== false,
+      },
+    })
+
+    return NextResponse.json(field, { status: 201 })
+  } catch (error) {
+    console.error('CMS Form Fields POST error:', error)
+    return NextResponse.json({ error: 'Failed to create form field' }, { status: 500 })
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+    const body = await request.json()
+
+    if (!id) {
+      return NextResponse.json({ error: 'ID is required' }, { status: 400 })
+    }
+
+    const field = await db.cmsFormField.update({
+      where: { id },
+      data: {
+        label: body.label,
+        fieldType: body.fieldType,
+        options: body.options,
+        isRequired: body.isRequired,
+        order: body.order,
+        section: body.section,
+        isActive: body.isActive,
+      },
+    })
+
+    return NextResponse.json(field)
+  } catch (error) {
+    console.error('CMS Form Fields PUT error:', error)
+    return NextResponse.json({ error: 'Failed to update form field' }, { status: 500 })
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return NextResponse.json({ error: 'ID is required' }, { status: 400 })
+    }
+
+    await db.cmsFormField.delete({ where: { id } })
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('CMS Form Fields DELETE error:', error)
+    return NextResponse.json({ error: 'Failed to delete form field' }, { status: 500 })
+  }
+}

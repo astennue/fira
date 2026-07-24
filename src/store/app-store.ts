@@ -6,6 +6,10 @@ export type ViewName =
   | 'landing'
   | 'job-listing'
   | 'job-detail'
+  | 'about'
+  | 'services'
+  | 'faq'
+  | 'contact'
   // Auth
   | 'login'
   | 'register'
@@ -41,8 +45,23 @@ export type ViewName =
   // AI
   | 'ai-matching'
   | 'resume-enhancement'
+  // CMS Admin
+  | 'cms-pages'
+  | 'cms-faq'
+  | 'cms-testimonials'
+  | 'cms-social'
+  | 'cms-org-chart'
+  | 'cms-terms'
+  | 'cms-form-builder'
+  | 'cms-settings'
+  // User
+  | 'user-settings'
+  // Super Admin
+  | 'super-admin-users'
 
-export type UserRole = 'applicant' | 'local_agency' | 'international_agency' | 'employer'
+export type UserRole = 'super_admin' | 'applicant' | 'local_agency' | 'international_agency' | 'employer'
+
+export type FontSize = 'small' | 'medium' | 'large'
 
 export interface FiraUser {
   id: string
@@ -78,6 +97,10 @@ interface AppState {
   searchQuery: string
   setSearchQuery: (query: string) => void
 
+  // Font Size
+  fontSize: FontSize
+  setFontSize: (size: FontSize) => void
+
   // Language
   language: Language
   setLanguage: (lang: Language) => void
@@ -105,13 +128,17 @@ export const useAppStore = create<AppState>()(
       searchQuery: '',
       setSearchQuery: (query) => set({ searchQuery: query }),
 
+      // Font Size
+      fontSize: 'medium',
+      setFontSize: (fontSize) => set({ fontSize }),
+
       // Language
       language: 'en',
       setLanguage: (language) => set({ language }),
     }),
     {
       name: 'fira_store',
-      partialize: (state) => ({ user: state.user, language: state.language }),
+      partialize: (state) => ({ user: state.user, language: state.language, fontSize: state.fontSize }),
     }
   )
 )
@@ -137,6 +164,17 @@ const labels: Record<string, Record<Language, string>> = {
   'AI Matching': { en: 'AI Matching', fil: 'AI Matching' },
   'Sign Out': { en: 'Sign Out', fil: 'Mag-logout' },
   'Profile': { en: 'Profile', fil: 'Profile' },
+  // CMS labels
+  'Manage Users': { en: 'Manage Users', fil: 'Pamahalaan ang Users' },
+  'CMS Pages': { en: 'CMS Pages', fil: 'Mga Pahina' },
+  'FAQ Management': { en: 'FAQ Management', fil: 'Pamahalaan ng FAQ' },
+  'Testimonials': { en: 'Testimonials', fil: 'Mga Testimonial' },
+  'Social Media': { en: 'Social Media', fil: 'Social Media' },
+  'Org Chart': { en: 'Org Chart', fil: 'Org Chart' },
+  'Terms & Privacy': { en: 'Terms & Privacy', fil: 'Mga Tahunan at Privacy' },
+  'Form Builder': { en: 'Form Builder', fil: 'Form Builder' },
+  'Site Settings': { en: 'Site Settings', fil: 'Settings ng Site' },
+  'Settings': { en: 'Settings', fil: 'Settings' },
   // Landing page
   'landing.hero.title': { en: 'Your Gateway to', fil: 'Ang Iyong Daan Patungo sa' },
   'landing.hero.titleHighlight': { en: 'Opportunities Abroad', fil: 'Opportunitya sa Labas ng Bansa' },
@@ -163,13 +201,12 @@ const labels: Record<string, Record<Language, string>> = {
   'landing.featured.subtitle': { en: 'Latest verified positions from our partner employers', fil: 'Mga pinakabagong na-verify na posisyon mula sa aming mga partner' },
   'landing.featured.viewAll': { en: 'View All Jobs', fil: 'Tingnan Lahat ng Trabaho' },
   'landing.featured.noJobs': { en: 'No featured jobs available right now. Check back soon!', fil: 'Wala pang itinatampok na trabaho. Balikan muli sa lalong madaling panahon!' },
-  'landing.footer.description': { en: 'FIRA (Fil International Recruitment Agency) is a trusted platform connecting Filipino workers with global employment opportunities.', fil: 'Ang FIRA (Fil International Recruitment Agency) ay isang mapagkakatiwalaang platform na nag-uugnay ng mga manggagawang Pilipino sa mga opportunity sa buong mundo.' },
+  'landing.footer.description': { en: 'Fil International Recruitment Agency (FIRA) — Based in Casablanca, Morocco. We recruit, deploy, monitor, and deliver results for Filipino workers seeking opportunities abroad.', fil: 'Ang Fil International Recruitment Agency (FIRA) — Nakabase sa Casablanca, Morocco. Nagnanakaw kami, nag-deploy, nag-monitor, at nagbibigay ng resulta para sa mga manggagawang Pilipino.' },
   'landing.footer.quickLinks': { en: 'Quick Links', fil: 'Mabilis na Link' },
   'landing.footer.contact': { en: 'Contact Us', fil: 'Makipag-ugnay' },
   'landing.footer.rights': { en: 'All rights reserved.', fil: 'Lahat ng karapatan ay nakalaan.' },
-  'landing.footer.address': { en: 'Makati City, Metro Manila, Philippines', fil: 'Makati City, Metro Manila, Pilipinas' },
-  'landing.footer.email': { en: 'info@fira.com.ph', fil: 'info@fira.com.ph' },
-  'landing.footer.phone': { en: '+63 2 8888 1234', fil: '+63 2 8888 1234' },
+  'landing.footer.address': { en: '59 Boulevard Zerktouni, Casablanca, Morocco', fil: '59 Boulevard Zerktouni, Casablanca, Morocco' },
+  'landing.footer.email': { en: 'manpower@filinternational.ma', fil: 'manpower@filinternational.ma' },
   // Job listing
   'jobs.searchPlaceholder': { en: 'Search jobs...', fil: 'Maghanap ng trabaho...' },
   'jobs.searchBtn': { en: 'Search', fil: 'Hanapin' },
@@ -321,10 +358,23 @@ interface NavItem {
 
 export const getNavItems = (role: UserRole): NavItem[] => {
   const common = [
-    { label: 'Dashboard', labelFil: 'Dashboard', icon: 'LayoutDashboard', view: `${role}-dashboard` as ViewName },
+    { label: 'Dashboard', labelFil: 'Dashboard', icon: 'LayoutDashboard', view: `${role === 'super_admin' ? 'fira' : role}-dashboard` as ViewName },
   ]
 
   switch (role) {
+    case 'super_admin':
+      return [
+        ...common,
+        { label: 'Manage Users', labelFil: 'Pamahalaan ang Users', icon: 'Users', view: 'super-admin-users' as ViewName },
+        { label: 'CMS Pages', labelFil: 'Mga Pahina', icon: 'FileText', view: 'cms-pages' as ViewName },
+        { label: 'FAQ Management', labelFil: 'Pamahalaan ng FAQ', icon: 'HelpCircle', view: 'cms-faq' as ViewName },
+        { label: 'Testimonials', labelFil: 'Mga Testimonial', icon: 'MessageSquareQuote', view: 'cms-testimonials' as ViewName },
+        { label: 'Social Media', labelFil: 'Social Media', icon: 'Share2', view: 'cms-social' as ViewName },
+        { label: 'Org Chart', labelFil: 'Org Chart', icon: 'Network', view: 'cms-org-chart' as ViewName },
+        { label: 'Terms & Privacy', labelFil: 'Mga Tahunan at Privacy', icon: 'ScrollText', view: 'cms-terms' as ViewName },
+        { label: 'Form Builder', labelFil: 'Form Builder', icon: 'LayoutList', view: 'cms-form-builder' as ViewName },
+        { label: 'Site Settings', labelFil: 'Settings ng Site', icon: 'Settings', view: 'cms-settings' as ViewName },
+      ]
     case 'applicant':
       return [
         ...common,
@@ -332,6 +382,7 @@ export const getNavItems = (role: UserRole): NavItem[] => {
         { label: 'My Applications', labelFil: 'Ang Mga Aplikasyon Ko', icon: 'FileText', view: 'applicant-applications' as ViewName },
         { label: 'My Profile', labelFil: 'Ang Profile Ko', icon: 'User', view: 'applicant-profile' as ViewName },
         { label: 'AI Resume Boost', labelFil: 'AI Resume Boost', icon: 'Sparkles', view: 'resume-enhancement' as ViewName },
+        { label: 'Settings', labelFil: 'Settings', icon: 'Settings', view: 'user-settings' as ViewName },
       ]
     case 'local_agency':
       return [
@@ -341,6 +392,7 @@ export const getNavItems = (role: UserRole): NavItem[] => {
         { label: 'Endorsements', labelFil: 'Mga Endorso', icon: 'Send', view: 'agency-endorsements' as ViewName },
         { label: 'ATS Pipeline', labelFil: 'ATS Pipeline', icon: 'Columns', view: 'ats-pipeline' as ViewName },
         { label: 'Members', labelFil: 'Miyembro', icon: 'UserCog', view: 'agency-members' as ViewName },
+        { label: 'Settings', labelFil: 'Settings', icon: 'Settings', view: 'user-settings' as ViewName },
       ]
     case 'international_agency':
       return [
@@ -351,6 +403,7 @@ export const getNavItems = (role: UserRole): NavItem[] => {
         { label: 'All Jobs', labelFil: 'Lahat ng Trabaho', icon: 'Briefcase', view: 'fira-jobs' as ViewName },
         { label: 'ATS Pipeline', labelFil: 'ATS Pipeline', icon: 'Columns', view: 'ats-pipeline' as ViewName },
         { label: 'AI Matching', labelFil: 'AI Matching', icon: 'Sparkles', view: 'ai-matching' as ViewName },
+        { label: 'Settings', labelFil: 'Settings', icon: 'Settings', view: 'user-settings' as ViewName },
       ]
     case 'employer':
       return [
@@ -358,6 +411,7 @@ export const getNavItems = (role: UserRole): NavItem[] => {
         { label: 'My Jobs', labelFil: 'Mga Trabaho Ko', icon: 'Briefcase', view: 'employer-jobs' as ViewName },
         { label: 'Endorsed Candidates', labelFil: 'Mga Inindorso', icon: 'UserCheck', view: 'employer-endorsed' as ViewName },
         { label: 'AI Matching', labelFil: 'AI Matching', icon: 'Sparkles', view: 'ai-matching' as ViewName },
+        { label: 'Settings', labelFil: 'Settings', icon: 'Settings', view: 'user-settings' as ViewName },
       ]
     default:
       return common
@@ -365,6 +419,7 @@ export const getNavItems = (role: UserRole): NavItem[] => {
 }
 
 export const roleDisplayNames: Record<UserRole, { en: string; fil: string }> = {
+  super_admin: { en: 'Super Admin', fil: 'Super Admin' },
   applicant: { en: 'Applicant', fil: 'Aplikante' },
   local_agency: { en: 'Local Agency', fil: 'Ahensya (PH)' },
   international_agency: { en: 'FIRA Admin', fil: 'Admin ng FIRA' },

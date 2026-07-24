@@ -1,1085 +1,504 @@
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
+import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 
-const db = new PrismaClient();
+const db = new PrismaClient()
 
-// Default ATS stages (NO VISA - can be added as custom stage)
-const DEFAULT_ATS_STAGES = [
-  { name: 'New Application', color: '#10b981' },
-  { name: 'Document Review', color: '#06b6d4' },
-  { name: 'Initial Screening', color: '#3b82f6' },
-  { name: 'Interview Scheduled', color: '#6366f1' },
-  { name: 'Interview Completed', color: '#8b5cf6' },
-  { name: 'Skills Assessment', color: '#a855f7' },
-  { name: 'Background Check', color: '#d946ef' },
-  { name: 'Medical Examination', color: '#ec4899' },
-  { name: 'Government Processing', color: '#f43f5e' },
-  { name: 'Pre-Departure Orientation', color: '#f97316' },
-  { name: 'Contract Signing', color: '#eab308' },
-  { name: 'Deployment', color: '#84cc16' },
-  { name: 'Arrival Confirmed', color: '#22c55e' },
-  { name: 'Completed', color: '#14b8a6' },
-];
-
-// Predefined household tasks for domestic helpers
-const HOUSEHOLD_TASKS = [
-  'General Housekeeping',
-  'Cooking / Food Preparation',
-  'Laundry / Ironing',
-  'Child Care / Babysitting',
-  'Elderly Care',
-  'Pet Care',
-  'Grocery Shopping',
-  'Car Washing',
-  'Gardening',
-  'Sewing / Mending',
-  'First Aid',
-  'Driving',
-];
-
-async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, 12);
+async function hashPassword(password: string) {
+  return bcrypt.hash(password, 12)
 }
 
 async function main() {
-  console.log('🌱 Seeding FIRA database...');
+  console.log('🌱 Seeding FIRA database...')
 
-  // Clean existing data in correct order (respect foreign keys)
-  console.log('🗑️ Cleaning existing data...');
-  // Delete tables that reference Application first
-  await db.applicationCustomResponse.deleteMany();
-  await db.aIAnalysisResult.deleteMany();
-  await db.aTSStageHistory.deleteMany();
-  await db.endorsement.deleteMany();
-  // Now delete Application
-  await db.application.deleteMany();
-  // Delete tables that reference JobOrder
-  await db.jobCustomField.deleteMany();
-  await db.aTSStage.deleteMany();
-  await db.jobOrder.deleteMany();
-  // Delete tables that reference ApplicantProfile
-  await db.applicantTraining.deleteMany();
-  await db.applicantDocument.deleteMany();
-  await db.applicantReference.deleteMany();
-  await db.applicantCertification.deleteMany();
-  await db.applicantLanguage.deleteMany();
-  await db.applicantSkill.deleteMany();
-  await db.applicantExperience.deleteMany();
-  await db.applicantEducation.deleteMany();
-  await db.applicantProfile.deleteMany();
-  // Delete tables that reference User
-  await db.resumeEnhancement.deleteMany();
-  await db.notification.deleteMany();
-  // Delete org-level tables
-  await db.agencyMember.deleteMany();
-  await db.agency.deleteMany();
-  await db.employerProfile.deleteMany();
-  await db.user.deleteMany();
+  // Clean existing data
+  const tables = [
+    'VerificationCode', 'CmsSettings', 'CmsFormField', 'CmsTermsPrivacy',
+    'CmsOrgChart', 'CmsSocialMedia', 'CmsTestimonial', 'CmsFaq', 'CmsPage',
+    'ResumeEnhancement', 'AIAnalysisResult', 'Notification', 'Endorsement',
+    'ATSStageHistory', 'ApplicationCustomResponse', 'Application',
+    'ATSStage', 'JobCustomField', 'JobOrder', 'ApplicantTraining',
+    'ApplicantDocument', 'ApplicantReference', 'ApplicantCertification',
+    'ApplicantLanguage', 'ApplicantSkill', 'ApplicantExperience',
+    'ApplicantEducation', 'ApplicantProfile', 'EmployerProfile',
+    'AgencyMember', 'Agency', 'User'
+  ]
 
-  console.log('✅ Data cleaned');
-
-  // ============ 1. FIRA SUPER ADMIN (International Agency) ============
-  const firaAdmin = await db.user.create({
-    data: {
-      email: 'admin@fira.com.ph',
-      password: await hashPassword('FiraAdmin2025!'),
-      name: 'FIRA Administrator',
-      role: 'international_agency',
-      phone: '+63 2 8888 1234',
-      isActive: true,
-      isApproved: true,
-    },
-  });
-  console.log('✅ FIRA Admin (International Agency) created');
-
-  // ============ 2. LOCAL AGENCY (Philippine-based) ============
-  const localAgency = await db.agency.create({
-    data: {
-      name: 'Starlight Manpower Services',
-      agencyType: 'local',
-      address: '123 Makati Avenue, Brgy. Pio del Pilar',
-      city: 'Makati',
-      country: 'Philippines',
-      licenseNo: 'POEA-LICENSE-2024-001',
-      phone: '+63 2 8888 1234',
-      email: 'info@starlightmanpower.ph',
-      website: 'https://starlightmanpower.ph',
-      isActive: true,
-      isApproved: true,
-    },
-  });
-
-  // Local Agency Admin
-  const localAgencyAdmin = await db.user.create({
-    data: {
-      email: 'agency@fira.com.ph',
-      password: await hashPassword('AgencyAdmin2025!'),
-      name: 'Maria Santos',
-      role: 'local_agency',
-      phone: '+63 917 200 0000',
-      isActive: true,
-      isApproved: true,
-    },
-  });
-
-  await db.agencyMember.create({
-    data: {
-      userId: localAgencyAdmin.id,
-      agencyId: localAgency.id,
-      role: 'admin',
-    },
-  });
-
-  // Local Agency Recruiter
-  const localRecruiter = await db.user.create({
-    data: {
-      email: 'recruiter@fira.com.ph',
-      password: await hashPassword('Recruiter2025!'),
-      name: 'Pedro Reyes',
-      role: 'local_agency',
-      phone: '+63 917 201 0000',
-      isActive: true,
-      isApproved: true,
-    },
-  });
-
-  await db.agencyMember.create({
-    data: {
-      userId: localRecruiter.id,
-      agencyId: localAgency.id,
-      role: 'recruiter',
-    },
-  });
-
-  // Second local agency
-  const localAgency2 = await db.agency.create({
-    data: {
-      name: 'My K International Agency',
-      agencyType: 'local',
-      address: '456 Shaw Boulevard, Mandaluyong',
-      city: 'Mandaluyong',
-      country: 'Philippines',
-      licenseNo: 'POEA-LICENSE-2024-002',
-      phone: '+63 2 8123 4567',
-      email: 'info@mykagency.ph',
-      isActive: true,
-      isApproved: true,
-    },
-  });
-
-  const localAgency2Admin = await db.user.create({
-    data: {
-      email: 'myk@fira.com.ph',
-      password: await hashPassword('MykAdmin2025!'),
-      name: 'Carmen Garcia',
-      role: 'local_agency',
-      phone: '+63 917 300 0000',
-      isActive: true,
-      isApproved: true,
-    },
-  });
-
-  await db.agencyMember.create({
-    data: {
-      userId: localAgency2Admin.id,
-      agencyId: localAgency2.id,
-      role: 'admin',
-    },
-  });
-  console.log('✅ Local Agencies created (Starlight + My K)');
-
-  // ============ 3. EMPLOYER ============
-  const employerUser = await db.user.create({
-    data: {
-      email: 'employer@fira.com.ph',
-      password: await hashPassword('Employer2025!'),
-      name: 'Ahmed Al-Rashid',
-      role: 'employer',
-      phone: '+966 50 123 4567',
-      isActive: true,
-      isApproved: true,
-    },
-  });
-
-  const employerProfile = await db.employerProfile.create({
-    data: {
-      userId: employerUser.id,
-      companyName: 'Al-Rashid Employment Services',
-      companyAddress: 'King Fahd Road, Riyadh',
-      country: 'Saudi Arabia',
-      industry: 'Domestic Services & Healthcare',
-      contactPerson: 'Ahmed Al-Rashid',
-      contactEmail: 'ahmed@alrashid.sa',
-      contactPhone: '+966 50 123 4567',
-    },
-  });
-
-  // Second employer
-  const employer2User = await db.user.create({
-    data: {
-      email: 'employer2@fira.com.ph',
-      password: await hashPassword('Employer2025!'),
-      name: 'Tanaka Yuki',
-      role: 'employer',
-      phone: '+81 90 1234 5678',
-      isActive: true,
-      isApproved: true,
-    },
-  });
-
-  const employer2Profile = await db.employerProfile.create({
-    data: {
-      userId: employer2User.id,
-      companyName: 'Tokyo Home Care Co.',
-      companyAddress: 'Shibuya-ku, Tokyo',
-      country: 'Japan',
-      industry: 'Elderly Care & Domestic Services',
-      contactPerson: 'Tanaka Yuki',
-      contactEmail: 'tanaka@tokyohomecare.jp',
-      contactPhone: '+81 90 1234 5678',
-    },
-  });
-  console.log('✅ Employers created');
-
-  // ============ 4. APPLICANTS ============
-
-  // Applicant 1: Domestic Helper
-  const applicant1User = await db.user.create({
-    data: {
-      email: 'applicant@fira.com.ph',
-      password: await hashPassword('Applicant2025!'),
-      name: 'Juan Dela Cruz',
-      role: 'applicant',
-      phone: '+63 917 400 0000',
-      isActive: true,
-      isApproved: true,
-    },
-  });
-
-  const applicant1Profile = await db.applicantProfile.create({
-    data: {
-      userId: applicant1User.id,
-      firstName: 'Juan',
-      lastName: 'Dela Cruz',
-      middleName: 'Santos',
-      gender: 'Male',
-      birthDate: new Date('1990-05-15'),
-      birthPlace: 'Manila',
-      nationality: 'Filipino',
-      civilStatus: 'Married',
-      religion: 'Roman Catholic',
-      height: '170',
-      weight: '68',
-      address: '456 Rizal Street, Sampaloc',
-      city: 'Manila',
-      province: 'Metro Manila',
-      region: 'NCR',
-      zipCode: '1008',
-      phone: '+63 917 400 0000',
-      altPhone: '+63 927 400 0001',
-      applicantType: 'domestic_helper',
-      householdTasks: JSON.stringify(['General Housekeeping', 'Cooking / Food Preparation', 'Laundry / Ironing', 'Child Care / Babysitting', 'Elderly Care']),
-      passportNo: 'PN1234567',
-      passportExpiry: new Date('2028-05-14'),
-      passportStatus: 'valid',
-      hasVisa: false,
-      medicalStatus: 'none',
-      highestEducation: 'bachelors',
-      yearsExperience: 5,
-      preferredCountry: 'Hong Kong',
-      preferredJob: 'Domestic Helper',
-      salaryExpectation: '500-700 USD',
-      resumeText: 'Experienced domestic helper with 5 years of work in Hong Kong. Proficient in household management, cooking Filipino and Chinese dishes, child care, and elderly care. Licensed Nurse in the Philippines.',
-      emergencyName: 'Maria Dela Cruz',
-      emergencyRelation: 'Wife',
-      emergencyPhone: '+63 917 400 0002',
-      formStep: 7,
-      isComplete: true,
-    },
-  });
-
-  // Juan's Education
-  await db.applicantEducation.create({
-    data: {
-      applicantId: applicant1Profile.id,
-      institution: 'University of Santo Tomas',
-      degree: 'Bachelor of Science',
-      fieldOfStudy: 'Nursing',
-      startYear: 2008,
-      endYear: 2012,
-      honors: 'Cum Laude',
-    },
-  });
-
-  // Juan's Experience
-  await db.applicantExperience.create({
-    data: {
-      applicantId: applicant1Profile.id,
-      company: 'Chan Family Household',
-      position: 'Domestic Helper',
-      country: 'Hong Kong',
-      startDate: new Date('2019-03-01'),
-      isCurrent: true,
-      description: 'Managing household of 5 members. Cooking Chinese and Filipino cuisine daily. Child care for 2 children ages 8 and 12. Elderly care for 70-year-old grandmother with diabetes.',
-      monthlySalary: 'HKD 5,000',
-      employerContact: '+852 9123 4567',
-    },
-  });
-
-  await db.applicantExperience.create({
-    data: {
-      applicantId: applicant1Profile.id,
-      company: 'General Santos Medical Center',
-      position: 'Staff Nurse',
-      country: 'Philippines',
-      startDate: new Date('2012-06-01'),
-      endDate: new Date('2019-01-31'),
-      description: 'Patient care in medical-surgical ward. Administered medications and monitored vital signs.',
-      monthlySalary: 'PHP 25,000',
-    },
-  });
-
-  // Juan's Skills
-  for (const skill of [
-    { name: 'Household Management', level: 'expert', yearsExperience: 5 },
-    { name: 'Cooking', level: 'advanced', yearsExperience: 7 },
-    { name: 'Child Care', level: 'advanced', yearsExperience: 5 },
-    { name: 'Elderly Care', level: 'advanced', yearsExperience: 5 },
-    { name: 'First Aid', level: 'advanced', yearsExperience: 12 },
-    { name: 'Nursing', level: 'advanced', yearsExperience: 7 },
-  ]) {
-    await db.applicantSkill.create({ data: { ...skill, applicantId: applicant1Profile.id } });
-  }
-
-  // Juan's Languages
-  for (const lang of [
-    { language: 'English', proficiency: 'fluent', speaking: 'fluent', reading: 'fluent', writing: 'advanced' },
-    { language: 'Filipino', proficiency: 'native', speaking: 'native', reading: 'native', writing: 'native' },
-    { language: 'Cantonese', proficiency: 'conversational', speaking: 'conversational', reading: 'basic', writing: 'basic' },
-  ]) {
-    await db.applicantLanguage.create({ data: { ...lang, applicantId: applicant1Profile.id } });
-  }
-
-  // Juan's Certifications
-  await db.applicantCertification.create({
-    data: {
-      applicantId: applicant1Profile.id,
-      name: 'TESDA Household Services NC II',
-      issuingBody: 'TESDA',
-      issuedDate: new Date('2018-06-15'),
-      expiryDate: null,
-      credentialId: 'TESDA-HS-2018-00123',
-    },
-  });
-  await db.applicantCertification.create({
-    data: {
-      applicantId: applicant1Profile.id,
-      name: 'Professional Regulation Commission - Nurse License',
-      issuingBody: 'PRC',
-      issuedDate: new Date('2012-07-01'),
-      credentialId: 'PRC-RN-2012-45678',
-    },
-  });
-
-  // Juan's Documents
-  for (const doc of [
-    { documentType: 'nso_birth_cert', fileName: 'birth_cert_juan.pdf' },
-    { documentType: 'valid_id', fileName: 'umid_juan.jpg' },
-    { documentType: 'passport', fileName: 'passport_juan.pdf' },
-    { documentType: 'nbi_clearance', fileName: 'nbi_juan.pdf' },
-  ]) {
-    await db.applicantDocument.create({ data: { ...doc, applicantId: applicant1Profile.id, isVerified: true } });
-  }
-
-  // Juan's References
-  await db.applicantReference.create({
-    data: {
-      applicantId: applicant1Profile.id,
-      name: 'Mrs. Chan',
-      company: 'Chan Family Household',
-      position: 'Employer',
-      phone: '+852 9123 4567',
-      email: 'mrs.chan@email.com',
-      relationship: 'Former Employer',
-      yearsKnown: '5',
-    },
-  });
-
-  console.log('✅ Applicant 1 (Juan Dela Cruz - Domestic Helper) created');
-
-  // Applicant 2: Skills Professional (Caregiver)
-  const applicant2User = await db.user.create({
-    data: {
-      email: 'rosa@fira.com.ph',
-      password: await hashPassword('Applicant2025!'),
-      name: 'Rosa Mendoza',
-      role: 'applicant',
-      phone: '+63 917 500 0000',
-      isActive: true,
-      isApproved: true,
-    },
-  });
-
-  const applicant2Profile = await db.applicantProfile.create({
-    data: {
-      userId: applicant2User.id,
-      firstName: 'Rosa',
-      lastName: 'Mendoza',
-      gender: 'Female',
-      birthDate: new Date('1992-08-22'),
-      birthPlace: 'Quezon City',
-      nationality: 'Filipino',
-      civilStatus: 'Single',
-      religion: 'Roman Catholic',
-      height: '158',
-      weight: '52',
-      address: '789 Bonifacio St, Brgy. San Isidro',
-      city: 'Quezon City',
-      province: 'Metro Manila',
-      region: 'NCR',
-      phone: '+63 917 500 0000',
-      applicantType: 'skills_professional',
-      passportNo: 'PN7654321',
-      passportExpiry: new Date('2027-08-21'),
-      passportStatus: 'valid',
-      hasVisa: false,
-      medicalStatus: 'none',
-      highestEducation: 'bachelors',
-      yearsExperience: 3,
-      preferredCountry: 'Singapore',
-      preferredJob: 'Caregiver',
-      salaryExpectation: '600-800 USD',
-      resumeText: 'Certified caregiver with 3 years experience in elderly care and nursing assistance. TESDA NC II certified. Experienced with dementia patients.',
-      emergencyName: 'Antonio Mendoza',
-      emergencyRelation: 'Father',
-      emergencyPhone: '+63 917 500 0003',
-      formStep: 7,
-      isComplete: true,
-    },
-  });
-
-  await db.applicantEducation.create({
-    data: {
-      applicantId: applicant2Profile.id,
-      institution: 'Technological Institute of the Philippines',
-      degree: 'Bachelor of Science',
-      fieldOfStudy: 'Caregiving',
-      startYear: 2010,
-      endYear: 2014,
-    },
-  });
-
-  await db.applicantExperience.create({
-    data: {
-      applicantId: applicant2Profile.id,
-      company: 'Home Care Plus Singapore',
-      position: 'Caregiver',
-      country: 'Singapore',
-      startDate: new Date('2021-01-15'),
-      isCurrent: true,
-      description: 'Providing care for elderly patient with dementia. Medication management, daily activities assistance, companionship.',
-      monthlySalary: 'SGD 2,200',
-      employerContact: '+65 9123 4567',
-    },
-  });
-
-  for (const skill of [
-    { name: 'Elderly Care', level: 'expert', yearsExperience: 3 },
-    { name: 'Patient Monitoring', level: 'advanced', yearsExperience: 3 },
-    { name: 'Medication Administration', level: 'intermediate', yearsExperience: 3 },
-    { name: 'Dementia Care', level: 'advanced', yearsExperience: 2 },
-    { name: 'First Aid', level: 'advanced', yearsExperience: 4 },
-  ]) {
-    await db.applicantSkill.create({ data: { ...skill, applicantId: applicant2Profile.id } });
-  }
-
-  for (const lang of [
-    { language: 'English', proficiency: 'fluent', speaking: 'fluent', reading: 'fluent', writing: 'fluent' },
-    { language: 'Filipino', proficiency: 'native', speaking: 'native', reading: 'native', writing: 'native' },
-    { language: 'Mandarin', proficiency: 'basic', speaking: 'basic', reading: 'basic', writing: null },
-  ]) {
-    await db.applicantLanguage.create({ data: { ...lang, applicantId: applicant2Profile.id } });
-  }
-
-  await db.applicantCertification.create({
-    data: {
-      applicantId: applicant2Profile.id,
-      name: 'TESDA Caregiving NC II',
-      issuingBody: 'TESDA',
-      issuedDate: new Date('2014-08-15'),
-      credentialId: 'TESDA-CG-2014-98765',
-    },
-  });
-
-  for (const doc of [
-    { documentType: 'nso_birth_cert', fileName: 'birth_cert_rosa.pdf' },
-    { documentType: 'valid_id', fileName: 'umid_rosa.jpg' },
-    { documentType: 'passport', fileName: 'passport_rosa.pdf' },
-  ]) {
-    await db.applicantDocument.create({ data: { ...doc, applicantId: applicant2Profile.id, isVerified: true } });
-  }
-
-  console.log('✅ Applicant 2 (Rosa Mendoza - Caregiver/Professional) created');
-
-  // Applicant 3: Domestic Helper (incomplete profile)
-  const applicant3User = await db.user.create({
-    data: {
-      email: 'nena@fira.com.ph',
-      password: await hashPassword('Applicant2025!'),
-      name: 'Nena Villanueva',
-      role: 'applicant',
-      phone: '+63 917 600 0000',
-      isActive: true,
-      isApproved: true,
-    },
-  });
-
-  const applicant3Profile = await db.applicantProfile.create({
-    data: {
-      userId: applicant3User.id,
-      firstName: 'Nena',
-      lastName: 'Villanueva',
-      gender: 'Female',
-      birthDate: new Date('1985-12-03'),
-      birthPlace: 'Cebu City',
-      nationality: 'Filipino',
-      civilStatus: 'Widowed',
-      address: '101 Rizal St, Barangay Ermita',
-      city: 'Cebu City',
-      province: 'Cebu',
-      region: 'Region VII',
-      phone: '+63 917 600 0000',
-      applicantType: 'domestic_helper',
-      householdTasks: JSON.stringify(['General Housekeeping', 'Cooking / Food Preparation', 'Laundry / Ironing', 'Child Care / Babysitting']),
-      passportNo: '',
-      passportStatus: 'none',
-      hasVisa: false,
-      medicalStatus: 'none',
-      highestEducation: 'high_school',
-      yearsExperience: 8,
-      preferredCountry: 'Middle East',
-      preferredJob: 'Domestic Helper',
-      formStep: 3,
-      isComplete: false,
-    },
-  });
-
-  console.log('✅ Applicant 3 (Nena Villanueva - Domestic Helper, incomplete) created');
-
-  // Applicant 4: Skills Professional (Engineer)
-  const applicant4User = await db.user.create({
-    data: {
-      email: 'mark@fira.com.ph',
-      password: await hashPassword('Applicant2025!'),
-      name: 'Mark Lim',
-      role: 'applicant',
-      phone: '+63 917 700 0000',
-      isActive: true,
-      isApproved: true,
-    },
-  });
-
-  const applicant4Profile = await db.applicantProfile.create({
-    data: {
-      userId: applicant4User.id,
-      firstName: 'Mark',
-      lastName: 'Lim',
-      middleName: 'Tan',
-      gender: 'Male',
-      birthDate: new Date('1995-03-18'),
-      birthPlace: 'Davao City',
-      nationality: 'Filipino',
-      civilStatus: 'Single',
-      height: '175',
-      weight: '72',
-      address: '55 Torres Street',
-      city: 'Davao City',
-      province: 'Davao del Sur',
-      region: 'Region XI',
-      phone: '+63 917 700 0000',
-      applicantType: 'skills_professional',
-      passportNo: 'PN9876543',
-      passportExpiry: new Date('2029-03-17'),
-      passportStatus: 'valid',
-      hasVisa: true,
-      visaCountry: 'Singapore',
-      visaType: 'Work Pass',
-      visaStatus: 'expired',
-      medicalStatus: 'passed',
-      highestEducation: 'bachelors',
-      yearsExperience: 4,
-      preferredCountry: 'Singapore, Japan',
-      preferredJob: 'Welder / Fabricator',
-      salaryExpectation: '800-1200 USD',
-      resumeText: 'Licensed Mechanical Engineer with 4 years experience in fabrication and welding. Certified AWS CWI. Experienced in structural steel, pipe welding, and quality inspection.',
-      emergencyName: 'Linda Lim',
-      emergencyRelation: 'Mother',
-      emergencyPhone: '+63 917 700 0005',
-      formStep: 7,
-      isComplete: true,
-    },
-  });
-
-  await db.applicantEducation.create({
-    data: {
-      applicantId: applicant4Profile.id,
-      institution: 'University of Mindanao',
-      degree: 'Bachelor of Science',
-      fieldOfStudy: 'Mechanical Engineering',
-      startYear: 2013,
-      endYear: 2017,
-      honors: null,
-    },
-  });
-
-  await db.applicantExperience.create({
-    data: {
-      applicantId: applicant4Profile.id,
-      company: 'DMCI Construction',
-      position: 'Welder / Fabricator',
-      country: 'Philippines',
-      startDate: new Date('2017-08-01'),
-      endDate: new Date('2021-06-30'),
-      description: 'Structural steel fabrication and welding for high-rise buildings. GTAW and SMAW certified.',
-      monthlySalary: 'PHP 35,000',
-    },
-  });
-
-  for (const skill of [
-    { name: 'GTAW (TIG) Welding', level: 'expert', yearsExperience: 4 },
-    { name: 'SMAW (Stick) Welding', level: 'expert', yearsExperience: 4 },
-    { name: 'Structural Fabrication', level: 'advanced', yearsExperience: 4 },
-    { name: 'Blueprint Reading', level: 'advanced', yearsExperience: 4 },
-    { name: 'Quality Inspection', level: 'intermediate', yearsExperience: 3 },
-  ]) {
-    await db.applicantSkill.create({ data: { ...skill, applicantId: applicant4Profile.id } });
-  }
-
-  for (const lang of [
-    { language: 'English', proficiency: 'fluent', speaking: 'fluent', reading: 'fluent', writing: 'fluent' },
-    { language: 'Filipino', proficiency: 'native', speaking: 'native', reading: 'native', writing: 'native' },
-    { language: 'Japanese', proficiency: 'basic', speaking: 'basic', reading: 'basic', writing: null },
-  ]) {
-    await db.applicantLanguage.create({ data: { ...lang, applicantId: applicant4Profile.id } });
-  }
-
-  await db.applicantCertification.create({
-    data: {
-      applicantId: applicant4Profile.id,
-      name: 'AWS Certified Welding Inspector (CWI)',
-      issuingBody: 'American Welding Society',
-      issuedDate: new Date('2019-12-01'),
-      expiryDate: new Date('2025-12-01'),
-      credentialId: 'AWS-CWI-2019-12345',
-    },
-  });
-
-  console.log('✅ Applicant 4 (Mark Lim - Welder/Professional) created');
-
-  // ============ 5. JOB ORDERS ============
-
-  async function createJobWithStages(data: {
-    title: string;
-    description: string;
-    country: string;
-    city: string;
-    category: string;
-    jobType?: string;
-    salaryMin: number;
-    salaryMax: number;
-    salaryCurrency: string;
-    salaryPeriod?: string;
-    duration: string;
-    slots: number;
-    requirements: string;
-    benefits: string;
-    requiredSkills: string;
-    status: string;
-    visibility: string;
-    employerId?: string;
-    agencyId?: string;
-    createdBy?: string;
-    customFields?: Array<{ label: string; fieldType: string; options?: string[]; isRequired: boolean }>;
-  }) {
-    const { customFields, ...jobData } = data;
-    const job = await db.jobOrder.create({ data: jobData });
-
-    for (let i = 0; i < DEFAULT_ATS_STAGES.length; i++) {
-      await db.aTSStage.create({
-        data: {
-          jobOrderId: job.id,
-          name: DEFAULT_ATS_STAGES[i].name,
-          order: i + 1,
-          color: DEFAULT_ATS_STAGES[i].color,
-          isDefault: true,
-        },
-      });
+  for (const table of tables) {
+    try {
+      await (db as any)[table].deleteMany()
+    } catch (e) {
+      // ignore
     }
+  }
 
-    if (customFields) {
-      for (const field of customFields) {
-        await db.jobCustomField.create({
-          data: {
-            jobOrderId: job.id,
-            label: field.label,
-            fieldType: field.fieldType,
-            options: field.options ? JSON.stringify(field.options) : null,
-            isRequired: field.isRequired,
+  // ============ USERS ============
+  console.log('  Creating users...')
+  const users = await Promise.all([
+    db.user.create({
+      data: {
+        email: 'admin@fira.com.ph', password: await hashPassword('admin2025!'),
+        name: 'FIRA Super Admin', role: 'super_admin', phone: '+212 662 261 499',
+        isActive: true, isApproved: true,
+      },
+    }),
+    db.user.create({
+      data: {
+        email: 'staff@fira.com.ph', password: await hashPassword('staff2025!'),
+        name: 'FIRA Staff Member', role: 'staff', phone: '+212 662 260 805',
+        isActive: true, isApproved: true,
+      },
+    }),
+    db.user.create({
+      data: {
+        email: 'applicant@fira.com.ph', password: await hashPassword('applicant2025!'),
+        name: 'Maria Santos', role: 'applicant', phone: '+63 917 123 4567',
+        isActive: true, isApproved: true,
+      },
+    }),
+    db.user.create({
+      data: {
+        email: 'agency@fira.com.ph', password: await hashPassword('agency2025!'),
+        name: 'Manila Recruitment Corp', role: 'local_agency', phone: '+63 2 8888 5678',
+        isActive: true, isApproved: true,
+      },
+    }),
+    db.user.create({
+      data: {
+        email: 'employer@fira.com.ph', password: await hashPassword('employer2025!'),
+        name: 'Al Baraka Holding', role: 'employer', phone: '+212 662 260 336',
+        isActive: true, isApproved: true,
+      },
+    }),
+  ])
+
+  // ============ AGENCY & MEMBERS ============
+  console.log('  Creating agencies...')
+  const agency = await db.agency.create({
+    data: {
+      name: 'Manila Recruitment Corp', agencyType: 'local',
+      address: '123 Ayala Ave, Makati City', city: 'Makati', country: 'Philippines',
+      licenseNo: 'POEA-LB-2024-001', phone: '+63 2 8888 5678',
+      email: 'info@manilarecruit.ph', isActive: true, isApproved: true,
+    },
+  })
+  await db.agencyMember.create({
+    data: { userId: users[3].id, agencyId: agency.id, role: 'admin' },
+  })
+
+  // ============ EMPLOYER PROFILE ============
+  console.log('  Creating employer profile...')
+  await db.employerProfile.create({
+    data: {
+      userId: users[4].id, companyName: 'Al Baraka Holding',
+      companyAddress: 'Casablanca, Morocco', country: 'Morocco',
+      industry: 'Household Services', contactPerson: 'Ahmed Bennani',
+      contactEmail: 'ahmed@albaraka.ma', contactPhone: '+212 662 260 336',
+      website: 'https://albaraka.ma',
+    },
+  })
+
+  // ============ APPLICANT PROFILE ============
+  console.log('  Creating applicant profile...')
+  await db.applicantProfile.create({
+    data: {
+      userId: users[2].id, firstName: 'Maria', middleName: 'Garcia', lastName: 'Santos',
+      gender: 'Female', nationality: 'Filipino', civilStatus: 'Single',
+      address: '456 Rizal St, Quezon City', city: 'Quezon City', province: 'Metro Manila',
+      region: 'NCR', phone: '+63 917 123 4567',
+      applicantType: 'domestic_helper', highestEducation: 'college_vocational',
+      yearsExperience: 3, preferredCountry: 'Morocco', preferredJob: 'Household Service Worker',
+      passportNo: 'PN1234567', passportStatus: 'valid',
+      medicalStatus: 'passed', formStep: 3, isComplete: true,
+    },
+  })
+
+  // ============ JOBS ============
+  console.log('  Creating job orders...')
+  const jobs = await Promise.all([
+    db.jobOrder.create({
+      data: {
+        title: 'Household Service Worker / Nanny', description: 'Looking for experienced Filipino household service workers to work in Morocco. Must be skilled in household chores, cooking, and child care.',
+        country: 'Morocco', city: 'Casablanca', category: 'domestic_helper',
+        jobType: 'domestic_helper', salaryMin: 400, salaryMax: 600,
+        salaryCurrency: 'USD', salaryPeriod: 'monthly', contractType: 'full_time',
+        duration: '2 years', slots: 10, requirements: 'At least 2 years experience as household worker. Can cook, clean, and take care of children. Must be able to communicate in basic English or Arabic.',
+        benefits: 'Free housing, free food, round-trip airfare, medical insurance, 1 day off per week, annual leave with pay',
+        requiredSkills: 'Household management, Cooking, Child care, Cleaning, Laundry',
+        status: 'open', visibility: 'public', employerId: users[4].id, agencyId: agency.id, createdBy: users[0].id,
+      },
+    }),
+    db.jobOrder.create({
+      data: {
+        title: 'Caregiver for Elderly Care', description: 'Seeking compassionate Filipino caregivers to provide care for elderly patients in private homes in Morocco.',
+        country: 'Morocco', city: 'Rabat', category: 'caregiver',
+        jobType: 'domestic_helper', salaryMin: 500, salaryMax: 700,
+        salaryCurrency: 'USD', salaryPeriod: 'monthly', contractType: 'full_time',
+        duration: '2 years', slots: 5, requirements: 'Certificate in caregiving. At least 1 year experience in elderly care. Patient, compassionate, and physically fit.',
+        benefits: 'Free housing, free food, medical insurance, overtime pay, annual bonus',
+        requiredSkills: 'Elderly care, First aid, Patient care, Medication management, Companionship',
+        status: 'open', visibility: 'public', employerId: users[4].id, agencyId: agency.id, createdBy: users[0].id,
+      },
+    }),
+    db.jobOrder.create({
+      data: {
+        title: 'Professional Nurse - Hospital', description: 'Hiring licensed Filipino nurses for a major hospital in Morocco. Must have valid PRC license and hospital experience.',
+        country: 'Morocco', city: 'Casablanca', category: 'nurse',
+        jobType: 'skills_professional', salaryMin: 1200, salaryMax: 1800,
+        salaryCurrency: 'USD', salaryPeriod: 'monthly', contractType: 'full_time',
+        duration: '3 years', slots: 15, requirements: 'BSN degree, valid PRC license, at least 2 years hospital experience, BLS/ACLS certified.',
+        benefits: 'Free housing, medical insurance, relocation allowance, professional development, paid vacations',
+        requiredSkills: 'Patient assessment, IV therapy, Medication administration, Nursing documentation, Emergency response',
+        status: 'open', visibility: 'public', employerId: users[4].id, agencyId: agency.id, createdBy: users[0].id,
+      },
+    }),
+    db.jobOrder.create({
+      data: {
+        title: 'Factory Worker - Electronics Assembly', description: 'Looking for skilled Filipino workers for electronics manufacturing company in Morocco.',
+        country: 'Morocco', city: 'Tangier', category: 'factory',
+        jobType: 'skills_professional', salaryMin: 600, salaryMax: 900,
+        salaryCurrency: 'USD', salaryPeriod: 'monthly', contractType: 'full_time',
+        duration: '2 years', slots: 20, requirements: 'At least high school graduate. Experience in electronics assembly preferred. Willing to work in shifts.',
+        benefits: 'Free housing, transportation, medical insurance, overtime pay, performance bonus',
+        requiredSkills: 'Electronics assembly, Quality control, Teamwork, Attention to detail',
+        status: 'open', visibility: 'public', employerId: users[4].id, agencyId: agency.id, createdBy: users[0].id,
+      },
+    }),
+    db.jobOrder.create({
+      data: {
+        title: 'Hotel Staff - Hospitality', description: 'Hiring experienced Filipino hospitality workers for a luxury hotel chain in Morocco.',
+        country: 'Morocco', city: 'Marrakech', category: 'hospitality',
+        jobType: 'skills_professional', salaryMin: 700, salaryMax: 1000,
+        salaryCurrency: 'USD', salaryPeriod: 'monthly', contractType: 'full_time',
+        duration: '2 years', slots: 8, requirements: 'Experience in hotel or restaurant service. Good communication skills. Professional appearance and demeanor.',
+        benefits: 'Free housing, meals, uniform, medical insurance, tips, career advancement opportunities',
+        requiredSkills: 'Customer service, Housekeeping, Food service, Front desk operations, English communication',
+        status: 'open', visibility: 'public', employerId: users[4].id, agencyId: agency.id, createdBy: users[0].id,
+      },
+    }),
+  ])
+
+  // ============ ATS STAGES ============
+  console.log('  Creating ATS stages...')
+  for (const job of jobs) {
+    const stages = [
+      { name: 'Applied', order: 0, color: '#3b82f6' },
+      { name: 'Screening', order: 1, color: '#f59e0b' },
+      { name: 'Interview', order: 2, color: '#8b5cf6' },
+      { name: 'Assessment', order: 3, color: '#ec4899' },
+      { name: 'Offer', order: 4, color: '#10b981' },
+      { name: 'Deployed', order: 5, color: '#06b6d4' },
+    ]
+    await Promise.all(stages.map(s =>
+      db.aTSStage.create({ data: { jobOrderId: job.id, ...s } })
+    ))
+  }
+
+  // ============ APPLICATIONS ============
+  console.log('  Creating applications...')
+  const stage1 = await db.aTSStage.findFirst({ where: { jobOrderId: jobs[0].id, order: 0 } })
+  if (stage1) {
+    await db.application.create({
+      data: {
+        applicantId: users[2].id, jobOrderId: jobs[0].id,
+        status: 'applied', currentStageId: stage1.id,
+        coverLetter: 'I am a hardworking and dedicated household worker with 3 years of experience. I am skilled in cooking, cleaning, and child care.',
+      },
+    })
+  }
+
+  // ============ CMS DATA ============
+  console.log('  Creating CMS content...')
+
+  // FAQ
+  const faqs = [
+    { question: 'What services does FIRA provide?', answer: 'FIRA (Fil International Recruitment Agency) provides comprehensive overseas recruitment services including job matching, document processing, skills assessment, pre-departure orientation, and post-deployment monitoring. We connect Filipino workers with trusted employers in Morocco and other countries.', category: 'General' },
+    { question: 'How do I apply for a job?', answer: 'To apply for a job: 1) Register an account on our platform, 2) Complete your applicant profile with your skills and documents, 3) Browse available job openings, 4) Submit your application with a cover letter. Our team will review your application and guide you through the process.', category: 'Application Process' },
+    { question: 'What are the requirements for applying?', answer: 'Basic requirements include: Valid Philippine passport, at least 2 years of relevant work experience, educational certificates, NBI clearance, and medical certificate. Specific requirements may vary depending on the job category and country.', category: 'Requirements' },
+    { question: 'Is there any placement fee?', answer: 'FIRA follows Philippine government regulations on placement fees. We do not charge illegal fees. Any processing fees are transparent and within the limits set by the Department of Migrant Workers (DMW). Please verify all fees before proceeding.', category: 'Fees' },
+    { question: 'How long does the recruitment process take?', answer: 'The recruitment process typically takes 2-6 months depending on the job category and employer requirements. This includes application review, interview, medical examination, document processing, and visa application.', category: 'Application Process' },
+    { question: 'What support do you provide after deployment?', answer: 'We provide comprehensive post-deployment support including: Regular check-ins with deployed workers, assistance with employer-related concerns, access to our 24/7 hotline, repatriation assistance when needed, and reintegration programs for returning workers.', category: 'Support' },
+    { question: 'Do you offer training programs?', answer: 'Yes, we offer pre-departure training programs including: Language and cultural orientation, skills enhancement workshops, safety and rights awareness, and country-specific orientation for destination countries.', category: 'Training' },
+    { question: 'How can employers partner with FIRA?', answer: 'Employers interested in partnering with FIRA can contact us through our website or directly via email/phone. We offer customized recruitment solutions including: Job posting and candidate sourcing, screening and skills assessment, document processing, and deployment coordination.', category: 'For Employers' },
+  ]
+  await Promise.all(faqs.map((f, i) =>
+    db.cmsFaq.create({ data: { ...f, order: i } })
+  ))
+
+  // Testimonials
+  const testimonials = [
+    { name: 'Rosa Mendoza', position: 'Household Service Worker', company: 'Deployed to Morocco', feedback: 'FIRA helped me find a good employer in Morocco. The process was smooth and transparent. I am now able to provide a better life for my family back in the Philippines.', rating: 5 },
+    { name: 'Juan Dela Cruz', position: 'Caregiver', company: 'Deployed to Morocco', feedback: 'The team at FIRA was very supportive from application to deployment. They made sure I was prepared and comfortable with my new role. I highly recommend FIRA to all OFWs.', rating: 5 },
+    { name: 'Carmen Reyes', position: 'Nurse', company: 'Deployed to Morocco', feedback: 'As a nurse, I was looking for international opportunities. FIRA matched me with a great hospital in Morocco. The salary and benefits are excellent. Thank you FIRA!', rating: 4 },
+    { name: 'Pedro Santos', position: 'Factory Worker', company: 'Deployed to Morocco', feedback: 'FIRA made the recruitment process easy and stress-free. Their team was always available to answer my questions. I am grateful for their professional service.', rating: 5 },
+    { name: 'Ana Flores', position: 'Hotel Staff', company: 'Deployed to Morocco', feedback: 'I am very happy with my deployment through FIRA. The hotel I work for treats me well and the salary is competitive. FIRA truly cares about the welfare of Filipino workers.', rating: 5 },
+  ]
+  await Promise.all(testimonials.map(t =>
+    db.cmsTestimonial.create({ data: t })
+  ))
+
+  // Social Media
+  const socials = [
+    { platform: 'facebook', title: 'Facebook', url: 'https://facebook.com/filinternational', order: 0 },
+    { platform: 'instagram', title: 'Instagram', url: 'https://instagram.com/filinternational', order: 1 },
+    { platform: 'whatsapp', title: 'WhatsApp', url: 'https://wa.me/212662261499', order: 2 },
+    { platform: 'twitter', title: 'Twitter', url: 'https://twitter.com/filinternational', order: 3 },
+    { platform: 'linkedin', title: 'LinkedIn', url: 'https://linkedin.com/company/filinternational', order: 4 },
+    { platform: 'tiktok', title: 'TikTok', url: 'https://tiktok.com/@filinternational', order: 5 },
+    { platform: 'youtube', title: 'YouTube', url: 'https://youtube.com/@filinternational', order: 6 },
+  ]
+  await Promise.all(socials.map(s =>
+    db.cmsSocialMedia.create({ data: s })
+  ))
+
+  // Terms & Privacy
+  await db.cmsTermsPrivacy.create({
+    data: {
+      type: 'terms_of_service',
+      title: 'Terms of Service',
+      content: `TERMS OF SERVICE
+
+Last Updated: ${new Date().toISOString().split('T')[0]}
+
+1. ACCEPTANCE OF TERMS
+By accessing and using the FIRA (Fil International Recruitment Agency) platform, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our platform.
+
+2. ELIGIBILITY
+You must be at least 18 years of age to use this platform. By using our services, you represent and warrant that you are of legal age to enter into a binding agreement.
+
+3. USER ACCOUNTS
+You are responsible for maintaining the confidentiality of your account information and password. You agree to accept responsibility for all activities that occur under your account.
+
+4. SERVICES
+FIRA provides overseas recruitment services including but not limited to: job matching, document processing, skills assessment, pre-departure orientation, and post-deployment monitoring.
+
+5. ACCURACY OF INFORMATION
+You agree to provide accurate, current, and complete information in your application and profile. Providing false information may result in account termination.
+
+6. FEES
+Any applicable fees will be communicated transparently before any payment is required. FIRA complies with all Philippine government regulations regarding placement fees.
+
+7. PRIVACY
+Your use of our platform is also governed by our Privacy Policy, which is incorporated by reference into these Terms.
+
+8. LIMITATION OF LIABILITY
+FIRA shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the platform.
+
+9. GOVERNING LAW
+These Terms shall be governed by and construed in accordance with the laws of the Philippines.
+
+10. CONTACT
+For any questions regarding these Terms, please contact us at manpower@filinternational.ma or +212 6 62 26 14 99.`,
+      version: '1.0',
+    },
+  })
+  await db.cmsTermsPrivacy.create({
+    data: {
+      type: 'data_privacy_consent',
+      title: 'Data Privacy Consent',
+      content: `DATA PRIVACY CONSENT
+
+Last Updated: ${new Date().toISOString().split('T')[0]}
+
+FIRA (Fil International Recruitment Agency) is committed to protecting your personal data in accordance with the Data Privacy Act of 2012 (Republic Act No. 10173).
+
+1. DATA COLLECTED
+We collect personal information including but not limited to: full name, contact details, educational background, work experience, government-issued IDs, and medical records as required for recruitment processing.
+
+2. PURPOSE OF COLLECTION
+Your personal data is collected and processed for: processing your job application, matching you with suitable job opportunities, facilitating deployment procedures, and providing post-deployment support.
+
+3. DATA SHARING
+Your data may be shared with: potential employers (with your consent), government agencies (POEA/DMW, DOLE, etc.), partner recruitment agencies, and medical service providers as required for recruitment processing.
+
+4. DATA SECURITY
+We implement appropriate security measures to protect your personal data against unauthorized access, alteration, disclosure, or destruction.
+
+5. DATA RETENTION
+We retain your personal data for the duration necessary to fulfill the purposes outlined above, or as required by law.
+
+6. YOUR RIGHTS
+You have the right to: access your personal data, request correction of inaccurate data, request deletion of your data (subject to legal requirements), and withdraw your consent.
+
+7. CONSENT
+By using our platform, you consent to the collection, processing, and sharing of your personal data as described in this Privacy Notice.
+
+8. CONTACT
+For data privacy concerns, contact our Data Protection Officer at manpower@filinternational.ma.`,
+      version: '1.0',
+    },
+  })
+
+  // Org Chart
+  const orgChart = [
+    { name: 'Ahmed Bennani', position: 'General Manager', department: 'Executive', order: 0, email: 'gm@filinternational.ma' },
+    { name: 'Fatima Zahra', position: 'Operations Director', department: 'Operations', order: 1, email: 'ops@filinternational.ma' },
+    { name: 'Carlos Rivera', position: 'Recruitment Manager', department: 'Recruitment', order: 2, email: 'recruit@filinternational.ma' },
+    { name: 'Aisha Benali', position: 'HR Manager', department: 'Human Resources', order: 3, email: 'hr@filinternational.ma' },
+    { name: 'Jose Rodriguez', position: 'Document Processor', department: 'Processing', order: 4, email: 'docs@filinternational.ma' },
+    { name: 'Nour El Houda', position: 'Finance Manager', department: 'Finance', order: 5, email: 'finance@filinternational.ma' },
+  ]
+  await Promise.all(orgChart.map(o =>
+    db.cmsOrgChart.create({ data: o })
+  ))
+
+  // CMS Pages (About, Services, Contact content)
+  await db.cmsPage.create({
+    data: {
+      title: 'About FIRA',
+      slug: 'about',
+      content: JSON.stringify({
+        sections: [
+          {
+            type: 'hero',
+            title: 'About Fil International Recruitment Agency',
+            subtitle: 'Your trusted partner in international recruitment since 2020'
           },
-        });
-      }
-    }
-
-    return job;
-  }
-
-  // Job 1: Domestic Helper Saudi Arabia
-  const job1 = await createJobWithStages({
-    title: 'Domestic Helper - All-Round',
-    description: 'Looking for experienced Domestic Helper for a family in Riyadh. Must be hardworking, trustworthy, and skilled in household management, cooking, and childcare. Family has 3 children ages 5, 8, and 12.',
-    country: 'Saudi Arabia',
-    city: 'Riyadh',
-    category: 'domestic_helper',
-    jobType: 'domestic_helper',
-    salaryMin: 400,
-    salaryMax: 600,
-    salaryCurrency: 'USD',
-    salaryPeriod: 'monthly',
-    duration: '2 years',
-    slots: 5,
-    requirements: JSON.stringify([
-      'Female, at least 23 years old',
-      'At least high school graduate',
-      'With valid passport (at least 6 months validity)',
-      'At least 2 years domestic work experience',
-      'Can cook Arabic and Filipino dishes',
-      'Willing to work without day off (negotiable)',
-    ]),
-    benefits: JSON.stringify([
-      'Free accommodation (private room)',
-      'Free food',
-      'Monthly salary $400-600',
-      'Annual leave with paid round-trip flight',
-      'Medical insurance',
-      'Overtime pay available',
-    ]),
-    requiredSkills: JSON.stringify(['General Housekeeping', 'Cooking / Food Preparation', 'Child Care / Babysitting', 'Laundry / Ironing']),
-    status: 'open',
-    visibility: 'public',
-    employerId: employerProfile.id,
-    agencyId: localAgency.id,
-    createdBy: firaAdmin.id,
-    customFields: [
-      { label: 'Can you cook Arabic food?', fieldType: 'select', options: ['Yes', 'No', 'Willing to learn'], isRequired: true },
-      { label: 'Are you willing to work without day off?', fieldType: 'select', options: ['Yes', 'Prefer with day off', 'Negotiable'], isRequired: true },
-    ],
-  });
-
-  // Job 2: Caregiver Singapore
-  const job2 = await createJobWithStages({
-    title: 'Caregiver for Elderly with Dementia',
-    description: 'Urgent need for a compassionate caregiver to provide daily care for an 80-year-old patient with dementia in Singapore. Must be patient, caring, and experienced in elderly care.',
-    country: 'Singapore',
-    city: 'Singapore',
-    category: 'caregiver',
-    jobType: 'skills_professional',
-    salaryMin: 600,
-    salaryMax: 800,
-    salaryCurrency: 'USD',
-    salaryPeriod: 'monthly',
-    duration: '2 years',
-    slots: 3,
-    requirements: JSON.stringify([
-      'At least 23 years old',
-      'TESDA Caregiving NC II certified',
-      'At least 2 years caregiving experience',
-      'Experience with dementia patients preferred',
-      'Good English communication skills',
-      'Valid passport',
-    ]),
-    benefits: JSON.stringify([
-      'Free accommodation (separate room)',
-      'Monthly salary SGD 2,200-2,800',
-      'Medical insurance',
-      'Annual leave with paid flight',
-      '13th month pay',
-      'Rest days: 1 per week',
-    ]),
-    requiredSkills: JSON.stringify(['Elderly Care', 'Patient Monitoring', 'Medication Administration', 'First Aid', 'Companionship']),
-    status: 'open',
-    visibility: 'public',
-    employerId: employerProfile.id,
-    agencyId: localAgency.id,
-    createdBy: firaAdmin.id,
-  });
-
-  // Job 3: Factory Worker Taiwan
-  const job3 = await createJobWithStages({
-    title: 'Factory Worker - Electronics Assembly',
-    description: 'Hiring Factory Workers for a major electronics manufacturing company in Taiwan. Training provided for qualified candidates. Must be willing to work in shifts and overtime.',
-    country: 'Taiwan',
-    city: 'Taipei',
-    category: 'factory',
-    jobType: 'skills_professional',
-    salaryMin: 500,
-    salaryMax: 700,
-    salaryCurrency: 'USD',
-    salaryPeriod: 'monthly',
-    duration: '3 years',
-    slots: 20,
-    requirements: JSON.stringify([
-      'At least 20 years old, maximum 40 years old',
-      'High school graduate or vocational course',
-      'Physically fit (will undergo medical exam)',
-      'Willing to work in rotating shifts',
-      'No criminal record',
-      'Valid passport',
-    ]),
-    benefits: JSON.stringify([
-      'Free shared accommodation',
-      'Free meals at factory cafeteria',
-      'Overtime pay (1.33x regular rate)',
-      'Medical insurance',
-      'Performance bonus quarterly',
-      'Annual leave with paid flight',
-    ]),
-    requiredSkills: JSON.stringify(['Assembly', 'Quality Control', 'Teamwork', 'Attention to Detail']),
-    status: 'open',
-    visibility: 'public',
-    agencyId: localAgency.id,
-    createdBy: localAgencyAdmin.id,
-  });
-
-  // Job 4: Nurse Dubai
-  const job4 = await createJobWithStages({
-    title: 'Registered Nurse - ICU/ER',
-    description: 'Prestigious hospital in Dubai urgently hiring Registered Nurses with ICU or ER experience. Competitive tax-free salary with comprehensive benefits package.',
-    country: 'United Arab Emirates',
-    city: 'Dubai',
-    category: 'nurse',
-    jobType: 'skills_professional',
-    salaryMin: 1500,
-    salaryMax: 2500,
-    salaryCurrency: 'USD',
-    salaryPeriod: 'monthly',
-    duration: '2 years',
-    slots: 10,
-    requirements: JSON.stringify([
-      'BSN graduate from accredited university',
-      'Active PRC license',
-      'At least 2 years ICU or ER experience',
-      'IELTS score of 6.5 or higher',
-      'BLS and ACLS certification',
-      'Valid passport',
-    ]),
-    benefits: JSON.stringify([
-      'Tax-free salary',
-      'Free furnished accommodation',
-      'Transportation allowance',
-      'Comprehensive medical insurance',
-      'Annual leave with paid round-trip flight',
-      'Professional development allowance',
-    ]),
-    requiredSkills: JSON.stringify(['ICU Nursing', 'Patient Assessment', 'IV Therapy', 'Emergency Response', 'Medical Documentation']),
-    status: 'open',
-    visibility: 'agency_only',
-    agencyId: localAgency.id,
-    createdBy: firaAdmin.id,
-  });
-
-  // Job 5: Domestic Helper Japan
-  const job5 = await createJobWithStages({
-    title: 'Domestic Helper / Care Worker',
-    description: 'Japanese family looking for a caring domestic helper who can also assist with elderly care. Must be willing to learn basic Japanese. Training and Japanese language classes provided.',
-    country: 'Japan',
-    city: 'Tokyo',
-    category: 'domestic_helper',
-    jobType: 'domestic_helper',
-    salaryMin: 800,
-    salaryMax: 1200,
-    salaryCurrency: 'USD',
-    salaryPeriod: 'monthly',
-    duration: '3 years',
-    slots: 3,
-    requirements: JSON.stringify([
-      'Female, at least 23 years old, maximum 45 years old',
-      'At least high school graduate',
-      'Willing to study Japanese language',
-      'Experience in caregiving or domestic work',
-      'Valid passport',
-    ]),
-    benefits: JSON.stringify([
-      'Free accommodation',
-      'Free meals during working days',
-      'Japanese language training',
-      'National health insurance',
-      'Annual paid leave',
-      'Bonus twice a year',
-    ]),
-    requiredSkills: JSON.stringify(['Elderly Care', 'General Housekeeping', 'Cooking / Food Preparation']),
-    status: 'open',
-    visibility: 'public',
-    employerId: employer2Profile.id,
-    agencyId: localAgency2.id,
-    createdBy: firaAdmin.id,
-    customFields: [
-      { label: 'Are you willing to study Japanese?', fieldType: 'select', options: ['Yes, very willing', 'Yes, if required', 'No'], isRequired: true },
-      { label: 'Any previous experience in Japan?', fieldType: 'select', options: ['Yes - worked there', 'Yes - visited', 'No'], isRequired: false },
-    ],
-  });
-
-  console.log('✅ 5 Job Orders created');
-
-  // ============ 6. APPLICATIONS ============
-
-  // Juan applies to Domestic Helper Saudi Arabia
-  const firstStage1 = await db.aTSStage.findFirst({ where: { jobOrderId: job1.id, order: 1 } });
-  const application1 = await db.application.create({
-    data: {
-      applicantId: applicant1User.id,
-      jobOrderId: job1.id,
-      status: 'screening',
-      coverLetter: 'Dear Sir/Madam, I am writing to express my sincere interest in the Domestic Helper position. With 5 years of experience in Hong Kong as a domestic helper and a Bachelor\'s degree in Nursing, I am confident I can provide excellent service to your family. I am skilled in cooking Filipino and Chinese dishes, childcare, and elderly care. I am hardworking, patient, and trustworthy. Thank you for considering my application.',
-      matchScore: 85.5,
-      currentStageId: firstStage1?.id,
+          {
+            type: 'content',
+            title: 'Who We Are',
+            body: 'Fil International Recruitment Agency (FIRA) is a licensed overseas recruitment agency based in Casablanca, Morocco. We specialize in connecting skilled Filipino workers with reputable employers across Morocco and other countries. Our mission is to provide ethical, transparent, and efficient recruitment services that benefit both workers and employers.'
+          },
+          {
+            type: 'content',
+            title: 'Our Mission',
+            body: 'To be the leading recruitment agency that bridges Filipino talent with global opportunities, while ensuring the welfare, rights, and dignity of every worker we deploy.'
+          },
+          {
+            type: 'content',
+            title: 'Our Vision',
+            body: 'A world where every Filipino worker has access to safe, fair, and rewarding international employment opportunities.'
+          },
+          {
+            type: 'values',
+            items: [
+              { title: 'Integrity', desc: 'We operate with transparency and honesty in all our dealings.' },
+              { title: 'Excellence', desc: 'We strive to deliver the highest quality recruitment services.' },
+              { title: 'Compassion', desc: 'We genuinely care for the welfare of every worker.' },
+              { title: 'Innovation', desc: 'We leverage technology to improve the recruitment experience.' },
+            ]
+          }
+        ]
+      }),
+      status: 'published',
     },
-  });
-
-  await db.aIAnalysisResult.create({
+  })
+  await db.cmsPage.create({
     data: {
-      applicationId: application1.id,
-      matchScore: 85.5,
-      semanticScore: 0.82,
-      matchedSkills: JSON.stringify(['General Housekeeping', 'Cooking / Food Preparation', 'Child Care / Babysitting']),
-      missingSkills: JSON.stringify(['Laundry / Ironing']),
-      explanation: 'Strong candidate with excellent household management and caregiving skills. 5 years of relevant experience in Hong Kong. Nursing background provides additional value for elderly care. Missing formal laundry management but this is easily trainable.',
+      title: 'Our Services',
+      slug: 'services',
+      content: JSON.stringify({
+        sections: [
+          {
+            type: 'hero',
+            title: 'Our Services',
+            subtitle: 'Comprehensive recruitment solutions for Filipino workers and international employers'
+          },
+          {
+            type: 'services',
+            items: [
+              { icon: 'users', title: 'Recruitment & Placement', desc: 'We source, screen, and match qualified Filipino workers with international job openings across various industries including healthcare, hospitality, household services, and manufacturing.' },
+              { icon: 'file-text', title: 'Document Processing', desc: 'Our team handles all necessary documentation including POEA processing, visa applications, work permits, and contract preparation to ensure a smooth deployment process.' },
+              { icon: 'graduation-cap', title: 'Skills Assessment & Training', desc: 'We conduct thorough skills assessment and provide pre-departure training including language courses, cultural orientation, and job-specific skills enhancement.' },
+              { icon: 'heart-pulse', title: 'Medical & Health Clearance', desc: 'We coordinate medical examinations and health clearances through accredited clinics to ensure all workers meet the health requirements of the destination country.' },
+              { icon: 'plane', title: 'Pre-Departure Orientation', desc: 'Comprehensive orientation programs that prepare workers for their new environment including cultural differences, work expectations, rights awareness, and emergency procedures.' },
+              { icon: 'headset', title: 'Post-Deployment Support', desc: 'Ongoing support for deployed workers including regular check-ins, dispute resolution assistance, welfare monitoring, and repatriation services when needed.' },
+            ]
+          }
+        ]
+      }),
+      status: 'published',
     },
-  });
-
-  // Custom response for Job 1
-  const job1Fields = await db.jobCustomField.findMany({ where: { jobOrderId: job1.id } });
-  if (job1Fields.length > 0) {
-    await db.applicationCustomResponse.create({
-      data: { applicationId: application1.id, fieldId: job1Fields[0].id, value: 'Willing to learn' },
-    });
-  }
-
-  console.log('✅ Application 1 (Juan -> Domestic Helper Saudi Arabia) created');
-
-  // Rosa applies to Caregiver Singapore
-  const firstStage2 = await db.aTSStage.findFirst({ where: { jobOrderId: job2.id, order: 1 } });
-  const application2 = await db.application.create({
+  })
+  await db.cmsPage.create({
     data: {
-      applicantId: applicant2User.id,
-      jobOrderId: job2.id,
-      status: 'applied',
-      coverLetter: 'I am a certified caregiver with 3 years of hands-on experience caring for elderly patients, including those with dementia. I have my TESDA NC II certification and I am passionate about providing quality elderly care.',
-      matchScore: 92.3,
-      currentStageId: firstStage2?.id,
+      title: 'Contact Us',
+      slug: 'contact',
+      content: JSON.stringify({
+        address: '59 Boulevard Zerktouni, Residence Les Fleurs, 6ème Etage Appt 19, 20360 Casablanca, Morocco',
+        phone: ['+212 6 62 26 14 99', '+212 6 62 26 08 05', '+212 6 62 26 03 36'],
+        email: 'manpower@filinternational.ma',
+        hours: 'Monday - Friday: 9:00 AM - 6:00 PM (GMT+1)',
+      }),
+      status: 'published',
     },
-  });
+  })
 
-  await db.aIAnalysisResult.create({
-    data: {
-      applicationId: application2.id,
-      matchScore: 92.3,
-      semanticScore: 0.91,
-      matchedSkills: JSON.stringify(['Elderly Care', 'Patient Monitoring', 'Medication Administration', 'First Aid']),
-      missingSkills: JSON.stringify(['Companionship']),
-      explanation: 'Excellent match. Candidate has direct dementia care experience which is specifically required. All core skills present. TESDA certified. Strong recommendation for this position.',
-    },
-  });
+  // Application Form Fields
+  const formFields = [
+    { label: 'First Name', fieldType: 'text', isRequired: true, order: 0, section: 'Personal Information' },
+    { label: 'Middle Name', fieldType: 'text', isRequired: false, order: 1, section: 'Personal Information' },
+    { label: 'Last Name', fieldType: 'text', isRequired: true, order: 2, section: 'Personal Information' },
+    { label: 'Suffix', fieldType: 'text', isRequired: false, order: 3, section: 'Personal Information' },
+    { label: 'Gender', fieldType: 'select', options: JSON.stringify(['Male', 'Female', 'Prefer not to say']), isRequired: true, order: 4, section: 'Personal Information' },
+    { label: 'Birth Date', fieldType: 'date', isRequired: true, order: 5, section: 'Personal Information' },
+    { label: 'Birth Place', fieldType: 'text', isRequired: false, order: 6, section: 'Personal Information' },
+    { label: 'Nationality', fieldType: 'text', isRequired: true, order: 7, section: 'Personal Information' },
+    { label: 'Civil Status', fieldType: 'select', options: JSON.stringify(['Single', 'Married', 'Widowed', 'Separated']), isRequired: true, order: 8, section: 'Personal Information' },
+    { label: 'Religion', fieldType: 'text', isRequired: false, order: 9, section: 'Personal Information' },
+    { label: 'Height (cm)', fieldType: 'text', isRequired: false, order: 10, section: 'Physical Details' },
+    { label: 'Weight (kg)', fieldType: 'text', isRequired: false, order: 11, section: 'Physical Details' },
+    { label: 'Street Address', fieldType: 'text', isRequired: true, order: 12, section: 'Contact Information' },
+    { label: 'City', fieldType: 'text', isRequired: true, order: 13, section: 'Contact Information' },
+    { label: 'Province', fieldType: 'text', isRequired: true, order: 14, section: 'Contact Information' },
+    { label: 'Region', fieldType: 'select', options: JSON.stringify(['NCR', 'Region I', 'Region II', 'Region III', 'Region IV-A', 'Region IV-B', 'Region V', 'Region VI', 'Region VII', 'Region VIII', 'Region IX', 'Region X', 'Region XI', 'Region XII', 'Region XIII', 'CAR', 'ARMM', 'MIMAROPA']), isRequired: true, order: 15, section: 'Contact Information' },
+    { label: 'Zip Code', fieldType: 'text', isRequired: false, order: 16, section: 'Contact Information' },
+    { label: 'Mobile Number', fieldType: 'text', isRequired: true, order: 17, section: 'Contact Information' },
+    { label: 'Alternative Phone', fieldType: 'text', isRequired: false, order: 18, section: 'Contact Information' },
+    { label: 'Email Address', fieldType: 'email', isRequired: true, order: 19, section: 'Contact Information' },
+    { label: 'Highest Education', fieldType: 'select', options: JSON.stringify(['Elementary', 'High School', 'College/Vocational', 'Bachelor\'s Degree', 'Master\'s Degree', 'Doctorate']), isRequired: true, order: 20, section: 'Education & Career' },
+    { label: 'Years of Experience', fieldType: 'text', isRequired: true, order: 21, section: 'Education & Career' },
+    { label: 'Preferred Country', fieldType: 'text', isRequired: false, order: 22, section: 'Education & Career' },
+    { label: 'Preferred Job', fieldType: 'text', isRequired: false, order: 23, section: 'Education & Career' },
+    { label: 'Expected Salary', fieldType: 'text', isRequired: false, order: 24, section: 'Education & Career' },
+    { label: 'Availability Date', fieldType: 'text', isRequired: false, order: 25, section: 'Education & Career' },
+    { label: 'Passport Number', fieldType: 'text', isRequired: false, order: 26, section: 'Travel Documents' },
+    { label: 'Emergency Contact Name', fieldType: 'text', isRequired: true, order: 27, section: 'Emergency Contact' },
+    { label: 'Emergency Contact Relationship', fieldType: 'text', isRequired: true, order: 28, section: 'Emergency Contact' },
+    { label: 'Emergency Contact Phone', fieldType: 'text', isRequired: true, order: 29, section: 'Emergency Contact' },
+  ]
+  await Promise.all(formFields.map(f =>
+    db.cmsFormField.create({ data: f })
+  ))
 
-  console.log('✅ Application 2 (Rosa -> Caregiver Singapore) created');
+  // CMS Settings
+  await Promise.all([
+    db.cmsSettings.create({ data: { key: 'site_name', value: 'FIRA - Fil International Recruitment Agency' } }),
+    db.cmsSettings.create({ data: { key: 'site_tagline', value: 'We Recruit. We Deploy. We Monitor. We Deliver Results.' } }),
+    db.cmsSettings.create({ data: { key: 'site_address', value: '59 Boulevard Zerktouni, Residence Les Fleurs, 6ème Etage Appt 19, 20360 Casablanca, Morocco' } }),
+    db.cmsSettings.create({ data: { key: 'site_phone_1', value: '+212 6 62 26 14 99' } }),
+    db.cmsSettings.create({ data: { key: 'site_phone_2', value: '+212 6 62 26 08 05' } }),
+    db.cmsSettings.create({ data: { key: 'site_phone_3', value: '+212 6 62 26 03 36' } }),
+    db.cmsSettings.create({ data: { key: 'site_email', value: 'manpower@filinternational.ma' } }),
+    db.cmsSettings.create({ data: { key: 'site_copyright', value: '© 2025 FIL INTERNATIONAL RECRUITMENT AGENCY. All Rights Reserved.' } }),
+  ])
 
-  // ============ 7. ENDORSEMENTS ============
-  // Juan's application endorsed by Local Agency to FIRA
-  await db.endorsement.create({
-    data: {
-      applicationId: application1.id,
-      endorsedById: localAgencyAdmin.id,
-      employerId: employerProfile.id,
-      status: 'pending_fira_review',
-      coverNote: 'Highly recommended candidate. Strong household skills and nursing background. Passes initial screening with flying colors.',
-      agencyNote: 'Verified all documents. Passport valid until 2028. Ready for medical examination.',
-    },
-  });
-
-  console.log('✅ Endorsement created (Juan -> FIRA review)');
-
-  // ============ 8. NOTIFICATIONS ============
+  // Notifications
   await db.notification.create({
     data: {
-      userId: applicant1User.id,
-      title: 'Application Submitted Successfully',
-      message: 'Your application for Domestic Helper in Riyadh, Saudi Arabia has been submitted. You are now being screened.',
-      type: 'success',
-    },
-  });
-
-  await db.notification.create({
-    data: {
-      userId: applicant1User.id,
-      title: 'Naisantabi ang iyong aplikasyon',
-      message: 'Matagumpay na na-submit ang iyong aplikasyon para sa Domestic Helper sa Riyadh, Saudi Arabia. Kasalukuyang sinusuri na ito.',
+      userId: users[2].id,
+      title: 'Welcome to FIRA!',
+      message: 'Complete your profile to increase your chances of getting hired. Upload your documents and keep your information up to date.',
       type: 'info',
     },
-  });
-
+  })
   await db.notification.create({
     data: {
-      userId: localAgencyAdmin.id,
-      title: 'New Application Received',
-      message: 'Juan Dela Cruz has applied for the Domestic Helper position in Riyadh.',
+      userId: users[0].id,
+      title: 'New Applications Received',
+      message: 'You have 1 new application to review. Check your dashboard for details.',
       type: 'info',
     },
-  });
+  })
 
-  await db.notification.create({
-    data: {
-      userId: applicant2User.id,
-      title: 'Application Submitted Successfully',
-      message: 'Your application for Caregiver position in Singapore has been submitted.',
-      type: 'success',
-    },
-  });
-
-  await db.notification.create({
-    data: {
-      userId: applicant3User.id,
-      title: 'Kumpletohin ang iyong profile',
-      message: 'May mga ilang impormasyon pa na kailangan mong i-complete sa iyong profile bago ka makapag-apply.',
-      type: 'warning',
-    },
-  });
-
-  console.log('✅ Notifications created');
-
-  console.log('');
-  console.log('🎉 Seeding complete!');
-  console.log('');
-  console.log('📋 Test Accounts:');
-  console.log('   FIRA Admin (International): admin@fira.com.ph / FiraAdmin2025!');
-  console.log('   Local Agency Admin:         agency@fira.com.ph / AgencyAdmin2025!');
-  console.log('   Local Agency Recruiter:     recruiter@fira.com.ph / Recruiter2025!');
-  console.log('   Local Agency 2 Admin:       myk@fira.com.ph / MykAdmin2025!');
-  console.log('   Employer (Saudi):           employer@fira.com.ph / Employer2025!');
-  console.log('   Employer (Japan):           employer2@fira.com.ph / Employer2025!');
-  console.log('   Applicant 1 (Juan - DH):    applicant@fira.com.ph / Applicant2025!');
-  console.log('   Applicant 2 (Rosa - CG):     rosa@fira.com.ph / Applicant2025!');
-  console.log('   Applicant 3 (Nena - DH):    nena@fira.com.ph / Applicant2025!');
-  console.log('   Applicant 4 (Mark - Welder): mark@fira.com.ph / Applicant2025!');
-  console.log('');
-  console.log('💼 Jobs Created: 5 (3 public, 1 agency_only, 1 public w/ Japan employer)');
-  console.log('📋 Applications: 2');
-  console.log('📤 Endorsements: 1');
+  console.log('✅ Seed completed successfully!')
+  console.log('📋 Test Accounts:')
+  console.log('   Super Admin: admin@fira.com.ph / admin2025!')
+  console.log('   Staff: staff@fira.com.ph / staff2025!')
+  console.log('   Applicant: applicant@fira.com.ph / applicant2025!')
+  console.log('   Agency: agency@fira.com.ph / agency2025!')
+  console.log('   Employer: employer@fira.com.ph / employer2025!')
 }
 
 main()
-  .catch((e) => {
-    console.error('❌ Seed error:', e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await db.$disconnect();
-  });
+  .catch(console.error)
+  .finally(() => db.$disconnect())
