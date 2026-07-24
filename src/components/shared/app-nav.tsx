@@ -8,7 +8,7 @@ import {
   Briefcase, Users, FileText, Sparkles, Send, Columns, Building,
   Building2, UserCheck, ChevronDown, UserCog, Globe, Languages,
   HelpCircle, MessageSquareQuote, Share2, Network, ScrollText,
-  LayoutList, Settings, X, Home, Info, BriefcaseIcon, MessageCircle, PhoneIcon,
+  LayoutList, Settings, X, Home, Info, MessageCircle, Phone,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -35,13 +35,13 @@ const publicNavItems = [
   { label: 'Home', labelFil: 'Home', icon: 'Home', view: 'landing' as ViewName },
   { label: 'About', labelFil: 'Tungkol', icon: 'Info', view: 'about' as ViewName },
   { label: 'Services', labelFil: 'Serbisyo', icon: 'Briefcase', view: 'services' as ViewName },
-  { label: 'Jobs', labelFil: 'Trabaho', icon: 'BriefcaseIcon', view: 'job-listing' as ViewName },
+  { label: 'Jobs', labelFil: 'Trabaho', icon: 'Briefcase', view: 'job-listing' as ViewName },
   { label: 'FAQ', labelFil: 'FAQ', icon: 'HelpCircle', view: 'faq' as ViewName },
-  { label: 'Contact', labelFil: 'Makipag-ugnay', icon: 'PhoneIcon', view: 'contact' as ViewName },
+  { label: 'Contact', labelFil: 'Makipag-ugnay', icon: 'Phone', view: 'contact' as ViewName },
 ]
 
 const publicIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  Home, Info, Briefcase, HelpCircle, PhoneIcon: Phone, BriefcaseIcon: Briefcase, MessageCircle,
+  Home, Info, Briefcase, HelpCircle, Phone, MessageCircle,
 }
 
 export function AppNav() {
