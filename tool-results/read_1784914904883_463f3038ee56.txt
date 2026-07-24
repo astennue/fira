@@ -1,0 +1,505 @@
+     1→import { PrismaClient } from '@prisma/client'
+     2→import bcrypt from 'bcryptjs'
+     3→
+     4→const db = new PrismaClient()
+     5→
+     6→async function hashPassword(password: string) {
+     7→  return bcrypt.hash(password, 12)
+     8→}
+     9→
+    10→async function main() {
+    11→  console.log('🌱 Seeding FIRA database...')
+    12→
+    13→  // Clean existing data
+    14→  const tables = [
+    15→    'VerificationCode', 'CmsSettings', 'CmsFormField', 'CmsTermsPrivacy',
+    16→    'CmsOrgChart', 'CmsSocialMedia', 'CmsTestimonial', 'CmsFaq', 'CmsPage',
+    17→    'ResumeEnhancement', 'AIAnalysisResult', 'Notification', 'Endorsement',
+    18→    'ATSStageHistory', 'ApplicationCustomResponse', 'Application',
+    19→    'ATSStage', 'JobCustomField', 'JobOrder', 'ApplicantTraining',
+    20→    'ApplicantDocument', 'ApplicantReference', 'ApplicantCertification',
+    21→    'ApplicantLanguage', 'ApplicantSkill', 'ApplicantExperience',
+    22→    'ApplicantEducation', 'ApplicantProfile', 'EmployerProfile',
+    23→    'AgencyMember', 'Agency', 'User'
+    24→  ]
+    25→
+    26→  for (const table of tables) {
+    27→    try {
+    28→      await (db as any)[table].deleteMany()
+    29→    } catch (e) {
+    30→      // ignore
+    31→    }
+    32→  }
+    33→
+    34→  // ============ USERS ============
+    35→  console.log('  Creating users...')
+    36→  const users = await Promise.all([
+    37→    db.user.create({
+    38→      data: {
+    39→        email: 'admin@fira.com.ph', password: await hashPassword('admin2025!'),
+    40→        name: 'FIRA Super Admin', role: 'super_admin', phone: '+212 662 261 499',
+    41→        isActive: true, isApproved: true,
+    42→      },
+    43→    }),
+    44→    db.user.create({
+    45→      data: {
+    46→        email: 'staff@fira.com.ph', password: await hashPassword('staff2025!'),
+    47→        name: 'FIRA Staff Member', role: 'staff', phone: '+212 662 260 805',
+    48→        isActive: true, isApproved: true,
+    49→      },
+    50→    }),
+    51→    db.user.create({
+    52→      data: {
+    53→        email: 'applicant@fira.com.ph', password: await hashPassword('applicant2025!'),
+    54→        name: 'Maria Santos', role: 'applicant', phone: '+63 917 123 4567',
+    55→        isActive: true, isApproved: true,
+    56→      },
+    57→    }),
+    58→    db.user.create({
+    59→      data: {
+    60→        email: 'agency@fira.com.ph', password: await hashPassword('agency2025!'),
+    61→        name: 'Manila Recruitment Corp', role: 'local_agency', phone: '+63 2 8888 5678',
+    62→        isActive: true, isApproved: true,
+    63→      },
+    64→    }),
+    65→    db.user.create({
+    66→      data: {
+    67→        email: 'employer@fira.com.ph', password: await hashPassword('employer2025!'),
+    68→        name: 'Al Baraka Holding', role: 'employer', phone: '+212 662 260 336',
+    69→        isActive: true, isApproved: true,
+    70→      },
+    71→    }),
+    72→  ])
+    73→
+    74→  // ============ AGENCY & MEMBERS ============
+    75→  console.log('  Creating agencies...')
+    76→  const agency = await db.agency.create({
+    77→    data: {
+    78→      name: 'Manila Recruitment Corp', agencyType: 'local',
+    79→      address: '123 Ayala Ave, Makati City', city: 'Makati', country: 'Philippines',
+    80→      licenseNo: 'POEA-LB-2024-001', phone: '+63 2 8888 5678',
+    81→      email: 'info@manilarecruit.ph', isActive: true, isApproved: true,
+    82→    },
+    83→  })
+    84→  await db.agencyMember.create({
+    85→    data: { userId: users[3].id, agencyId: agency.id, role: 'admin' },
+    86→  })
+    87→
+    88→  // ============ EMPLOYER PROFILE ============
+    89→  console.log('  Creating employer profile...')
+    90→  const employerProfile = await db.employerProfile.create({
+    91→    data: {
+    92→      userId: users[4].id, companyName: 'Al Baraka Holding',
+    93→      companyAddress: 'Casablanca, Morocco', country: 'Morocco',
+    94→      industry: 'Household Services', contactPerson: 'Ahmed Bennani',
+    95→      contactEmail: 'ahmed@albaraka.ma', contactPhone: '+212 662 260 336',
+    96→      website: 'https://albaraka.ma',
+    97→    },
+    98→  })
+    99→
+   100→  // ============ APPLICANT PROFILE ============
+   101→  console.log('  Creating applicant profile...')
+   102→  await db.applicantProfile.create({
+   103→    data: {
+   104→      userId: users[2].id, firstName: 'Maria', middleName: 'Garcia', lastName: 'Santos',
+   105→      gender: 'Female', nationality: 'Filipino', civilStatus: 'Single',
+   106→      address: '456 Rizal St, Quezon City', city: 'Quezon City', province: 'Metro Manila',
+   107→      region: 'NCR', phone: '+63 917 123 4567',
+   108→      applicantType: 'domestic_helper', highestEducation: 'college_vocational',
+   109→      yearsExperience: 3, preferredCountry: 'Morocco', preferredJob: 'Household Service Worker',
+   110→      passportNo: 'PN1234567', passportStatus: 'valid',
+   111→      medicalStatus: 'passed', formStep: 3, isComplete: true,
+   112→    },
+   113→  })
+   114→
+   115→  // ============ JOBS ============
+   116→  console.log('  Creating job orders...')
+   117→  const jobs = await Promise.all([
+   118→    db.jobOrder.create({
+   119→      data: {
+   120→        title: 'Household Service Worker / Nanny', description: 'Looking for experienced Filipino household service workers to work in Morocco. Must be skilled in household chores, cooking, and child care.',
+   121→        country: 'Morocco', city: 'Casablanca', category: 'domestic_helper',
+   122→        jobType: 'domestic_helper', salaryMin: 400, salaryMax: 600,
+   123→        salaryCurrency: 'USD', salaryPeriod: 'monthly', contractType: 'full_time',
+   124→        duration: '2 years', slots: 10, requirements: 'At least 2 years experience as household worker. Can cook, clean, and take care of children. Must be able to communicate in basic English or Arabic.',
+   125→        benefits: 'Free housing, free food, round-trip airfare, medical insurance, 1 day off per week, annual leave with pay',
+   126→        requiredSkills: 'Household management, Cooking, Child care, Cleaning, Laundry',
+   127→        status: 'open', visibility: 'public', employerId: employerProfile.id, agencyId: agency.id, createdBy: users[0].id,
+   128→      },
+   129→    }),
+   130→    db.jobOrder.create({
+   131→      data: {
+   132→        title: 'Caregiver for Elderly Care', description: 'Seeking compassionate Filipino caregivers to provide care for elderly patients in private homes in Morocco.',
+   133→        country: 'Morocco', city: 'Rabat', category: 'caregiver',
+   134→        jobType: 'domestic_helper', salaryMin: 500, salaryMax: 700,
+   135→        salaryCurrency: 'USD', salaryPeriod: 'monthly', contractType: 'full_time',
+   136→        duration: '2 years', slots: 5, requirements: 'Certificate in caregiving. At least 1 year experience in elderly care. Patient, compassionate, and physically fit.',
+   137→        benefits: 'Free housing, free food, medical insurance, overtime pay, annual bonus',
+   138→        requiredSkills: 'Elderly care, First aid, Patient care, Medication management, Companionship',
+   139→        status: 'open', visibility: 'public', employerId: employerProfile.id, agencyId: agency.id, createdBy: users[0].id,
+   140→      },
+   141→    }),
+   142→    db.jobOrder.create({
+   143→      data: {
+   144→        title: 'Professional Nurse - Hospital', description: 'Hiring licensed Filipino nurses for a major hospital in Morocco. Must have valid PRC license and hospital experience.',
+   145→        country: 'Morocco', city: 'Casablanca', category: 'nurse',
+   146→        jobType: 'skills_professional', salaryMin: 1200, salaryMax: 1800,
+   147→        salaryCurrency: 'USD', salaryPeriod: 'monthly', contractType: 'full_time',
+   148→        duration: '3 years', slots: 15, requirements: 'BSN degree, valid PRC license, at least 2 years hospital experience, BLS/ACLS certified.',
+   149→        benefits: 'Free housing, medical insurance, relocation allowance, professional development, paid vacations',
+   150→        requiredSkills: 'Patient assessment, IV therapy, Medication administration, Nursing documentation, Emergency response',
+   151→        status: 'open', visibility: 'public', employerId: employerProfile.id, agencyId: agency.id, createdBy: users[0].id,
+   152→      },
+   153→    }),
+   154→    db.jobOrder.create({
+   155→      data: {
+   156→        title: 'Factory Worker - Electronics Assembly', description: 'Looking for skilled Filipino workers for electronics manufacturing company in Morocco.',
+   157→        country: 'Morocco', city: 'Tangier', category: 'factory',
+   158→        jobType: 'skills_professional', salaryMin: 600, salaryMax: 900,
+   159→        salaryCurrency: 'USD', salaryPeriod: 'monthly', contractType: 'full_time',
+   160→        duration: '2 years', slots: 20, requirements: 'At least high school graduate. Experience in electronics assembly preferred. Willing to work in shifts.',
+   161→        benefits: 'Free housing, transportation, medical insurance, overtime pay, performance bonus',
+   162→        requiredSkills: 'Electronics assembly, Quality control, Teamwork, Attention to detail',
+   163→        status: 'open', visibility: 'public', employerId: users[4].id, agencyId: agency.id, createdBy: users[0].id,
+   164→      },
+   165→    }),
+   166→    db.jobOrder.create({
+   167→      data: {
+   168→        title: 'Hotel Staff - Hospitality', description: 'Hiring experienced Filipino hospitality workers for a luxury hotel chain in Morocco.',
+   169→        country: 'Morocco', city: 'Marrakech', category: 'hospitality',
+   170→        jobType: 'skills_professional', salaryMin: 700, salaryMax: 1000,
+   171→        salaryCurrency: 'USD', salaryPeriod: 'monthly', contractType: 'full_time',
+   172→        duration: '2 years', slots: 8, requirements: 'Experience in hotel or restaurant service. Good communication skills. Professional appearance and demeanor.',
+   173→        benefits: 'Free housing, meals, uniform, medical insurance, tips, career advancement opportunities',
+   174→        requiredSkills: 'Customer service, Housekeeping, Food service, Front desk operations, English communication',
+   175→        status: 'open', visibility: 'public', employerId: employerProfile.id, agencyId: agency.id, createdBy: users[0].id,
+   176→      },
+   177→    }),
+   178→  ])
+   179→
+   180→  // ============ ATS STAGES ============
+   181→  console.log('  Creating ATS stages...')
+   182→  for (const job of jobs) {
+   183→    const stages = [
+   184→      { name: 'Applied', order: 0, color: '#3b82f6' },
+   185→      { name: 'Screening', order: 1, color: '#f59e0b' },
+   186→      { name: 'Interview', order: 2, color: '#8b5cf6' },
+   187→      { name: 'Assessment', order: 3, color: '#ec4899' },
+   188→      { name: 'Offer', order: 4, color: '#10b981' },
+   189→      { name: 'Deployed', order: 5, color: '#06b6d4' },
+   190→    ]
+   191→    await Promise.all(stages.map(s =>
+   192→      db.aTSStage.create({ data: { jobOrderId: job.id, ...s } })
+   193→    ))
+   194→  }
+   195→
+   196→  // ============ APPLICATIONS ============
+   197→  console.log('  Creating applications...')
+   198→  const stage1 = await db.aTSStage.findFirst({ where: { jobOrderId: jobs[0].id, order: 0 } })
+   199→  if (stage1) {
+   200→    await db.application.create({
+   201→      data: {
+   202→        applicantId: users[2].id, jobOrderId: jobs[0].id,
+   203→        status: 'applied', currentStageId: stage1.id,
+   204→        coverLetter: 'I am a hardworking and dedicated household worker with 3 years of experience. I am skilled in cooking, cleaning, and child care.',
+   205→      },
+   206→    })
+   207→  }
+   208→
+   209→  // ============ CMS DATA ============
+   210→  console.log('  Creating CMS content...')
+   211→
+   212→  // FAQ
+   213→  const faqs = [
+   214→    { question: 'What services does FIRA provide?', answer: 'FIRA (Fil International Recruitment Agency) provides comprehensive overseas recruitment services including job matching, document processing, skills assessment, pre-departure orientation, and post-deployment monitoring. We connect Filipino workers with trusted employers in Morocco and other countries.', category: 'General' },
+   215→    { question: 'How do I apply for a job?', answer: 'To apply for a job: 1) Register an account on our platform, 2) Complete your applicant profile with your skills and documents, 3) Browse available job openings, 4) Submit your application with a cover letter. Our team will review your application and guide you through the process.', category: 'Application Process' },
+   216→    { question: 'What are the requirements for applying?', answer: 'Basic requirements include: Valid Philippine passport, at least 2 years of relevant work experience, educational certificates, NBI clearance, and medical certificate. Specific requirements may vary depending on the job category and country.', category: 'Requirements' },
+   217→    { question: 'Is there any placement fee?', answer: 'FIRA follows Philippine government regulations on placement fees. We do not charge illegal fees. Any processing fees are transparent and within the limits set by the Department of Migrant Workers (DMW). Please verify all fees before proceeding.', category: 'Fees' },
+   218→    { question: 'How long does the recruitment process take?', answer: 'The recruitment process typically takes 2-6 months depending on the job category and employer requirements. This includes application review, interview, medical examination, document processing, and visa application.', category: 'Application Process' },
+   219→    { question: 'What support do you provide after deployment?', answer: 'We provide comprehensive post-deployment support including: Regular check-ins with deployed workers, assistance with employer-related concerns, access to our 24/7 hotline, repatriation assistance when needed, and reintegration programs for returning workers.', category: 'Support' },
+   220→    { question: 'Do you offer training programs?', answer: 'Yes, we offer pre-departure training programs including: Language and cultural orientation, skills enhancement workshops, safety and rights awareness, and country-specific orientation for destination countries.', category: 'Training' },
+   221→    { question: 'How can employers partner with FIRA?', answer: 'Employers interested in partnering with FIRA can contact us through our website or directly via email/phone. We offer customized recruitment solutions including: Job posting and candidate sourcing, screening and skills assessment, document processing, and deployment coordination.', category: 'For Employers' },
+   222→  ]
+   223→  await Promise.all(faqs.map((f, i) =>
+   224→    db.cmsFaq.create({ data: { ...f, order: i } })
+   225→  ))
+   226→
+   227→  // Testimonials
+   228→  const testimonials = [
+   229→    { name: 'Rosa Mendoza', position: 'Household Service Worker', company: 'Deployed to Morocco', feedback: 'FIRA helped me find a good employer in Morocco. The process was smooth and transparent. I am now able to provide a better life for my family back in the Philippines.', rating: 5 },
+   230→    { name: 'Juan Dela Cruz', position: 'Caregiver', company: 'Deployed to Morocco', feedback: 'The team at FIRA was very supportive from application to deployment. They made sure I was prepared and comfortable with my new role. I highly recommend FIRA to all OFWs.', rating: 5 },
+   231→    { name: 'Carmen Reyes', position: 'Nurse', company: 'Deployed to Morocco', feedback: 'As a nurse, I was looking for international opportunities. FIRA matched me with a great hospital in Morocco. The salary and benefits are excellent. Thank you FIRA!', rating: 4 },
+   232→    { name: 'Pedro Santos', position: 'Factory Worker', company: 'Deployed to Morocco', feedback: 'FIRA made the recruitment process easy and stress-free. Their team was always available to answer my questions. I am grateful for their professional service.', rating: 5 },
+   233→    { name: 'Ana Flores', position: 'Hotel Staff', company: 'Deployed to Morocco', feedback: 'I am very happy with my deployment through FIRA. The hotel I work for treats me well and the salary is competitive. FIRA truly cares about the welfare of Filipino workers.', rating: 5 },
+   234→  ]
+   235→  await Promise.all(testimonials.map(t =>
+   236→    db.cmsTestimonial.create({ data: t })
+   237→  ))
+   238→
+   239→  // Social Media
+   240→  const socials = [
+   241→    { platform: 'facebook', title: 'Facebook', url: 'https://facebook.com/filinternational', order: 0 },
+   242→    { platform: 'instagram', title: 'Instagram', url: 'https://instagram.com/filinternational', order: 1 },
+   243→    { platform: 'whatsapp', title: 'WhatsApp', url: 'https://wa.me/212662261499', order: 2 },
+   244→    { platform: 'twitter', title: 'Twitter', url: 'https://twitter.com/filinternational', order: 3 },
+   245→    { platform: 'linkedin', title: 'LinkedIn', url: 'https://linkedin.com/company/filinternational', order: 4 },
+   246→    { platform: 'tiktok', title: 'TikTok', url: 'https://tiktok.com/@filinternational', order: 5 },
+   247→    { platform: 'youtube', title: 'YouTube', url: 'https://youtube.com/@filinternational', order: 6 },
+   248→  ]
+   249→  await Promise.all(socials.map(s =>
+   250→    db.cmsSocialMedia.create({ data: s })
+   251→  ))
+   252→
+   253→  // Terms & Privacy
+   254→  await db.cmsTermsPrivacy.create({
+   255→    data: {
+   256→      type: 'terms_of_service',
+   257→      title: 'Terms of Service',
+   258→      content: `TERMS OF SERVICE
+   259→
+   260→Last Updated: ${new Date().toISOString().split('T')[0]}
+   261→
+   262→1. ACCEPTANCE OF TERMS
+   263→By accessing and using the FIRA (Fil International Recruitment Agency) platform, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our platform.
+   264→
+   265→2. ELIGIBILITY
+   266→You must be at least 18 years of age to use this platform. By using our services, you represent and warrant that you are of legal age to enter into a binding agreement.
+   267→
+   268→3. USER ACCOUNTS
+   269→You are responsible for maintaining the confidentiality of your account information and password. You agree to accept responsibility for all activities that occur under your account.
+   270→
+   271→4. SERVICES
+   272→FIRA provides overseas recruitment services including but not limited to: job matching, document processing, skills assessment, pre-departure orientation, and post-deployment monitoring.
+   273→
+   274→5. ACCURACY OF INFORMATION
+   275→You agree to provide accurate, current, and complete information in your application and profile. Providing false information may result in account termination.
+   276→
+   277→6. FEES
+   278→Any applicable fees will be communicated transparently before any payment is required. FIRA complies with all Philippine government regulations regarding placement fees.
+   279→
+   280→7. PRIVACY
+   281→Your use of our platform is also governed by our Privacy Policy, which is incorporated by reference into these Terms.
+   282→
+   283→8. LIMITATION OF LIABILITY
+   284→FIRA shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the platform.
+   285→
+   286→9. GOVERNING LAW
+   287→These Terms shall be governed by and construed in accordance with the laws of the Philippines.
+   288→
+   289→10. CONTACT
+   290→For any questions regarding these Terms, please contact us at manpower@filinternational.ma or +212 6 62 26 14 99.`,
+   291→      version: '1.0',
+   292→    },
+   293→  })
+   294→  await db.cmsTermsPrivacy.create({
+   295→    data: {
+   296→      type: 'data_privacy_consent',
+   297→      title: 'Data Privacy Consent',
+   298→      content: `DATA PRIVACY CONSENT
+   299→
+   300→Last Updated: ${new Date().toISOString().split('T')[0]}
+   301→
+   302→FIRA (Fil International Recruitment Agency) is committed to protecting your personal data in accordance with the Data Privacy Act of 2012 (Republic Act No. 10173).
+   303→
+   304→1. DATA COLLECTED
+   305→We collect personal information including but not limited to: full name, contact details, educational background, work experience, government-issued IDs, and medical records as required for recruitment processing.
+   306→
+   307→2. PURPOSE OF COLLECTION
+   308→Your personal data is collected and processed for: processing your job application, matching you with suitable job opportunities, facilitating deployment procedures, and providing post-deployment support.
+   309→
+   310→3. DATA SHARING
+   311→Your data may be shared with: potential employers (with your consent), government agencies (POEA/DMW, DOLE, etc.), partner recruitment agencies, and medical service providers as required for recruitment processing.
+   312→
+   313→4. DATA SECURITY
+   314→We implement appropriate security measures to protect your personal data against unauthorized access, alteration, disclosure, or destruction.
+   315→
+   316→5. DATA RETENTION
+   317→We retain your personal data for the duration necessary to fulfill the purposes outlined above, or as required by law.
+   318→
+   319→6. YOUR RIGHTS
+   320→You have the right to: access your personal data, request correction of inaccurate data, request deletion of your data (subject to legal requirements), and withdraw your consent.
+   321→
+   322→7. CONSENT
+   323→By using our platform, you consent to the collection, processing, and sharing of your personal data as described in this Privacy Notice.
+   324→
+   325→8. CONTACT
+   326→For data privacy concerns, contact our Data Protection Officer at manpower@filinternational.ma.`,
+   327→      version: '1.0',
+   328→    },
+   329→  })
+   330→
+   331→  // Org Chart
+   332→  const orgChart = [
+   333→    { name: 'Ahmed Bennani', position: 'General Manager', department: 'Executive', order: 0, email: 'gm@filinternational.ma' },
+   334→    { name: 'Fatima Zahra', position: 'Operations Director', department: 'Operations', order: 1, email: 'ops@filinternational.ma' },
+   335→    { name: 'Carlos Rivera', position: 'Recruitment Manager', department: 'Recruitment', order: 2, email: 'recruit@filinternational.ma' },
+   336→    { name: 'Aisha Benali', position: 'HR Manager', department: 'Human Resources', order: 3, email: 'hr@filinternational.ma' },
+   337→    { name: 'Jose Rodriguez', position: 'Document Processor', department: 'Processing', order: 4, email: 'docs@filinternational.ma' },
+   338→    { name: 'Nour El Houda', position: 'Finance Manager', department: 'Finance', order: 5, email: 'finance@filinternational.ma' },
+   339→  ]
+   340→  await Promise.all(orgChart.map(o =>
+   341→    db.cmsOrgChart.create({ data: o })
+   342→  ))
+   343→
+   344→  // CMS Pages (About, Services, Contact content)
+   345→  await db.cmsPage.create({
+   346→    data: {
+   347→      title: 'About FIRA',
+   348→      slug: 'about',
+   349→      content: JSON.stringify({
+   350→        sections: [
+   351→          {
+   352→            type: 'hero',
+   353→            title: 'About Fil International Recruitment Agency',
+   354→            subtitle: 'Your trusted partner in international recruitment since 2020'
+   355→          },
+   356→          {
+   357→            type: 'content',
+   358→            title: 'Who We Are',
+   359→            body: 'Fil International Recruitment Agency (FIRA) is a licensed overseas recruitment agency based in Casablanca, Morocco. We specialize in connecting skilled Filipino workers with reputable employers across Morocco and other countries. Our mission is to provide ethical, transparent, and efficient recruitment services that benefit both workers and employers.'
+   360→          },
+   361→          {
+   362→            type: 'content',
+   363→            title: 'Our Mission',
+   364→            body: 'To be the leading recruitment agency that bridges Filipino talent with global opportunities, while ensuring the welfare, rights, and dignity of every worker we deploy.'
+   365→          },
+   366→          {
+   367→            type: 'content',
+   368→            title: 'Our Vision',
+   369→            body: 'A world where every Filipino worker has access to safe, fair, and rewarding international employment opportunities.'
+   370→          },
+   371→          {
+   372→            type: 'values',
+   373→            items: [
+   374→              { title: 'Integrity', desc: 'We operate with transparency and honesty in all our dealings.' },
+   375→              { title: 'Excellence', desc: 'We strive to deliver the highest quality recruitment services.' },
+   376→              { title: 'Compassion', desc: 'We genuinely care for the welfare of every worker.' },
+   377→              { title: 'Innovation', desc: 'We leverage technology to improve the recruitment experience.' },
+   378→            ]
+   379→          }
+   380→        ]
+   381→      }),
+   382→      status: 'published',
+   383→    },
+   384→  })
+   385→  await db.cmsPage.create({
+   386→    data: {
+   387→      title: 'Our Services',
+   388→      slug: 'services',
+   389→      content: JSON.stringify({
+   390→        sections: [
+   391→          {
+   392→            type: 'hero',
+   393→            title: 'Our Services',
+   394→            subtitle: 'Comprehensive recruitment solutions for Filipino workers and international employers'
+   395→          },
+   396→          {
+   397→            type: 'services',
+   398→            items: [
+   399→              { icon: 'users', title: 'Recruitment & Placement', desc: 'We source, screen, and match qualified Filipino workers with international job openings across various industries including healthcare, hospitality, household services, and manufacturing.' },
+   400→              { icon: 'file-text', title: 'Document Processing', desc: 'Our team handles all necessary documentation including POEA processing, visa applications, work permits, and contract preparation to ensure a smooth deployment process.' },
+   401→              { icon: 'graduation-cap', title: 'Skills Assessment & Training', desc: 'We conduct thorough skills assessment and provide pre-departure training including language courses, cultural orientation, and job-specific skills enhancement.' },
+   402→              { icon: 'heart-pulse', title: 'Medical & Health Clearance', desc: 'We coordinate medical examinations and health clearances through accredited clinics to ensure all workers meet the health requirements of the destination country.' },
+   403→              { icon: 'plane', title: 'Pre-Departure Orientation', desc: 'Comprehensive orientation programs that prepare workers for their new environment including cultural differences, work expectations, rights awareness, and emergency procedures.' },
+   404→              { icon: 'headset', title: 'Post-Deployment Support', desc: 'Ongoing support for deployed workers including regular check-ins, dispute resolution assistance, welfare monitoring, and repatriation services when needed.' },
+   405→            ]
+   406→          }
+   407→        ]
+   408→      }),
+   409→      status: 'published',
+   410→    },
+   411→  })
+   412→  await db.cmsPage.create({
+   413→    data: {
+   414→      title: 'Contact Us',
+   415→      slug: 'contact',
+   416→      content: JSON.stringify({
+   417→        address: '59 Boulevard Zerktouni, Residence Les Fleurs, 6ème Etage Appt 19, 20360 Casablanca, Morocco',
+   418→        phone: ['+212 6 62 26 14 99', '+212 6 62 26 08 05', '+212 6 62 26 03 36'],
+   419→        email: 'manpower@filinternational.ma',
+   420→        hours: 'Monday - Friday: 9:00 AM - 6:00 PM (GMT+1)',
+   421→      }),
+   422→      status: 'published',
+   423→    },
+   424→  })
+   425→
+   426→  // Application Form Fields
+   427→  const formFields = [
+   428→    { label: 'First Name', fieldType: 'text', isRequired: true, order: 0, section: 'Personal Information' },
+   429→    { label: 'Middle Name', fieldType: 'text', isRequired: false, order: 1, section: 'Personal Information' },
+   430→    { label: 'Last Name', fieldType: 'text', isRequired: true, order: 2, section: 'Personal Information' },
+   431→    { label: 'Suffix', fieldType: 'text', isRequired: false, order: 3, section: 'Personal Information' },
+   432→    { label: 'Gender', fieldType: 'select', options: JSON.stringify(['Male', 'Female', 'Prefer not to say']), isRequired: true, order: 4, section: 'Personal Information' },
+   433→    { label: 'Birth Date', fieldType: 'date', isRequired: true, order: 5, section: 'Personal Information' },
+   434→    { label: 'Birth Place', fieldType: 'text', isRequired: false, order: 6, section: 'Personal Information' },
+   435→    { label: 'Nationality', fieldType: 'text', isRequired: true, order: 7, section: 'Personal Information' },
+   436→    { label: 'Civil Status', fieldType: 'select', options: JSON.stringify(['Single', 'Married', 'Widowed', 'Separated']), isRequired: true, order: 8, section: 'Personal Information' },
+   437→    { label: 'Religion', fieldType: 'text', isRequired: false, order: 9, section: 'Personal Information' },
+   438→    { label: 'Height (cm)', fieldType: 'text', isRequired: false, order: 10, section: 'Physical Details' },
+   439→    { label: 'Weight (kg)', fieldType: 'text', isRequired: false, order: 11, section: 'Physical Details' },
+   440→    { label: 'Street Address', fieldType: 'text', isRequired: true, order: 12, section: 'Contact Information' },
+   441→    { label: 'City', fieldType: 'text', isRequired: true, order: 13, section: 'Contact Information' },
+   442→    { label: 'Province', fieldType: 'text', isRequired: true, order: 14, section: 'Contact Information' },
+   443→    { label: 'Region', fieldType: 'select', options: JSON.stringify(['NCR', 'Region I', 'Region II', 'Region III', 'Region IV-A', 'Region IV-B', 'Region V', 'Region VI', 'Region VII', 'Region VIII', 'Region IX', 'Region X', 'Region XI', 'Region XII', 'Region XIII', 'CAR', 'ARMM', 'MIMAROPA']), isRequired: true, order: 15, section: 'Contact Information' },
+   444→    { label: 'Zip Code', fieldType: 'text', isRequired: false, order: 16, section: 'Contact Information' },
+   445→    { label: 'Mobile Number', fieldType: 'text', isRequired: true, order: 17, section: 'Contact Information' },
+   446→    { label: 'Alternative Phone', fieldType: 'text', isRequired: false, order: 18, section: 'Contact Information' },
+   447→    { label: 'Email Address', fieldType: 'email', isRequired: true, order: 19, section: 'Contact Information' },
+   448→    { label: 'Highest Education', fieldType: 'select', options: JSON.stringify(['Elementary', 'High School', 'College/Vocational', 'Bachelor\'s Degree', 'Master\'s Degree', 'Doctorate']), isRequired: true, order: 20, section: 'Education & Career' },
+   449→    { label: 'Years of Experience', fieldType: 'text', isRequired: true, order: 21, section: 'Education & Career' },
+   450→    { label: 'Preferred Country', fieldType: 'text', isRequired: false, order: 22, section: 'Education & Career' },
+   451→    { label: 'Preferred Job', fieldType: 'text', isRequired: false, order: 23, section: 'Education & Career' },
+   452→    { label: 'Expected Salary', fieldType: 'text', isRequired: false, order: 24, section: 'Education & Career' },
+   453→    { label: 'Availability Date', fieldType: 'text', isRequired: false, order: 25, section: 'Education & Career' },
+   454→    { label: 'Passport Number', fieldType: 'text', isRequired: false, order: 26, section: 'Travel Documents' },
+   455→    { label: 'Emergency Contact Name', fieldType: 'text', isRequired: true, order: 27, section: 'Emergency Contact' },
+   456→    { label: 'Emergency Contact Relationship', fieldType: 'text', isRequired: true, order: 28, section: 'Emergency Contact' },
+   457→    { label: 'Emergency Contact Phone', fieldType: 'text', isRequired: true, order: 29, section: 'Emergency Contact' },
+   458→  ]
+   459→  await Promise.all(formFields.map(f =>
+   460→    db.cmsFormField.create({ data: f })
+   461→  ))
+   462→
+   463→  // CMS Settings
+   464→  await Promise.all([
+   465→    db.cmsSettings.create({ data: { key: 'site_name', value: 'FIRA - Fil International Recruitment Agency' } }),
+   466→    db.cmsSettings.create({ data: { key: 'site_tagline', value: 'We Recruit. We Deploy. We Monitor. We Deliver Results.' } }),
+   467→    db.cmsSettings.create({ data: { key: 'site_address', value: '59 Boulevard Zerktouni, Residence Les Fleurs, 6ème Etage Appt 19, 20360 Casablanca, Morocco' } }),
+   468→    db.cmsSettings.create({ data: { key: 'site_phone_1', value: '+212 6 62 26 14 99' } }),
+   469→    db.cmsSettings.create({ data: { key: 'site_phone_2', value: '+212 6 62 26 08 05' } }),
+   470→    db.cmsSettings.create({ data: { key: 'site_phone_3', value: '+212 6 62 26 03 36' } }),
+   471→    db.cmsSettings.create({ data: { key: 'site_email', value: 'manpower@filinternational.ma' } }),
+   472→    db.cmsSettings.create({ data: { key: 'site_copyright', value: '© 2025 FIL INTERNATIONAL RECRUITMENT AGENCY. All Rights Reserved.' } }),
+   473→  ])
+   474→
+   475→  // Notifications
+   476→  await db.notification.create({
+   477→    data: {
+   478→      userId: users[2].id,
+   479→      title: 'Welcome to FIRA!',
+   480→      message: 'Complete your profile to increase your chances of getting hired. Upload your documents and keep your information up to date.',
+   481→      type: 'info',
+   482→    },
+   483→  })
+   484→  await db.notification.create({
+   485→    data: {
+   486→      userId: users[0].id,
+   487→      title: 'New Applications Received',
+   488→      message: 'You have 1 new application to review. Check your dashboard for details.',
+   489→      type: 'info',
+   490→    },
+   491→  })
+   492→
+   493→  console.log('✅ Seed completed successfully!')
+   494→  console.log('📋 Test Accounts:')
+   495→  console.log('   Super Admin: admin@fira.com.ph / admin2025!')
+   496→  console.log('   Staff: staff@fira.com.ph / staff2025!')
+   497→  console.log('   Applicant: applicant@fira.com.ph / applicant2025!')
+   498→  console.log('   Agency: agency@fira.com.ph / agency2025!')
+   499→  console.log('   Employer: employer@fira.com.ph / employer2025!')
+   500→}
+   501→
+   502→main()
+   503→  .catch(console.error)
+   504→  .finally(() => db.$disconnect())
+   505→
