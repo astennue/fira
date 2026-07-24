@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     let newStatus = application.status
     if (stageLower.includes('reject') || stageLower.includes('terminat')) newStatus = 'rejected'
     else if (stageLower.includes('deploy')) newStatus = 'deployed'
-    else if (stageLower.includes('complet')) newStatus = 'completed'
+    else if (stageLower.includes('complet') || stageLower.includes('arrival')) newStatus = 'deployed'
     else if (stageLower.includes('hired') || stageLower.includes('offer')) newStatus = 'offered'
 
     const updated = await db.application.update({
