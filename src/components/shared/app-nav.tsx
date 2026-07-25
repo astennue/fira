@@ -21,7 +21,7 @@ import {
   Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger,
 } from '@/components/ui/sheet'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useAppStore, type ViewName, roleDisplayNames } from '@/store/app-store'
+import { useAppStore, getDashboardView, type ViewName, roleDisplayNames } from '@/store/app-store'
 import { cn } from '@/lib/utils'
 
 const publicNavItems = [
@@ -92,8 +92,7 @@ export function AppNav() {
 
   const handleLogoClick = () => {
     if (user) {
-      const dashView = `${user.role === 'super_admin' ? 'fira' : user.role}-dashboard` as ViewName
-      navigate(dashView)
+      navigate(getDashboardView(user.role))
     } else {
       navigate('landing')
     }
@@ -307,7 +306,7 @@ export function AppNav() {
                     <p className="text-xs text-muted-foreground">{getRoleBadge()}</p>
                   </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate(`${user.role === 'super_admin' ? 'fira' : user.role}-dashboard` as ViewName)}>
+                  <DropdownMenuItem onClick={() => navigate(getDashboardView(user.role))}>
                     <LayoutDashboard className="mr-2 h-4 w-4" />
                     Dashboard
                   </DropdownMenuItem>

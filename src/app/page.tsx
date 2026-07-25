@@ -2,7 +2,7 @@
 
 import { lazy, Suspense, useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useAppStore, type ViewName, getNavItems } from '@/store/app-store'
+import { useAppStore, type ViewName, getNavItems, getDashboardView } from '@/store/app-store'
 import { AppNav } from '@/components/shared/app-nav'
 import { AuthModal } from '@/components/auth/auth-modal'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -239,7 +239,7 @@ export default function Home() {
   useEffect(() => {
     if (user && !redirected.current && publicViews.includes(currentView)) {
       redirected.current = true
-      const dashView = `${user.role === 'super_admin' ? 'fira' : user.role}-dashboard` as ViewName
+      const dashView = getDashboardView(user.role)
       navigate(dashView)
     }
     if (!user) {

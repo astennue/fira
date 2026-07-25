@@ -19,7 +19,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Checkbox } from '@/components/ui/checkbox'
-import { useAppStore, type UserRole, roleDisplayNames } from '@/store/app-store'
+import { useAppStore, getDashboardView, type UserRole, roleDisplayNames } from '@/store/app-store'
 import { toast } from 'sonner'
 
 const loginSchema = z.object({
@@ -114,7 +114,7 @@ export function AuthModal() {
         language === 'fil' ? 'Maligayang pagbabalik!' : 'Welcome back!',
         { description: `${language === 'fil' ? 'Naka-sign in bilang' : 'Signed in as'} ${data.user.name}` }
       )
-      navigate(`${role}-dashboard` as any)
+      navigate(getDashboardView(role))
     },
     onError: (err) => {
       toast.error(
@@ -146,7 +146,7 @@ export function AuthModal() {
         language === 'fil' ? 'Matagumpay ang pagpaparehistro!' : 'Account created!',
         { description: language === 'fil' ? 'Maligayang bago sa FIRA!' : 'Welcome to FIRA!' }
       )
-      navigate('applicant-dashboard')
+      navigate(getDashboardView('applicant'))
     },
     onError: (err) => {
       toast.error(

@@ -371,9 +371,26 @@ interface NavItem {
   view: ViewName
 }
 
+/** Maps a UserRole to its correct dashboard ViewName */
+export const getDashboardView = (role: UserRole): ViewName => {
+  switch (role) {
+    case 'super_admin':
+    case 'international_agency':
+      return 'fira-dashboard'
+    case 'local_agency':
+      return 'agency-dashboard'
+    case 'applicant':
+      return 'applicant-dashboard'
+    case 'employer':
+      return 'employer-dashboard'
+    default:
+      return 'landing'
+  }
+}
+
 export const getNavItems = (role: UserRole): NavItem[] => {
   const common = [
-    { label: 'Dashboard', labelFil: 'Dashboard', icon: 'LayoutDashboard', view: `${role === 'super_admin' ? 'fira' : role}-dashboard` as ViewName },
+    { label: 'Dashboard', labelFil: 'Dashboard', icon: 'LayoutDashboard', view: getDashboardView(role) },
   ]
 
   switch (role) {
