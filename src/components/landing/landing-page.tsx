@@ -8,7 +8,7 @@ import {
   ArrowRight, Shield, HeartHandshake, Plane, Mail, Phone,
   Star, ChevronRight, FileText, ClipboardCheck, Stethoscope,
   GraduationCap, UsersRound, Headphones, Menu, X, Facebook,
-  Instagram, Linkedin, Twitter,
+  Instagram, Linkedin, Twitter, Building2, Handshake,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -303,9 +303,9 @@ export function LandingPage() {
               </Button>
               <Button size="lg" variant="outline" className="border-white/40 text-white hover:bg-white/10 rounded-xl px-6" onClick={() => {
                 if (user) navigate('applicant-dashboard')
-                else setAuthModalOpen(true)
+                else setAuthModalOpen(true, 'register')
               }}>
-                {language === 'fil' ? 'Magparehistro Ngayon' : 'Register Now'}
+                {language === 'fil' ? 'Magparehistro Na' : 'Register Now'}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
@@ -626,6 +626,54 @@ export function LandingPage() {
         </div>
       </section>
 
+      {/* Employer Partnership Banner */}
+      <section className="py-16 md:py-20 bg-fira-gradient text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-30" />
+        <div className="absolute top-10 right-10 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-10 left-10 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl" />
+        <div className="container mx-auto px-4 relative">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-3xl mx-auto text-center"
+          >
+            <Card className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 md:p-12">
+              <CardContent className="p-0">
+                <div className="flex justify-center mb-6">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 border border-white/30">
+                    <Building2 className="h-8 w-8 text-blue-200" />
+                  </div>
+                </div>
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 leading-tight">
+                  {language === 'fil'
+                    ? 'Ikaw ba ay empleyador na naghahanap ng manggagawang Pilipino?'
+                    : 'Are you an employer looking for Filipino workers?'}
+                </h2>
+                <p className="text-blue-100 text-base md:text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
+                  {language === 'fil'
+                    ? 'Ang FIRA ay nagkonekta sa mga empleyador sa buong mundo sa mga beripikadong at bihasang manggagawang Pilipino. Makipag-ugnayan sa amin upang mahanap ang perpektong kandidato para sa inyong negosyo.'
+                    : 'FIRA connects employers worldwide with verified and skilled Filipino workers. Partner with us to find the perfect candidates for your business needs.'}
+                </p>
+                <Button
+                  size="lg"
+                  className="bg-white text-blue-900 hover:bg-blue-50 rounded-xl px-8 font-semibold"
+                  onClick={() => navigate('employer-partnership')}
+                >
+                  <Handshake className="mr-2 h-5 w-5" />
+                  {language === 'fil' ? 'Maging Partner ng FIRA' : 'Partner with FIRA'}
+                </Button>
+                <p className="text-blue-200/70 text-sm mt-4">
+                  {language === 'fil'
+                    ? 'Mga ahensya ay malugod din na maging partner namin'
+                    : 'Agencies are also welcome to partner with us'}
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Newsletter Section */}
       <section className="py-16 md:py-20 bg-fira-gradient-soft">
         <div className="container mx-auto px-4">
@@ -692,12 +740,13 @@ export function LandingPage() {
               </h4>
               <ul className="space-y-2.5 text-sm text-gray-400">
                 {[
-                  { label: 'Home', view: 'landing' },
-                  { label: 'About', view: 'about' },
-                  { label: 'Services', view: 'services' },
-                  { label: 'Jobs', view: 'job-listing' },
+                  { label: language === 'fil' ? 'Home' : 'Home', view: 'landing' },
+                  { label: language === 'fil' ? 'Tungkol' : 'About', view: 'about' },
+                  { label: language === 'fil' ? 'Serbisyo' : 'Services', view: 'services' },
+                  { label: language === 'fil' ? 'Trabaho' : 'Jobs', view: 'job-listing' },
+                  { label: language === 'fil' ? 'Para sa Empleyador' : 'For Employers', view: 'employer-partnership' },
                   { label: 'FAQ', view: 'faq' },
-                  { label: 'Contact', view: 'contact' },
+                  { label: language === 'fil' ? 'Makipag-ugnay' : 'Contact', view: 'contact' },
                 ].map((link) => (
                   <li key={link.view}>
                     <button onClick={() => navigate(link.view as any)} className="hover:text-blue-400 transition-colors">

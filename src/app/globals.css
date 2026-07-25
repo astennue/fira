@@ -179,14 +179,43 @@
   box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05);
 }
 
+.dark .glass {
+  background: rgba(30, 41, 59, 0.3);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(51, 65, 85, 0.4);
+}
+
+.dark .glass-card {
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(51, 65, 85, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
 .dark .glass-nav {
-  background: rgba(15, 23, 42, 0.85);
-  border-bottom: 1px solid rgba(30, 41, 59, 0.5);
+  background: rgba(15, 23, 42, 0.92);
+  border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+  box-shadow: 0 1px 12px rgba(0, 0, 0, 0.3);
 }
 
 .dark .glass-card-light {
   background: rgba(30, 41, 59, 0.7);
   border: 1px solid rgba(51, 65, 85, 0.4);
+}
+
+/* Dark mode hero overrides */
+.dark .bg-fira-hero {
+  background: linear-gradient(135deg, #0f172a 0%, #172554 25%, #1e3a8a 50%, #1e40af 75%, #2563eb 100%);
+}
+
+.dark .bg-fira-gradient-soft {
+  background: linear-gradient(135deg, #1e293b, #1e3a8a);
+}
+
+.dark .bg-fira-gradient-card {
+  background: linear-gradient(145deg, rgba(30, 64, 175, 0.1), rgba(59, 130, 246, 0.15));
 }
 
 /* ===== FONT SIZE UTILITIES ===== */

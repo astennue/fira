@@ -10,6 +10,8 @@ export type ViewName =
   | 'services'
   | 'faq'
   | 'contact'
+  | 'terms-public'
+  | 'employer-partnership'
   // Auth
   | 'login'
   | 'register'
@@ -91,7 +93,8 @@ interface AppState {
 
   // UI State
   authModalOpen: boolean
-  setAuthModalOpen: (open: boolean) => void
+  setAuthModalOpen: (open: boolean, defaultTab?: 'login' | 'register') => void
+  authModalDefaultTab: 'login' | 'register'
   sidebarOpen: boolean
   setSidebarOpen: (open: boolean) => void
   searchQuery: string
@@ -122,7 +125,8 @@ export const useAppStore = create<AppState>()(
 
       // UI State
       authModalOpen: false,
-      setAuthModalOpen: (open) => set({ authModalOpen: open }),
+      authModalDefaultTab: 'login' as const,
+      setAuthModalOpen: (open, defaultTab) => set({ authModalOpen: open, authModalDefaultTab: defaultTab || 'login' }),
       sidebarOpen: false,
       setSidebarOpen: (open) => set({ sidebarOpen: open }),
       searchQuery: '',

@@ -20,6 +20,8 @@ const AboutPage = lazy(() => import('@/components/landing/about-page').then(m =>
 const ServicesPage = lazy(() => import('@/components/landing/services-page').then(m => ({ default: m.ServicesPage })))
 const FaqPage = lazy(() => import('@/components/landing/faq-page').then(m => ({ default: m.FaqPage })))
 const ContactPage = lazy(() => import('@/components/landing/contact-page').then(m => ({ default: m.ContactPage })))
+const TermsPublicPage = lazy(() => import('@/components/landing/terms-public-page').then(m => ({ default: m.TermsPublicPage })))
+const EmployerPartnershipPage = lazy(() => import('@/components/landing/employer-partnership-page').then(m => ({ default: m.EmployerPartnershipPage })))
 const JobListingPage = lazy(() => import('@/components/landing/job-listing-page').then(m => ({ default: m.JobListingPage })))
 const JobDetailPage = lazy(() => import('@/components/landing/job-detail-page').then(m => ({ default: m.JobDetailPage })))
 const ApplicantDashboard = lazy(() => import('@/components/dashboard/applicant-dashboard').then(m => ({ default: m.ApplicantDashboard })))
@@ -52,7 +54,7 @@ const CmsSettingsPage = lazy(() => import('@/components/cms/cms-settings-page').
 const UserSettingsPage = lazy(() => import('@/components/shared/user-settings-page').then(m => ({ default: m.UserSettingsPage })))
 const SuperAdminUsersPage = lazy(() => import('@/components/shared/super-admin-users-page').then(m => ({ default: m.SuperAdminUsersPage })))
 
-const publicViews: ViewName[] = ['landing', 'job-listing', 'job-detail', 'about', 'services', 'faq', 'contact']
+const publicViews: ViewName[] = ['landing', 'job-listing', 'job-detail', 'about', 'services', 'faq', 'contact', 'terms-public', 'employer-partnership']
 
 function LoadingSpinner() {
   return (
@@ -167,6 +169,8 @@ function ViewRenderer({ view }: { view: ViewName }) {
       case 'services': return <ServicesPage />
       case 'faq': return <FaqPage />
       case 'contact': return <ContactPage />
+      case 'terms-public': return <TermsPublicPage />
+      case 'employer-partnership': return <EmployerPartnershipPage />
       case 'job-listing': return <JobListingPage />
       case 'job-detail': return <JobDetailPage />
       case 'applicant-dashboard': return <ApplicantDashboard />

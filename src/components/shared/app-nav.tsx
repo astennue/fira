@@ -36,12 +36,13 @@ const publicNavItems = [
   { label: 'About', labelFil: 'Tungkol', icon: 'Info', view: 'about' as ViewName },
   { label: 'Services', labelFil: 'Serbisyo', icon: 'Briefcase', view: 'services' as ViewName },
   { label: 'Jobs', labelFil: 'Trabaho', icon: 'Briefcase', view: 'job-listing' as ViewName },
+  { label: 'For Employers', labelFil: 'Para sa Empleyador', icon: 'Building2', view: 'employer-partnership' as ViewName },
   { label: 'FAQ', labelFil: 'FAQ', icon: 'HelpCircle', view: 'faq' as ViewName },
   { label: 'Contact', labelFil: 'Makipag-ugnay', icon: 'Phone', view: 'contact' as ViewName },
 ]
 
 const publicIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  Home, Info, Briefcase, HelpCircle, Phone, MessageCircle,
+  Home, Info, Briefcase, HelpCircle, Phone, MessageCircle, Building2,
 }
 
 export function AppNav() {
@@ -51,6 +52,7 @@ export function AppNav() {
     sidebarOpen, setSidebarOpen,
     searchQuery, setSearchQuery,
     language, setLanguage,
+    fontSize, setFontSize,
     currentView,
   } = useAppStore()
   const { theme, setTheme } = useTheme()
@@ -185,15 +187,7 @@ export function AppNav() {
             onClick={() => navigate('landing')}
             className="flex items-center gap-2 shrink-0"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-700 to-blue-900 text-white font-bold text-sm">
-              F
-            </div>
-            <span className={cn(
-              'hidden sm:inline text-lg font-bold transition-colors',
-              scrolled || !isPublicView
-                ? 'bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent'
-                : 'text-white'
-            )}>FIRA</span>
+            <img src="/logo.png" alt="FIRA Logo" className="h-8 sm:h-9 object-contain" />
           </button>
 
           {/* Desktop Nav Links (public) */}
@@ -210,10 +204,10 @@ export function AppNav() {
                       'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
                       isActive
                         ? scrolled
-                          ? 'bg-blue-100 text-blue-700'
+                          ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
                           : 'bg-white/20 text-white'
                         : scrolled
-                          ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                          ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700/50'
                           : 'text-white/70 hover:text-white hover:bg-white/10',
                     )}
                   >
@@ -278,6 +272,23 @@ export function AppNav() {
                 )}
               </Button>
             )}
+
+            {/* Font size selector */}
+            <select
+              value={fontSize}
+              onChange={(e) => useAppStore.getState().setFontSize(e.target.value as 'small' | 'medium' | 'large')}
+              className={cn(
+                'text-xs rounded-md border px-1.5 py-1 bg-transparent cursor-pointer',
+                scrolled || !isPublicView
+                  ? 'border-border text-foreground'
+                  : 'border-white/30 text-white bg-white/10'
+              )}
+              title="Font Size"
+            >
+              <option value="small">A</option>
+              <option value="medium">A+</option>
+              <option value="large">A++</option>
+            </select>
 
             {/* Theme toggle */}
             <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>

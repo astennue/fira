@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2, Eye, EyeOff, Globe, User, Briefcase, Building2, ShieldCheck, AlertTriangle, Check } from 'lucide-react'
+import { Loader2, Eye, EyeOff, User, Check, Info } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -17,16 +17,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Progress } from '@/components/ui/progress'
 import { useAppStore, type UserRole, roleDisplayNames } from '@/store/app-store'
 import { toast } from 'sonner'
 
@@ -43,8 +35,6 @@ const registerSchema = z
     email: z.string().email('Please enter a valid email'),
     password: z.string().min(8, 'Password must be at least 8 characters'),
     confirmPassword: z.string(),
-    role: z.enum(['applicant', 'local_agency', 'international_agency', 'employer'] as const),
-    agencyName: z.string().optional(),
     phone: z.string().optional(),
     agreeTerms: z.literal(true, {
       errorMap: () => ({ message: 'You must agree to the Terms of Service and Data Privacy Consent' }),
@@ -53,15 +43,6 @@ const registerSchema = z
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
     path: ['confirmPassword'],
-  })
-  .refine((data) => {
-    if (data.role === 'local_agency' || data.role === 'international_agency') {
-      return data.agencyName && data.agencyName.length >= 2
-    }
-    return true
-  }, {
-    message: 'Agency name is required',
-    path: ['agencyName'],
   })
 
 type RegisterFormData = z.infer<typeof registerSchema>
@@ -85,7 +66,7 @@ function getPasswordStrength(password: string): { score: number; label: string; 
 }
 
 export function AuthModal() {
-  const { authModalOpen, setAuthModalOpen, setUser, navigate, language, fontSize } = useAppStore()
+  const { authModalOpen, setAuthModalOpen, setUser, navigate, language, fontSize, authModalDefaultTab } = useAppStore()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
@@ -101,14 +82,11 @@ export function AuthModal() {
       email: '',
       password: '',
       confirmPassword: '',
-      role: 'applicant',
-      agencyName: '',
       phone: '',
       agreeTerms: false as unknown as true,
     },
   })
 
-  const selectedRole = registerForm.watch('role')
   const passwordValue = registerForm.watch('password')
   const agreeTerms = registerForm.watch('agreeTerms')
 
@@ -152,7 +130,7 @@ export function AuthModal() {
       const res = await fetch('/api/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'register', ...payload }),
+        body: JSON.stringify({ action: 'register', role: 'applicant', ...payload }),
       })
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: 'Registration failed' }))
@@ -164,24 +142,10 @@ export function AuthModal() {
       setUser(data.user)
       setAuthModalOpen(false)
       registerForm.reset()
-
-      const needsApproval = !data.user.isApproved
-      if (needsApproval) {
-        toast.success(
-          language === 'fil' ? 'Matagumpay ang pagpaparehistro!' : 'Registration successful!',
-          {
-            description: language === 'fil'
-              ? 'Ang iyong account ay naka-pending para sa approval.'
-              : 'Your account is pending approval.',
-            duration: 5000,
-          }
-        )
-      } else {
-        toast.success(
-          language === 'fil' ? 'Matagumpay ang pagpaparehistro!' : 'Account created!',
-          { description: language === 'fil' ? 'Maligayang bago sa FIRA!' : 'Welcome to FIRA!' }
-        )
-      }
+      toast.success(
+        language === 'fil' ? 'Matagumpay ang pagpaparehistro!' : 'Account created!',
+        { description: language === 'fil' ? 'Maligayang bago sa FIRA!' : 'Welcome to FIRA!' }
+      )
       navigate('applicant-dashboard')
     },
     onError: (err) => {
@@ -197,19 +161,16 @@ export function AuthModal() {
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto" data-font-size={fontSize}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-700 to-blue-900 text-white font-bold text-sm">
-              F
-            </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent">FIRA</span>
+            <img src="/logo.png" alt="FIRA Logo" className="h-8 object-contain" />
           </DialogTitle>
           <DialogDescription>
             {language === 'fil'
-              ? 'Mag-sign in sa iyong account o gumawa ng bago'
-              : 'Sign in to your account or create a new one'}
+              ? 'Mag-sign in sa iyong account o magparehistro bilang aplikante'
+              : 'Sign in to your account or register as an applicant'}
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs defaultValue="login" className="w-full">
+        <Tabs value={authModalDefaultTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 bg-blue-50">
             <TabsTrigger value="login" className="data-[state=active]:bg-blue-700 data-[state=active]:text-white rounded-lg">
               {language === 'fil' ? 'Mag-sign In' : 'Sign In'}
@@ -271,12 +232,21 @@ export function AuthModal() {
                 <p>Agency (PH): agency@fira.com.ph</p>
                 <p>FIRA Admin: admin@fira.com.ph</p>
                 <p>Employer: employer@fira.com.ph</p>
-                <p className="text-gray-400">Password: see role + 2025!</p>
+                <p className="text-gray-400">Password: role + 2025!</p>
               </div>
             </form>
           </TabsContent>
 
           <TabsContent value="register" className="mt-4">
+            <Alert className="bg-blue-50 border-blue-200 mb-4">
+              <User className="h-4 w-4 text-blue-600" />
+              <AlertDescription className="text-xs text-blue-800">
+                {language === 'fil'
+                  ? 'Parehistro ay bukas lamang para sa mga aplikante (Job Seeker). Para sa mga ahensya at empleyador, mangyaring makipag-ugnayan sa FIRA admin.'
+                  : 'Registration is open for applicants (Job Seekers) only. For agencies and employers, please contact FIRA admin.'}
+              </AlertDescription>
+            </Alert>
+
             <form onSubmit={registerForm.handleSubmit((d) => registerMutation.mutate(d))} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="reg-name">
@@ -306,63 +276,6 @@ export function AuthModal() {
                   <p className="text-xs text-red-500">{registerForm.formState.errors.email.message}</p>
                 )}
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="reg-role">
-                  {language === 'fil' ? 'Ako ay isang...' : 'I am a...'}
-                </Label>
-                <Select
-                  value={selectedRole}
-                  onValueChange={(val) => registerForm.setValue('role', val as UserRole)}
-                >
-                  <SelectTrigger id="reg-role" className="h-11">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="applicant">
-                      <div className="flex items-center gap-2">
-                        <User className="h-3.5 w-3.5" />
-                        <span>{language === 'fil' ? 'Aplikante (Job Seeker)' : 'Applicant (Job Seeker)'}</span>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="local_agency">
-                      <div className="flex items-center gap-2">
-                        <Building2 className="h-3.5 w-3.5" />
-                        <span>{language === 'fil' ? 'Ahensya sa Pilipinas' : 'Local Agency (Philippines)'}</span>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="international_agency">
-                      <div className="flex items-center gap-2">
-                        <ShieldCheck className="h-3.5 w-3.5" />
-                        <span>FIRA Admin (International)</span>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="employer">
-                      <div className="flex items-center gap-2">
-                        <Briefcase className="h-3.5 w-3.5" />
-                        <span>{language === 'fil' ? 'Empleyador (Foreign)' : 'Employer (Foreign)'}</span>
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {(selectedRole === 'local_agency' || selectedRole === 'international_agency') && (
-                <div className="space-y-2">
-                  <Label htmlFor="reg-agency">
-                    {language === 'fil' ? 'Pangalan ng Ahensya' : 'Agency Name'}
-                  </Label>
-                  <Input
-                    id="reg-agency"
-                    placeholder={language === 'fil' ? 'Pangalan ng ahensya...' : 'Agency name...'}
-                    className="h-11"
-                    {...registerForm.register('agencyName')}
-                  />
-                  {registerForm.formState.errors.agencyName && (
-                    <p className="text-xs text-red-500">{registerForm.formState.errors.agencyName.message}</p>
-                  )}
-                </div>
-              )}
 
               <div className="space-y-2">
                 <Label htmlFor="reg-phone">
@@ -467,7 +380,7 @@ export function AuthModal() {
                     I agree to the{' '}
                     <button
                       type="button"
-                      onClick={() => useAppStore.getState().navigate('cms-terms')}
+                      onClick={() => useAppStore.getState().navigate('terms-public')}
                       className="text-blue-600 underline hover:text-blue-800"
                     >
                       Terms of Service
@@ -475,7 +388,7 @@ export function AuthModal() {
                     and{' '}
                     <button
                       type="button"
-                      onClick={() => useAppStore.getState().navigate('cms-terms')}
+                      onClick={() => useAppStore.getState().navigate('terms-public')}
                       className="text-blue-600 underline hover:text-blue-800"
                     >
                       Data Privacy Consent
@@ -486,17 +399,6 @@ export function AuthModal() {
                   <p className="text-xs text-red-500">{registerForm.formState.errors.agreeTerms.message}</p>
                 )}
               </div>
-
-              {(selectedRole === 'local_agency' || selectedRole === 'international_agency' || selectedRole === 'employer') && (
-                <Alert className="bg-amber-50 border-amber-200">
-                  <AlertTriangle className="h-4 w-4 text-amber-600" />
-                  <AlertDescription className="text-xs text-amber-800">
-                    {language === 'fil'
-                      ? 'Ang iyong account ay kailangang i-approve muna bago ka makagamit ng system.'
-                      : 'Your account needs approval before you can use the system.'}
-                  </AlertDescription>
-                </Alert>
-              )}
 
               <Button type="submit" className="w-full h-11 bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 rounded-xl" disabled={registerMutation.isPending}>
                 {registerMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
