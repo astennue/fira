@@ -59,3 +59,4 @@ tool-results/.*
 *.db
 prisma/db/
 db/
+tool-results/
