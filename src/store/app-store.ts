@@ -56,6 +56,8 @@ export type ViewName =
   | 'cms-terms'
   | 'cms-form-builder'
   | 'cms-settings'
+  // Messaging
+  | 'messages'
   // User
   | 'user-settings'
   // Super Admin
@@ -339,6 +341,8 @@ const labels: Record<string, Record<Language, string>> = {
   'resume.enhanced': { en: 'Enhanced Resume', fil: 'Pinahusay na Resume' },
   'resume.changesSummary': { en: 'Changes Summary', fil: 'Buod ng Mga Pagbabago' },
   'resume.noResult': { en: 'Your enhanced resume will appear here.', fil: 'Ang iyong pinahusay na resume ay lalabas dito.' },
+  // Messaging
+  'Messages': { en: 'Messages', fil: 'Mensahe ' },
 }
 
 export function t(key: string, lang?: Language): string {
@@ -369,6 +373,7 @@ export const getNavItems = (role: UserRole): NavItem[] => {
     case 'super_admin':
       return [
         ...common,
+        { label: 'Messages', labelFil: 'Mensahe', icon: 'MessageCircle', view: 'messages' as ViewName },
         { label: 'Manage Users', labelFil: 'Pamahalaan ang Users', icon: 'Users', view: 'super-admin-users' as ViewName },
         { label: 'CMS Pages', labelFil: 'Mga Pahina', icon: 'FileText', view: 'cms-pages' as ViewName },
         { label: 'FAQ Management', labelFil: 'Pamahalaan ng FAQ', icon: 'HelpCircle', view: 'cms-faq' as ViewName },
@@ -382,6 +387,7 @@ export const getNavItems = (role: UserRole): NavItem[] => {
     case 'applicant':
       return [
         ...common,
+        { label: 'Messages', labelFil: 'Mensahe', icon: 'MessageCircle', view: 'messages' as ViewName },
         { label: 'Find Jobs', labelFil: 'Maghanap ng Trabaho', icon: 'Search', view: 'applicant-jobs' as ViewName },
         { label: 'My Applications', labelFil: 'Ang Mga Aplikasyon Ko', icon: 'FileText', view: 'applicant-applications' as ViewName },
         { label: 'My Profile', labelFil: 'Ang Profile Ko', icon: 'User', view: 'applicant-profile' as ViewName },
@@ -391,6 +397,7 @@ export const getNavItems = (role: UserRole): NavItem[] => {
     case 'local_agency':
       return [
         ...common,
+        { label: 'Messages', labelFil: 'Mensahe', icon: 'MessageCircle', view: 'messages' as ViewName },
         { label: 'Jobs', labelFil: 'Mga Trabaho', icon: 'Briefcase', view: 'agency-jobs' as ViewName },
         { label: 'Applicants', labelFil: 'Mga Aplikante', icon: 'Users', view: 'agency-applicants' as ViewName },
         { label: 'Endorsements', labelFil: 'Mga Endorso', icon: 'Send', view: 'agency-endorsements' as ViewName },
@@ -401,6 +408,7 @@ export const getNavItems = (role: UserRole): NavItem[] => {
     case 'international_agency':
       return [
         ...common,
+        { label: 'Messages', labelFil: 'Mensahe', icon: 'MessageCircle', view: 'messages' as ViewName },
         { label: 'Agencies', labelFil: 'Mga Ahensya', icon: 'Building', view: 'fira-agencies' as ViewName },
         { label: 'Employers', labelFil: 'Mga Empleyador', icon: 'Building2', view: 'fira-employers' as ViewName },
         { label: 'Applicants', labelFil: 'Mga Aplikante', icon: 'Users', view: 'fira-applicants' as ViewName },
@@ -412,6 +420,7 @@ export const getNavItems = (role: UserRole): NavItem[] => {
     case 'employer':
       return [
         ...common,
+        { label: 'Messages', labelFil: 'Mensahe', icon: 'MessageCircle', view: 'messages' as ViewName },
         { label: 'My Jobs', labelFil: 'Mga Trabaho Ko', icon: 'Briefcase', view: 'employer-jobs' as ViewName },
         { label: 'Endorsed Candidates', labelFil: 'Mga Inindorso', icon: 'UserCheck', view: 'employer-endorsed' as ViewName },
         { label: 'AI Matching', labelFil: 'AI Matching', icon: 'Sparkles', view: 'ai-matching' as ViewName },

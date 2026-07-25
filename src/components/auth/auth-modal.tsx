@@ -171,7 +171,7 @@ export function AuthModal() {
         </DialogHeader>
 
         <Tabs value={authModalDefaultTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-blue-50">
+          <TabsList className="grid w-full grid-cols-2 bg-blue-50 dark:bg-blue-950/50">
             <TabsTrigger value="login" className="data-[state=active]:bg-blue-700 data-[state=active]:text-white rounded-lg">
               {language === 'fil' ? 'Mag-sign In' : 'Sign In'}
             </TabsTrigger>
@@ -224,23 +224,23 @@ export function AuthModal() {
                 {language === 'fil' ? 'Mag-sign In' : 'Sign In'}
               </Button>
 
-              <div className="text-center text-xs text-gray-500 space-y-1 pt-2 bg-blue-50 rounded-xl p-4">
-                <p className="font-medium text-gray-700">
+              <div className="text-center text-xs text-muted-foreground space-y-1 pt-2 bg-blue-50 dark:bg-blue-950/30 rounded-xl p-4">
+                <p className="font-medium text-foreground">
                   {language === 'fil' ? 'Mga Test Account:' : 'Test Accounts:'}
                 </p>
                 <p>Applicant: applicant@fira.com.ph</p>
                 <p>Agency (PH): agency@fira.com.ph</p>
                 <p>FIRA Admin: admin@fira.com.ph</p>
                 <p>Employer: employer@fira.com.ph</p>
-                <p className="text-gray-400">Password: role + 2025!</p>
+                <p className="text-muted-foreground">Password: role + 2025!</p>
               </div>
             </form>
           </TabsContent>
 
           <TabsContent value="register" className="mt-4">
-            <Alert className="bg-blue-50 border-blue-200 mb-4">
-              <User className="h-4 w-4 text-blue-600" />
-              <AlertDescription className="text-xs text-blue-800">
+            <Alert className="bg-blue-50 border-blue-200 dark:bg-blue-950/30 dark:border-blue-800 mb-4">
+              <User className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <AlertDescription className="text-xs text-blue-800 dark:text-blue-200">
                 {language === 'fil'
                   ? 'Parehistro ay bukas lamang para sa mga aplikante (Job Seeker). Para sa mga ahensya at empleyador, mangyaring makipag-ugnayan sa FIRA admin.'
                   : 'Registration is open for applicants (Job Seekers) only. For agencies and employers, please contact FIRA admin.'}
@@ -317,12 +317,12 @@ export function AuthModal() {
                 {passwordValue && (
                   <div className="space-y-2 mt-2">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-gray-500">Password Strength</span>
+                      <span className="text-muted-foreground">Password Strength</span>
                       <span className={`font-medium ${passwordStrength.score <= 1 ? 'text-red-500' : passwordStrength.score === 2 ? 'text-orange-500' : passwordStrength.score === 3 ? 'text-yellow-600' : 'text-green-600'}`}>
                         {passwordStrength.label}
                       </span>
                     </div>
-                    <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all duration-300 ${passwordStrength.color}`}
                         style={{ width: `${(passwordStrength.score / 5) * 100}%` }}
@@ -331,8 +331,8 @@ export function AuthModal() {
                     <ul className="space-y-1">
                       {passwordStrength.checks.map((check, i) => (
                         <li key={i} className="flex items-center gap-1.5 text-xs">
-                          <Check className={`h-3 w-3 ${check.met ? 'text-green-500' : 'text-gray-300'}`} />
-                          <span className={check.met ? 'text-green-700' : 'text-gray-400'}>{check.label}</span>
+                          <Check className={`h-3 w-3 ${check.met ? 'text-green-500' : 'text-muted-foreground/30'}`} />
+                          <span className={check.met ? 'text-green-700 dark:text-green-400' : 'text-muted-foreground'}>{check.label}</span>
                         </li>
                       ))}
                     </ul>

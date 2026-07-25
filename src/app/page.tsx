@@ -11,7 +11,7 @@ import {
   LayoutDashboard, Users, FileText, HelpCircle, MessageSquareQuote,
   Share2, Network, ScrollText, LayoutList, Settings, Search,
   Briefcase, Send, Columns, UserCog, Sparkles, User, Building, Building2,
-  ChevronLeft, ChevronRight, Home as HomeIcon
+  Home as HomeIcon, MessageCircle, UserCheck,
 } from 'lucide-react'
 
 // Lazy load all view components to reduce initial bundle
@@ -53,6 +53,7 @@ const CmsOrgChartPage = lazy(() => import('@/components/cms/cms-org-chart-page')
 const CmsSettingsPage = lazy(() => import('@/components/cms/cms-settings-page').then(m => ({ default: m.CmsSettingsPage })))
 const UserSettingsPage = lazy(() => import('@/components/shared/user-settings-page').then(m => ({ default: m.UserSettingsPage })))
 const SuperAdminUsersPage = lazy(() => import('@/components/shared/super-admin-users-page').then(m => ({ default: m.SuperAdminUsersPage })))
+const MessagingPage = lazy(() => import('@/components/shared/messaging-page').then(m => ({ default: m.MessagingPage })))
 
 const publicViews: ViewName[] = ['landing', 'job-listing', 'job-detail', 'about', 'services', 'faq', 'contact', 'terms-public', 'employer-partnership']
 
@@ -71,10 +72,66 @@ const iconMap: Record<string, any> = {
   LayoutDashboard, Users, FileText, HelpCircle, MessageSquareQuote,
   Share2, Network, ScrollText, LayoutList, Settings, Search,
   Briefcase, Send, Columns, UserCog, Sparkles, User, Building, Building2, Home: HomeIcon,
+  MessageCircle, UserCheck,
 }
 
-function DesktopSidebar() {
-  const { user, currentView, navigate, sidebarOpen, setSidebarOpen, language } = useAppStore()
+function DashboardSidebar() {
+  const { user, currentView, navigate, language } = useAppStore()
+  const navItems = user ? getNavItems(user.role) : []
+
+  if (!user) return null
+
+  return (
+    <>
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-40 bg-black/50 lg:hidden" onClick={() => setSidebarOpen(false)} />
+      )}
+      {/* Sidebar - fixed on desktop, drawer on mobile */}
+      <aside className={cn(
+        'fixed left-0 top-14 z-40 h-[calc(100vh-3.5rem)] w-64 border-r bg-card transition-transform duration-300 lg:translate-x-0',
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      )}>
+        <ScrollArea className="h-full">
+          <div className="flex flex-col gap-1 p-3">
+            {/* User info */}
+            <div className="mb-3 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 p-3 dark:from-blue-950/50 dark:to-blue-900/50">
+              <p className="text-sm font-semibold text-blue-900 dark:text-blue-100 truncate">{user.name}</p>
+              <p className="text-xs text-blue-600 dark:text-blue-300 capitalize">
+                {user.role.replace(/_/g, ' ')}
+              </p>
+            </div>
+
+            {/* Nav items */}
+            {navItems.map((item) => {
+              const Icon = iconMap[item.icon] || LayoutDashboard
+              const isActive = currentView === item.view
+              return (
+                <button
+                  key={item.view}
+                  onClick={() => navigate(item.view)}
+                  className={cn(
+                    'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 w-full text-left',
+                    isActive
+                      ? 'bg-blue-600 text-white shadow-md shadow-blue-600/25 dark:bg-blue-600 dark:text-white'
+                      : 'hover:bg-accent text-foreground hover:text-foreground',
+                  )}
+                >
+                  <Icon className={cn('h-4 w-4 shrink-0', isActive ? 'text-white' : 'text-muted-foreground')} />
+                  <span>{language === 'fil' ? item.labelFil : item.label}</span>
+                </button>
+              )
+            })}
+          </div>
+        </ScrollArea>
+      </aside>
+    </>
+  )
+}
+
+// Need to import setSidebarOpen
+function DashboardSidebarWrapper() {
+  const { user, currentView, navigate, language, sidebarOpen, setSidebarOpen } = useAppStore()
   const navItems = user ? getNavItems(user.role) : []
 
   if (!user) return null
@@ -111,56 +168,36 @@ function DesktopSidebar() {
                   className={cn(
                     'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 w-full text-left',
                     isActive
-                      ? 'bg-blue-600 text-white shadow-md shadow-blue-600/25'
-                      : 'hover:bg-blue-50 text-gray-700 hover:text-blue-700 dark:hover:bg-blue-950/50 dark:text-gray-300'
+                      ? 'bg-blue-600 text-white shadow-md shadow-blue-600/25 dark:bg-blue-600 dark:text-white'
+                      : 'hover:bg-accent text-foreground',
                   )}
                 >
-                  <Icon className={cn('h-4 w-4 shrink-0', isActive ? 'text-white' : 'text-gray-400')} />
+                  <Icon className={cn('h-4 w-4 shrink-0', isActive ? 'text-white' : 'text-muted-foreground')} />
                   <span>{language === 'fil' ? item.labelFil : item.label}</span>
                 </button>
               )
             })}
 
-            {/* Extra links */}
+            {/* Settings at bottom */}
             <div className="mt-2 pt-2 border-t">
               <button
-                onClick={() => navigate('landing')}
-                className={cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 w-full text-left',
-                  'hover:bg-blue-50 text-gray-500 hover:text-blue-700 dark:hover:bg-blue-950/50 dark:text-gray-400'
-                )}
-              >
-                <HomeIcon className="h-4 w-4 shrink-0 text-gray-400" />
-                <span>{language === 'fil' ? 'Bumalik sa Home' : 'Back to Website'}</span>
-              </button>
-              <button
                 onClick={() => navigate('user-settings')}
-                className={cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 w-full text-left',
-                  'hover:bg-blue-50 text-gray-500 hover:text-blue-700 dark:hover:bg-blue-950/50 dark:text-gray-400'
-                )}
+                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 w-full text-left hover:bg-accent text-muted-foreground"
               >
-                <User className="h-4 w-4 shrink-0 text-gray-400" />
+                <Settings className="h-4 w-4 shrink-0" />
                 <span>{language === 'fil' ? 'Settings' : 'Account Settings'}</span>
               </button>
             </div>
           </div>
         </ScrollArea>
-
-        {/* Collapse button */}
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="absolute -right-3 top-20 z-50 hidden lg:flex h-6 w-6 items-center justify-center rounded-full border bg-card shadow-sm hover:bg-muted"
-        >
-          <ChevronLeft className={cn('h-3 w-3 transition-transform', !sidebarOpen && 'rotate-180')} />
-        </button>
       </aside>
     </>
   )
 }
 
 function ViewRenderer({ view }: { view: ViewName }) {
-  const isLanding = publicViews.includes(view)
+  const isPublic = publicViews.includes(view)
+  const user = useAppStore((s) => s.user)
 
   const renderView = () => {
     switch (view) {
@@ -202,11 +239,12 @@ function ViewRenderer({ view }: { view: ViewName }) {
       case 'cms-settings': return <CmsSettingsPage />
       case 'user-settings': return <UserSettingsPage />
       case 'super-admin-users': return <SuperAdminUsersPage />
+      case 'messages': return <MessagingPage />
       default: return <LandingPage />
     }
   }
 
-  if (isLanding) {
+  if (isPublic) {
     return (
       <AnimatePresence mode="wait">
         <motion.div key={view}>
@@ -217,6 +255,8 @@ function ViewRenderer({ view }: { view: ViewName }) {
       </AnimatePresence>
     )
   }
+
+  const isFullWidth = view === 'messages'
 
   return (
     <div className="flex h-[calc(100vh-3.5rem)]">
@@ -230,9 +270,15 @@ function ViewRenderer({ view }: { view: ViewName }) {
           transition={{ duration: 0.15 }}
         >
           <Suspense fallback={<LoadingSpinner />}>
-            <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
-              {renderView()}
-            </div>
+            {isFullWidth ? (
+              <div className="p-4 md:p-6 h-full">
+                {renderView()}
+              </div>
+            ) : (
+              <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+                {renderView()}
+              </div>
+            )}
           </Suspense>
         </motion.div>
       </AnimatePresence>
@@ -246,7 +292,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-background" data-font-size={fontSize}>
       <AppNav />
-      <DesktopSidebar />
+      <DashboardSidebarWrapper />
       <main className="flex-1">
         <ViewRenderer view={currentView} />
       </main>

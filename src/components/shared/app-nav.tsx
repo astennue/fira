@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTheme } from 'next-themes'
 import { useQuery } from '@tanstack/react-query'
 import {
@@ -9,6 +9,7 @@ import {
   Building2, UserCheck, ChevronDown, UserCog, Globe, Languages,
   HelpCircle, MessageSquareQuote, Share2, Network, ScrollText,
   LayoutList, Settings, X, Home, Info, MessageCircle, Phone,
+  Minus, Plus, ALargeSmall,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -22,7 +23,7 @@ import {
   Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger,
 } from '@/components/ui/sheet'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useAppStore, getNavItems, type ViewName, roleDisplayNames } from '@/store/app-store'
+import { useAppStore, getNavItems, type ViewName, roleDisplayNames, type FontSize } from '@/store/app-store'
 import { cn } from '@/lib/utils'
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -45,6 +46,8 @@ const publicIconMap: Record<string, React.ComponentType<{ className?: string }>>
   Home, Info, Briefcase, HelpCircle, Phone, MessageCircle, Building2,
 }
 
+const fontSizes: FontSize[] = ['small', 'medium', 'large']
+
 export function AppNav() {
   const {
     user, logout, navigate,
@@ -57,6 +60,13 @@ export function AppNav() {
   } = useAppStore()
   const { theme, setTheme } = useTheme()
   const [scrolled, setScrolled] = useState(false)
+
+  // Proper scroll listener
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const { data: notifications = [] } = useQuery({
     queryKey: ['notifications', user?.id],
@@ -88,19 +98,32 @@ export function AppNav() {
     return roleInfo[language]
   }
 
-  if (typeof window !== 'undefined') {
-    window.addEventListener('scroll', () => {
-      setScrolled(window.scrollY > 20)
-    })
+  const isPublicView = publicNavItems.some((item) => item.view === currentView)
+  const isDashboardView = user && !isPublicView
+
+  const handleLogoClick = () => {
+    if (user) {
+      const dashView = `${user.role === 'super_admin' ? 'fira' : user.role}-dashboard` as ViewName
+      navigate(dashView)
+    } else {
+      navigate('landing')
+    }
   }
 
-  const isPublicView = publicNavItems.some((item) => item.view === currentView)
+  const cycleFontSize = (direction: 'up' | 'down') => {
+    const idx = fontSizes.indexOf(fontSize)
+    if (direction === 'up' && idx < fontSizes.length - 1) {
+      setFontSize(fontSizes[idx + 1])
+    } else if (direction === 'down' && idx > 0) {
+      setFontSize(fontSizes[idx - 1])
+    }
+  }
 
   return (
     <>
       <header className={cn(
         'sticky top-0 z-50 w-full transition-all duration-300',
-        scrolled || !isPublicView
+        isDashboardView || scrolled
           ? 'glass-nav shadow-sm'
           : 'bg-transparent border-transparent'
       )}>
@@ -108,7 +131,11 @@ export function AppNav() {
           {/* Mobile hamburger */}
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden shrink-0">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden shrink-0 text-foreground dark:text-foreground"
+              >
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
@@ -132,7 +159,7 @@ export function AppNav() {
                     </Avatar>
                     <div className="min-w-0">
                       <p className="text-sm font-medium truncate">{user.name}</p>
-                      <p className="text-xs text-gray-500">{getRoleBadge()}</p>
+                      <p className="text-xs text-muted-foreground">{getRoleBadge()}</p>
                     </div>
                   </div>
                 </div>
@@ -149,8 +176,8 @@ export function AppNav() {
                         className={cn(
                           'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors w-full text-left',
                           isActive
-                            ? 'bg-blue-50 text-blue-700'
-                            : 'hover:bg-gray-100 hover:text-gray-900',
+                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
+                            : 'hover:bg-accent hover:text-accent-foreground',
                         )}
                       >
                         <Icon className="h-4 w-4 shrink-0" />
@@ -168,8 +195,8 @@ export function AppNav() {
                         className={cn(
                           'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors w-full text-left',
                           isActive
-                            ? 'bg-blue-50 text-blue-700'
-                            : 'hover:bg-gray-100 hover:text-gray-900',
+                            ? 'bg-blue-600 text-white dark:bg-blue-600 dark:text-white'
+                            : 'hover:bg-accent hover:text-accent-foreground',
                         )}
                       >
                         <Icon className="h-4 w-4 shrink-0" />
@@ -184,14 +211,14 @@ export function AppNav() {
 
           {/* Logo */}
           <button
-            onClick={() => navigate('landing')}
+            onClick={handleLogoClick}
             className="flex items-center gap-2 shrink-0"
           >
             <img src="/logo.png" alt="FIRA Logo" className="h-8 sm:h-9 object-contain" />
           </button>
 
-          {/* Desktop Nav Links (public) */}
-          {isPublicView && (
+          {/* Desktop Nav Links (public only, when not logged in) */}
+          {!user && isPublicView && (
             <nav className="hidden lg:flex items-center gap-1 ml-6">
               {publicNavItems.map((item) => {
                 const Icon = publicIconMap[item.icon] || Home
@@ -207,7 +234,7 @@ export function AppNav() {
                           ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
                           : 'bg-white/20 text-white'
                         : scrolled
-                          ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700/50'
+                          ? 'text-foreground hover:text-foreground hover:bg-accent'
                           : 'text-white/70 hover:text-white hover:bg-white/10',
                     )}
                   >
@@ -221,25 +248,12 @@ export function AppNav() {
 
           {/* Search */}
           <form onSubmit={handleSearch} className="flex-1 max-w-md hidden sm:flex ml-auto">
-            <div className={cn(
-              'relative w-full',
-              scrolled || !isPublicView
-                ? ''
-                : 'bg-white/15 backdrop-blur-sm'
-            )}>
-              <Search className={cn(
-                'absolute left-2.5 top-2.5 h-4 w-4',
-                scrolled || !isPublicView ? 'text-gray-400' : 'text-white/60'
-              )} />
+            <div className="relative w-full">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
                 placeholder={language === 'fil' ? 'Maghanap ng trabaho...' : 'Search jobs...'}
-                className={cn(
-                  'pl-9 h-9',
-                  scrolled || !isPublicView
-                    ? ''
-                    : 'bg-transparent border-white/20 text-white placeholder:text-white/50 focus-visible:ring-white/30'
-                )}
+                className="pl-9 h-9"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -251,10 +265,7 @@ export function AppNav() {
             <Button
               variant="ghost"
               size="sm"
-              className={cn(
-                'hidden sm:flex gap-1 text-xs',
-                scrolled || !isPublicView ? '' : 'text-white/80 hover:text-white hover:bg-white/10'
-              )}
+              className="hidden sm:flex gap-1 text-xs text-foreground hover:text-foreground hover:bg-accent"
               onClick={() => setLanguage(language === 'en' ? 'fil' : 'en')}
             >
               <Globe className="h-3.5 w-3.5" />
@@ -263,7 +274,7 @@ export function AppNav() {
 
             {/* Notifications */}
             {user && (
-              <Button variant="ghost" size="icon" className="relative">
+              <Button variant="ghost" size="icon" className="relative text-foreground hover:text-foreground hover:bg-accent">
                 <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">
@@ -273,29 +284,38 @@ export function AppNav() {
               </Button>
             )}
 
-            {/* Font size selector */}
-            <select
-              value={fontSize}
-              onChange={(e) => useAppStore.getState().setFontSize(e.target.value as 'small' | 'medium' | 'large')}
-              className={cn(
-                'text-xs rounded-md border px-1.5 py-1 bg-transparent cursor-pointer',
-                scrolled || !isPublicView
-                  ? 'border-border text-foreground'
-                  : 'border-white/30 text-white bg-white/10'
-              )}
-              title="Font Size"
-            >
-              <option value="small">A</option>
-              <option value="medium">A+</option>
-              <option value="large">A++</option>
-            </select>
+            {/* Font size +/- buttons */}
+            <div className="flex items-center gap-0.5">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-foreground hover:text-foreground hover:bg-accent"
+                onClick={() => cycleFontSize('down')}
+                disabled={fontSize === 'small'}
+                title="Decrease font size"
+              >
+                <Minus className="h-3 w-3" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-foreground hover:text-foreground hover:bg-accent"
+                onClick={() => cycleFontSize('up')}
+                disabled={fontSize === 'large'}
+                title="Increase font size"
+              >
+                <Plus className="h-3 w-3" />
+              </Button>
+            </div>
 
             {/* Theme toggle */}
-            <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
-              <Sun className={cn(
-                'h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0',
-                scrolled || !isPublicView ? '' : 'text-white'
-              )} />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-foreground hover:text-foreground hover:bg-accent"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            >
+              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
               <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
               <span className="sr-only">Toggle theme</span>
             </Button>
@@ -303,7 +323,7 @@ export function AppNav() {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="gap-2 pl-2 pr-1">
+                  <Button variant="ghost" className="gap-2 pl-2 pr-1 text-foreground hover:text-foreground hover:bg-accent">
                     <Avatar className="h-7 w-7">
                       <AvatarFallback className="bg-blue-100 text-blue-700 text-xs font-semibold">
                         {initials}
@@ -312,13 +332,13 @@ export function AppNav() {
                     <span className="hidden md:inline text-sm font-medium max-w-[120px] truncate">
                       {user.name}
                     </span>
-                    <ChevronDown className="h-3.5 w-3.5 text-gray-500" />
+                    <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <div className="px-2 py-1.5">
                     <p className="text-sm font-medium">{user.name}</p>
-                    <p className="text-xs text-gray-500">{getRoleBadge()}</p>
+                    <p className="text-xs text-muted-foreground">{getRoleBadge()}</p>
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => navigate(`${user.role === 'super_admin' ? 'fira' : user.role}-dashboard` as ViewName)}>
@@ -345,7 +365,7 @@ export function AppNav() {
                   variant="ghost"
                   size="sm"
                   className={cn(
-                    scrolled || !isPublicView ? '' : 'text-white hover:text-white hover:bg-white/10'
+                    'text-foreground hover:text-foreground hover:bg-accent',
                   )}
                   onClick={() => setAuthModalOpen(true)}
                 >

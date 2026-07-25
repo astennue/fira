@@ -2,13 +2,15 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, AnimatePresence } from 'framer-motion'
 import {
   Search, Briefcase, Globe, CheckCircle, Users, MapPin,
   ArrowRight, Shield, HeartHandshake, Plane, Mail, Phone,
-  Star, ChevronRight, FileText, ClipboardCheck, Stethoscope,
-  GraduationCap, UsersRound, Headphones, Menu, X, Facebook,
+  Star, ChevronRight, ChevronLeft, FileText, ClipboardCheck, Stethoscope,
+  GraduationCap, Headphones, Menu, X, Facebook,
   Instagram, Linkedin, Twitter, Building2, Handshake,
+  ArrowUpRight, Zap, Target, Route, TrendingUp,
+  Globe2, Compass, BadgeCheck, Quote,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -21,27 +23,52 @@ import {
 import { useAppStore, useT } from '@/store/app-store'
 import { formatDistanceToNow } from 'date-fns'
 
+/* ============================================================
+   ANIMATION VARIANTS
+   ============================================================ */
+
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: (i: number) => ({
-    opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.6 },
+    opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] },
   }),
 }
 
 const stagger = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
+  visible: { transition: { staggerChildren: 0.1 } },
 }
+
+const slideInLeft = {
+  hidden: { opacity: 0, x: -40 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+}
+
+const slideInRight = {
+  hidden: { opacity: 0, x: 40 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+}
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.85 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+}
+
+/* ============================================================
+   CATEGORY COLORS
+   ============================================================ */
 
 const categoryColors: Record<string, string> = {
-  domestic_helper: 'bg-pink-100 text-pink-800',
-  caregiver: 'bg-purple-100 text-purple-800',
-  nurse: 'bg-teal-100 text-teal-800',
-  factory: 'bg-orange-100 text-orange-800',
-  hospitality: 'bg-amber-100 text-amber-800',
+  domestic_helper: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300',
+  caregiver: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
+  nurse: 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300',
+  factory: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
+  hospitality: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300',
 }
 
-const taglineParts = ['WE RECRUIT.', 'WE DEPLOY.', 'WE MONITOR.', 'WE DELIVER RESULTS']
+/* ============================================================
+   ANIMATED COUNTER
+   ============================================================ */
 
 function AnimatedCounter({ target, suffix = '', duration = 2000 }: { target: number; suffix?: string; duration?: number }) {
   const [count, setCount] = useState(0)
@@ -67,85 +94,121 @@ function AnimatedCounter({ target, suffix = '', duration = 2000 }: { target: num
   return <div ref={ref}>{count.toLocaleString()}{suffix}</div>
 }
 
+/* ============================================================
+   TESTIMONIALS CAROUSEL
+   ============================================================ */
+
 function TestimonialsCarousel({ testimonials }: { testimonials: any[] }) {
   const [current, setCurrent] = useState(0)
-  const [isTransitioning, setIsTransitioning] = useState(false)
+  const [direction, setDirection] = useState(0)
+
+  const paginate = (dir: number) => {
+    setDirection(dir)
+    setCurrent((prev) => (prev + dir + testimonials.length) % testimonials.length)
+  }
 
   useEffect(() => {
     if (testimonials.length <= 1) return
-    const timer = setInterval(() => {
-      setIsTransitioning(true)
-      setTimeout(() => {
-        setCurrent((prev) => (prev + 1) % testimonials.length)
-        setIsTransitioning(false)
-      }, 400)
-    }, 5000)
+    const timer = setInterval(() => paginate(1), 6000)
     return () => clearInterval(timer)
   }, [testimonials.length])
 
   if (testimonials.length === 0) return null
+
+  const variants = {
+    enter: (dir: number) => ({ x: dir > 0 ? 200 : -200, opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (dir: number) => ({ x: dir < 0 ? 200 : -200, opacity: 0 }),
+  }
+
   const t = testimonials[current]
 
   return (
-    <div className="relative min-h-[220px]">
-      <motion.div
-        key={t.id}
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: isTransitioning ? 0 : 1, x: isTransitioning ? -20 : 0 }}
-        transition={{ duration: 0.4 }}
-        className="glass-card rounded-2xl p-6 md:p-8 max-w-2xl mx-auto text-center"
-      >
-        <div className="flex justify-center gap-1 mb-4">
-          {Array.from({ length: t.rating || 5 }).map((_, i) => (
-            <Star key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />
+    <div className="relative">
+      <div className="overflow-hidden">
+        <AnimatePresence initial={false} custom={direction} mode="wait">
+          <motion.div
+            key={current}
+            custom={direction}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="glass-card rounded-2xl p-8 md:p-10 max-w-2xl mx-auto text-center"
+          >
+            <Quote className="h-8 w-8 text-blue-400/60 mx-auto mb-4" />
+            <div className="flex justify-center gap-1 mb-5">
+              {Array.from({ length: t.rating || 5 }).map((_, i) => (
+                <Star key={i} className="h-4 w-4 text-amber-400 fill-amber-400" />
+              ))}
+            </div>
+            <p className="text-foreground/90 text-base md:text-lg italic leading-relaxed mb-6">
+              &ldquo;{t.feedback}&rdquo;
+            </p>
+            <div className="flex items-center justify-center gap-3">
+              {t.avatar ? (
+                <img src={t.avatar} alt={t.name} className="h-11 w-11 rounded-full object-cover border-2 border-blue-400/40" />
+              ) : (
+                <div className="h-11 w-11 rounded-full bg-blue-500/20 flex items-center justify-center text-foreground font-bold text-sm">
+                  {t.name?.charAt(0)}
+                </div>
+              )}
+              <div className="text-left">
+                <p className="text-foreground font-semibold text-sm">{t.name}</p>
+                {t.position && <p className="text-muted-foreground text-xs">{t.position}{t.company ? ` at ${t.company}` : ''}</p>}
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+      {/* Navigation */}
+      <div className="flex items-center justify-center gap-4 mt-8">
+        <button onClick={() => paginate(-1)} className="h-9 w-9 rounded-full glass flex items-center justify-center hover:bg-blue-500/20 transition-colors">
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+        <div className="flex gap-2">
+          {testimonials.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => { setDirection(i > current ? 1 : -1); setCurrent(i) }}
+              className={`h-2 rounded-full transition-all duration-500 ${i === current ? 'w-8 bg-blue-500' : 'w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50'}`}
+            />
           ))}
         </div>
-        <p className="text-white/90 text-base md:text-lg italic leading-relaxed mb-6">
-          &ldquo;{t.feedback}&rdquo;
-        </p>
-        <div className="flex items-center justify-center gap-3">
-          {t.avatar ? (
-            <img src={t.avatar} alt={t.name} className="h-10 w-10 rounded-full object-cover border-2 border-white/30" />
-          ) : (
-            <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold">
-              {t.name?.charAt(0)}
-            </div>
-          )}
-          <div className="text-left">
-            <p className="text-white font-semibold text-sm">{t.name}</p>
-            {t.position && <p className="text-white/60 text-xs">{t.position}{t.company ? ` at ${t.company}` : ''}</p>}
-          </div>
-        </div>
-      </motion.div>
-      <div className="flex justify-center gap-2 mt-6">
-        {testimonials.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => { setCurrent(i); setIsTransitioning(false) }}
-            className={`h-2 rounded-full transition-all duration-300 ${i === current ? 'w-8 bg-white' : 'w-2 bg-white/40 hover:bg-white/60'}`}
-          />
-        ))}
+        <button onClick={() => paginate(1)} className="h-9 w-9 rounded-full glass flex items-center justify-center hover:bg-blue-500/20 transition-colors">
+          <ChevronRight className="h-4 w-4" />
+        </button>
       </div>
     </div>
   )
 }
 
+/* ============================================================
+   FLOATING ORB DECORATION
+   ============================================================ */
+
+function FloatingOrb({ className }: { className?: string }) {
+  return (
+    <div className={`absolute rounded-full blur-3xl pointer-events-none ${className}`}>
+      <div className="w-full h-full rounded-full bg-blue-500/15 animate-pulse" />
+    </div>
+  )
+}
+
+/* ============================================================
+   MAIN LANDING PAGE COMPONENT
+   ============================================================ */
+
 export function LandingPage() {
   const { navigate, setSearchQuery, setAuthModalOpen, user, language, fontSize } = useAppStore()
   const t = useT()
   const [heroSearch, setHeroSearch] = useState('')
-  const [taglineIndex, setTaglineIndex] = useState(0)
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [newsletterEmail, setNewsletterEmail] = useState('')
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false)
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTaglineIndex((prev) => (prev + 1) % taglineParts.length)
-    }, 3000)
-    return () => clearInterval(timer)
-  }, [])
-
+  // ── API Data Fetching ───────────────────────────────────────
   const { data: jobsData, isLoading } = useQuery({
     queryKey: ['public-jobs'],
     queryFn: async () => {
@@ -174,9 +237,10 @@ export function LandingPage() {
   })
 
   const publicJobs = Array.isArray(jobsData?.jobs) ? jobsData.jobs.slice(0, 6) : []
-  const testimonials = Array.isArray(testimonialsData) ? testimonialsData.filter((t: any) => t.isActive) : []
+  const testimonials = Array.isArray(testimonialsData) ? testimonialsData.filter((tt: any) => tt.isActive) : []
   const faqs = Array.isArray(faqsData) ? faqsData.filter((f: any) => f.isActive).slice(0, 6) : []
 
+  // ── Handlers ───────────────────────────────────────────────
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     setSearchQuery(heroSearch)
@@ -189,304 +253,350 @@ export function LandingPage() {
     setTimeout(() => setNewsletterSubmitted(false), 3000)
   }
 
-  const services = [
-    { icon: Briefcase, title: language === 'fil' ? 'Rekrutamento' : 'Recruitment', desc: language === 'fil' ? 'Comprehensive overseas recruitment services connecting Filipino workers with international employers.' : 'Comprehensive overseas recruitment services connecting Filipino workers with international employers.' },
-    { icon: FileText, title: language === 'fil' ? 'Pagsasalaysay ng Dokumento' : 'Document Processing', desc: language === 'fil' ? 'End-to-end document preparation, verification, and processing for all deployment requirements.' : 'End-to-end document preparation, verification, and processing for all deployment requirements.' },
-    { icon: ClipboardCheck, title: language === 'fil' ? 'Pagsusuri ng Kakayahan' : 'Skills Assessment', desc: language === 'fil' ? 'Thorough evaluation of candidate skills, experience, and qualifications to ensure job fit.' : 'Thorough evaluation of candidate skills, experience, and qualifications to ensure job fit.' },
-    { icon: Stethoscope, title: language === 'fil' ? 'Pagsusuri Medikal' : 'Medical Clearance', desc: language === 'fil' ? 'Coordination with accredited medical facilities for complete health screening.' : 'Coordination with accredited medical facilities for complete health screening.' },
-    { icon: GraduationCap, title: language === 'fil' ? 'Oryentasyon bago Pumalad' : 'Pre-Departure Orientation', desc: language === 'fil' ? 'Comprehensive PDOS covering culture, rights, employer expectations, and safety.' : 'Comprehensive PDOS covering culture, rights, employer expectations, and safety.' },
-    { icon: Headphones, title: language === 'fil' ? 'Suporta pagkatapos Pumalad' : 'Post-Deployment Support', desc: language === 'fil' ? 'Continuous monitoring and support for deployed workers throughout their employment.' : 'Continuous monitoring and support for deployed workers throughout their employment.' },
+  // ── Bilingual Labels ──────────────────────────────────────
+  const L = (fil: string, en: string) => language === 'fil' ? fil : en
+
+  // ── Nav Items ──────────────────────────────────────────────
+  const navItems = [
+    { label: 'Home', view: 'landing' as const },
+    { label: L('Tungkol', 'About'), view: 'about' as const },
+    { label: L('Serbisyo', 'Services'), view: 'services' as const },
+    { label: L('Trabaho', 'Jobs'), view: 'job-listing' as const },
+    { label: 'FAQ', view: 'faq' as const },
+    { label: L('Makipag-ugnay', 'Contact'), view: 'contact' as const },
   ]
 
+  // ── Hero Bento Cards ───────────────────────────────────────
+  const heroBentoCards = [
+    { icon: Globe2, label: L('30+ Bansa', '30+ Countries'), size: 'large' as const, accent: 'from-blue-500/20 to-blue-600/10' },
+    { icon: Users, label: L('10K+ Na-deploy', '10K+ Deployed'), size: 'small' as const, accent: 'from-amber-500/20 to-amber-600/10' },
+    { icon: Shield, label: L('Ligtas & Legal', 'Safe & Legal'), size: 'small' as const, accent: 'from-emerald-500/20 to-emerald-600/10' },
+    { icon: BadgeCheck, label: L('DOLE License', 'DOLE Licensed'), size: 'small' as const, accent: 'from-sky-500/20 to-sky-600/10' },
+    { icon: HeartHandshake, label: L('Full Support', 'Full Support'), size: 'large' as const, accent: 'from-rose-500/20 to-rose-600/10' },
+  ]
+
+  // ── How It Works Steps ────────────────────────────────────
+  const steps = [
+    {
+      icon: Users,
+      title: L('Magparehistro', 'Create Account'),
+      desc: L(
+        'Gumawa ng account at kumpletuhin ang iyong profile kasama ang iyong kasanayan at karanasan.',
+        'Create your account and complete your profile with your skills and experience.'
+      ),
+      accent: 'bg-blue-500',
+      visual: '01',
+    },
+    {
+      icon: Compass,
+      title: L('Mag-apply', 'Find & Apply'),
+      desc: L(
+        'Mag-browse ng verified na job openings at mag-apply sa mga trabaho na nakapares sa iyong kasanayan.',
+        'Browse verified job openings and apply to positions matching your skills and qualifications.'
+      ),
+      accent: 'bg-amber-500',
+      visual: '02',
+    },
+    {
+      icon: Plane,
+      title: L('Maging Deployed', 'Get Deployed'),
+      desc: L(
+        'Ma-match ka sa empleyador, kumpletuhin ang proseso, at maging deployed sa ibang bansa.',
+        'Get matched with employers, complete the process, and get deployed abroad.'
+      ),
+      accent: 'bg-emerald-500',
+      visual: '03',
+    },
+  ]
+
+  // ── Services ───────────────────────────────────────────────
+  const services = [
+    { icon: Briefcase, title: L('Rekrutamento', 'Recruitment'), desc: L('Comprehensive overseas recruitment services connecting Filipino workers with international employers.', 'Comprehensive overseas recruitment services connecting Filipino workers with international employers.') },
+    { icon: FileText, title: L('Pagsasalaysay ng Dokumento', 'Document Processing'), desc: L('End-to-end document preparation, verification, and processing for all deployment requirements.', 'End-to-end document preparation, verification, and processing for all deployment requirements.') },
+    { icon: ClipboardCheck, title: L('Pagsusuri ng Kakayahan', 'Skills Assessment'), desc: L('Thorough evaluation of candidate skills, experience, and qualifications to ensure job fit.', 'Thorough evaluation of candidate skills, experience, and qualifications to ensure job fit.') },
+    { icon: Stethoscope, title: L('Pagsusuri Medikal', 'Medical Clearance'), desc: L('Coordination with accredited medical facilities for complete health screening.', 'Coordination with accredited medical facilities for complete health screening.') },
+    { icon: GraduationCap, title: L('Oryentasyon bago Pumalad', 'Pre-Departure Orientation'), desc: L('Comprehensive PDOS covering culture, rights, employer expectations, and safety.', 'Comprehensive PDOS covering culture, rights, employer expectations, and safety.') },
+    { icon: Headphones, title: L('Suporta pagkatapos Pumalad', 'Post-Deployment Support'), desc: L('Continuous monitoring and support for deployed workers throughout their employment.', 'Continuous monitoring and support for deployed workers throughout their employment.') },
+  ]
+
+  /* ============================================================
+     RENDER
+     ============================================================ */
+
   return (
-    <div className="view-transition min-h-screen flex flex-col" data-font-size={fontSize}>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-fira-hero text-white min-h-[85vh] flex items-center">
-        <div className="absolute inset-0 bg-grid-pattern" />
-        <div className="absolute top-20 right-10 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 left-10 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl" />
-
-        {/* Mobile Nav */}
-        <div className="absolute top-4 left-4 right-4 z-20 md:hidden">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/20 backdrop-blur-md border border-white/20 font-bold text-sm">F</div>
-              <span className="font-bold text-lg">FIRA</span>
+    <div className="view-transition min-h-screen flex flex-col bg-background" data-font-size={fontSize}>
+      {/* ═══════════════════════════════════════════════════════
+          NAVIGATION BAR (Glassmorphism, sticky)
+          ═══════════════════════════════════════════════════════ */}
+      <nav className="glass-nav sticky top-0 z-50">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          {/* Logo */}
+          <button onClick={() => navigate('landing')} className="flex items-center gap-2.5 group">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white font-bold text-sm shadow-lg shadow-blue-600/25 group-hover:shadow-blue-600/40 transition-shadow">
+              F
             </div>
-            <button onClick={() => setMobileNavOpen(!mobileNavOpen)} className="glass p-2 rounded-lg">
-              {mobileNavOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
-          </div>
-          {mobileNavOpen && (
-            <motion.nav
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-3 glass-card rounded-xl p-4 flex flex-col gap-2"
-            >
-              {['Home', 'About', 'Services', 'Jobs', 'FAQ', 'Contact'].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => {
-                    if (item === 'Home') navigate('landing')
-                    else if (item === 'Jobs') navigate('job-listing')
-                    else navigate(item.toLowerCase() as any)
-                    setMobileNavOpen(false)
-                  }}
-                  className="text-left px-3 py-2 rounded-lg hover:bg-white/10 transition-colors text-sm"
-                >
-                  {item}
-                </button>
-              ))}
-            </motion.nav>
-          )}
-        </div>
+            <div className="flex flex-col">
+              <span className="font-bold text-lg leading-tight text-foreground">FIRA</span>
+              <span className="text-[10px] leading-tight text-muted-foreground tracking-wider uppercase">Recruitment</span>
+            </div>
+          </button>
 
-        <div className="relative container mx-auto px-4 py-20 md:py-28 text-center">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <Badge className="bg-white/15 text-white/90 border-white/25 mb-6 text-sm px-4 py-1.5 backdrop-blur-sm">
-              <Shield className="mr-2 h-3.5 w-3.5" />
-              {language === 'fil' ? 'Pinagkakatiwalaan ng 500+ ahensya sa buong mundo' : 'Trusted by 500+ agencies worldwide'}
-            </Badge>
-
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-tight">
-              {language === 'fil' ? (
-                <>
-                  Fil International<br />
-                  <span className="bg-gradient-to-r from-blue-200 via-white to-blue-200 bg-clip-text text-transparent">
-                    Recruitment Agency
-                  </span>
-                </>
-              ) : (
-                <>
-                  Fil International<br />
-                  <span className="bg-gradient-to-r from-blue-200 via-white to-blue-200 bg-clip-text text-transparent">
-                    Recruitment Agency
-                  </span>
-                </>
-              )}
-            </h1>
-
-            {/* Animated Tagline */}
-            <div className="h-10 mb-8 flex items-center justify-center overflow-hidden">
-              <motion.p
-                key={taglineIndex}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5 }}
-                className="text-blue-200 text-sm md:text-base font-medium tracking-widest uppercase"
+          {/* Desktop Nav */}
+          <div className="hidden md:flex items-center gap-1">
+            {navItems.map((item) => (
+              <button
+                key={item.view}
+                onClick={() => navigate(item.view as any)}
+                className="px-3.5 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-all"
               >
-                {taglineParts[taglineIndex]}
-              </motion.p>
+                {item.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center gap-3">
+            {/* Language Toggle */}
+            <div className="flex items-center bg-muted/60 rounded-lg p-0.5">
+              <button
+                onClick={() => useAppStore.getState().setLanguage('en')}
+                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${language === 'en' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => useAppStore.getState().setLanguage('fil')}
+                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${language === 'fil' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                FIL
+              </button>
             </div>
 
-            <form onSubmit={handleSearch} className="max-w-xl mx-auto mb-10">
-              <div className="glass-card rounded-2xl p-2 flex items-center">
-                <Search className="h-5 w-5 text-white/60 ml-4 shrink-0" />
-                <Input
-                  type="search"
-                  placeholder={language === 'fil' ? 'Maghanap ng trabaho...' : 'Search jobs by title, country, or keyword...'}
-                  className="flex-1 border-0 bg-transparent focus-visible:ring-0 h-12 text-white placeholder:text-white/50 text-base"
-                  value={heroSearch}
-                  onChange={(e) => setHeroSearch(e.target.value)}
-                />
-                <Button type="submit" className="rounded-xl h-10 px-6 shrink-0 bg-white text-blue-900 hover:bg-blue-50 font-semibold">
-                  {language === 'fil' ? 'Hanapin' : 'Search'}
+            {user ? (
+              <Button size="sm" className="rounded-lg bg-blue-600 hover:bg-blue-700" onClick={() => navigate('applicant-dashboard')}>
+                {L('Dashboard', 'Dashboard')}
+              </Button>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" className="rounded-lg" onClick={() => setAuthModalOpen(true, 'login')}>
+                  {L('Mag-sign In', 'Sign In')}
                 </Button>
-              </div>
-            </form>
+                <Button size="sm" className="rounded-lg bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-500/25" onClick={() => setAuthModalOpen(true, 'register')}>
+                  {L('Magparehistro', 'Register')}
+                </Button>
+              </>
+            )}
+          </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <Button size="lg" className="bg-white text-blue-900 hover:bg-blue-50 rounded-xl px-6" onClick={() => navigate('job-listing')}>
-                <Briefcase className="mr-2 h-5 w-5" />
-                {language === 'fil' ? 'Maghanap ng Trabaho' : 'Browse Jobs'}
-              </Button>
-              <Button size="lg" variant="outline" className="border-white/40 text-white hover:bg-white/10 rounded-xl px-6" onClick={() => {
-                if (user) navigate('applicant-dashboard')
-                else setAuthModalOpen(true, 'register')
-              }}>
-                {language === 'fil' ? 'Magparehistro Na' : 'Register Now'}
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </div>
-          </motion.div>
+          {/* Mobile Menu Toggle */}
+          <button onClick={() => setMobileNavOpen(!mobileNavOpen)} className="md:hidden p-2 rounded-lg hover:bg-muted/60 transition-colors">
+            {mobileNavOpen ? <X className="h-5 w-5 text-foreground" /> : <Menu className="h-5 w-5 text-foreground" />}
+          </button>
         </div>
-      </section>
 
-      {/* About Section */}
-      <section className="py-16 md:py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
+        {/* Mobile Nav Dropdown */}
+        <AnimatePresence>
+          {mobileNavOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden border-t border-border bg-card/95 backdrop-blur-xl overflow-hidden"
+            >
+              <div className="container mx-auto px-4 py-4 flex flex-col gap-1">
+                {navItems.map((item) => (
+                  <button
+                    key={item.view}
+                    onClick={() => { navigate(item.view as any); setMobileNavOpen(false) }}
+                    className="text-left px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
+                  >
+                    {item.label}
+                  </button>
+                ))}
+                <div className="border-t border-border mt-2 pt-3 flex items-center gap-2">
+                  <Button size="sm" variant="outline" className="rounded-lg flex-1" onClick={() => { setAuthModalOpen(true, 'login'); setMobileNavOpen(false) }}>
+                    {L('Mag-sign In', 'Sign In')}
+                  </Button>
+                  <Button size="sm" className="rounded-lg flex-1 bg-amber-500 hover:bg-amber-600 text-white" onClick={() => { setAuthModalOpen(true, 'register'); setMobileNavOpen(false) }}>
+                    {L('Magparehistro', 'Register')}
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
+
+      {/* ═══════════════════════════════════════════════════════
+          HERO SECTION — Split Layout with Bento Grid
+          ═══════════════════════════════════════════════════════ */}
+      <section className="relative overflow-hidden bg-fira-hero min-h-[90vh]">
+        {/* Background Orbs */}
+        <FloatingOrb className="top-20 -left-20 w-[500px] h-[500px]" />
+        <FloatingOrb className="bottom-10 right-0 w-[400px] h-[400px]" />
+        <FloatingOrb className="top-1/2 left-1/3 w-[300px] h-[300px]" />
+        <div className="absolute inset-0 bg-grid-pattern" />
+
+        <div className="relative container mx-auto px-4 py-16 md:py-24">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[70vh]">
+            {/* LEFT: Content */}
+            <motion.div initial="hidden" animate="visible" variants={stagger} className="flex flex-col gap-6">
+              {/* Trust Badge */}
               <motion.div variants={fadeUp} custom={0}>
-                <Badge className="bg-blue-100 text-blue-800 mb-4">About FIRA</Badge>
+                <Badge className="bg-white/15 text-white/90 border-white/25 text-sm px-4 py-1.5 backdrop-blur-sm">
+                  <Shield className="mr-2 h-3.5 w-3.5" />
+                  {L('Pinagkakatiwalaan ng 500+ ahensya sa buong mundo', 'Trusted by 500+ agencies worldwide')}
+                </Badge>
               </motion.div>
-              <motion.h2 variants={fadeUp} custom={1} className="text-2xl md:text-4xl font-bold text-gray-900 mb-4">
-                {language === 'fil'
-                  ? 'Ang Pinakamalaking Recruitment Agency ng Pilipino sa Morocco'
-                  : 'The Premier Filipino Recruitment Agency in Morocco'}
-              </motion.h2>
-              <motion.p variants={fadeUp} custom={2} className="text-gray-600 leading-relaxed mb-6">
-                {language === 'fil'
-                  ? 'Ang Fil International Recruitment Agency (FIRA), nakabase sa Casablanca, Morocco, ay isang full-service recruitment agency na nakatuon sa pagkonekta ng bihasang Pilipinong manggagawa sa mga respetadong empleyador sa buong mundo. Sa mahigit 10 taon ng karanasan, aming misyon ay magbigay ng ligtas, legal, at propesyonal na serbisyo ng rekrutamento.'
-                  : 'Fil International Recruitment Agency (FIRA), based in Casablanca, Morocco, is a full-service recruitment agency dedicated to connecting skilled Filipino workers with reputable employers worldwide. With over 10 years of experience, we are committed to providing safe, legal, and professional recruitment services.'}
+
+              {/* Main Headline */}
+              <motion.h1 variants={fadeUp} custom={1} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] text-white">
+                {L(
+                  <><span className="block">Ang Iyong</span><span className="block mt-1">Karera sa</span></>,
+                  <><span className="block">Your Career</span><span className="block mt-1">Starts</span></>
+                )}
+                <span className="block mt-1 bg-gradient-to-r from-amber-300 via-amber-400 to-amber-300 bg-clip-text text-transparent">
+                  {L('Dito.', 'Here.')}
+                </span>
+              </motion.h1>
+
+              {/* Subtitle */}
+              <motion.p variants={fadeUp} custom={2} className="text-blue-100/80 text-lg md:text-xl max-w-lg leading-relaxed">
+                {L(
+                  'Ang FIRA ay nagkonekta ng bihasang manggagawang Pilipino sa mga pinakamahusay na oportunidad sa buong mundo.',
+                  'FIRA connects skilled Filipino workers with the best opportunities worldwide.'
+                )}
               </motion.p>
-              <motion.div variants={fadeUp} custom={3}>
-                <Button className="rounded-xl" onClick={() => navigate('about')}>
-                  {language === 'fil' ? 'Alamin ang Higit Pa' : 'Learn More About Us'}
+
+              {/* Search Bar */}
+              <motion.form variants={fadeUp} custom={3} onSubmit={handleSearch} className="max-w-lg">
+                <div className="glass-card rounded-2xl p-1.5 flex items-center gap-2">
+                  <Search className="h-5 w-5 text-white/50 ml-4 shrink-0" />
+                  <Input
+                    type="search"
+                    placeholder={L('Maghanap ng trabaho...', 'Search jobs by title, country, or keyword...')}
+                    className="flex-1 border-0 bg-transparent focus-visible:ring-0 h-12 text-white placeholder:text-white/40 text-base"
+                    value={heroSearch}
+                    onChange={(e) => setHeroSearch(e.target.value)}
+                  />
+                  <Button type="submit" className="rounded-xl h-10 px-5 shrink-0 bg-amber-500 hover:bg-amber-600 text-white font-semibold shadow-lg shadow-amber-500/30">
+                    {L('Hanapin', 'Search')}
+                  </Button>
+                </div>
+              </motion.form>
+
+              {/* CTAs */}
+              <motion.div variants={fadeUp} custom={4} className="flex flex-wrap items-center gap-3">
+                <Button size="lg" className="rounded-xl bg-white text-blue-900 hover:bg-blue-50 font-semibold shadow-xl shadow-white/10" onClick={() => navigate('job-listing')}>
+                  <Briefcase className="mr-2 h-5 w-5" />
+                  {L('Maghanap ng Trabaho', 'Browse Jobs')}
+                </Button>
+                <Button size="lg" variant="outline" className="rounded-xl border-white/30 text-white hover:bg-white/10 bg-transparent" onClick={() => {
+                  if (user) navigate('applicant-dashboard')
+                  else setAuthModalOpen(true, 'register')
+                }}>
+                  {L('Magparehistro Na', 'Register Now')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </motion.div>
             </motion.div>
+
+            {/* RIGHT: Bento Grid */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="relative"
+              initial="hidden"
+              animate="visible"
+              variants={stagger}
+              className="hidden lg:grid grid-cols-3 grid-rows-3 gap-3 h-[420px]"
             >
-              <div className="bg-fira-gradient rounded-2xl p-8 text-white relative overflow-hidden">
-                <div className="absolute inset-0 bg-dots-pattern" />
-                <div className="relative">
-                  <h3 className="text-xl font-bold mb-6">Our Mission</h3>
-                  <p className="text-blue-100 leading-relaxed mb-4">
-                    To be the bridge between Filipino talent and global opportunity, ensuring every deployment is ethical, transparent, and mutually beneficial.
-                  </p>
-                  <div className="grid grid-cols-2 gap-4 mt-6">
-                    <div className="glass rounded-xl p-4 text-center">
-                      <p className="text-2xl font-bold">10+</p>
-                      <p className="text-blue-200 text-sm">{language === 'fil' ? 'Taon ng Serbisyo' : 'Years of Service'}</p>
-                    </div>
-                    <div className="glass rounded-xl p-4 text-center">
-                      <p className="text-2xl font-bold">Morocco</p>
-                      <p className="text-blue-200 text-sm">{language === 'fil' ? 'Punong Tanggapan' : 'Headquarters'}</p>
-                    </div>
+              {heroBentoCards.map((card, i) => (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  custom={i}
+                  className={`${card.size === 'large' ? 'col-span-2' : 'col-span-1'} row-span-1 rounded-2xl bg-gradient-to-br ${card.accent} backdrop-blur-md border border-white/15 p-5 flex flex-col justify-between group hover:border-white/30 transition-all duration-500 cursor-pointer`}
+                  onClick={() => navigate('about')}
+                >
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 group-hover:bg-white/25 transition-colors`}>
+                    <card.icon className="h-5 w-5 text-white" />
                   </div>
-                </div>
-              </div>
+                  <div>
+                    <p className="text-white/70 text-xs font-medium tracking-wide uppercase">{L('Tampok', 'Feature')}</p>
+                    <p className="text-white font-semibold text-lg mt-0.5">{card.label}</p>
+                  </div>
+                </motion.div>
+              ))}
             </motion.div>
           </div>
         </div>
-      </section>
 
-      {/* Services Section */}
-      <section className="py-16 md:py-20 bg-fira-gradient-soft">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <Badge className="bg-blue-100 text-blue-800 mb-3">Our Services</Badge>
-            <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-3">
-              {language === 'fil' ? 'Mga Serbisyo Namin' : 'What We Offer'}
-            </h2>
-            <p className="text-gray-600 max-w-xl mx-auto">
-              {language === 'fil'
-                ? 'End-to-end na serbisyo ng rekrutamento mula aplikasyon hanggang post-deployment support.'
-                : 'End-to-end recruitment services from application to post-deployment support.'}
-            </p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {services.map((service, i) => (
-              <motion.div key={service.title} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i} variants={fadeUp}>
-                <Card className="h-full hover:shadow-xl hover:shadow-blue-100/50 transition-all duration-300 border-blue-100 group cursor-pointer" onClick={() => navigate('services')}>
-                  <CardContent className="p-6">
-                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-700 group-hover:bg-blue-700 group-hover:text-white transition-colors duration-300">
-                      <service.icon className="h-6 w-6" />
-                    </div>
-                    <h3 className="text-lg font-semibold mb-2 text-gray-900">{service.title}</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">{service.desc}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-          <div className="text-center mt-10">
-            <Button variant="outline" className="rounded-xl" onClick={() => navigate('services')}>
-              {language === 'fil' ? 'Tingnan Lahat ng Serbisyo' : 'View All Services'}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
+        {/* Bottom Wave Divider */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg viewBox="0 0 1440 80" className="w-full h-16 md:h-20" preserveAspectRatio="none">
+            <path d="M0,60 C360,20 720,80 1080,40 C1260,20 1380,50 1440,40 L1440,80 L0,80 Z" className="fill-background" />
+          </svg>
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-16 md:py-20 bg-white">
+      {/* ═══════════════════════════════════════════════════════
+          HOW IT WORKS — Creative Horizontal Steps
+          ═══════════════════════════════════════════════════════ */}
+      <section className="py-20 md:py-28 bg-background">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <Badge className="bg-blue-100 text-blue-800 mb-3">How It Works</Badge>
-            <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-3">
-              {language === 'fil' ? 'Paano Gumagana' : 'Simple 3-Step Process'}
-            </h2>
-            <p className="text-gray-600 max-w-lg mx-auto">
-              {language === 'fil'
-                ? 'Tatlong simpleng hakbang upang simulan ang iyong karera sa labas ng bansa'
-                : 'Three simple steps to start your international career journey'}
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {[
-              { step: '1', title: language === 'fil' ? 'Magparehistro' : 'Register', desc: language === 'fil' ? 'Gumawa ng account at kumpletuhin ang iyong profile kasama ang iyong kasanayan at karanasan.' : 'Create your account and complete your profile with your skills and experience.', icon: Users, color: 'from-blue-600 to-blue-800' },
-              { step: '2', title: language === 'fil' ? 'Mag-apply' : 'Apply for Jobs', desc: language === 'fil' ? 'Mag-browse ng verified na job openings at mag-apply sa mga trabaho na nakapares sa iyong kasanayan.' : 'Browse verified job openings and apply to positions matching your skills.', icon: Briefcase, color: 'from-blue-700 to-blue-900' },
-              { step: '3', title: language === 'fil' ? 'Maging Hired' : 'Get Hired & Deployed', desc: language === 'fil' ? 'Ma-match ka sa emplyador, kumpletuhin ang proseso, at maging deployed sa ibang bansa.' : 'Get matched with employers, complete the process, and get deployed abroad.', icon: CheckCircle, color: 'from-blue-800 to-blue-950' },
-            ].map((item, i) => (
-              <motion.div key={item.step} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i} variants={fadeUp}>
-                <div className="relative">
-                  <div className={`bg-gradient-to-br ${item.color} rounded-2xl p-6 text-white text-center relative overflow-hidden h-full`}>
-                    <div className="absolute inset-0 bg-dots-pattern" />
-                    <div className="relative">
-                      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
-                        <item.icon className="h-7 w-7" />
-                      </div>
-                      <div className="text-xs font-bold tracking-widest text-blue-200 mb-2">
-                        STEP {item.step}
-                      </div>
-                      <h3 className="text-xl font-semibold mb-3">{item.title}</h3>
-                      <p className="text-sm text-blue-100 leading-relaxed">{item.desc}</p>
-                    </div>
-                  </div>
-                  {i < 2 && (
-                    <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
-                      <ChevronRight className="h-8 w-8 text-blue-400" />
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+          {/* Section Header */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={stagger}
+            className="text-center mb-16 max-w-2xl mx-auto"
+          >
+            <motion.div variants={fadeUp} custom={0}>
+              <Badge variant="outline" className="border-blue-200 text-blue-600 dark:border-blue-800 dark:text-blue-400 mb-4">
+                {L('Paano Gumagana', 'How It Works')}
+              </Badge>
+            </motion.div>
+            <motion.h2 variants={fadeUp} custom={1} className="text-3xl md:text-5xl font-bold text-foreground tracking-tight">
+              {L(
+                'Tatlong Hakbang Papunta sa iyong Pangarap',
+                'Three Steps to Your Dream Career'
+              )}
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="text-muted-foreground mt-4 text-lg">
+              {L(
+                'Simple at direktang proseso — mula rehistrasyon hanggang sa pag-deploy.',
+                'A simple and direct process — from registration to deployment.'
+              )}
+            </motion.p>
+          </motion.div>
 
-      {/* Stats Section */}
-      <section className="py-16 md:py-20 bg-fira-hero text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-dots-pattern" />
-        <div className="absolute top-10 left-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-10 right-1/4 w-64 h-64 bg-blue-300/10 rounded-full blur-3xl" />
-        <div className="relative container mx-auto px-4">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-bold mb-2">
-              {language === 'fil' ? 'Pinagkakatiwalaan ng Libo-libo' : 'Trusted by Thousands'}
-            </h2>
-            <p className="text-blue-200">
-              {language === 'fil' ? 'Mga numero na nagsasalita para sa sarili nila' : 'Numbers that speak for themselves'}
-            </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
-            {[
-              { target: 10000, suffix: '+', label: language === 'fil' ? 'Na-deploy na OFW' : 'Workers Deployed' },
-              { target: 500, suffix: '+', label: language === 'fil' ? 'Partner na Ahensya' : 'Partner Agencies' },
-              { target: 30, suffix: '+', label: language === 'fil' ? 'Mga Bansa' : 'Countries' },
-              { target: 98, suffix: '%', label: language === 'fil' ? 'Rate ng Kasiyahan' : 'Satisfaction Rate' },
-            ].map((s, i) => (
+          {/* Steps */}
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto relative">
+            {/* Connecting Line (desktop) */}
+            <div className="hidden md:block absolute top-16 left-[18%] right-[18%] h-[2px] bg-gradient-to-r from-blue-300 via-amber-300 to-emerald-300 dark:from-blue-700 dark:via-amber-700 dark:to-emerald-700" />
+
+            {steps.map((step, i) => (
               <motion.div
-                key={s.label}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                key={i}
+                initial="hidden"
+                whileInView="visible"
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="text-center"
+                custom={i}
+                variants={fadeUp}
+                className="relative"
               >
-                <div className="glass rounded-2xl p-6">
-                  <div className="text-3xl md:text-5xl font-bold mb-1">
-                    <AnimatedCounter target={s.target} suffix={s.suffix} />
+                <div className="flex flex-col items-center text-center">
+                  {/* Step Number Circle */}
+                  <div className={`relative z-10 h-16 w-16 rounded-2xl ${step.accent} flex items-center justify-center text-white font-bold text-xl shadow-lg mb-6 rotate-3 hover:rotate-0 transition-transform duration-300`}>
+                    {step.visual}
                   </div>
-                  <p className="text-blue-200 text-sm">{s.label}</p>
+                  {/* Step Card */}
+                  <div className="bg-card border border-border rounded-2xl p-6 w-full hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-500 group">
+                    <div className="h-12 w-12 rounded-xl bg-muted/80 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                      <step.icon className="h-6 w-6 text-foreground" />
+                    </div>
+                    <h3 className="text-xl font-bold text-foreground mb-2">{step.title}</h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed">{step.desc}</p>
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -494,317 +604,489 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Featured Jobs */}
-      <section className="py-16 md:py-20 bg-fira-gradient-soft">
+      {/* ═══════════════════════════════════════════════════════
+          FEATURED JOBS
+          ═══════════════════════════════════════════════════════ */}
+      <section className="py-20 md:py-28 bg-muted/40">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={stagger}
+            className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4"
+          >
             <div>
-              <Badge className="bg-blue-100 text-blue-800 mb-3">Featured Jobs</Badge>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-                {language === 'fil' ? 'Mga Pinakabagong Trabaho' : 'Latest Job Openings'}
-              </h2>
-              <p className="text-gray-600 mt-1">
-                {language === 'fil' ? 'Tingnan ang pinakabagong oportunidad mula sa aming mga partner'
-                  : 'Explore the latest opportunities from our partners'}
-              </p>
+              <motion.div variants={fadeUp} custom={0}>
+                <Badge variant="outline" className="border-blue-200 text-blue-600 dark:border-blue-800 dark:text-blue-400 mb-4">
+                  <Briefcase className="mr-1.5 h-3 w-3" />
+                  {L('Pinakabagong Trabaho', 'Latest Openings')}
+                </Badge>
+              </motion.div>
+              <motion.h2 variants={fadeUp} custom={1} className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+                {L('Mga Pinakabagong Oportunidad', 'Latest Opportunities')}
+              </motion.h2>
+              <motion.p variants={fadeUp} custom={2} className="text-muted-foreground mt-2">
+                {L('Tingnan ang pinakabagong trabaho mula sa aming mga partner.', 'Explore the latest opportunities from our partners.')}
+              </motion.p>
             </div>
-            <Button variant="outline" onClick={() => navigate('job-listing')} className="hidden sm:flex rounded-xl">
-              {language === 'fil' ? 'Tingnan Lahat' : 'View All'} <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
+            <motion.div variants={fadeUp} custom={3}>
+              <Button variant="outline" onClick={() => navigate('job-listing')} className="rounded-xl border-border">
+                {L('Tingnan Lahat', 'View All')} <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </motion.div>
+          </motion.div>
+
           {isLoading ? (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-56 rounded-2xl" />)}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-64 rounded-2xl" />
+              ))}
             </div>
           ) : publicJobs.length === 0 ? (
-            <Card className="p-8 text-center rounded-2xl">
-              <Briefcase className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-              <p className="text-gray-500">{language === 'fil' ? 'Wala pang trabaho ngayon.' : 'No jobs available yet. Check back soon!'}</p>
-            </Card>
+            <div className="glass-card-light rounded-2xl p-12 text-center max-w-md mx-auto">
+              <Briefcase className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
+              <p className="text-muted-foreground">{L('Wala pang trabaho ngayon.', 'No jobs available yet. Check back soon!')}</p>
+            </div>
           ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={stagger}
+              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"
+            >
               {publicJobs.map((job: any, i: number) => (
-                <motion.div key={job.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
-                  <Card className="hover:shadow-xl hover:shadow-blue-100/50 cursor-pointer transition-all duration-300 h-full border-blue-100" onClick={() => navigate('job-detail', { jobId: job.id })}>
-                    <CardContent className="p-5">
+                <motion.div key={job.id} variants={fadeUp} custom={i}>
+                  <Card
+                    className="h-full hover:shadow-xl hover:shadow-blue-500/5 cursor-pointer transition-all duration-500 border-border hover:border-blue-400 dark:hover:border-blue-600 group bg-card"
+                    onClick={() => navigate('job-detail', { jobId: job.id })}
+                  >
+                    <CardContent className="p-5 flex flex-col h-full">
                       <div className="flex items-start justify-between mb-3">
-                        <Badge className={`text-xs ${categoryColors[job.category] || 'bg-gray-100 text-gray-800'}`}>
+                        <Badge className={`text-xs ${categoryColors[job.category] || 'bg-muted text-muted-foreground'}`}>
                           {job.category?.replace('_', ' ') || 'General'}
                         </Badge>
-                        {job.slots > 1 && <span className="text-xs text-gray-500">{job.slots} slots</span>}
+                        <ArrowUpRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-blue-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                       </div>
-                      <h3 className="font-semibold mb-2 text-gray-900 line-clamp-2">{job.title}</h3>
-                      <div className="flex items-center gap-1.5 text-sm text-gray-500 mb-3">
+                      <h3 className="font-semibold text-foreground mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{job.title}</h3>
+                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
                         <MapPin className="h-3.5 w-3.5 shrink-0" />
                         <span className="truncate">{job.city ? `${job.city}, ` : ''}{job.country}</span>
                       </div>
-                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
-                        <span className="text-sm font-bold text-blue-700">
+                      <div className="mt-auto pt-4 border-t border-border/60 flex items-center justify-between">
+                        <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
                           {job.salaryMin || job.salaryMax
                             ? `$${job.salaryMin ?? '?'} - $${job.salaryMax ?? '?'}`
-                            : 'Competitive'}
+                            : L('Kompetitibo', 'Competitive')}
                         </span>
-                        <ArrowRight className="h-4 w-4 text-blue-500" />
+                        {job.slots > 1 && (
+                          <Badge variant="secondary" className="text-xs">{job.slots} {L('slots', 'slots')}</Badge>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
-          <div className="mt-6 text-center sm:hidden">
-            <Button variant="outline" onClick={() => navigate('job-listing')} className="rounded-xl">
-              {language === 'fil' ? 'Tingnan Lahat ng Trabaho' : 'View All Jobs'}
-            </Button>
-          </div>
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="py-16 md:py-20 bg-fira-hero relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-pattern" />
+      {/* ═══════════════════════════════════════════════════════
+          STATS / TRUST BAR
+          ═══════════════════════════════════════════════════════ */}
+      <section className="relative py-20 md:py-24 bg-fira-hero overflow-hidden">
+        <div className="absolute inset-0 bg-dots-pattern" />
+        <FloatingOrb className="-top-20 -left-20 w-[400px] h-[400px]" />
+        <FloatingOrb className="-bottom-20 -right-20 w-[350px] h-[350px]" />
+
         <div className="relative container mx-auto px-4">
-          <div className="text-center mb-10">
-            <Badge className="bg-white/15 text-white/90 border-white/20 mb-3">Testimonials</Badge>
-            <h2 className="text-2xl md:text-3xl font-bold mb-2">
-              {language === 'fil' ? 'Mga Sinabi ng aming Mga Deployed Workers' : 'What Our Workers Say'}
-            </h2>
-            <p className="text-blue-200">
-              {language === 'fil' ? 'Mga totoong kwento mula sa aming mga matagumpay na deployed workers'
-                : 'Real stories from our successfully deployed workers'}
-            </p>
-          </div>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={stagger}
+            className="text-center mb-14"
+          >
+            <motion.h2 variants={fadeUp} custom={0} className="text-3xl md:text-4xl font-bold text-white tracking-tight">
+              {L('Mga Numero na Nagsasalita', 'Numbers That Speak')}
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={1} className="text-blue-200/70 mt-3 text-lg">
+              {L('Pinagkakatiwalaan ng libo-libo sa buong mundo', 'Trusted by thousands worldwide')}
+            </motion.p>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={stagger}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-5xl mx-auto"
+          >
+            {[
+              { target: 10000, suffix: '+', label: L('Na-deploy na OFW', 'Workers Deployed'), icon: Users },
+              { target: 500, suffix: '+', label: L('Partner na Ahensya', 'Partner Agencies'), icon: Globe },
+              { target: 30, suffix: '+', label: L('Mga Bansa', 'Countries'), icon: MapPin },
+              { target: 98, suffix: '%', label: L('Rate ng Kasiyahan', 'Satisfaction Rate'), icon: TrendingUp },
+            ].map((s, i) => (
+              <motion.div key={s.label} variants={fadeUp} custom={i}>
+                <div className="glass-card rounded-2xl p-6 text-center group hover:border-white/30 transition-all duration-500">
+                  <s.icon className="h-5 w-5 text-amber-400 mx-auto mb-3" />
+                  <div className="text-3xl md:text-5xl font-bold text-white mb-1">
+                    <AnimatedCounter target={s.target} suffix={s.suffix} />
+                  </div>
+                  <p className="text-blue-200/80 text-sm">{s.label}</p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Top Wave Divider */}
+        <div className="absolute top-0 left-0 right-0 rotate-180">
+          <svg viewBox="0 0 1440 60" className="w-full h-12 md:h-16" preserveAspectRatio="none">
+            <path d="M0,30 C480,60 960,0 1440,30 L1440,60 L0,60 Z" className="fill-background" />
+          </svg>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          FOR EMPLOYERS — CTA Section
+          ═══════════════════════════════════════════════════════ */}
+      <section className="py-20 md:py-28 bg-background">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="relative max-w-5xl mx-auto rounded-3xl overflow-hidden"
+          >
+            {/* Background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 dark:from-blue-800 dark:via-blue-900 dark:to-blue-950" />
+            <div className="absolute inset-0 bg-dots-pattern" />
+            <FloatingOrb className="-top-10 -right-10 w-[300px] h-[300px]" />
+            <FloatingOrb className="-bottom-10 -left-10 w-[250px] h-[250px]" />
+
+            <div className="relative p-8 md:p-14 lg:p-16">
+              <div className="grid md:grid-cols-2 gap-10 items-center">
+                {/* Left */}
+                <div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="h-12 w-12 rounded-xl bg-amber-400/20 border border-amber-400/30 flex items-center justify-center">
+                      <Building2 className="h-6 w-6 text-amber-300" />
+                    </div>
+                    <Badge className="bg-amber-400/20 text-amber-200 border-amber-400/30 text-xs">
+                      {L('Para sa Empleyador', 'For Employers')}
+                    </Badge>
+                  </div>
+                  <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight mb-4">
+                    {L(
+                      'Hanapin ang Pinakamahusay na Manggagawang Pilipino',
+                      'Find the Best Filipino Workers'
+                    )}
+                  </h2>
+                  <p className="text-blue-100/80 leading-relaxed mb-8">
+                    {L(
+                      'Ang FIRA ay nagkonekta sa mga empleyador sa buong mundo sa mga beripikadong at bihasang manggagawang Pilipino. Makipag-ugnayan sa amin upang mahanap ang perpektong kandidato.',
+                      'FIRA connects employers worldwide with verified and skilled Filipino workers. Partner with us to find the perfect candidates for your business needs.'
+                    )}
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    <Button
+                      size="lg"
+                      className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold shadow-xl shadow-amber-500/30"
+                      onClick={() => navigate('employer-partnership')}
+                    >
+                      <Handshake className="mr-2 h-5 w-5" />
+                      {L('Maging Partner', 'Partner with FIRA')}
+                    </Button>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="rounded-xl border-white/30 text-white hover:bg-white/10 bg-transparent"
+                      onClick={() => navigate('contact')}
+                    >
+                      {L('Makipag-ugnay', 'Contact Us')}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Right: Benefits */}
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { icon: Shield, label: L('Verified Workers', 'Verified Workers') },
+                    { icon: Zap, label: L('Fast Processing', 'Fast Processing') },
+                    { icon: Target, label: L('Right Match', 'Right Match') },
+                    { icon: HeartHandshake, label: L('Full Support', 'Full Support') },
+                  ].map((item, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.1 + 0.3, duration: 0.5 }}
+                      className="glass-card rounded-xl p-4 flex flex-col items-center text-center group hover:border-white/30 transition-all"
+                    >
+                      <item.icon className="h-5 w-5 text-amber-400 mb-2" />
+                      <p className="text-white/90 text-sm font-medium">{item.label}</p>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          TESTIMONIALS
+          ═══════════════════════════════════════════════════════ */}
+      <section className="py-20 md:py-28 bg-muted/40">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={stagger}
+            className="text-center mb-14 max-w-2xl mx-auto"
+          >
+            <motion.div variants={fadeUp} custom={0}>
+              <Badge variant="outline" className="border-blue-200 text-blue-600 dark:border-blue-800 dark:text-blue-400 mb-4">
+                <Star className="mr-1.5 h-3 w-3" />
+                Testimonials
+              </Badge>
+            </motion.div>
+            <motion.h2 variants={fadeUp} custom={1} className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+              {L('Mga Sinabi ng aming Deployed Workers', 'What Our Deployed Workers Say')}
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="text-muted-foreground mt-3">
+              {L('Mga totoong kwento mula sa aming mga matagumpay na deployed workers', 'Real stories from our successfully deployed workers')}
+            </motion.p>
+          </motion.div>
+
           {testimonials.length > 0 ? (
             <TestimonialsCarousel testimonials={testimonials} />
           ) : (
-            <div className="glass-card rounded-2xl p-8 max-w-2xl mx-auto text-center">
-              <p className="text-white/70">{language === 'fil' ? 'Walang testimonial pa ngayon.' : 'No testimonials yet. Check back soon!'}</p>
+            <div className="glass-card-light rounded-2xl p-10 max-w-2xl mx-auto text-center">
+              <p className="text-muted-foreground">{L('Walang testimonial pa ngayon.', 'No testimonials yet. Check back soon!')}</p>
             </div>
           )}
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-16 md:py-20 bg-white">
+      {/* ═══════════════════════════════════════════════════════
+          FAQ ACCORDION
+          ═══════════════════════════════════════════════════════ */}
+      <section className="py-20 md:py-28 bg-background">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-10">
-            <Badge className="bg-blue-100 text-blue-800 mb-3">FAQ</Badge>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-              {language === 'fil' ? 'Mga Madalas Itanong' : 'Frequently Asked Questions'}
-            </h2>
-            <p className="text-gray-600">
-              {language === 'fil' ? 'Mga sagot sa mga karaniwang tanong tungkol sa aming serbisyo'
-                : 'Answers to common questions about our services'}
-            </p>
-          </div>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={stagger}
+            className="text-center mb-14 max-w-2xl mx-auto"
+          >
+            <motion.div variants={fadeUp} custom={0}>
+              <Badge variant="outline" className="border-blue-200 text-blue-600 dark:border-blue-800 dark:text-blue-400 mb-4">
+                FAQ
+              </Badge>
+            </motion.div>
+            <motion.h2 variants={fadeUp} custom={1} className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+              {L('Mga Madalas Itanong', 'Frequently Asked Questions')}
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="text-muted-foreground mt-3">
+              {L('Mga sagot sa mga karaniwang tanong tungkol sa aming serbisyo', 'Answers to common questions about our services')}
+            </motion.p>
+          </motion.div>
+
           {faqs.length > 0 ? (
-            <div className="max-w-3xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="max-w-3xl mx-auto"
+            >
               <Accordion type="single" collapsible className="space-y-3">
                 {faqs.map((faq: any, i: number) => (
-                  <AccordionItem key={faq.id} value={`faq-${i}`} className="bg-fira-gradient-card rounded-xl px-6 border border-blue-100 data-[state=open]:bg-blue-50 transition-colors">
-                    <AccordionTrigger className="text-left text-gray-900 font-medium hover:no-underline">
+                  <AccordionItem
+                    key={faq.id}
+                    value={`faq-${i}`}
+                    className="bg-card border border-border rounded-xl px-6 data-[state=open]:border-blue-300 dark:data-[state=open]:border-blue-700 data-[state=open]:shadow-lg data-[state=open]:shadow-blue-500/5 transition-all duration-300"
+                  >
+                    <AccordionTrigger className="text-left font-medium hover:no-underline text-foreground py-5">
                       {faq.question}
                     </AccordionTrigger>
-                    <AccordionContent className="text-gray-600 leading-relaxed">
+                    <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
                       {faq.answer}
                     </AccordionContent>
                   </AccordionItem>
                 ))}
               </Accordion>
-              <div className="text-center mt-6">
-                <Button variant="outline" className="rounded-xl" onClick={() => navigate('faq')}>
-                  {language === 'fil' ? 'Tingnan Lahat ng FAQ' : 'View All FAQs'}
+              <div className="text-center mt-8">
+                <Button variant="outline" className="rounded-xl border-border" onClick={() => navigate('faq')}>
+                  {L('Tingnan Lahat ng FAQ', 'View All FAQs')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
-            </div>
+            </motion.div>
           ) : (
-            <Card className="p-8 text-center max-w-md mx-auto rounded-2xl">
-              <p className="text-gray-500">{language === 'fil' ? 'Walang FAQ pa ngayon.' : 'No FAQs available yet.'}</p>
-            </Card>
+            <div className="glass-card-light rounded-2xl p-10 max-w-md mx-auto text-center">
+              <p className="text-muted-foreground">{L('Walang FAQ pa ngayon.', 'No FAQs available yet.')}</p>
+            </div>
           )}
         </div>
       </section>
 
-      {/* Employer Partnership Banner */}
-      <section className="py-16 md:py-20 bg-fira-gradient text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-pattern opacity-30" />
-        <div className="absolute top-10 right-10 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-10 left-10 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl" />
-        <div className="container mx-auto px-4 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-3xl mx-auto text-center"
-          >
-            <Card className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 md:p-12">
-              <CardContent className="p-0">
-                <div className="flex justify-center mb-6">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 border border-white/30">
-                    <Building2 className="h-8 w-8 text-blue-200" />
-                  </div>
-                </div>
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 leading-tight">
-                  {language === 'fil'
-                    ? 'Ikaw ba ay empleyador na naghahanap ng manggagawang Pilipino?'
-                    : 'Are you an employer looking for Filipino workers?'}
-                </h2>
-                <p className="text-blue-100 text-base md:text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
-                  {language === 'fil'
-                    ? 'Ang FIRA ay nagkonekta sa mga empleyador sa buong mundo sa mga beripikadong at bihasang manggagawang Pilipino. Makipag-ugnayan sa amin upang mahanap ang perpektong kandidato para sa inyong negosyo.'
-                    : 'FIRA connects employers worldwide with verified and skilled Filipino workers. Partner with us to find the perfect candidates for your business needs.'}
-                </p>
-                <Button
-                  size="lg"
-                  className="bg-white text-blue-900 hover:bg-blue-50 rounded-xl px-8 font-semibold"
-                  onClick={() => navigate('employer-partnership')}
-                >
-                  <Handshake className="mr-2 h-5 w-5" />
-                  {language === 'fil' ? 'Maging Partner ng FIRA' : 'Partner with FIRA'}
-                </Button>
-                <p className="text-blue-200/70 text-sm mt-4">
-                  {language === 'fil'
-                    ? 'Mga ahensya ay malugod din na maging partner namin'
-                    : 'Agencies are also welcome to partner with us'}
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Newsletter Section */}
-      <section className="py-16 md:py-20 bg-fira-gradient-soft">
+      {/* ═══════════════════════════════════════════════════════
+          NEWSLETTER
+          ═══════════════════════════════════════════════════════ */}
+      <section className="py-16 md:py-20 bg-muted/40">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
             className="max-w-2xl mx-auto text-center"
           >
-            <Badge className="bg-blue-100 text-blue-800 mb-3">Newsletter</Badge>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
-              {language === 'fil' ? 'Huwag palampasin ang Mga Bagong Trabaho' : 'Never Miss a Job Opportunity'}
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+              {L('Huwag Palampasin ang Mga Bagong Trabaho', 'Never Miss a Job Opportunity')}
             </h2>
-            <p className="text-gray-600 mb-8">
-              {language === 'fil'
-                ? 'Mag-subscribe sa aming newsletter para makatanggap ng mga bagong job openings at update.'
-                : 'Subscribe to our newsletter for the latest job openings and updates.'}
+            <p className="text-muted-foreground mb-8">
+              {L(
+                'Mag-subscribe sa aming newsletter para makatanggap ng mga bagong job openings at update.',
+                'Subscribe to our newsletter for the latest job openings and updates.'
+              )}
             </p>
             <form onSubmit={handleNewsletter} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
               <Input
                 type="email"
                 placeholder="your@email.com"
-                className="h-12 rounded-xl"
+                className="h-12 rounded-xl bg-card border-border"
                 value={newsletterEmail}
                 onChange={(e) => setNewsletterEmail(e.target.value)}
                 required
               />
-              <Button type="submit" className="h-12 rounded-xl px-6 shrink-0">
+              <Button type="submit" className="h-12 rounded-xl px-6 shrink-0 bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-500/25">
                 {newsletterSubmitted ? (
                   <CheckCircle className="h-5 w-5" />
                 ) : (
-                  language === 'fil' ? 'Mag-subscribe' : 'Subscribe'
+                  L('Mag-subscribe', 'Subscribe')
                 )}
               </Button>
             </form>
             {newsletterSubmitted && (
-              <p className="text-sm text-green-600 mt-2">{language === 'fil' ? 'Salamat sa pag-subscribe!' : 'Thank you for subscribing!'}</p>
+              <p className="text-sm text-emerald-600 dark:text-emerald-400 mt-3">{L('Salamat sa pag-subscribe!', 'Thank you for subscribing!')}</p>
             )}
           </motion.div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white">
+      {/* ═══════════════════════════════════════════════════════
+          FOOTER
+          ═══════════════════════════════════════════════════════ */}
+      <footer className="bg-card border-t border-border mt-auto">
         <div className="container mx-auto px-4 py-12 md:py-16">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+            {/* Brand */}
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 font-bold text-sm">F</div>
-                <div>
-                  <span className="text-lg font-bold">FIRA</span>
-                  <p className="text-xs text-gray-400">Fil International Recruitment Agency</p>
+              <div className="flex items-center gap-2.5 mb-4">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white font-bold text-sm shadow-lg shadow-blue-600/25">
+                  F
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-lg font-bold text-foreground">FIRA</span>
+                  <span className="text-[10px] leading-tight text-muted-foreground tracking-wider uppercase">Recruitment</span>
                 </div>
               </div>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                {language === 'fil'
-                  ? 'Nakabase sa Casablanca, Morocco. Nagnanakaw kami, nag-deploy, nag-monitor, at nagbibigay ng resulta para sa mga manggagawang Pilipino.'
-                  : 'Based in Casablanca, Morocco. We recruit, deploy, monitor, and deliver results for Filipino workers seeking opportunities abroad.'}
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {L(
+                  'Nakabase sa Casablanca, Morocco. Kami ay nagrekrut, nag-deploy, at nagbibigay ng resulta para sa mga manggagawang Pilipino.',
+                  'Based in Casablanca, Morocco. We recruit, deploy, monitor, and deliver results for Filipino workers seeking opportunities abroad.'
+                )}
               </p>
             </div>
+
+            {/* Quick Links */}
             <div>
-              <h4 className="font-semibold mb-4 text-white">
-                {language === 'fil' ? 'Mabilis na Link' : 'Quick Links'}
-              </h4>
-              <ul className="space-y-2.5 text-sm text-gray-400">
+              <h4 className="font-semibold mb-4 text-foreground">{L('Mabilis na Link', 'Quick Links')}</h4>
+              <ul className="space-y-2.5 text-sm">
                 {[
-                  { label: language === 'fil' ? 'Home' : 'Home', view: 'landing' },
-                  { label: language === 'fil' ? 'Tungkol' : 'About', view: 'about' },
-                  { label: language === 'fil' ? 'Serbisyo' : 'Services', view: 'services' },
-                  { label: language === 'fil' ? 'Trabaho' : 'Jobs', view: 'job-listing' },
-                  { label: language === 'fil' ? 'Para sa Empleyador' : 'For Employers', view: 'employer-partnership' },
+                  { label: L('Home', 'Home'), view: 'landing' },
+                  { label: L('Tungkol', 'About'), view: 'about' },
+                  { label: L('Serbisyo', 'Services'), view: 'services' },
+                  { label: L('Trabaho', 'Jobs'), view: 'job-listing' },
+                  { label: L('Para sa Empleyador', 'For Employers'), view: 'employer-partnership' },
                   { label: 'FAQ', view: 'faq' },
-                  { label: language === 'fil' ? 'Makipag-ugnay' : 'Contact', view: 'contact' },
+                  { label: L('Makipag-ugnay', 'Contact'), view: 'contact' },
                 ].map((link) => (
                   <li key={link.view}>
-                    <button onClick={() => navigate(link.view as any)} className="hover:text-blue-400 transition-colors">
+                    <button onClick={() => navigate(link.view as any)} className="text-muted-foreground hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                       {link.label}
                     </button>
                   </li>
                 ))}
               </ul>
             </div>
+
+            {/* Contact */}
             <div>
-              <h4 className="font-semibold mb-4 text-white">
-                {language === 'fil' ? 'Makipag-ugnay' : 'Contact Us'}
-              </h4>
-              <ul className="space-y-2.5 text-sm text-gray-400">
-                <li className="flex items-start gap-2">
-                  <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-blue-400" />
+              <h4 className="font-semibold mb-4 text-foreground">{L('Makipag-ugnay', 'Contact Us')}</h4>
+              <ul className="space-y-2.5 text-sm text-muted-foreground">
+                <li className="flex items-start gap-2.5">
+                  <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-blue-500" />
                   <span>59 Boulevard Zerktouni, Casablanca, Morocco</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 shrink-0 text-blue-400" />
+                <li className="flex items-center gap-2.5">
+                  <Phone className="h-4 w-4 shrink-0 text-blue-500" />
                   <span>+212 662 26 14 99</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 shrink-0 text-blue-400" />
+                <li className="flex items-center gap-2.5">
+                  <Phone className="h-4 w-4 shrink-0 text-blue-500" />
                   <span>+212 662 26 08 05</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 shrink-0 text-blue-400" />
+                <li className="flex items-center gap-2.5">
+                  <Mail className="h-4 w-4 shrink-0 text-blue-500" />
                   <span>manpower@filinternational.ma</span>
                 </li>
               </ul>
             </div>
+
+            {/* Social & Language */}
             <div>
-              <h4 className="font-semibold mb-4 text-white">
-                {language === 'fil' ? 'Sundan kami' : 'Follow Us'}
-              </h4>
-              <div className="flex gap-3 mb-6">
+              <h4 className="font-semibold mb-4 text-foreground">{L('Sundan kami', 'Follow Us')}</h4>
+              <div className="flex gap-2 mb-6">
                 {[Facebook, Instagram, Linkedin, Twitter].map((Icon, i) => (
-                  <button key={i} className="h-10 w-10 rounded-xl bg-gray-800 hover:bg-blue-600 flex items-center justify-center transition-colors">
+                  <button key={i} className="h-10 w-10 rounded-xl bg-muted/80 hover:bg-blue-600 hover:text-white flex items-center justify-center transition-all duration-300 text-muted-foreground">
                     <Icon className="h-4 w-4" />
                   </button>
                 ))}
               </div>
-              <h4 className="font-semibold mb-2 text-white">
-                {language === 'fil' ? 'Wika' : 'Language'}
-              </h4>
+              <h4 className="font-semibold mb-2 text-foreground">{L('Wika', 'Language')}</h4>
               <div className="flex gap-2">
-                <Button variant={language === 'fil' ? 'default' : 'outline'} size="sm" className="rounded-lg" onClick={() => useAppStore.getState().setLanguage('fil')}>
+                <button
+                  onClick={() => useAppStore.getState().setLanguage('fil')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${language === 'fil' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' : 'bg-muted text-muted-foreground hover:bg-muted/80'}`}
+                >
                   🇵🇭 Filipino
-                </Button>
-                <Button variant={language === 'en' ? 'default' : 'outline'} size="sm" className="rounded-lg" onClick={() => useAppStore.getState().setLanguage('en')}>
+                </button>
+                <button
+                  onClick={() => useAppStore.getState().setLanguage('en')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${language === 'en' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' : 'bg-muted text-muted-foreground hover:bg-muted/80'}`}
+                >
                   🇬🇧 English
-                </Button>
+                </button>
               </div>
             </div>
           </div>
-          <div className="mt-12 pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
-            &copy; {new Date().getFullYear()} Fil International Recruitment Agency (FIRA). All rights reserved. | 59 Boulevard Zerktouni, Casablanca, Morocco
+
+          {/* Bottom Bar */}
+          <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+            <p>&copy; {new Date().getFullYear()} Fil International Recruitment Agency (FIRA). All rights reserved.</p>
+            <p>59 Boulevard Zerktouni, Casablanca, Morocco</p>
           </div>
         </div>
       </footer>
