@@ -3,16 +3,35 @@
 import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
-  Briefcase, UserCheck, CheckCircle, ArrowRight, Eye, MessageSquare,
-  Clock, TrendingUp, ChevronRight, XCircle, Star, Zap, Shield, BarChart3,
-  Target
+  Briefcase,
+  UserCheck,
+  CheckCircle,
+  ArrowRight,
+  Eye,
+  MessageSquare,
+  Clock,
+  TrendingUp,
+  ChevronRight,
+  XCircle,
+  Star,
+  Zap,
+  Shield,
+  BarChart3,
+  Target,
+  Globe,
+  AlertTriangle,
 } from 'lucide-react'
 import { motion, useSpring, useTransform, useMotionValue } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { useAppStore } from '@/store/app-store'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useAppStore, type ViewName } from '@/store/app-store'
+import { cn } from '@/lib/utils'
 
+/* ------------------------------------------------------------------ */
+/*  Animated Counter                                                   */
+/* ------------------------------------------------------------------ */
 function AnimatedCounter({ target, duration = 1.5 }: { target: number; duration?: number }) {
   const [display, setDisplay] = useState(0)
   const motionVal = useMotionValue(0)
@@ -28,54 +47,266 @@ function AnimatedCounter({ target, duration = 1.5 }: { target: number; duration?
   return <>{display}</>
 }
 
-function MatchScoreRing({ score }: { score: number }) {
-  const radius = 18
+/* ------------------------------------------------------------------ */
+/*  Match Score Ring  (SVG circle animation)                           */
+/* ------------------------------------------------------------------ */
+function MatchScoreRing({ score, size = 52 }: { score: number; size?: number }) {
+  const radius = (size - 8) / 2
   const circumference = 2 * Math.PI * radius
-  const offset = circumference - (score / 100) * circumference
-  const color = score >= 80 ? 'text-emerald-500' : score >= 60 ? 'text-amber-500' : 'text-rose-500'
+  const clamped = Math.min(100, Math.max(0, score || 0))
+  const offset = circumference - (clamped / 100) * circumference
+
+  const color =
+    clamped >= 80
+      ? 'text-emerald-500 dark:text-emerald-400'
+      : clamped >= 60
+        ? 'text-amber-500 dark:text-amber-400'
+        : 'text-rose-500 dark:text-rose-400'
+
+  const trackColor =
+    clamped >= 80
+      ? 'stroke-emerald-200 dark:stroke-emerald-900/60'
+      : clamped >= 60
+        ? 'stroke-amber-200 dark:stroke-amber-900/60'
+        : 'stroke-rose-200 dark:stroke-rose-900/60'
 
   return (
-    <div className="relative w-12 h-12 shrink-0">
-      <svg className="w-12 h-12 -rotate-90" viewBox="0 0 44 44">
-        <circle cx="22" cy="22" r={radius} fill="none" className="stroke-muted" strokeWidth="3" />
+    <div className="relative shrink-0" style={{ width: size, height: size }}>
+      <svg
+        className="-rotate-90"
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
+      >
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          className={trackColor}
+          strokeWidth="3.5"
+        />
         <motion.circle
-          cx="22" cy="22" r={radius} fill="none"
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
           className={color}
-          strokeWidth="3"
+          strokeWidth="3.5"
           strokeLinecap="round"
           strokeDasharray={circumference}
           initial={{ strokeDashoffset: circumference }}
           animate={{ strokeDashoffset: offset }}
-          transition={{ duration: 1, delay: 0.5 }}
+          transition={{ duration: 1.2, delay: 0.4, ease: 'easeOut' }}
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-xs font-bold">{score || 0}%</span>
+        <span className={cn('text-xs font-bold', color)}>{score || 0}%</span>
       </div>
     </div>
   )
 }
 
+/* ------------------------------------------------------------------ */
+/*  Initials Circle (NO PHOTOS — privacy safe)                        */
+/* ------------------------------------------------------------------ */
+function InitialsCircle({
+  name,
+  size = 'md',
+  isPending = false,
+}: {
+  name?: string
+  size?: 'sm' | 'md' | 'lg'
+  className?: string
+  isPending?: boolean
+}) {
+  const initials = name
+    ? name
+        .split(' ')
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase()
+    : '?'
+
+  const sizeMap = { sm: 'w-8 h-8 text-xs', md: 'w-11 h-11 text-sm', lg: 'w-14 h-14 text-base' }
+
+  return (
+    <div
+      className={cn(
+        'rounded-full flex items-center justify-center font-bold shrink-0 bg-gradient-to-br',
+        isPending
+          ? 'from-emerald-400 to-teal-500 text-white shadow-lg shadow-emerald-500/25'
+          : 'from-teal-400 to-emerald-600 text-white shadow-lg shadow-teal-500/20',
+        sizeMap[size]
+      )}
+    >
+      {initials}
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Loading skeleton for the entire dashboard                          */
+/* ------------------------------------------------------------------ */
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-6">
+      {/* Header skeleton */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-4 w-80" />
+        </div>
+        <Skeleton className="h-9 w-32" />
+      </div>
+      {/* Stats skeleton */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div
+            key={i}
+            className="h-28 rounded-2xl border border-white/20 dark:border-white/5 bg-white/50 dark:bg-white/5 backdrop-blur-xl"
+          >
+            <div className="p-4 space-y-3">
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="h-7 w-12" />
+            </div>
+          </div>
+        ))}
+      </div>
+      {/* Main content skeleton */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 h-[500px] rounded-2xl border border-white/20 dark:border-white/5 bg-white/50 dark:bg-white/5 backdrop-blur-xl" />
+        <div className="space-y-4">
+          <div className="h-64 rounded-2xl border border-white/20 dark:border-white/5 bg-white/50 dark:bg-white/5 backdrop-blur-xl" />
+          <div className="h-56 rounded-2xl border border-white/20 dark:border-white/5 bg-white/50 dark:bg-white/5 backdrop-blur-xl" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Glass Card wrapper                                                  */
+/* ------------------------------------------------------------------ */
+function GlassCard({
+  children,
+  className,
+  hover = false,
+}: {
+  children: React.ReactNode
+  className?: string
+  hover?: boolean
+}) {
+  return (
+    <div
+      className={cn(
+        'rounded-2xl border border-white/30 dark:border-white/[0.06]',
+        'bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl',
+        'shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)]',
+        hover && 'hover:shadow-[0_12px_40px_rgba(16,185,129,0.10)] dark:hover:shadow-[0_12px_40px_rgba(16,185,129,0.15)] hover:-translate-y-0.5 transition-all duration-300',
+        className
+      )}
+    >
+      {children}
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Stat Card with gradient accent                                      */
+/* ------------------------------------------------------------------ */
+function StatCard({
+  label,
+  value,
+  icon: Icon,
+  gradient,
+  shadowColor,
+  warning,
+  delay = 0,
+}: {
+  label: string
+  value: number
+  icon: any
+  gradient: string
+  shadowColor: string
+  warning?: { text: string }
+  delay?: number
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.1 + delay * 0.07, duration: 0.4 }}
+    >
+      <GlassCard hover>
+        <div className="p-4">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-xs font-medium text-muted-foreground">{label}</p>
+              <p className="text-2xl font-bold mt-1.5">
+                <AnimatedCounter target={value} />
+              </p>
+            </div>
+            <div
+              className={cn(
+                'p-2.5 rounded-xl bg-gradient-to-br shadow-lg',
+                gradient,
+                shadowColor
+              )}
+            >
+              <Icon className="h-4 w-4 text-white" />
+            </div>
+          </div>
+          {warning && value > 0 && (
+            <div className="mt-2 flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400">
+              <AlertTriangle className="h-3 w-3" />
+              <span>{warning.text}</span>
+            </div>
+          )}
+        </div>
+      </GlassCard>
+    </motion.div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Employer Dashboard — Main Component                                */
+/* ------------------------------------------------------------------ */
 export function EmployerDashboard() {
   const { user, navigate, language } = useAppStore()
   const isFil = language === 'fil'
 
-  const { data: endorseData } = useQuery({
+  /* ---- API queries ---- */
+  const { data: endorseData, isLoading: endorseLoading } = useQuery({
     queryKey: ['employer-endorsements'],
-    queryFn: async () => { const res = await fetch('/api/endorsements'); if (!res.ok) return { endorsements: [] }; return res.json() },
+    queryFn: async () => {
+      const res = await fetch('/api/endorsements')
+      if (!res.ok) return { endorsements: [] }
+      return res.json()
+    },
   })
 
   const { data: jobsData } = useQuery({
     queryKey: ['employer-jobs'],
-    queryFn: async () => { const res = await fetch('/api/jobs'); if (!res.ok) return { jobs: [] }; return res.json() },
+    queryFn: async () => {
+      const res = await fetch('/api/jobs')
+      if (!res.ok) return { jobs: [] }
+      return res.json()
+    },
   })
 
   const { data: notifData } = useQuery({
     queryKey: ['employer-notifications', user?.id],
-    queryFn: async () => { const res = await fetch(`/api/notifications?userId=${user?.id}`); if (!res.ok) return { notifications: [] }; return res.json() },
+    queryFn: async () => {
+      const res = await fetch(`/api/notifications?userId=${user?.id}`)
+      if (!res.ok) return { notifications: [] }
+      return res.json()
+    },
     enabled: !!user?.id,
   })
 
+  /* ---- Derived data ---- */
   const endorsements = Array.isArray(endorseData?.endorsements) ? endorseData.endorsements : []
   const jobs = Array.isArray(jobsData?.jobs) ? jobsData.jobs : []
   const notifications = Array.isArray(notifData?.notifications) ? notifData.notifications : []
@@ -84,176 +315,316 @@ export function EmployerDashboard() {
   const pending = endorsements.filter((e: any) => e.status === 'pending_employer_review').length
   const accepted = endorsements.filter((e: any) => e.status === 'employer_accepted').length
   const declined = endorsements.filter((e: any) => e.status === 'employer_declined').length
-  const inReview = endorsements.filter((e: any) => ['pending_employer_review', 'fira_approved'].includes(e.status)).length
   const myJobsCount = jobs.filter((j: any) => j.employerId === user?.id || j.createdById === user?.id).length
+  const acceptRate = endorsements.length > 0 ? Math.round((accepted / endorsements.length) * 100) : 0
 
-  // Sort: pending first, then recent
-  const sortedEndorsements = [...endorsements]
-    .sort((a: any, b: any) => {
-      const aPending = a.status === 'pending_employer_review' ? 0 : 1
-      const bPending = b.status === 'pending_employer_review' ? 0 : 1
-      if (aPending !== bPending) return aPending - bPending
-      return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
-    })
+  /* ---- Sort endorsements: pending first, then newest ---- */
+  const sortedEndorsements = [...endorsements].sort((a: any, b: any) => {
+    const aPending = a.status === 'pending_employer_review' ? 0 : 1
+    const bPending = b.status === 'pending_employer_review' ? 0 : 1
+    if (aPending !== bPending) return aPending - bPending
+    return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+  })
 
-  const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.05 } } }
-  const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } }
+  /* ---- Animation variants ---- */
+  const container = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.05 } },
+  }
+  const item = {
+    hidden: { opacity: 0, y: 16 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+  }
 
+  /* ---- Stat definitions ---- */
   const stats = [
-    { label: isFil ? 'Naghihintay ng Review' : 'Pending Review', value: pending, icon: Eye, gradient: 'from-amber-500 to-yellow-500', shadowColor: 'shadow-amber-500/20' },
-    { label: isFil ? 'Na-accept' : 'Accepted', value: accepted, icon: CheckCircle, gradient: 'from-emerald-500 to-green-500', shadowColor: 'shadow-emerald-500/20' },
-    { label: isFil ? 'Ibinalewala' : 'Declined', value: declined, icon: XCircle, gradient: 'from-rose-500 to-red-500', shadowColor: 'shadow-rose-500/20' },
-    { label: isFil ? 'Kabuuang Endorso' : 'Total Endorsements', value: endorsements.length, icon: BarChart3, gradient: 'from-teal-500 to-emerald-600', shadowColor: 'shadow-teal-500/20' },
+    {
+      label: isFil ? 'Naghihintay ng Review' : 'Pending Review',
+      value: pending,
+      icon: Eye,
+      gradient: 'from-amber-500 to-yellow-500',
+      shadowColor: 'shadow-amber-500/20',
+      warning: pending > 0
+        ? { text: isFil ? 'Kailangan ng aksyon' : 'Needs action' }
+        : undefined,
+    },
+    {
+      label: isFil ? 'Na-accept' : 'Accepted',
+      value: accepted,
+      icon: CheckCircle,
+      gradient: 'from-emerald-500 to-green-500',
+      shadowColor: 'shadow-emerald-500/20',
+    },
+    {
+      label: isFil ? 'Ibinalewala' : 'Declined',
+      value: declined,
+      icon: XCircle,
+      gradient: 'from-rose-500 to-red-500',
+      shadowColor: 'shadow-rose-500/20',
+    },
+    {
+      label: isFil ? 'Kabuuang Endorso' : 'Total Endorsements',
+      value: endorsements.length,
+      icon: BarChart3,
+      gradient: 'from-teal-500 to-emerald-600',
+      shadowColor: 'shadow-teal-500/20',
+    },
   ]
 
+  /* ---- Quick action buttons ---- */
+  const quickActions: {
+    icon: any
+    label: string
+    view: ViewName
+    badge?: number
+  }[] = [
+    {
+      icon: UserCheck,
+      label: isFil ? 'Review Kandidato' : 'Review Candidates',
+      view: 'employer-endorsed',
+      badge: pending > 0 ? pending : undefined,
+    },
+    {
+      icon: Briefcase,
+      label: isFil ? 'Mga Trabaho Ko' : 'My Jobs',
+      view: 'employer-jobs',
+      badge: myJobsCount > 0 ? myJobsCount : undefined,
+    },
+    {
+      icon: MessageSquare,
+      label: isFil ? 'Mensahe' : 'Messages',
+      view: 'messages',
+      badge: unreadNotifs > 0 ? unreadNotifs : undefined,
+    },
+    {
+      icon: Target,
+      label: 'AI Matching',
+      view: 'ai-matching',
+    },
+  ]
+
+  /* ---- Gradient color map for initials (deterministic based on name) ---- */
+  const gradientMap = [
+    'from-emerald-400 to-teal-500',
+    'from-teal-400 to-cyan-500',
+    'from-emerald-500 to-green-600',
+    'from-green-400 to-emerald-600',
+    'from-teal-500 to-emerald-400',
+    'from-cyan-400 to-teal-600',
+  ]
+  function getGradient(name: string, idx: number) {
+    const code = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)
+    return gradientMap[(code + idx) % gradientMap.length]
+  }
+
+  /* ---- Loading state ---- */
+  if (endorseLoading) return <DashboardSkeleton />
+
+  /* ---- Render ---- */
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
-      {/* Header */}
-      <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+      {/* ================================================================ */}
+      {/*  HEADER                                                          */}
+      {/* ================================================================ */}
+      <motion.div
+        variants={item}
+        className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3"
+      >
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-emerald-700 via-teal-600 to-emerald-600 dark:from-emerald-400 dark:via-teal-300 dark:to-emerald-400 bg-clip-text text-transparent">
             {isFil ? 'Dashboard ng Empleyador' : 'Employer Dashboard'}
           </h1>
           <p className="text-muted-foreground mt-1">
             {isFil
-              ? 'Pamahalaan ang mga endorsed na kandidato at mga trabaho'
+              ? 'Pamahalaan ang mga endorsed na kandidato at mga job postings'
               : 'Manage endorsed candidates and job postings'}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-1.5" onClick={() => navigate('messages')}>
-            <MessageSquare className="h-4 w-4" />
-            {isFil ? 'Mensahe' : 'Messages'}
-            {unreadNotifs > 0 && (
-              <Badge className="bg-rose-500 text-white text-[10px] h-4 min-w-4 px-1">{unreadNotifs}</Badge>
-            )}
-          </Button>
-        </div>
+
+        {/* Messages button with unread badge */}
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1.5 border-emerald-200 dark:border-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-colors"
+          onClick={() => navigate('messages')}
+        >
+          <MessageSquare className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+          {isFil ? 'Mensahe' : 'Messages'}
+          {unreadNotifs > 0 && (
+            <Badge className="bg-rose-500 text-white text-[10px] h-4 min-w-4 px-1.5 rounded-full">
+              {unreadNotifs}
+            </Badge>
+          )}
+        </Button>
       </motion.div>
 
-      {/* Stats */}
+      {/* ================================================================ */}
+      {/*  STATS — 4 cards, 2x2 mobile, 4 across desktop                  */}
+      {/* ================================================================ */}
       <motion.div variants={item} className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {stats.map((stat, i) => (
-          <motion.div
+          <StatCard
             key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 + i * 0.07, duration: 0.4 }}
-          >
-            <Card className="group hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 overflow-hidden">
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-xs text-muted-foreground font-medium">{stat.label}</p>
-                    <p className="text-2xl font-bold mt-1.5"><AnimatedCounter target={stat.value} /></p>
-                  </div>
-                  <div className={`p-2.5 rounded-xl bg-gradient-to-br ${stat.gradient} shadow-lg ${stat.shadowColor}`}>
-                    <stat.icon className="h-4 w-4 text-white" />
-                  </div>
-                </div>
-                {stat.label === (isFil ? 'Naghihintay ng Review' : 'Pending Review') && pending > 0 && (
-                  <div className="mt-2 flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400">
-                    <TrendingUp className="h-3 w-3" />
-                    <span>{isFil ? 'Kailangan ng aksyon' : 'Needs action'}</span>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </motion.div>
+            label={stat.label}
+            value={stat.value}
+            icon={stat.icon}
+            gradient={stat.gradient}
+            shadowColor={stat.shadowColor}
+            warning={stat.warning}
+            delay={i}
+          />
         ))}
       </motion.div>
 
-      {/* Main Content */}
+      {/* ================================================================ */}
+      {/*  MAIN CONTENT — 2/3 + 1/3 on desktop                            */}
+      {/* ================================================================ */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Endorsed Candidates - NO PHOTOS, LIMITED INFO */}
+        {/* ------------------------------------------------------------ */}
+        {/*  LEFT (2/3): Endorsed Candidates — THE MAIN FEATURE           */}
+        {/* ------------------------------------------------------------ */}
         <motion.div variants={item} className="lg:col-span-2">
-          <Card className="h-full">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <div className="p-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/50">
-                    <UserCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                  </div>
+          <GlassCard className="h-full">
+            <div className="p-4 md:p-5 pb-0 md:pb-0 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20">
+                  <UserCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <h2 className="text-base font-semibold">
                   {isFil ? 'Mga Inindorso na Kandidato' : 'Endorsed Candidates'}
-                  {pending > 0 && (
-                    <Badge className="bg-amber-500 text-white text-[10px] h-5 min-w-5 px-1.5 ml-2">{pending} {isFil ? 'bago' : 'new'}</Badge>
-                  )}
-                </CardTitle>
-                <Button variant="ghost" size="sm" className="text-xs" onClick={() => navigate('employer-endorsed')}>
-                  {isFil ? 'Lahat' : 'All'} <ArrowRight className="h-3.5 w-3.5 ml-1" />
-                </Button>
+                </h2>
+                {pending > 0 && (
+                  <Badge className="bg-emerald-500 text-white text-[10px] h-5 min-w-5 px-1.5 rounded-full font-semibold">
+                    {pending} {isFil ? 'bago' : 'new'}
+                  </Badge>
+                )}
               </div>
-            </CardHeader>
-            <CardContent className="pt-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+                onClick={() => navigate('employer-endorsed')}
+              >
+                {isFil ? 'Lahat' : 'All'} <ArrowRight className="h-3.5 w-3.5 ml-1" />
+              </Button>
+            </div>
+
+            <div className="p-4 pt-3 md:p-5 md:pt-3">
               {sortedEndorsements.length === 0 ? (
-                <div className="text-center py-10">
-                  <Shield className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-sm text-muted-foreground">{isFil ? 'Wala pang endorsement.' : 'No endorsements yet.'}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{isFil ? 'Maghintay ng mga kandidato mula sa FIRA.' : 'Waiting for candidates from FIRA.'}</p>
+                <div className="text-center py-12">
+                  <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/40 flex items-center justify-center mb-3">
+                    <Shield className="h-8 w-8 text-emerald-500 dark:text-emerald-400" />
+                  </div>
+                  <p className="text-sm font-medium text-foreground">
+                    {isFil ? 'Wala pang endorsement.' : 'No endorsements yet.'}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {isFil
+                      ? 'Maghintay ng mga kandidato mula sa FIRA.'
+                      : 'Waiting for candidates from FIRA.'}
+                  </p>
                 </div>
               ) : (
-                <div className="space-y-3 max-h-[460px] overflow-y-auto pr-1">
+                <div className="space-y-3 max-h-[520px] overflow-y-auto pr-1 custom-scrollbar">
                   {sortedEndorsements.slice(0, 10).map((e: any, idx: number) => {
                     const applicant = e.application?.applicant
                     const job = e.application?.jobOrder
                     const isPending = e.status === 'pending_employer_review'
-                    // ONLY show: name, position, skills, experience, match score
-                    // NO photos, NO address, NO contact
+                    const matchScore = e.matchScore || applicant?.matchScore || 0
+                    const name = applicant?.name || 'Candidate'
+
                     return (
                       <motion.div
                         key={e.id}
-                        initial={{ opacity: 0, x: -10 }}
+                        initial={{ opacity: 0, x: -12 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.04 }}
-                        className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer ${
+                        transition={{ delay: idx * 0.04, duration: 0.35 }}
+                        className={cn(
+                          'p-4 rounded-xl border transition-all duration-200 cursor-pointer group',
                           isPending
-                            ? 'bg-emerald-50/80 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800 hover:shadow-md'
-                            : 'hover:bg-accent/50'
-                        }`}
+                            ? 'bg-emerald-50/80 dark:bg-emerald-950/20 border-emerald-200/70 dark:border-emerald-800/60 hover:shadow-md hover:shadow-emerald-500/10'
+                            : 'bg-white/40 dark:bg-white/[0.02] border-white/40 dark:border-white/[0.06] hover:bg-white/60 dark:hover:bg-white/[0.04] hover:shadow-md'
+                        )}
                         onClick={() => navigate('employer-endorsed')}
                       >
-                        <div className="flex items-start gap-4">
-                          {/* NO AVATAR - use initials circle instead */}
-                          <div className="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white text-sm font-bold shrink-0">
-                            {(applicant?.name || 'C')[0].toUpperCase()}
+                        <div className="flex items-start gap-3 sm:gap-4">
+                          {/* Initials circle — NO PHOTO */}
+                          <div
+                            className={cn(
+                              'rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0 w-11 h-11 bg-gradient-to-br shadow-lg',
+                              getGradient(name, idx),
+                              isPending
+                                ? 'shadow-emerald-500/25 ring-2 ring-emerald-400/30 dark:ring-emerald-600/30'
+                                : 'shadow-teal-500/15'
+                            )}
+                          >
+                            {name
+                              .split(' ')
+                              .map((n: string) => n[0])
+                              .slice(0, 2)
+                              .join('')
+                              .toUpperCase()}
                           </div>
+
                           <div className="min-w-0 flex-1">
+                            {/* Name + Match Score */}
                             <div className="flex items-start justify-between gap-2">
                               <div className="min-w-0">
-                                <p className="font-semibold text-sm truncate">{applicant?.name || 'Candidate'}</p>
-                                <p className="text-xs text-muted-foreground mt-0.5">
-                                  {job?.title || isFil ? 'Posisyon' : 'Position'}
+                                <p className="font-semibold text-sm truncate group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
+                                  {name}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                                  {job?.title || (isFil ? 'Posisyon' : 'Position')}
                                 </p>
                               </div>
-                              <MatchScoreRing score={e.matchScore || applicant?.matchScore || 0} />
+                              <MatchScoreRing score={matchScore} size={48} />
                             </div>
-                            {/* Skills summary only */}
+
+                            {/* Skills badges — max 4, +N more */}
                             {applicant?.skills && (
-                              <div className="flex flex-wrap gap-1 mt-2">
-                                {String(applicant.skills).split(',').slice(0, 4).map((skill: string, si: number) => (
-                                  <Badge key={si} variant="secondary" className="text-[10px] h-5">{skill.trim()}</Badge>
-                                ))}
-                                {String(applicant.skills).split(',').length > 4 && (
-                                  <Badge variant="outline" className="text-[10px] h-5">
-                                    +{String(applicant.skills).split(',').length - 4}
+                              <div className="flex flex-wrap gap-1 mt-2.5">
+                                {String(applicant.skills)
+                                  .split(',')
+                                  .filter((s: string) => s.trim())
+                                  .slice(0, 4)
+                                  .map((skill: string, si: number) => (
+                                    <Badge
+                                      key={si}
+                                      variant="secondary"
+                                      className="text-[10px] h-5 px-1.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-0"
+                                    >
+                                      {skill.trim()}
+                                    </Badge>
+                                  ))}
+                                {String(applicant.skills).split(',').filter((s: string) => s.trim()).length > 4 && (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[10px] h-5 px-1.5 border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400"
+                                  >
+                                    +{String(applicant.skills).split(',').filter((s: string) => s.trim()).length - 4}
                                   </Badge>
                                 )}
                               </div>
                             )}
-                            {/* Experience level only */}
-                            <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+
+                            {/* Experience, Country, Date */}
+                            <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mt-2.5 text-xs text-muted-foreground">
                               {applicant?.experience && (
-                                <span className="flex items-center gap-1">
-                                  <Star className="h-3 w-3" />
+                                <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                                  <Star className="h-3 w-3 fill-emerald-500 dark:fill-emerald-400 text-emerald-500 dark:text-emerald-400" />
                                   {applicant.experience}
                                 </span>
                               )}
                               {job?.country && (
-                                <span>{job.country}</span>
+                                <span className="flex items-center gap-1">
+                                  <Globe className="h-3 w-3" />
+                                  {job.country}
+                                </span>
                               )}
                               {e.createdAt && (
-                                <span className="flex items-center gap-0.5">
-                                  <Clock className="h-3 w-3" />{new Date(e.createdAt).toLocaleDateString()}
+                                <span className="flex items-center gap-1">
+                                  <Clock className="h-3 w-3" />
+                                  {new Date(e.createdAt).toLocaleDateString()}
                                 </span>
                               )}
                             </div>
@@ -264,41 +635,48 @@ export function EmployerDashboard() {
                   })}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </GlassCard>
         </motion.div>
 
-        {/* Quick Actions + Summary */}
+        {/* ------------------------------------------------------------ */}
+        {/*  RIGHT (1/3): Quick Actions + Accept Rate                     */}
+        {/* ------------------------------------------------------------ */}
         <motion.div variants={item} className="space-y-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <div className="p-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/50">
+          {/* Quick Actions */}
+          <GlassCard>
+            <div className="p-4 md:p-5 pb-0 md:pb-0">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20">
                   <Zap className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                 </div>
-                {isFil ? 'Mabilis na Aksyon' : 'Quick Actions'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0 space-y-2">
-              {[
-                { icon: UserCheck, label: isFil ? 'Review Kandidato' : 'Review Candidates', view: 'employer-endorsed' as const, badge: pending > 0 ? pending : undefined },
-                { icon: Briefcase, label: isFil ? 'Mga Trabaho' : 'My Jobs', view: 'employer-jobs' as const, badge: myJobsCount > 0 ? myJobsCount : undefined },
-                { icon: MessageSquare, label: isFil ? 'Mensahe' : 'Messages', view: 'messages' as const, badge: unreadNotifs > 0 ? unreadNotifs : undefined },
-                { icon: Target, label: isFil ? 'AI Matching' : 'AI Matching', view: 'ai-matching' as const },
-              ].map((action) => (
+                <h2 className="text-base font-semibold">
+                  {isFil ? 'Mabilis na Aksyon' : 'Quick Actions'}
+                </h2>
+              </div>
+            </div>
+
+            <div className="p-4 pt-3 md:p-5 md:pt-3 space-y-2">
+              {quickActions.map((action) => (
                 <Button
                   key={action.view}
                   variant="outline"
-                  className="w-full justify-between h-10 group"
+                  className={cn(
+                    'w-full justify-between h-10 group',
+                    'border-white/40 dark:border-white/[0.06]',
+                    'hover:bg-emerald-50/80 dark:hover:bg-emerald-950/20',
+                    'hover:border-emerald-200 dark:hover:border-emerald-800',
+                    'transition-all duration-200'
+                  )}
                   onClick={() => navigate(action.view)}
                 >
                   <span className="flex items-center gap-2">
-                    <action.icon className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    <action.icon className="h-4 w-4 text-muted-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors" />
                     <span>{action.label}</span>
                   </span>
                   <div className="flex items-center gap-1.5">
-                    {action.badge && (
-                      <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 text-[10px] h-5 min-w-5 px-1.5">
+                    {action.badge != null && (
+                      <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 text-[10px] h-5 min-w-5 px-1.5 border-0">
                         {action.badge}
                       </Badge>
                     )}
@@ -306,46 +684,95 @@ export function EmployerDashboard() {
                   </div>
                 </Button>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          </GlassCard>
 
-          {/* Accept Rate Card */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <div className="p-1.5 rounded-lg bg-teal-100 dark:bg-teal-900/50">
+          {/* Accept Rate */}
+          <GlassCard>
+            <div className="p-4 md:p-5 pb-0 md:pb-0">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-gradient-to-br from-teal-500/10 to-emerald-500/10 dark:from-teal-500/20 dark:to-emerald-500/20">
                   <TrendingUp className="h-4 w-4 text-teal-600 dark:text-teal-400" />
                 </div>
-                {isFil ? 'Accept Rate' : 'Accept Rate'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="text-center py-3">
-                <p className="text-4xl font-bold text-emerald-600 dark:text-emerald-400">
-                  {endorsements.length > 0 ? Math.round((accepted / endorsements.length) * 100) : 0}%
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {isFil ? 'ng mga endorsement' : 'of endorsements accepted'}
+                <h2 className="text-base font-semibold">
+                  {isFil ? 'Accept Rate' : 'Accept Rate'}
+                </h2>
+              </div>
+            </div>
+
+            <div className="p-4 pt-3 md:p-5 md:pt-3">
+              {/* Large percentage display */}
+              <div className="text-center py-4">
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                >
+                  <p className="text-5xl font-extrabold bg-gradient-to-br from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-300 bg-clip-text text-transparent">
+                    <AnimatedCounter target={acceptRate} />
+                    <span className="text-3xl">%</span>
+                  </p>
+                </motion.div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  {isFil ? 'ng mga endorsement ang na-accept' : 'of endorsements accepted'}
                 </p>
               </div>
-              <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-border">
+
+              {/* 3-column breakdown */}
+              <div className="grid grid-cols-3 gap-2 pt-4 border-t border-emerald-100 dark:border-emerald-900/40">
                 <div className="text-center">
-                  <p className="text-lg font-bold text-amber-600 dark:text-amber-400">{pending}</p>
-                  <p className="text-[10px] text-muted-foreground">{isFil ? 'Pending' : 'Pending'}</p>
+                  <p className="text-xl font-bold text-amber-600 dark:text-amber-400">
+                    <AnimatedCounter target={pending} />
+                  </p>
+                  <p className="text-[10px] text-muted-foreground font-medium mt-0.5">
+                    {isFil ? 'Pending' : 'Pending'}
+                  </p>
                 </div>
                 <div className="text-center">
-                  <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{accepted}</p>
-                  <p className="text-[10px] text-muted-foreground">{isFil ? 'Accept' : 'Accept'}</p>
+                  <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+                    <AnimatedCounter target={accepted} />
+                  </p>
+                  <p className="text-[10px] text-muted-foreground font-medium mt-0.5">
+                    {isFil ? 'Accept' : 'Accept'}
+                  </p>
                 </div>
                 <div className="text-center">
-                  <p className="text-lg font-bold text-rose-600 dark:text-rose-400">{declined}</p>
-                  <p className="text-[10px] text-muted-foreground">{isFil ? 'Decline' : 'Decline'}</p>
+                  <p className="text-xl font-bold text-rose-600 dark:text-rose-400">
+                    <AnimatedCounter target={declined} />
+                  </p>
+                  <p className="text-[10px] text-muted-foreground font-medium mt-0.5">
+                    {isFil ? 'Decline' : 'Decline'}
+                  </p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </GlassCard>
         </motion.div>
       </div>
+
+      {/* ================================================================ */}
+      {/*  INLINE STYLES — Custom scrollbar + dark mode vars              */}
+      {/* ================================================================ */}
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(16, 185, 129, 0.2);
+          border-radius: 999px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(16, 185, 129, 0.4);
+        }
+        @media (prefers-color-scheme: dark) {
+          .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(16, 185, 129, 0.25);
+          }
+        }
+      `}</style>
     </motion.div>
   )
 }
