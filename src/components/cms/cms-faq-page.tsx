@@ -110,7 +110,7 @@ const listItemVariants = {
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 export function CmsFaqPage() {
-  const { language, fontSize } = useAppStore()
+  const { language } = useAppStore()
   const t = useT()
 
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -308,7 +308,7 @@ export function CmsFaqPage() {
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div data-font-size={fontSize}>
+    <div>
       {/* ─── Header ─────────────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>

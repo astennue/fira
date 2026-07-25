@@ -26,7 +26,7 @@ const platformIcons: Record<string, React.ComponentType<{ className?: string }>>
 }
 
 export function CmsSocialPage() {
-  const { fontSize } = useAppStore()
+  
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
   const [form, setForm] = useState({ platform: '', title: '', url: '', icon: '', order: 0, isActive: true })
@@ -85,7 +85,7 @@ export function CmsSocialPage() {
   const platforms = ['facebook', 'instagram', 'linkedin', 'twitter', 'youtube', 'tiktok', 'whatsapp', 'website']
 
   return (
-    <div data-font-size={fontSize}>
+    <div>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Social Media</h1>

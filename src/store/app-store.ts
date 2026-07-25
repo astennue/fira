@@ -65,8 +65,6 @@ export type ViewName =
 
 export type UserRole = 'super_admin' | 'applicant' | 'local_agency' | 'international_agency' | 'employer'
 
-export type FontSize = 'small' | 'medium' | 'large'
-
 export interface FiraUser {
   id: string
   email: string
@@ -102,9 +100,9 @@ interface AppState {
   searchQuery: string
   setSearchQuery: (query: string) => void
 
-  // Font Size
-  fontSize: FontSize
-  setFontSize: (size: FontSize) => void
+  // Font Size (continuous number in px, e.g. 14-28)
+  fontSize: number
+  setFontSize: (size: number) => void
 
   // Language
   language: Language
@@ -134,9 +132,9 @@ export const useAppStore = create<AppState>()(
       searchQuery: '',
       setSearchQuery: (query) => set({ searchQuery: query }),
 
-      // Font Size
-      fontSize: 'medium',
-      setFontSize: (fontSize) => set({ fontSize }),
+      // Font Size (px)
+      fontSize: 16,
+      setFontSize: (fontSize) => set({ fontSize: Math.max(12, Math.min(28, fontSize)) }),
 
       // Language
       language: 'en',
@@ -145,6 +143,15 @@ export const useAppStore = create<AppState>()(
     {
       name: 'fira_store',
       partialize: (state) => ({ user: state.user, language: state.language, fontSize: state.fontSize }),
+      merge: (persisted, current) => {
+        const p = persisted as Record<string, unknown>
+        // Handle migration from old fontSize enum ('small'|'medium'|'large') to number
+        if (typeof p.fontSize === 'string') {
+          const map: Record<string, number> = { small: 14, medium: 16, large: 18 }
+          p.fontSize = map[p.fontSize] || 16
+        }
+        return { ...current, ...p }
+      },
     }
   )
 )

@@ -13,7 +13,7 @@ import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
 
 export function ContactPage() {
-  const { language, fontSize } = useAppStore()
+  const { language } = useAppStore()
   const [submitted, setSubmitted] = useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -24,7 +24,7 @@ export function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col" data-font-size={fontSize}>
+    <div className="min-h-screen flex flex-col">
       {/* Header */}
       <section className="bg-fira-hero text-white py-16 md:py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern" />

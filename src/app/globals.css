@@ -218,18 +218,10 @@
   background: linear-gradient(145deg, rgba(30, 64, 175, 0.1), rgba(59, 130, 246, 0.15));
 }
 
-/* ===== FONT SIZE UTILITIES ===== */
-[data-font-size="small"] {
-  font-size: 14px;
-}
-
-[data-font-size="medium"] {
-  font-size: 16px;
-}
-
-[data-font-size="large"] {
-  font-size: 18px;
-}
+/* ===== FONT SIZE =====
+   Controlled via inline style: style={{ fontSize: `${fontSize}px` }}
+   Min: 12px, Max: 28px, Default: 16px, Step: 2px
+*/
 
 /* ===== SMOOTH SCROLLBAR ===== */
 ::-webkit-scrollbar {

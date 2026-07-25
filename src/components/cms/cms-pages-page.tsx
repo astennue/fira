@@ -17,7 +17,7 @@ import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
 
 export function CmsPagesPage() {
-  const { fontSize } = useAppStore()
+  
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
   const [form, setForm] = useState({ title: '', slug: '', content: '', status: 'published', order: 0 })
@@ -82,7 +82,7 @@ export function CmsPagesPage() {
   const draftPages = pages.filter((p: any) => p.status === 'draft')
 
   return (
-    <div data-font-size={fontSize}>
+    <div>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">CMS Pages</h1>

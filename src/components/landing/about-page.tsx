@@ -13,10 +13,10 @@ const fadeUp = {
 }
 
 export function AboutPage() {
-  const { navigate, language, fontSize } = useAppStore()
+  const { navigate, language } = useAppStore()
 
   return (
-    <div className="min-h-screen flex flex-col" data-font-size={fontSize}>
+    <div className="min-h-screen flex flex-col">
       {/* Header */}
       <section className="bg-fira-hero text-white py-16 md:py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern" />

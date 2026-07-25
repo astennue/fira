@@ -97,3 +97,32 @@ Stage Summary:
 - Dark mode: all buttons visible in both themes, CSS variables used
 - Dashboards: unique per role, role-based data visibility enforced
 - Messaging system integrated in all dashboards
+
+---
+Task ID: 9
+Agent: Main Agent
+Task: Fix dashboard redirect, remove duplicate navbar, font size continuous scaling, mobile responsive
+
+Work Log:
+- Fixed dashboard redirect: Added useEffect in page.tsx that auto-redirects logged-in users from public views to their role-specific dashboard
+- Removed duplicate navbar from landing-page.tsx: Deleted entire <nav> block (lines 331-428) that was redundant with AppNav
+- Cleaned up unused imports (Menu, X, AnimatePresence) and variables (mobileNavOpen, fontSize, navItems) from landing-page.tsx
+- Changed font size from enum (small/medium/large) to continuous number (12-28px, step 2):
+  - Updated store: fontSize type changed from FontSize to number, setFontSize clamps 12-28
+  - Updated page.tsx: uses inline style={{ fontSize: `${fontSize}px` }} instead of data-font-size attribute
+  - Updated app-nav.tsx: +/- buttons with continuous scaling, shows current px value
+  - Updated user-settings-page.tsx: slider with +/- buttons and live preview
+  - Removed old data-font-size attributes from 15+ files across landing, cms, dashboard components
+  - Added merge migration in store to convert old persisted 'medium' string to number 16
+- Fixed mobile responsive: Split hamburger behavior — logged-in users toggle dashboard sidebar, non-logged-in users get Sheet with public nav
+- Removed dead DashboardSidebar code from page.tsx (referenced undeclared sidebarOpen)
+- Cleaned up all unused imports across app-nav.tsx (removed iconMap, getNavItems, many unused lucide icons)
+- Fixed missing Minus/Plus imports in user-settings-page.tsx
+- All lint errors in src/ resolved (only pre-existing prisma/*.js errors remain)
+
+Stage Summary:
+- Dashboard auto-redirect working for all logged-in users
+- Single navbar on public site (no more duplicate)
+- Font size: continuous 12-28px scaling with +/- buttons and slider
+- Mobile/tablet: proper hamburger behavior per auth state
+- Old persisted state gracefully migrated

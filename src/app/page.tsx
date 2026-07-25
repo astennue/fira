@@ -1,6 +1,6 @@
 'use client'
 
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAppStore, type ViewName, getNavItems } from '@/store/app-store'
 import { AppNav } from '@/components/shared/app-nav'
@@ -75,61 +75,6 @@ const iconMap: Record<string, any> = {
   MessageCircle, UserCheck,
 }
 
-function DashboardSidebar() {
-  const { user, currentView, navigate, language } = useAppStore()
-  const navItems = user ? getNavItems(user.role) : []
-
-  if (!user) return null
-
-  return (
-    <>
-      {/* Mobile overlay */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-40 bg-black/50 lg:hidden" onClick={() => setSidebarOpen(false)} />
-      )}
-      {/* Sidebar - fixed on desktop, drawer on mobile */}
-      <aside className={cn(
-        'fixed left-0 top-14 z-40 h-[calc(100vh-3.5rem)] w-64 border-r bg-card transition-transform duration-300 lg:translate-x-0',
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      )}>
-        <ScrollArea className="h-full">
-          <div className="flex flex-col gap-1 p-3">
-            {/* User info */}
-            <div className="mb-3 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 p-3 dark:from-blue-950/50 dark:to-blue-900/50">
-              <p className="text-sm font-semibold text-blue-900 dark:text-blue-100 truncate">{user.name}</p>
-              <p className="text-xs text-blue-600 dark:text-blue-300 capitalize">
-                {user.role.replace(/_/g, ' ')}
-              </p>
-            </div>
-
-            {/* Nav items */}
-            {navItems.map((item) => {
-              const Icon = iconMap[item.icon] || LayoutDashboard
-              const isActive = currentView === item.view
-              return (
-                <button
-                  key={item.view}
-                  onClick={() => navigate(item.view)}
-                  className={cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 w-full text-left',
-                    isActive
-                      ? 'bg-blue-600 text-white shadow-md shadow-blue-600/25 dark:bg-blue-600 dark:text-white'
-                      : 'hover:bg-accent text-foreground hover:text-foreground',
-                  )}
-                >
-                  <Icon className={cn('h-4 w-4 shrink-0', isActive ? 'text-white' : 'text-muted-foreground')} />
-                  <span>{language === 'fil' ? item.labelFil : item.label}</span>
-                </button>
-              )
-            })}
-          </div>
-        </ScrollArea>
-      </aside>
-    </>
-  )
-}
-
-// Need to import setSidebarOpen
 function DashboardSidebarWrapper() {
   const { user, currentView, navigate, language, sidebarOpen, setSidebarOpen } = useAppStore()
   const navItems = user ? getNavItems(user.role) : []
@@ -287,10 +232,23 @@ function ViewRenderer({ view }: { view: ViewName }) {
 }
 
 export default function Home() {
-  const { currentView, fontSize } = useAppStore()
+  const { currentView, fontSize, user, navigate } = useAppStore()
+  const redirected = useRef(false)
+
+  // Auto-redirect logged-in users from public views to their dashboard
+  useEffect(() => {
+    if (user && !redirected.current && publicViews.includes(currentView)) {
+      redirected.current = true
+      const dashView = `${user.role === 'super_admin' ? 'fira' : user.role}-dashboard` as ViewName
+      navigate(dashView)
+    }
+    if (!user) {
+      redirected.current = false
+    }
+  }, [user, currentView, navigate])
 
   return (
-    <div className="min-h-screen flex flex-col bg-background" data-font-size={fontSize}>
+    <div className="min-h-screen flex flex-col bg-background" style={{ fontSize: `${fontSize}px` }}>
       <AppNav />
       <DashboardSidebarWrapper />
       <main className="flex-1">

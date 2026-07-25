@@ -7,7 +7,7 @@ import {
   Search, Briefcase, Globe, CheckCircle, Users, MapPin,
   ArrowRight, Shield, HeartHandshake, Plane, Mail, Phone,
   Star, ChevronRight, ChevronLeft, FileText, ClipboardCheck, Stethoscope,
-  GraduationCap, Headphones, Menu, X, Facebook,
+  GraduationCap, Headphones, Facebook,
   Instagram, Linkedin, Twitter, Building2, Handshake,
   ArrowUpRight, Zap, Target, Route, TrendingUp,
   Globe2, Compass, BadgeCheck, Quote,
@@ -201,10 +201,9 @@ function FloatingOrb({ className }: { className?: string }) {
    ============================================================ */
 
 export function LandingPage() {
-  const { navigate, setSearchQuery, setAuthModalOpen, user, language, fontSize } = useAppStore()
+  const { navigate, setSearchQuery, setAuthModalOpen, user, language } = useAppStore()
   const t = useT()
   const [heroSearch, setHeroSearch] = useState('')
-  const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [newsletterEmail, setNewsletterEmail] = useState('')
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false)
 
@@ -255,16 +254,6 @@ export function LandingPage() {
 
   // ── Bilingual Labels ──────────────────────────────────────
   const L = (fil: string, en: string) => language === 'fil' ? fil : en
-
-  // ── Nav Items ──────────────────────────────────────────────
-  const navItems = [
-    { label: 'Home', view: 'landing' as const },
-    { label: L('Tungkol', 'About'), view: 'about' as const },
-    { label: L('Serbisyo', 'Services'), view: 'services' as const },
-    { label: L('Trabaho', 'Jobs'), view: 'job-listing' as const },
-    { label: 'FAQ', view: 'faq' as const },
-    { label: L('Makipag-ugnay', 'Contact'), view: 'contact' as const },
-  ]
 
   // ── Hero Bento Cards ───────────────────────────────────────
   const heroBentoCards = [
@@ -324,109 +313,7 @@ export function LandingPage() {
      ============================================================ */
 
   return (
-    <div className="view-transition min-h-screen flex flex-col bg-background" data-font-size={fontSize}>
-      {/* ═══════════════════════════════════════════════════════
-          NAVIGATION BAR (Glassmorphism, sticky)
-          ═══════════════════════════════════════════════════════ */}
-      <nav className="glass-nav sticky top-0 z-50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          {/* Logo */}
-          <button onClick={() => navigate('landing')} className="flex items-center gap-2.5 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white font-bold text-sm shadow-lg shadow-blue-600/25 group-hover:shadow-blue-600/40 transition-shadow">
-              F
-            </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-lg leading-tight text-foreground">FIRA</span>
-              <span className="text-[10px] leading-tight text-muted-foreground tracking-wider uppercase">Recruitment</span>
-            </div>
-          </button>
-
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => (
-              <button
-                key={item.view}
-                onClick={() => navigate(item.view as any)}
-                className="px-3.5 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-all"
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-3">
-            {/* Language Toggle */}
-            <div className="flex items-center bg-muted/60 rounded-lg p-0.5">
-              <button
-                onClick={() => useAppStore.getState().setLanguage('en')}
-                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${language === 'en' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
-              >
-                EN
-              </button>
-              <button
-                onClick={() => useAppStore.getState().setLanguage('fil')}
-                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${language === 'fil' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
-              >
-                FIL
-              </button>
-            </div>
-
-            {user ? (
-              <Button size="sm" className="rounded-lg bg-blue-600 hover:bg-blue-700" onClick={() => navigate('applicant-dashboard')}>
-                {L('Dashboard', 'Dashboard')}
-              </Button>
-            ) : (
-              <>
-                <Button variant="ghost" size="sm" className="rounded-lg" onClick={() => setAuthModalOpen(true, 'login')}>
-                  {L('Mag-sign In', 'Sign In')}
-                </Button>
-                <Button size="sm" className="rounded-lg bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-500/25" onClick={() => setAuthModalOpen(true, 'register')}>
-                  {L('Magparehistro', 'Register')}
-                </Button>
-              </>
-            )}
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <button onClick={() => setMobileNavOpen(!mobileNavOpen)} className="md:hidden p-2 rounded-lg hover:bg-muted/60 transition-colors">
-            {mobileNavOpen ? <X className="h-5 w-5 text-foreground" /> : <Menu className="h-5 w-5 text-foreground" />}
-          </button>
-        </div>
-
-        {/* Mobile Nav Dropdown */}
-        <AnimatePresence>
-          {mobileNavOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-border bg-card/95 backdrop-blur-xl overflow-hidden"
-            >
-              <div className="container mx-auto px-4 py-4 flex flex-col gap-1">
-                {navItems.map((item) => (
-                  <button
-                    key={item.view}
-                    onClick={() => { navigate(item.view as any); setMobileNavOpen(false) }}
-                    className="text-left px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
-                  >
-                    {item.label}
-                  </button>
-                ))}
-                <div className="border-t border-border mt-2 pt-3 flex items-center gap-2">
-                  <Button size="sm" variant="outline" className="rounded-lg flex-1" onClick={() => { setAuthModalOpen(true, 'login'); setMobileNavOpen(false) }}>
-                    {L('Mag-sign In', 'Sign In')}
-                  </Button>
-                  <Button size="sm" className="rounded-lg flex-1 bg-amber-500 hover:bg-amber-600 text-white" onClick={() => { setAuthModalOpen(true, 'register'); setMobileNavOpen(false) }}>
-                    {L('Magparehistro', 'Register')}
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
-
+    <div className="view-transition min-h-screen flex flex-col bg-background">
       {/* ═══════════════════════════════════════════════════════
           HERO SECTION — Split Layout with Bento Grid
           ═══════════════════════════════════════════════════════ */}

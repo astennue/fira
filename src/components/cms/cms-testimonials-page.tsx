@@ -15,7 +15,7 @@ import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
 
 export function CmsTestimonialsPage() {
-  const { language, fontSize } = useAppStore()
+  const { language } = useAppStore()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
   const [form, setForm] = useState({ name: '', position: '', company: '', feedback: '', rating: 5, avatar: '', isActive: true })
@@ -72,7 +72,7 @@ export function CmsTestimonialsPage() {
   }
 
   return (
-    <div data-font-size={fontSize}>
+    <div>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Testimonials</h1>

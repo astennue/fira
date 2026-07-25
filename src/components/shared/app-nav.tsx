@@ -5,11 +5,9 @@ import { useTheme } from 'next-themes'
 import { useQuery } from '@tanstack/react-query'
 import {
   Menu, Search, Bell, Moon, Sun, LogOut, User, LayoutDashboard,
-  Briefcase, Users, FileText, Sparkles, Send, Columns, Building,
-  Building2, UserCheck, ChevronDown, UserCog, Globe, Languages,
-  HelpCircle, MessageSquareQuote, Share2, Network, ScrollText,
-  LayoutList, Settings, X, Home, Info, MessageCircle, Phone,
-  Minus, Plus, ALargeSmall,
+  Briefcase, Building2, ChevronDown, Globe,
+  HelpCircle, Home, Info, MessageCircle, Phone,
+  Minus, Plus, Settings,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -23,14 +21,8 @@ import {
   Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger,
 } from '@/components/ui/sheet'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useAppStore, getNavItems, type ViewName, roleDisplayNames, type FontSize } from '@/store/app-store'
+import { useAppStore, type ViewName, roleDisplayNames } from '@/store/app-store'
 import { cn } from '@/lib/utils'
-
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  LayoutDashboard, Search, FileText, User, Briefcase, Users, Sparkles,
-  Send, Columns, Building, Building2, UserCheck, UserCog, Settings,
-  HelpCircle, MessageSquareQuote, Share2, Network, ScrollText, LayoutList,
-}
 
 const publicNavItems = [
   { label: 'Home', labelFil: 'Home', icon: 'Home', view: 'landing' as ViewName },
@@ -45,8 +37,6 @@ const publicNavItems = [
 const publicIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Home, Info, Briefcase, HelpCircle, Phone, MessageCircle, Building2,
 }
-
-const fontSizes: FontSize[] = ['small', 'medium', 'large']
 
 export function AppNav() {
   const {
@@ -81,7 +71,6 @@ export function AppNav() {
   })
 
   const unreadCount = notifications.filter((n) => !n.read).length
-  const navItems = user ? getNavItems(user.role) : []
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -111,12 +100,8 @@ export function AppNav() {
   }
 
   const cycleFontSize = (direction: 'up' | 'down') => {
-    const idx = fontSizes.indexOf(fontSize)
-    if (direction === 'up' && idx < fontSizes.length - 1) {
-      setFontSize(fontSizes[idx + 1])
-    } else if (direction === 'down' && idx > 0) {
-      setFontSize(fontSizes[idx - 1])
-    }
+    const step = direction === 'up' ? 2 : -2
+    setFontSize(fontSize + step)
   }
 
   return (
@@ -129,85 +114,65 @@ export function AppNav() {
       )}>
         <div className="flex h-14 items-center gap-3 px-4 md:px-6">
           {/* Mobile hamburger */}
-          <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden shrink-0 text-foreground dark:text-foreground"
-              >
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-72 p-0">
-              <SheetHeader className="border-b px-4 py-3">
-                <SheetTitle className="flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-700 to-blue-900 text-white font-bold text-sm">
-                    F
-                  </div>
-                  <span className="text-lg font-bold bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent">FIRA</span>
-                </SheetTitle>
-              </SheetHeader>
-              {user && (
-                <div className="px-4 py-3 border-b">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-9 w-9">
-                      <AvatarFallback className="bg-blue-100 text-blue-700 text-xs font-semibold">
-                        {initials}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium truncate">{user.name}</p>
-                      <p className="text-xs text-muted-foreground">{getRoleBadge()}</p>
+          {user ? (
+            // Logged in: hamburger toggles dashboard sidebar
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden shrink-0 text-foreground"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Toggle sidebar</span>
+            </Button>
+          ) : (
+            // Not logged in: hamburger opens Sheet with public nav
+            <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="md:hidden shrink-0 text-foreground"
+                >
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-72 p-0">
+                <SheetHeader className="border-b px-4 py-3">
+                  <SheetTitle className="flex items-center gap-2">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-700 to-blue-900 text-white font-bold text-sm">
+                      F
                     </div>
-                  </div>
-                </div>
-              )}
-              <ScrollArea className="flex-1 h-[calc(100vh-8rem)]">
-                <nav className="flex flex-col gap-1 p-3">
-                  {!user && publicNavItems.map((item) => {
-                    const Icon = publicIconMap[item.icon] || Home
-                    const isActive = currentView === item.view
-                    return (
-                      <button
-                        key={item.view}
-                        onClick={() => navigate(item.view)}
-                        className={cn(
-                          'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors w-full text-left',
-                          isActive
-                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
-                            : 'hover:bg-accent hover:text-accent-foreground',
-                        )}
-                      >
-                        <Icon className="h-4 w-4 shrink-0" />
-                        <span>{language === 'fil' ? item.labelFil : item.label}</span>
-                      </button>
-                    )
-                  })}
-                  {user && navItems.map((item) => {
-                    const Icon = iconMap[item.icon] || LayoutDashboard
-                    const isActive = currentView === item.view
-                    return (
-                      <button
-                        key={item.view}
-                        onClick={() => navigate(item.view)}
-                        className={cn(
-                          'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors w-full text-left',
-                          isActive
-                            ? 'bg-blue-600 text-white dark:bg-blue-600 dark:text-white'
-                            : 'hover:bg-accent hover:text-accent-foreground',
-                        )}
-                      >
-                        <Icon className="h-4 w-4 shrink-0" />
-                        <span>{language === 'fil' ? item.labelFil : item.label}</span>
-                      </button>
-                    )
-                  })}
-                </nav>
-              </ScrollArea>
-            </SheetContent>
-          </Sheet>
+                    <span className="text-lg font-bold bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent">FIRA</span>
+                  </SheetTitle>
+                </SheetHeader>
+                <ScrollArea className="flex-1 h-[calc(100vh-8rem)]">
+                  <nav className="flex flex-col gap-1 p-3">
+                    {publicNavItems.map((item) => {
+                      const Icon = publicIconMap[item.icon] || Home
+                      const isActive = currentView === item.view
+                      return (
+                        <button
+                          key={item.view}
+                          onClick={() => { navigate(item.view); setSidebarOpen(false) }}
+                          className={cn(
+                            'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors w-full text-left',
+                            isActive
+                              ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
+                              : 'hover:bg-accent hover:text-accent-foreground',
+                          )}
+                        >
+                          <Icon className="h-4 w-4 shrink-0" />
+                          <span>{language === 'fil' ? item.labelFil : item.label}</span>
+                        </button>
+                      )
+                    })}
+                  </nav>
+                </ScrollArea>
+              </SheetContent>
+            </Sheet>
+          )}
 
           {/* Logo */}
           <button
@@ -291,18 +256,19 @@ export function AppNav() {
                 size="icon"
                 className="h-7 w-7 text-foreground hover:text-foreground hover:bg-accent"
                 onClick={() => cycleFontSize('down')}
-                disabled={fontSize === 'small'}
-                title="Decrease font size"
+                disabled={fontSize <= 12}
+                title="Decrease font size (A-)"
               >
                 <Minus className="h-3 w-3" />
               </Button>
+              <span className="text-[10px] text-muted-foreground w-6 text-center tabular-nums">{fontSize}</span>
               <Button
                 variant="ghost"
                 size="icon"
                 className="h-7 w-7 text-foreground hover:text-foreground hover:bg-accent"
                 onClick={() => cycleFontSize('up')}
-                disabled={fontSize === 'large'}
-                title="Increase font size"
+                disabled={fontSize >= 28}
+                title="Increase font size (A+)"
               >
                 <Plus className="h-3 w-3" />
               </Button>

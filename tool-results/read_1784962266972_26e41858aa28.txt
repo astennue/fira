@@ -1,0 +1,720 @@
+     1→'use client'
+     2→
+     3→import { useState, useMemo } from 'react'
+     4→import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+     5→import { motion, AnimatePresence } from 'framer-motion'
+     6→import {
+     7→  Plus,
+     8→  Edit,
+     9→  Trash2,
+    10→  Save,
+    11→  HelpCircle,
+    12→  Search,
+    13→  Filter,
+    14→  ChevronDown,
+    15→  ChevronUp,
+    16→  GripVertical,
+    17→  MessageCircleQuestion,
+    18→  X,
+    19→} from 'lucide-react'
+    20→import { Card, CardContent } from '@/components/ui/card'
+    21→import { Button } from '@/components/ui/button'
+    22→import { Input } from '@/components/ui/input'
+    23→import { Textarea } from '@/components/ui/textarea'
+    24→import { Label } from '@/components/ui/label'
+    25→import { Badge } from '@/components/ui/badge'
+    26→import { Skeleton } from '@/components/ui/skeleton'
+    27→import { Switch } from '@/components/ui/switch'
+    28→import {
+    29→  Dialog,
+    30→  DialogContent,
+    31→  DialogHeader,
+    32→  DialogTitle,
+    33→  DialogDescription,
+    34→} from '@/components/ui/dialog'
+    35→import {
+    36→  Select,
+    37→  SelectContent,
+    38→  SelectItem,
+    39→  SelectTrigger,
+    40→  SelectValue,
+    41→} from '@/components/ui/select'
+    42→import { useAppStore, useT } from '@/store/app-store'
+    43→import { toast } from 'sonner'
+    44→
+    45→// ─── Types ───────────────────────────────────────────────────────────────────
+    46→
+    47→interface FaqItem {
+    48→  id: string
+    49→  question: string
+    50→  answer: string
+    51→  category: string
+    52→  order: number
+    53→  isActive: boolean
+    54→  createdAt: string
+    55→  updatedAt: string
+    56→}
+    57→
+    58→interface FaqFormState {
+    59→  question: string
+    60→  answer: string
+    61→  category: string
+    62→  order: number
+    63→  isActive: boolean
+    64→}
+    65→
+    66→const EMPTY_FORM: FaqFormState = {
+    67→  question: '',
+    68→  answer: '',
+    69→  category: '',
+    70→  order: 0,
+    71→  isActive: true,
+    72→}
+    73→
+    74→const DEFAULT_CATEGORIES = [
+    75→  'General',
+    76→  'For Applicants',
+    77→  'For Employers',
+    78→  'Deployment',
+    79→  'Documents',
+    80→  'Fees & Payments',
+    81→  'Other',
+    82→]
+    83→
+    84→// ─── Animation Variants ──────────────────────────────────────────────────────
+    85→
+    86→const listContainerVariants = {
+    87→  hidden: { opacity: 0 },
+    88→  visible: {
+    89→    opacity: 1,
+    90→    transition: { staggerChildren: 0.04 },
+    91→  },
+    92→}
+    93→
+    94→const listItemVariants = {
+    95→  hidden: { opacity: 0, y: 12, scale: 0.97 },
+    96→  visible: {
+    97→    opacity: 1,
+    98→    y: 0,
+    99→    scale: 1,
+   100→    transition: { type: 'spring', stiffness: 400, damping: 25 },
+   101→  },
+   102→  exit: {
+   103→    opacity: 0,
+   104→    y: -8,
+   105→    scale: 0.95,
+   106→    transition: { duration: 0.2 },
+   107→  },
+   108→}
+   109→
+   110→// ─── Main Component ──────────────────────────────────────────────────────────
+   111→
+   112→export function CmsFaqPage() {
+   113→  const { language, fontSize } = useAppStore()
+   114→  const t = useT()
+   115→
+   116→  const [dialogOpen, setDialogOpen] = useState(false)
+   117→  const [editId, setEditId] = useState<string | null>(null)
+   118→  const [form, setForm] = useState<FaqFormState>(EMPTY_FORM)
+   119→  const [categoryFilter, setCategoryFilter] = useState<string>('all')
+   120→  const [searchQuery, setSearchQuery] = useState<string>('')
+   121→  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
+   122→
+   123→  const queryClient = useQueryClient()
+   124→
+   125→  // ── Data Fetching ─────────────────────────────────────────────────────────
+   126→
+   127→  const { data: faqs = [], isLoading } = useQuery<FaqItem[]>({
+   128→    queryKey: ['cms-faqs'],
+   129→    queryFn: async () => {
+   130→      const res = await fetch('/api/cms/faqs')
+   131→      if (!res.ok) return []
+   132→      return res.json()
+   133→    },
+   134→  })
+   135→
+   136→  // ── Derived Categories ─────────────────────────────────────────────────────
+   137→
+   138→  const categories = useMemo(() => {
+   139→    const fromData = Array.from(new Set(faqs.map((f) => f.category).filter(Boolean)))
+   140→    return [...DEFAULT_CATEGORIES, ...fromData.filter((c) => !DEFAULT_CATEGORIES.includes(c))]
+   141→  }, [faqs])
+   142→
+   143→  // ── Filtering ──────────────────────────────────────────────────────────────
+   144→
+   145→  const filteredFaqs = useMemo(() => {
+   146→    let result = [...faqs]
+   147→
+   148→    if (categoryFilter !== 'all') {
+   149→      result = result.filter((f) => f.category === categoryFilter)
+   150→    }
+   151→
+   152→    if (searchQuery.trim()) {
+   153→      const q = searchQuery.toLowerCase()
+   154→      result = result.filter(
+   155→        (f) =>
+   156→          f.question.toLowerCase().includes(q) || f.answer.toLowerCase().includes(q)
+   157→      )
+   158→    }
+   159→
+   160→    // Sort by order, then by createdAt
+   161→    result.sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
+   162→
+   163→    return result
+   164→  }, [faqs, categoryFilter, searchQuery])
+   165→
+   166→  // ── Grouped FAQs by Category ───────────────────────────────────────────────
+   167→
+   168→  const groupedFaqs = useMemo(() => {
+   169→    if (categoryFilter !== 'all') {
+   170→      return { [categoryFilter]: filteredFaqs }
+   171→    }
+   172→    const groups: Record<string, FaqItem[]> = {}
+   173→    for (const faq of filteredFaqs) {
+   174→      const cat = faq.category || 'Uncategorized'
+   175→      if (!groups[cat]) groups[cat] = []
+   176→      groups[cat].push(faq)
+   177→    }
+   178→    return groups
+   179→  }, [filteredFaqs, categoryFilter])
+   180→
+   181→  // ── Mutations ──────────────────────────────────────────────────────────────
+   182→
+   183→  const saveMutation = useMutation({
+   184→    mutationFn: async () => {
+   185→      const isEdit = !!editId
+   186→      const url = '/api/cms/faqs'
+   187→      const method = isEdit ? 'PUT' : 'POST'
+   188→      const body = isEdit
+   189→        ? { id: editId, question: form.question, answer: form.answer, category: form.category, order: form.order, isActive: form.isActive }
+   190→        : { question: form.question, answer: form.answer, category: form.category, order: form.order }
+   191→
+   192→      const res = await fetch(url, {
+   193→        method,
+   194→        headers: { 'Content-Type': 'application/json' },
+   195→        body: JSON.stringify(body),
+   196→      })
+   197→      if (!res.ok) throw new Error('Failed to save FAQ')
+   198→      return res.json()
+   199→    },
+   200→    onSuccess: () => {
+   201→      queryClient.invalidateQueries({ queryKey: ['cms-faqs'] })
+   202→      setDialogOpen(false)
+   203→      setEditId(null)
+   204→      setForm(EMPTY_FORM)
+   205→      toast.success(editId ? 'FAQ updated successfully!' : 'FAQ created successfully!')
+   206→    },
+   207→    onError: () => {
+   208→      toast.error(editId ? 'Failed to update FAQ' : 'Failed to create FAQ')
+   209→    },
+   210→  })
+   211→
+   212→  const deleteMutation = useMutation({
+   213→    mutationFn: async (id: string) => {
+   214→      const res = await fetch('/api/cms/faqs', {
+   215→        method: 'DELETE',
+   216→        headers: { 'Content-Type': 'application/json' },
+   217→        body: JSON.stringify({ id }),
+   218→      })
+   219→      if (!res.ok) throw new Error('Failed to delete FAQ')
+   220→    },
+   221→    onSuccess: () => {
+   222→      queryClient.invalidateQueries({ queryKey: ['cms-faqs'] })
+   223→      toast.success('FAQ deleted successfully!')
+   224→    },
+   225→    onError: () => {
+   226→      toast.error('Failed to delete FAQ')
+   227→    },
+   228→  })
+   229→
+   230→  const toggleActiveMutation = useMutation({
+   231→    mutationFn: async ({ id, isActive }: { id: string; isActive: boolean }) => {
+   232→      const res = await fetch('/api/cms/faqs', {
+   233→        method: 'PUT',
+   234→        headers: { 'Content-Type': 'application/json' },
+   235→        body: JSON.stringify({ id, isActive }),
+   236→      })
+   237→      if (!res.ok) throw new Error('Failed to toggle FAQ status')
+   238→      return res.json()
+   239→    },
+   240→    onSuccess: () => {
+   241→      queryClient.invalidateQueries({ queryKey: ['cms-faqs'] })
+   242→    },
+   243→    onError: () => {
+   244→      toast.error('Failed to update FAQ status')
+   245→    },
+   246→  })
+   247→
+   248→  // ── Handlers ──────────────────────────────────────────────────────────────
+   249→
+   250→  const openEdit = (faq: FaqItem) => {
+   251→    setEditId(faq.id)
+   252→    setForm({
+   253→      question: faq.question,
+   254→      answer: faq.answer,
+   255→      category: faq.category,
+   256→      order: faq.order ?? 0,
+   257→      isActive: faq.isActive,
+   258→    })
+   259→    setDialogOpen(true)
+   260→  }
+   261→
+   262→  const openNew = () => {
+   263→    setEditId(null)
+   264→    setForm({ ...EMPTY_FORM, order: faqs.length })
+   265→    setDialogOpen(true)
+   266→  }
+   267→
+   268→  const toggleExpanded = (id: string) => {
+   269→    setExpandedIds((prev) => {
+   270→      const next = new Set(prev)
+   271→      if (next.has(id)) {
+   272→        next.delete(id)
+   273→      } else {
+   274→        next.add(id)
+   275→      }
+   276→      return next
+   277→    })
+   278→  }
+   279→
+   280→  const handleSave = () => {
+   281→    if (!form.question.trim() || !form.answer.trim()) {
+   282→      toast.error('Question and answer are required')
+   283→      return
+   284→    }
+   285→    saveMutation.mutate()
+   286→  }
+   287→
+   288→  const handleDelete = (id: string) => {
+   289→    deleteMutation.mutate(id)
+   290→  }
+   291→
+   292→  // ── Category Color Map ────────────────────────────────────────────────────
+   293→
+   294→  const categoryColorMap: Record<string, string> = {
+   295→    General: 'bg-blue-100 text-blue-700 border-blue-200',
+   296→    'For Applicants': 'bg-emerald-100 text-emerald-700 border-emerald-200',
+   297→    'For Employers': 'bg-violet-100 text-violet-700 border-violet-200',
+   298→    Deployment: 'bg-amber-100 text-amber-700 border-amber-200',
+   299→    Documents: 'bg-cyan-100 text-cyan-700 border-cyan-200',
+   300→    'Fees & Payments': 'bg-rose-100 text-rose-700 border-rose-200',
+   301→    Other: 'bg-gray-100 text-gray-600 border-gray-200',
+   302→  }
+   303→
+   304→  const getCategoryStyle = (category: string) => {
+   305→    return categoryColorMap[category] || 'bg-sky-100 text-sky-700 border-sky-200'
+   306→  }
+   307→
+   308→  // ── Render ────────────────────────────────────────────────────────────────
+   309→
+   310→  return (
+   311→    <div data-font-size={fontSize}>
+   312→      {/* ─── Header ─────────────────────────────────────────────────────── */}
+   313→      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+   314→        <div>
+   315→          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-700 to-sky-600 bg-clip-text text-transparent">
+   316→            {t('FAQ Management')}
+   317→          </h1>
+   318→          <p className="text-gray-500 text-sm">
+   319→            Manage frequently asked questions and organize them by category
+   320→          </p>
+   321→        </div>
+   322→        <Button
+   323→          onClick={openNew}
+   324→          className="rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 shadow-md shadow-blue-500/20 transition-all"
+   325→        >
+   326→          <Plus className="mr-2 h-4 w-4" />
+   327→          Add FAQ
+   328→        </Button>
+   329→      </div>
+   330→
+   331→      {/* ─── Stats Bar ───────────────────────────────────────────────────── */}
+   332→      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+   333→        <Card className="bg-gradient-to-br from-blue-50 to-sky-50 border-blue-100">
+   334→          <CardContent className="p-4">
+   335→            <div className="flex items-center gap-2">
+   336→              <MessageCircleQuestion className="h-4 w-4 text-blue-500" />
+   337→              <span className="text-xs text-blue-600 font-medium">Total FAQs</span>
+   338→            </div>
+   339→            <p className="text-xl font-bold text-blue-800 mt-1">{faqs.length}</p>
+   340→          </CardContent>
+   341→        </Card>
+   342→        <Card className="bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-100">
+   343→          <CardContent className="p-4">
+   344→            <div className="flex items-center gap-2">
+   345→              <HelpCircle className="h-4 w-4 text-emerald-500" />
+   346→              <span className="text-xs text-emerald-600 font-medium">Active</span>
+   347→            </div>
+   348→            <p className="text-xl font-bold text-emerald-800 mt-1">
+   349→              {faqs.filter((f) => f.isActive).length}
+   350→            </p>
+   351→          </CardContent>
+   352→        </Card>
+   353→        <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-amber-100">
+   354→          <CardContent className="p-4">
+   355→            <div className="flex items-center gap-2">
+   356→              <Filter className="h-4 w-4 text-amber-500" />
+   357→              <span className="text-xs text-amber-600 font-medium">Categories</span>
+   358→            </div>
+   359→            <p className="text-xl font-bold text-amber-800 mt-1">{categories.length}</p>
+   360→          </CardContent>
+   361→        </Card>
+   362→        <Card className="bg-gradient-to-br from-violet-50 to-purple-50 border-violet-100">
+   363→          <CardContent className="p-4">
+   364→            <div className="flex items-center gap-2">
+   365→              <GripVertical className="h-4 w-4 text-violet-500" />
+   366→              <span className="text-xs text-violet-600 font-medium">Showing</span>
+   367→            </div>
+   368→            <p className="text-xl font-bold text-violet-800 mt-1">{filteredFaqs.length}</p>
+   369→          </CardContent>
+   370→        </Card>
+   371→      </div>
+   372→
+   373→      {/* ─── Filters ─────────────────────────────────────────────────────── */}
+   374→      <div className="flex flex-col sm:flex-row gap-3 mb-6">
+   375→        <div className="relative flex-1">
+   376→          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+   377→          <Input
+   378→            value={searchQuery}
+   379→            onChange={(e) => setSearchQuery(e.target.value)}
+   380→            placeholder="Search questions or answers..."
+   381→            className="pl-9 rounded-xl border-blue-100 focus:border-blue-300 focus:ring-blue-200"
+   382→          />
+   383→          {searchQuery && (
+   384→            <button
+   385→              onClick={() => setSearchQuery('')}
+   386→              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+   387→            >
+   388→              <X className="h-3.5 w-3.5" />
+   389→            </button>
+   390→          )}
+   391→        </div>
+   392→        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+   393→          <SelectTrigger className="w-full sm:w-[200px] rounded-xl border-blue-100">
+   394→            <SelectValue placeholder="All Categories" />
+   395→          </SelectTrigger>
+   396→          <SelectContent>
+   397→            <SelectItem value="all">All Categories</SelectItem>
+   398→            {categories.map((cat) => (
+   399→              <SelectItem key={cat} value={cat}>
+   400→                {cat}
+   401→              </SelectItem>
+   402→            ))}
+   403→          </SelectContent>
+   404→        </Select>
+   405→      </div>
+   406→
+   407→      {/* ─── FAQ List ───────────────────────────────────────────────────── */}
+   408→      {isLoading ? (
+   409→        <div className="space-y-4">
+   410→          {Array.from({ length: 5 }).map((_, i) => (
+   411→            <Skeleton key={i} className="h-24 rounded-xl" />
+   412→          ))}
+   413→        </div>
+   414→      ) : filteredFaqs.length === 0 ? (
+   415→        <Card className="border-blue-100">
+   416→          <CardContent className="p-12 text-center">
+   417→            <HelpCircle className="h-12 w-12 mx-auto text-blue-200 mb-4" />
+   418→            <h3 className="text-lg font-semibold text-gray-600 mb-1">No FAQs found</h3>
+   419→            <p className="text-sm text-gray-400 mb-4">
+   420→              {searchQuery || categoryFilter !== 'all'
+   421→                ? 'Try adjusting your filters or search query.'
+   422→                : 'Get started by adding your first FAQ.'}
+   423→            </p>
+   424→            {!searchQuery && categoryFilter === 'all' && (
+   425→              <Button
+   426→                onClick={openNew}
+   427→                variant="outline"
+   428→                className="rounded-xl border-blue-200 text-blue-600 hover:bg-blue-50"
+   429→              >
+   430→                <Plus className="mr-2 h-4 w-4" />
+   431→                Add First FAQ
+   432→              </Button>
+   433→            )}
+   434→          </CardContent>
+   435→        </Card>
+   436→      ) : (
+   437→        <AnimatePresence mode="wait">
+   438→          <motion.div
+   439→            key={`${categoryFilter}-${searchQuery}`}
+   440→            variants={listContainerVariants}
+   441→            initial="hidden"
+   442→            animate="visible"
+   443→            className="space-y-6"
+   444→          >
+   445→            {Object.entries(groupedFaqs).map(([category, items]) => (
+   446→              <div key={category}>
+   447→                {/* Category Header */}
+   448→                <div className="flex items-center gap-2 mb-3">
+   449→                  <Badge className={`text-xs font-medium border ${getCategoryStyle(category)}`}>
+   450→                    {category}
+   451→                  </Badge>
+   452→                  <span className="text-xs text-gray-400">{items.length} item{items.length !== 1 ? 's' : ''}</span>
+   453→                </div>
+   454→
+   455→                {/* FAQ Cards */}
+   456→                <motion.div variants={listContainerVariants} className="space-y-2">
+   457→                  <AnimatePresence>
+   458→                    {items.map((faq) => {
+   459→                      const isExpanded = expandedIds.has(faq.id)
+   460→                      return (
+   461→                        <motion.div
+   462→                          key={faq.id}
+   463→                          variants={listItemVariants}
+   464→                          initial="hidden"
+   465→                          animate="visible"
+   466→                          exit="exit"
+   467→                          layout
+   468→                        >
+   469→                          <Card
+   470→                            className={`border transition-all duration-200 ${
+   471→                              faq.isActive
+   472→                                ? 'border-blue-100 hover:border-blue-200 hover:shadow-md hover:shadow-blue-50'
+   473→                                : 'border-gray-200 opacity-60 hover:opacity-80'
+   474→                            }`}
+   475→                          >
+   476→                            <CardContent className="p-0">
+   477→                              <div className="flex items-start gap-3 p-4">
+   478→                                {/* Drag Handle / Order Indicator */}
+   479→                                <div className="flex flex-col items-center pt-0.5 text-gray-300">
+   480→                                  <GripVertical className="h-4 w-4" />
+   481→                                  <span className="text-[10px] mt-0.5 font-mono">#{faq.order ?? 0}</span>
+   482→                                </div>
+   483→
+   484→                                {/* Main Content */}
+   485→                                <div className="flex-1 min-w-0">
+   486→                                  <div className="flex items-start justify-between gap-3">
+   487→                                    <button
+   488→                                      onClick={() => toggleExpanded(faq.id)}
+   489→                                      className="text-left flex-1 min-w-0 group"
+   490→                                    >
+   491→                                      <div className="flex items-center gap-2">
+   492→                                        <h3 className="font-semibold text-gray-800 group-hover:text-blue-700 transition-colors truncate">
+   493→                                          {faq.question}
+   494→                                        </h3>
+   495→                                        {isExpanded ? (
+   496→                                          <ChevronUp className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+   497→                                        ) : (
+   498→                                          <ChevronDown className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+   499→                                        )}
+   500→                                      </div>
+   501→                                    </button>
+   502→                                  </div>
+   503→
+   504→                                  {/* Expanded Answer */}
+   505→                                  <AnimatePresence>
+   506→                                    {isExpanded && (
+   507→                                      <motion.div
+   508→                                        initial={{ height: 0, opacity: 0 }}
+   509→                                        animate={{ height: 'auto', opacity: 1 }}
+   510→                                        exit={{ height: 0, opacity: 0 }}
+   511→                                        transition={{ duration: 0.2 }}
+   512→                                        className="overflow-hidden"
+   513→                                      >
+   514→                                        <p className="text-sm text-gray-600 mt-2 leading-relaxed whitespace-pre-wrap">
+   515→                                          {faq.answer}
+   516→                                        </p>
+   517→                                      </motion.div>
+   518→                                    )}
+   519→                                  </AnimatePresence>
+   520→
+   521→                                  {/* Collapsed Preview */}
+   522→                                  {!isExpanded && (
+   523→                                    <p className="text-sm text-gray-400 mt-1 line-clamp-1">
+   524→                                      {faq.answer}
+   525→                                    </p>
+   526→                                  )}
+   527→
+   528→                                  {/* Meta Row */}
+   529→                                  <div className="flex items-center gap-2 mt-2 flex-wrap">
+   530→                                    <Badge
+   531→                                      className={`text-[10px] border px-1.5 py-0 ${getCategoryStyle(faq.category || 'Other')}`}
+   532→                                    >
+   533→                                      {faq.category || 'Uncategorized'}
+   534→                                    </Badge>
+   535→                                    {!faq.isActive && (
+   536→                                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+   537→                                        Inactive
+   538→                                      </Badge>
+   539→                                    )}
+   540→                                  </div>
+   541→                                </div>
+   542→
+   543→                                {/* Controls */}
+   544→                                <div className="flex flex-col items-end gap-2 shrink-0">
+   545→                                  <div className="flex items-center gap-1">
+   546→                                    <Button
+   547→                                      variant="ghost"
+   548→                                      size="icon"
+   549→                                      className="h-7 w-7 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+   550→                                      onClick={() => openEdit(faq)}
+   551→                                    >
+   552→                                      <Edit className="h-3.5 w-3.5" />
+   553→                                    </Button>
+   554→                                    <Button
+   555→                                      variant="ghost"
+   556→                                      size="icon"
+   557→                                      className="h-7 w-7 text-destructive hover:text-destructive hover:bg-red-50"
+   558→                                      onClick={() => handleDelete(faq.id)}
+   559→                                      disabled={deleteMutation.isPending}
+   560→                                    >
+   561→                                      <Trash2 className="h-3.5 w-3.5" />
+   562→                                    </Button>
+   563→                                  </div>
+   564→                                  <div className="flex items-center gap-2">
+   565→                                    <span className="text-[10px] text-gray-400">
+   566→                                      {faq.isActive ? 'Active' : 'Inactive'}
+   567→                                    </span>
+   568→                                    <Switch
+   569→                                      checked={faq.isActive}
+   570→                                      onCheckedChange={(checked) =>
+   571→                                        toggleActiveMutation.mutate({ id: faq.id, isActive: checked })
+   572→                                      }
+   573→                                      disabled={toggleActiveMutation.isPending}
+   574→                                    />
+   575→                                  </div>
+   576→                                </div>
+   577→                              </div>
+   578→                            </CardContent>
+   579→                          </Card>
+   580→                        </motion.div>
+   581→                      )
+   582→                    })}
+   583→                  </AnimatePresence>
+   584→                </motion.div>
+   585→              </div>
+   586→            ))}
+   587→          </motion.div>
+   588→        </AnimatePresence>
+   589→      )}
+   590→
+   591→      {/* ─── Add/Edit Dialog ────────────────────────────────────────────── */}
+   592→      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+   593→        <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto">
+   594→          <DialogHeader>
+   595→            <DialogTitle className="text-lg font-bold bg-gradient-to-r from-blue-700 to-sky-600 bg-clip-text text-transparent">
+   596→              {editId ? 'Edit FAQ' : 'Add New FAQ'}
+   597→            </DialogTitle>
+   598→            <DialogDescription className="text-sm text-gray-500">
+   599→              {editId
+   600→                ? 'Update the question, answer, category, and order of this FAQ.'
+   601→                : 'Fill in the details to create a new frequently asked question.'}
+   602→            </DialogDescription>
+   603→          </DialogHeader>
+   604→
+   605→          <div className="space-y-5 pt-2">
+   606→            {/* Question */}
+   607→            <div className="space-y-2">
+   608→              <Label htmlFor="faq-question" className="text-sm font-medium text-gray-700">
+   609→                Question <span className="text-red-400">*</span>
+   610→              </Label>
+   611→              <Input
+   612→                id="faq-question"
+   613→                value={form.question}
+   614→                onChange={(e) => setForm({ ...form, question: e.target.value })}
+   615→                placeholder="e.g., What documents do I need to apply?"
+   616→                className="rounded-xl border-blue-100 focus:border-blue-300 focus:ring-blue-200"
+   617→              />
+   618→            </div>
+   619→
+   620→            {/* Answer */}
+   621→            <div className="space-y-2">
+   622→              <Label htmlFor="faq-answer" className="text-sm font-medium text-gray-700">
+   623→                Answer <span className="text-red-400">*</span>
+   624→              </Label>
+   625→              <Textarea
+   626→                id="faq-answer"
+   627→                value={form.answer}
+   628→                onChange={(e) => setForm({ ...form, answer: e.target.value })}
+   629→                placeholder="Provide a clear and detailed answer..."
+   630→                className="min-h-[140px] rounded-xl border-blue-100 focus:border-blue-300 focus:ring-blue-200 resize-none"
+   631→              />
+   632→            </div>
+   633→
+   634→            {/* Category & Order */}
+   635→            <div className="grid grid-cols-2 gap-4">
+   636→              <div className="space-y-2">
+   637→                <Label htmlFor="faq-category" className="text-sm font-medium text-gray-700">
+   638→                  Category
+   639→                </Label>
+   640→                <Select
+   641→                  value={form.category}
+   642→                  onValueChange={(val) => setForm({ ...form, category: val })}
+   643→                >
+   644→                  <SelectTrigger className="rounded-xl border-blue-100">
+   645→                    <SelectValue placeholder="Select category" />
+   646→                  </SelectTrigger>
+   647→                  <SelectContent>
+   648→                    {categories.map((cat) => (
+   649→                      <SelectItem key={cat} value={cat}>
+   650→                        {cat}
+   651→                      </SelectItem>
+   652→                    ))}
+   653→                  </SelectContent>
+   654→                </Select>
+   655→                <Input
+   656→                  value={form.category}
+   657→                  onChange={(e) => setForm({ ...form, category: e.target.value })}
+   658→                  placeholder="Or type a new category..."
+   659→                  className="rounded-xl border-blue-100 focus:border-blue-300 focus:ring-blue-200 text-sm"
+   660→                />
+   661→              </div>
+   662→              <div className="space-y-2">
+   663→                <Label htmlFor="faq-order" className="text-sm font-medium text-gray-700">
+   664→                  Display Order
+   665→                </Label>
+   666→                <Input
+   667→                  id="faq-order"
+   668→                  type="number"
+   669→                  min={0}
+   670→                  value={form.order}
+   671→                  onChange={(e) => setForm({ ...form, order: parseInt(e.target.value) || 0 })}
+   672→                  className="rounded-xl border-blue-100 focus:border-blue-300 focus:ring-blue-200"
+   673→                />
+   674→                <p className="text-[11px] text-gray-400">
+   675→                  Lower numbers appear first
+   676→                </p>
+   677→              </div>
+   678→            </div>
+   679→
+   680→            {/* Active Toggle (Edit mode only) */}
+   681→            {editId && (
+   682→              <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100">
+   683→                <div>
+   684→                  <Label className="text-sm font-medium text-gray-700">Active Status</Label>
+   685→                  <p className="text-[11px] text-gray-400">
+   686→                    Inactive FAQs will not be shown to visitors
+   687→                  </p>
+   688→                </div>
+   689→                <Switch
+   690→                  checked={form.isActive}
+   691→                  onCheckedChange={(checked) => setForm({ ...form, isActive: checked })}
+   692→                />
+   693→              </div>
+   694→            )}
+   695→
+   696→            {/* Actions */}
+   697→            <div className="flex justify-end gap-3 pt-2">
+   698→              <Button
+   699→                variant="outline"
+   700→                onClick={() => setDialogOpen(false)}
+   701→                className="rounded-xl"
+   702→              >
+   703→                Cancel
+   704→              </Button>
+   705→              <Button
+   706→                onClick={handleSave}
+   707→                disabled={saveMutation.isPending}
+   708→                className="rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 shadow-md shadow-blue-500/20"
+   709→              >
+   710→                <Save className="mr-2 h-4 w-4" />
+   711→                {saveMutation.isPending ? 'Saving...' : editId ? 'Update FAQ' : 'Create FAQ'}
+   712→              </Button>
+   713→            </div>
+   714→          </div>
+   715→        </DialogContent>
+   716→      </Dialog>
+   717→    </div>
+   718→  )
+   719→}
+   720→

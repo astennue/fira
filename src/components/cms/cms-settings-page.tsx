@@ -30,7 +30,7 @@ const defaultSettings: Record<string, string> = {
 }
 
 export function CmsSettingsPage() {
-  const { fontSize } = useAppStore()
+  
   const queryClient = useQueryClient()
   const [settings, setSettings] = useState<Record<string, string> | null>(null)
 
@@ -74,7 +74,7 @@ export function CmsSettingsPage() {
   }
 
   return (
-    <div data-font-size={fontSize}>
+    <div>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Site Settings</h1>

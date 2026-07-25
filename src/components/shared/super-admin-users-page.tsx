@@ -19,7 +19,7 @@ import { toast } from 'sonner'
 import { formatDistanceToNow } from 'date-fns'
 
 export function SuperAdminUsersPage() {
-  const { language, fontSize } = useAppStore()
+  const { language } = useAppStore()
   const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
@@ -70,7 +70,7 @@ export function SuperAdminUsersPage() {
   }
 
   return (
-    <div data-font-size={fontSize}>
+    <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Manage Users</h1>
         <p className="text-gray-500 text-sm">View and manage all platform users</p>

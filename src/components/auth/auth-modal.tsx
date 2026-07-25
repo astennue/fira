@@ -66,7 +66,7 @@ function getPasswordStrength(password: string): { score: number; label: string; 
 }
 
 export function AuthModal() {
-  const { authModalOpen, setAuthModalOpen, setUser, navigate, language, fontSize, authModalDefaultTab } = useAppStore()
+  const { authModalOpen, setAuthModalOpen, setUser, navigate, language, authModalDefaultTab } = useAppStore()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
@@ -158,7 +158,7 @@ export function AuthModal() {
 
   return (
     <Dialog open={authModalOpen} onOpenChange={setAuthModalOpen}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto" data-font-size={fontSize}>
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <img src="/logo.png" alt="FIRA Logo" className="h-8 object-contain" />

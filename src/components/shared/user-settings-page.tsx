@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback, useRef } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { User, Mail, Phone, Lock, Camera, Save, Eye, EyeOff, Check, Loader2, Type, Shield, Upload } from 'lucide-react'
+import { User, Mail, Phone, Lock, Camera, Save, Eye, EyeOff, Check, Loader2, Type, Shield, Upload, Minus, Plus } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Progress } from '@/components/ui/progress'
-import { useAppStore, type FontSize } from '@/store/app-store'
+import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
 
 function getPasswordStrength(password: string) {
@@ -161,14 +161,8 @@ export function UserSettingsPage() {
     onError: (err) => toast.error(err.message),
   })
 
-  const fontSizeOptions: { value: FontSize; label: string; sample: string }[] = [
-    { value: 'small', label: language === 'fil' ? 'Maliit' : 'Small', sample: 'Aa' },
-    { value: 'medium', label: language === 'fil' ? 'Katamtaman' : 'Medium', sample: 'Aa' },
-    { value: 'large', label: language === 'fil' ? 'Malaki' : 'Large', sample: 'Aa' },
-  ]
-
   return (
-    <div data-font-size={fontSize} className="space-y-6">
+    <div className="space-y-6">
       <div className="mb-2">
         <h1 className="text-2xl font-bold">{language === 'fil' ? 'Settings' : 'Settings'}</h1>
         <p className="text-muted-foreground text-sm">{language === 'fil' ? 'Pamahalaan ang iyong account' : 'Manage your account preferences'}</p>
@@ -358,18 +352,49 @@ export function UserSettingsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">{language === 'fil' ? 'Pumili ng gusto mong laki ng text.' : 'Choose your preferred text size for readability.'}</p>
-            <div className="flex gap-3">
-              {fontSizeOptions.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => setFontSize(opt.value)}
-                  className={`flex-1 rounded-xl p-4 border-2 text-center transition-all ${fontSize === opt.value ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/30' : 'border-border hover:border-blue-300 dark:hover:border-blue-700'}`}
-                >
-                  <p className={`font-bold ${opt.value === 'small' ? 'text-sm' : opt.value === 'medium' ? 'text-base' : 'text-lg'}`}>{opt.sample}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{opt.label}</p>
-                </button>
-              ))}
+            <p className="text-sm text-muted-foreground mb-4">{language === 'fil' ? 'I-adjust ang laki ng text para sa mas magandang basahin.' : 'Adjust text size for better readability.'}</p>
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-10 w-10 shrink-0"
+                onClick={() => setFontSize(fontSize - 2)}
+                disabled={fontSize <= 12}
+              >
+                <Minus className="h-4 w-4" />
+              </Button>
+              <div className="flex-1">
+                <input
+                  type="range"
+                  min={12}
+                  max={28}
+                  step={2}
+                  value={fontSize}
+                  onChange={(e) => setFontSize(Number(e.target.value))}
+                  className="w-full h-2 bg-muted rounded-full appearance-none cursor-pointer accent-blue-600"
+                />
+                <div className="flex justify-between mt-1 text-xs text-muted-foreground">
+                  <span>12px</span>
+                  <span className="font-semibold text-foreground">{fontSize}px</span>
+                  <span>28px</span>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-10 w-10 shrink-0"
+                onClick={() => setFontSize(fontSize + 2)}
+                disabled={fontSize >= 28}
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="mt-4 p-3 rounded-lg bg-muted/50 border">
+              <p style={{ fontSize: `${fontSize}px` }} className="leading-relaxed text-foreground">
+                {language === 'fil'
+                  ? 'Halimbawa ng text. Ito ang magiging laki ng text sa buong site.'
+                  : 'Sample text preview. This will be the text size across the site.'}
+              </p>
             </div>
           </CardContent>
         </Card>

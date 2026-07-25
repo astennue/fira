@@ -28,7 +28,7 @@ const fieldTypes = [
 ]
 
 export function CmsFormBuilderPage() {
-  const { fontSize } = useAppStore()
+  
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
   const [form, setForm] = useState({ label: '', fieldType: 'text', options: '', section: 'Personal Information', isRequired: false, order: 0, isActive: true })
@@ -94,7 +94,7 @@ export function CmsFormBuilderPage() {
   const sections = [...new Set(sortedFields.map((f: any) => f.section || 'Personal Information'))]
 
   return (
-    <div data-font-size={fontSize}>
+    <div>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Form Builder</h1>
