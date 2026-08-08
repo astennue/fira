@@ -12,7 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
-import { useAppStore, useT } from '@/store/app-store'
+import { useAppStore } from '@/store/app-store'
 
 const CATEGORIES = [
   { value: 'all', label: 'All Categories' },
@@ -53,7 +53,6 @@ const categoryColors: Record<string, string> = {
 
 export function JobListingPage() {
   const { navigate, viewParams, language } = useAppStore()
-  const t = useT()
   const [country, setCountry] = useState('all')
   const [category, setCategory] = useState('all')
   const [search, setSearch] = useState(viewParams?.search || '')

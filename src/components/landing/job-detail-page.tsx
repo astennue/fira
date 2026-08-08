@@ -1,34 +1,63 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import {
   ArrowLeft, MapPin, Briefcase, Clock, DollarSign, Shield,
-  CheckCircle, User, Building2, Send, AlertCircle,
+  CheckCircle, User, Building2, Send, AlertCircle, CheckCheck,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Separator } from '@/components/ui/separator'
-import { useAppStore, useT } from '@/store/app-store'
+import { useAppStore } from '@/store/app-store'
+import { toast } from 'sonner'
 
 export function JobDetailPage() {
   const { navigate, viewParams, user, language } = useAppStore()
-  const t = useT()
+  const queryClient = useQueryClient()
   const jobId = viewParams?.jobId
+  const [isApplying, setIsApplying] = useState(false)
+  const [applied, setApplied] = useState(false)
 
   const { data: jobsData, isLoading } = useQuery({
     queryKey: ['job-detail', jobId],
     queryFn: async () => {
-      const res = await fetch(`/api/jobs?search=${jobId}`)
-      if (!res.ok) return { jobs: [] }
+      const res = await fetch(`/api/jobs/${jobId}`)
+      if (!res.ok) return null
       return res.json()
     },
     enabled: !!jobId,
   })
 
-  const job = Array.isArray(jobsData?.jobs) ? jobsData.jobs.find((j: any) => j.id === jobId) : null
+  const applyMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch('/api/applications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ applicantId: user!.id, jobOrderId: jobId }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to apply')
+      return data
+    },
+    onSuccess: () => {
+      setApplied(true)
+      queryClient.invalidateQueries({ queryKey: ['applications'] })
+      queryClient.invalidateQueries({ queryKey: ['job-detail', jobId] })
+      toast.success(language === 'fil' ? 'Matagumpay na na-apply!' : 'Application submitted successfully!')
+    },
+    onSettled: () => setIsApplying(false),
+  })
+
+  const handleApply = () => {
+    if (!user) return
+    setIsApplying(true)
+    applyMutation.mutate()
+  }
+
+  const job = jobsData?.job || jobsData?.jobs?.find((j: any) => j.id === jobId) || null
 
   if (isLoading) {
     return (
@@ -158,10 +187,17 @@ export function JobDetailPage() {
           {/* Apply Button */}
           {isApplicant && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="sticky bottom-4">
-              <Button size="lg" className="w-full h-14 text-base font-semibold shadow-lg">
-                <Send className="mr-2 h-5 w-5" />
-                {language === 'fil' ? 'Mag-apply sa Trabahong Ito' : 'Apply for This Job'}
-              </Button>
+              {applied ? (
+                <Button size="lg" className="w-full h-14 text-base font-semibold shadow-lg bg-emerald-600 hover:bg-emerald-700" disabled>
+                  <CheckCheck className="mr-2 h-5 w-5" />
+                  {language === 'fil' ? 'Na-apply Ka Na!' : 'Already Applied!'}
+                </Button>
+              ) : (
+                <Button size="lg" className="w-full h-14 text-base font-semibold shadow-lg" disabled={isApplying} onClick={handleApply}>
+                  <Send className="mr-2 h-5 w-5" />
+                  {isApplying ? (language === 'fil' ? 'Nagsusumite...' : 'Submitting...') : (language === 'fil' ? 'Mag-apply sa Trabahong Ito' : 'Apply for This Job')}
+                </Button>
+              )}
             </motion.div>
           )}
           {!isApplicant && (

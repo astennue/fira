@@ -20,8 +20,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from '@/components/ui/accordion'
-import { useAppStore, useT } from '@/store/app-store'
-import { formatDistanceToNow } from 'date-fns'
+import { useAppStore } from '@/store/app-store'
 
 /* ============================================================
    ANIMATION VARIANTS
@@ -202,7 +201,6 @@ function FloatingOrb({ className }: { className?: string }) {
 
 export function LandingPage() {
   const { navigate, setSearchQuery, setAuthModalOpen, user, language } = useAppStore()
-  const t = useT()
   const [heroSearch, setHeroSearch] = useState('')
   const [newsletterEmail, setNewsletterEmail] = useState('')
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false)

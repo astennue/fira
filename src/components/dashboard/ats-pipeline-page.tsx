@@ -113,7 +113,7 @@ export function AtsPipelinePage() {
   const applications = Array.isArray(appData?.applications) ? appData.applications : []
   const stages = Array.isArray(stagesData) ? stagesData : []
 
-  const isFira = user?.role === 'super_admin' || user?.role === 'staff'
+  const isFira = user?.role === 'super_admin' || user?.role === 'staff' || user?.role === 'international_agency'
 
   const stageMap: Record<string, any[]> = {}
   stages.forEach((stage: any) => { stageMap[stage.id] = [] })

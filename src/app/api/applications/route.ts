@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     const applications = await db.application.findMany({
       where,
       include: {
-        applicant: { select: { id: true, name: true, email: true, phone: true, avatar: true, role: true }, include: { applicantProfile: true } },
+      applicant: { include: { applicantProfile: true } },
         jobOrder: { include: { employer: { select: { id: true, companyName: true, country: true } }, agency: { select: { id: true, name: true } } } },
         currentStage: true,
         aiAnalysis: true,

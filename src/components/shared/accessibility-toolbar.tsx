@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/static-components */
 'use client'
 
 import { useEffect, useRef, useCallback } from 'react'
@@ -6,7 +5,7 @@ import { useAppStore } from '@/store/app-store'
 import { Separator } from '@/components/ui/separator'
 import {
   Accessibility, Type, Eye, Minus, Plus, RotateCcw, MousePointer2,
-  Volume2, Ruler, Palette, Sparkles, X, Sun,
+  Volume2, Ruler, Palette, X, Sun,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -39,7 +38,59 @@ const COLOR_OVERLAYS = [
   { color: 'rgba(221,160,221,0.2)', label: 'Purple', hex: '#DDA0DD' },
 ]
 
+/* ── Slider sub-component (defined outside to avoid re-creation) ── */
+function AccessSlider({ value, min, max, step, color, onMinus, onPlus, label, unit = 'px' }: {
+  value: number; min: number; max: number; step: number; color: string;
+  onMinus: () => void; onPlus: () => void; label: string; unit?: string;
+}) {
+  return (
+    <div className="rounded-lg bg-muted/50 p-3">
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-sm font-medium">{label}</span>
+        <span className="ml-auto text-xs text-muted-foreground bg-background rounded-full px-2 py-0.5">
+          {typeof value === 'number' && value % 1 !== 0 ? value.toFixed(1) : value}{unit}
+        </span>
+      </div>
+      <div className="flex items-center gap-2">
+        <button onClick={onMinus} className="h-8 w-8 rounded-lg border bg-background flex items-center justify-center hover:bg-accent transition" aria-label={`Decrease ${label}`}><Minus className="h-3 w-3" /></button>
+        <div className="flex-1 h-2 rounded-full bg-gray-200 dark:bg-gray-700 relative">
+          <div className="absolute left-0 top-0 h-full rounded-full transition-all" style={{ width: `${((value - min) / (max - min)) * 100}%`, backgroundColor: color }} />
+        </div>
+        <button onClick={onPlus} className="h-8 w-8 rounded-lg border bg-background flex items-center justify-center hover:bg-accent transition" aria-label={`Increase ${label}`}><Plus className="h-3 w-3" /></button>
+      </div>
+    </div>
+  )
+}
+
 export function AccessibilityToolbar() {
+  const fontSize = useAppStore((s) => s.fontSize)
+  const setFontSize = useAppStore((s) => s.setFontSize)
+  const language = useAppStore((s) => s.language)
+  const accessibilityOpen = useAppStore((s) => s.accessibilityOpen)
+  const setAccessibilityOpen = useAppStore((s) => s.setAccessibilityOpen)
+  const dyslexiaFont = useAppStore((s) => s.dyslexiaFont)
+  const setDyslexiaFont = useAppStore((s) => s.setDyslexiaFont)
+  const highContrast = useAppStore((s) => s.highContrast)
+  const setHighContrast = useAppStore((s) => s.setHighContrast)
+  const lineHeight = useAppStore((s) => s.lineHeight)
+  const setLineHeight = useAppStore((s) => s.setLineHeight)
+  const letterSpacing = useAppStore((s) => s.letterSpacing)
+  const setLetterSpacing = useAppStore((s) => s.setLetterSpacing)
+  const readingRuler = useAppStore((s) => s.readingRuler)
+  const setReadingRuler = useAppStore((s) => s.setReadingRuler)
+  const colorOverlay = useAppStore((s) => s.colorOverlay)
+  const setColorOverlay = useAppStore((s) => s.setColorOverlay)
+  const textToSpeech = useAppStore((s) => s.textToSpeech)
+  const setTextToSpeech = useAppStore((s) => s.setTextToSpeech)
+  const largeCursors = useAppStore((s) => s.largeCursors)
+  const setLargeCursors = useAppStore((s) => s.setLargeCursors)
+  const reduceAnimations = useAppStore((s) => s.reduceAnimations)
+  const setReduceAnimations = useAppStore((s) => s.setReduceAnimations)
+  const resetAccessibility = useAppStore((s) => s.resetAccessibility)
+
+  const isFil = language === 'fil'
+
+  /* ── Apply accessibility styles to document ──────── */
   useEffect(() => {
     const root = document.documentElement
     root.classList.toggle('dyslexia-font', dyslexiaFont)
@@ -49,13 +100,15 @@ export function AccessibilityToolbar() {
     root.classList.toggle('large-cursors', largeCursors)
     root.classList.toggle('reduce-motion', reduceAnimations)
     root.classList.toggle('reading-ruler-active', readingRuler)
+    document.body.style.fontSize = `${fontSize}px`
     return () => {
       root.classList.remove('dyslexia-font', 'large-cursors', 'reduce-motion', 'reading-ruler-active')
       root.style.removeProperty('lineHeight')
       root.style.removeProperty('letterSpacing')
       root.removeAttribute('data-contrast')
+      document.body.style.removeProperty('fontSize')
     }
-  }, [dyslexiaFont, highContrast, lineHeight, letterSpacing, largeCursors, reduceAnimations, readingRuler])
+  }, [dyslexiaFont, highContrast, lineHeight, letterSpacing, largeCursors, reduceAnimations, readingRuler, fontSize])
 
   /* ── Text-to-speech on selection ────────────────── */
   useEffect(() => {
@@ -80,25 +133,6 @@ export function AccessibilityToolbar() {
     if (textToSpeech) { speechSynthesis.cancel(); setTextToSpeech(false) }
     else { setTextToSpeech(true) }
   }, [textToSpeech, setTextToSpeech])
-
-  /* ── Slider helper ──────────────────────────────── */
-  const Slider = ({ value, min, max, step, color, onMinus, onPlus, label }: any) => (
-    <div className="rounded-lg bg-muted/50 p-3">
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-sm font-medium">{label}</span>
-        <span className="ml-auto text-xs text-muted-foreground bg-background rounded-full px-2 py-0.5">
-          {typeof value === 'number' && value % 1 !== 0 ? value.toFixed(1) : value}{label.includes('px') ? '' : 'px'}
-        </span>
-      </div>
-      <div className="flex items-center gap-2">
-        <button onClick={onMinus} className="h-8 w-8 rounded-lg border bg-background flex items-center justify-center hover:bg-accent transition" aria-label={`Decrease ${label}`}><Minus className="h-3 w-3" /></button>
-        <div className="flex-1 h-2 rounded-full bg-gray-200 dark:bg-gray-700 relative">
-          <div className="absolute left-0 top-0 h-full rounded-full transition-all" style={{ width: `${((value - min) / (max - min)) * 100}%`, backgroundColor: color }} />
-        </div>
-        <button onClick={onPlus} className="h-8 w-8 rounded-lg border bg-background flex items-center justify-center hover:bg-accent transition" aria-label={`Increase ${label}`}><Plus className="h-3 w-3" /></button>
-      </div>
-    </div>
-  )
 
   return (
     <>
@@ -133,9 +167,9 @@ export function AccessibilityToolbar() {
           </div>
 
           <div className="p-4 flex flex-col gap-1">
-            <Slider value={fontSize} min={12} max={28} step={1} color="#2563eb" onMinus={() => setFontSize(fontSize - 1)} onPlus={() => setFontSize(fontSize + 1)} label={isFil ? 'Laki ng Font' : 'Font Size'} />
-            <Slider value={lineHeight} min={1.2} max={3} step={0.1} color="#10b981" onMinus={() => setLineHeight(lineHeight - 0.1)} onPlus={() => setLineHeight(lineHeight + 0.1)} label={isFil ? 'Taas ng Linya' : 'Line Height'} />
-            <Slider value={letterSpacing} min={0} max={5} step={0.5} color="#8b5cf6" onMinus={() => setLetterSpacing(letterSpacing - 0.5)} onPlus={() => setLetterSpacing(letterSpacing + 0.5)} label={isFil ? 'Espasyo ng Letra' : 'Letter Spacing'} />
+            <AccessSlider value={fontSize} min={12} max={28} step={1} color="#2563eb" onMinus={() => setFontSize(fontSize - 1)} onPlus={() => setFontSize(fontSize + 1)} label={isFil ? 'Laki ng Font' : 'Font Size'} />
+            <AccessSlider value={lineHeight} min={1.2} max={3} step={0.1} color="#10b981" onMinus={() => setLineHeight(lineHeight - 0.1)} onPlus={() => setLineHeight(lineHeight + 0.1)} label={isFil ? 'Taas ng Linya' : 'Line Height'} unit="" />
+            <AccessSlider value={letterSpacing} min={0} max={5} step={0.5} color="#8b5cf6" onMinus={() => setLetterSpacing(letterSpacing - 0.5)} onPlus={() => setLetterSpacing(letterSpacing + 0.5)} label={isFil ? 'Espasyo ng Letra' : 'Letter Spacing'} />
 
             <Separator className="my-1" />
 

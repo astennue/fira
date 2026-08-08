@@ -63,7 +63,7 @@ export type ViewName =
   // Super Admin
   | 'super-admin-users'
 
-export type UserRole = 'super_admin' | 'applicant' | 'local_agency' | 'international_agency' | 'employer'
+export type UserRole = 'super_admin' | 'staff' | 'applicant' | 'local_agency' | 'international_agency' | 'employer'
 
 export interface FiraUser {
   id: string
@@ -431,6 +431,7 @@ interface NavItem {
 export const getDashboardView = (role: UserRole): ViewName => {
   switch (role) {
     case 'super_admin':
+    case 'staff':
     case 'international_agency':
       return 'fira-dashboard'
     case 'local_agency':
@@ -451,6 +452,7 @@ export const getNavItems = (role: UserRole): NavItem[] => {
 
   switch (role) {
     case 'super_admin':
+    case 'staff':
       return [
         ...common,
         { label: 'Messages', labelFil: 'Mensahe', icon: 'MessageCircle', view: 'messages' as ViewName },
@@ -513,6 +515,7 @@ export const getNavItems = (role: UserRole): NavItem[] => {
 
 export const roleDisplayNames: Record<UserRole, { en: string; fil: string }> = {
   super_admin: { en: 'Super Admin', fil: 'Super Admin' },
+  staff: { en: 'FIRA Staff', fil: 'Staff ng FIRA' },
   applicant: { en: 'Applicant', fil: 'Aplikante' },
   local_agency: { en: 'Local Agency', fil: 'Ahensya (PH)' },
   international_agency: { en: 'FIRA Admin', fil: 'Admin ng FIRA' },

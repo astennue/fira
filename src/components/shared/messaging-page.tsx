@@ -8,8 +8,6 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import {
   MessageCircle,
@@ -18,11 +16,9 @@ import {
   ArrowLeft,
   Phone,
   Video,
-  MoreVertical,
   Circle,
   Loader2,
   X,
-  Filter,
 } from 'lucide-react'
 
 // Types

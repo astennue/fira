@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2, Eye, EyeOff, User, Check, Info } from 'lucide-react'
+import { Loader2, Eye, EyeOff, User, Check } from 'lucide-react'
 import {
   Dialog,
   DialogContent,

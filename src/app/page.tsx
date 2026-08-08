@@ -7,12 +7,13 @@ import { AppNav } from '@/components/shared/app-nav'
 import { AccessibilityToolbar } from '@/components/shared/accessibility-toolbar'
 import { AuthModal } from '@/components/auth/auth-modal'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard, Users, FileText, HelpCircle, MessageSquareQuote,
   Share2, Network, ScrollText, LayoutList, Settings, Search,
   Briefcase, Send, Columns, UserCog, Sparkles, User, Building, Building2,
-  Home as HomeIcon, MessageCircle, UserCheck,
+  Home as HomeIcon, MessageCircle, UserCheck, ArrowLeft,
 } from 'lucide-react'
 
 // Lazy load all view components to reduce initial bundle
@@ -131,7 +132,7 @@ function DashboardSidebarWrapper() {
                 className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 w-full text-left hover:bg-accent text-muted-foreground"
               >
                 <Settings className="h-4 w-4 shrink-0" />
-                <span>{language === 'fil' ? 'Settings' : 'Account Settings'}</span>
+                <span>{language === 'fil' ? 'Mga Setting' : 'Account Settings'}</span>
               </button>
             </div>
           </div>
@@ -143,7 +144,7 @@ function DashboardSidebarWrapper() {
 
 function ViewRenderer({ view }: { view: ViewName }) {
   const isPublic = publicViews.includes(view)
-  const user = useAppStore((s) => s.user)
+  const navigate = useAppStore((s) => s.navigate)
 
   const renderView = () => {
     switch (view) {
@@ -186,6 +187,43 @@ function ViewRenderer({ view }: { view: ViewName }) {
       case 'user-settings': return <UserSettingsPage />
       case 'super-admin-users': return <SuperAdminUsersPage />
       case 'messages': return <MessagingPage />
+      case 'agency-members':
+        return (
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <h2 className="text-xl font-semibold">Agency Members - Coming Soon</h2>
+            <Button variant="outline" onClick={() => navigate('agency-dashboard')}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button>
+          </div>
+        )
+      case 'applicant-profile-edit':
+        return <ApplicantProfilePage />
+      case 'fira-applicant-detail':
+        return (
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <h2 className="text-xl font-semibold">Applicant Detail - Coming Soon</h2>
+            <Button variant="outline" onClick={() => navigate('fira-applicants')}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button>
+          </div>
+        )
+      case 'fira-job-create':
+        return (
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <h2 className="text-xl font-semibold">Create Job - Coming Soon</h2>
+            <Button variant="outline" onClick={() => navigate('fira-jobs')}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button>
+          </div>
+        )
+      case 'agency-job-create':
+        return (
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <h2 className="text-xl font-semibold">Create Job - Coming Soon</h2>
+            <Button variant="outline" onClick={() => navigate('agency-jobs')}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button>
+          </div>
+        )
+      case 'employer-candidate-detail':
+        return (
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <h2 className="text-xl font-semibold">Candidate Detail - Coming Soon</h2>
+            <Button variant="outline" onClick={() => navigate('employer-endorsed')}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button>
+          </div>
+        )
       default: return <LandingPage />
     }
   }

@@ -7,7 +7,7 @@ import {
   Menu, Search, Bell, Moon, Sun, LogOut, User, LayoutDashboard,
   Briefcase, Building2, ChevronDown, Globe,
   HelpCircle, Home, Info, MessageCircle, Phone,
-  Minus, Plus, Settings,
+  Minus, Plus,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -83,8 +83,7 @@ export function AppNav() {
 
   const getRoleBadge = () => {
     if (!user) return null
-    const roleInfo = roleDisplayNames[user.role]
-    return roleInfo[language]
+    return roleDisplayNames[user.role]?.[language] ?? user.role?.replace(/_/g, ' ') ?? ''
   }
 
   const isPublicView = publicNavItems.some((item) => item.view === currentView)
