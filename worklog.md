@@ -126,3 +126,28 @@ Stage Summary:
 - Font size: continuous 12-28px scaling with +/- buttons and slider
 - Mobile/tablet: proper hamburger behavior per auth state
 - Old persisted state gracefully migrated
+
+---
+Task ID: 10
+Agent: main
+Task: Sync FIRA repo from GitHub to local sandbox, prepare for next update/upgrade
+
+Work Log:
+- Found local was 12 commits ahead, remote was 11 commits ahead (diverged histories)
+- Backed up .env credentials
+- Hard reset local to match GitHub remote: `git reset --hard origin/main` (now at 868b526)
+- Discovered GitHub version is significantly more advanced: CMS system, messaging, dark mode, AI matching, Python AI service, chat service, @dnd-kit, 40+ views, 300+ i18n keys
+- Created .env with Supabase credentials — but Supabase unreachable from sandbox (IPv6 only, no IPv4)
+- Switched Prisma schema from PostgreSQL to SQLite for local sandbox development
+- Ran `bunx prisma db push` — 24 models synced to SQLite
+- Ran `bunx tsx prisma/seed.ts` — 5 test users + agencies + employers + jobs + ATS stages + CMS data seeded
+- Installed 3 missing packages: @types/bcryptjs, pg, socket.io-client
+- Started dev server via `bun run dev` on port 3000 (accessible only through Caddy proxy on port 81)
+- Verified: landing page returns HTTP 200 via Caddy, full 82KB HTML response
+
+Stage Summary:
+- Local sandbox fully synced with GitHub repo (commit 868b526)
+- Using SQLite locally (PostgreSQL schema preserved, switchable for production)
+- Dev server running and verified accessible
+- Test accounts: admin@fira.com.ph/admin2025!, staff@fira.com.ph/staff2025!, applicant@fira.com.ph/applicant2025!, agency@fira.com.ph/agency2025!, employer@fira.com.ph/employer2025!
+- Sandbox ready for next update and upgrade
