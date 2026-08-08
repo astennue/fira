@@ -4,6 +4,7 @@ import { lazy, Suspense, useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAppStore, type ViewName, getNavItems, getDashboardView } from '@/store/app-store'
 import { AppNav } from '@/components/shared/app-nav'
+import { AccessibilityToolbar } from '@/components/shared/accessibility-toolbar'
 import { AuthModal } from '@/components/auth/auth-modal'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
@@ -255,6 +256,7 @@ export default function Home() {
         <ViewRenderer view={currentView} />
       </main>
       <AuthModal />
+      <AccessibilityToolbar />
     </div>
   )
 }

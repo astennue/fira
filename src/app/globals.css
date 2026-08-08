@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=OpenDyslexic&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
@@ -347,4 +348,109 @@
 .bg-dots-pattern {
   background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
   background-size: 20px 20px;
+}
+
+/* ============ ACCESSIBILITY STYLES ============ */
+
+/* Dyslexia-friendly font */
+.dyslexia-font,
+.dyslexia-font * {
+  font-family: 'OpenDyslexic', sans-serif !important;
+  letter-spacing: 0.05em !important;
+  word-spacing: 0.1em;
+}
+
+/* High contrast modes */
+[data-contrast="high"] {
+  --background: #ffffff !important;
+  --foreground: #000000 !important;
+  --card: #ffffff !important;
+  --card-foreground: #000000 !important;
+  --muted: #f5f5f5 !important;
+  --muted-foreground: #333333 !important;
+  --border: #000000 !important;
+  --input: #000000 !important;
+  --ring: #000000 !important;
+  --primary: #000000 !important;
+  --primary-foreground: #ffffff !important;
+  --secondary: #f0f0f0 !important;
+  --secondary-foreground: #000000 !important;
+  --accent: #f0f0f0 !important;
+  --accent-foreground: #000000 !important;
+  --destructive: #cc0000 !important;
+}
+
+[data-contrast="high"] img,
+[data-contrast="high"] video {
+  filter: contrast(1.2);
+}
+
+[data-contrast="inverted"] {
+  --background: #000000 !important;
+  --foreground: #ffffff !important;
+  --card: #1a1a1a !important;
+  --card-foreground: #ffffff !important;
+  --muted: #2a2a2a !important;
+  --muted-foreground: #cccccc !important;
+  --border: #555555 !important;
+  --input: #555555 !important;
+  --ring: #ffffff !important;
+  --primary: #ffffff !important;
+  --primary-foreground: #000000 !important;
+  --secondary: #333333 !important;
+  --secondary-foreground: #ffffff !important;
+  --accent: #333333 !important;
+  --accent-foreground: #ffffff !important;
+  --destructive: #ff4444 !important;
+}
+
+[data-contrast="inverted"] img {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Large cursors */
+.large-cursors,
+.large-cursors * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath fill='white' stroke='black' stroke-width='2' d='M4 4l20 12-8 2-4 8z'/%3E%3C/svg%3E") 4 0, auto !important;
+}
+
+.large-cursors a,
+.large-cursors button,
+.large-cursors [role="button"],
+.large-cursors [onclick],
+.large-cursors select,
+.large-cursors input[type="checkbox"],
+.large-cursors input[type="radio"] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath fill='white' stroke='black' stroke-width='2' d='M4 4l20 12-8 2-4 8z'/%3E%3C/svg%3E") 4 0, pointer !important;
+}
+
+/* Reduce animations */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Focus indicators for keyboard navigation */
+.reduce-motion :focus-visible {
+  outline: 3px solid #2563eb !important;
+  outline-offset: 2px !important;
+}
+
+/* Skip to content link for screen readers */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  z-index: 10000;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
 }

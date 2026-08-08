@@ -107,6 +107,29 @@ interface AppState {
   // Language
   language: Language
   setLanguage: (lang: Language) => void
+
+  // Accessibility
+  accessibilityOpen: boolean
+  setAccessibilityOpen: (open: boolean) => void
+  dyslexiaFont: boolean
+  setDyslexiaFont: (on: boolean) => void
+  highContrast: 'none' | 'high' | 'inverted'
+  setHighContrast: (mode: 'none' | 'high' | 'inverted') => void
+  lineHeight: number
+  setLineHeight: (h: number) => void
+  letterSpacing: number
+  setLetterSpacing: (s: number) => void
+  readingRuler: boolean
+  setReadingRuler: (on: boolean) => void
+  colorOverlay: string | null
+  setColorOverlay: (color: string | null) => void
+  textToSpeech: boolean
+  setTextToSpeech: (on: boolean) => void
+  largeCursors: boolean
+  setLargeCursors: (on: boolean) => void
+  reduceAnimations: boolean
+  setReduceAnimations: (on: boolean) => void
+  resetAccessibility: () => void
 }
 
 export const useAppStore = create<AppState>()(
@@ -139,10 +162,43 @@ export const useAppStore = create<AppState>()(
       // Language
       language: 'en',
       setLanguage: (language) => set({ language }),
+
+      // Accessibility
+      accessibilityOpen: false,
+      setAccessibilityOpen: (accessibilityOpen) => set({ accessibilityOpen }),
+      dyslexiaFont: false,
+      setDyslexiaFont: (dyslexiaFont) => set({ dyslexiaFont }),
+      highContrast: 'none' as const,
+      setHighContrast: (highContrast) => set({ highContrast }),
+      lineHeight: 1.5,
+      setLineHeight: (lineHeight) => set({ lineHeight: Math.max(1.2, Math.min(3, lineHeight)) }),
+      letterSpacing: 0,
+      setLetterSpacing: (letterSpacing) => set({ letterSpacing: Math.max(0, Math.min(5, letterSpacing)) }),
+      readingRuler: false,
+      setReadingRuler: (readingRuler) => set({ readingRuler }),
+      colorOverlay: null,
+      setColorOverlay: (colorOverlay) => set({ colorOverlay }),
+      textToSpeech: false,
+      setTextToSpeech: (textToSpeech) => set({ textToSpeech }),
+      largeCursors: false,
+      setLargeCursors: (largeCursors) => set({ largeCursors }),
+      reduceAnimations: false,
+      setReduceAnimations: (reduceAnimations) => set({ reduceAnimations }),
+      resetAccessibility: () => set({
+        dyslexiaFont: false, highContrast: 'none', lineHeight: 1.5, letterSpacing: 0,
+        readingRuler: false, colorOverlay: null, textToSpeech: false,
+        largeCursors: false, reduceAnimations: false,
+      }),
     }),
     {
       name: 'fira_store',
-      partialize: (state) => ({ user: state.user, language: state.language, fontSize: state.fontSize }),
+      partialize: (state) => ({
+        user: state.user, language: state.language, fontSize: state.fontSize,
+        dyslexiaFont: state.dyslexiaFont, highContrast: state.highContrast,
+        lineHeight: state.lineHeight, letterSpacing: state.letterSpacing,
+        readingRuler: state.readingRuler, colorOverlay: state.colorOverlay,
+        largeCursors: state.largeCursors, reduceAnimations: state.reduceAnimations,
+      }),
       merge: (persisted, current) => {
         const p = persisted as Record<string, unknown>
         // Handle migration from old fontSize enum ('small'|'medium'|'large') to number
