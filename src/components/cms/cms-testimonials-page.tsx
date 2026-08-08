@@ -75,8 +75,8 @@ export function CmsTestimonialsPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Testimonials</h1>
-          <p className="text-gray-500 text-sm">Manage client testimonials and reviews</p>
+          <h1 className="text-2xl font-bold text-foreground">Testimonials</h1>
+          <p className="text-muted-foreground text-sm">Manage client testimonials and reviews</p>
         </div>
         <Button onClick={openNew} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> Add Testimonial</Button>
       </div>
@@ -86,12 +86,12 @@ export function CmsTestimonialsPage() {
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {testimonials.map((t: any) => (
-            <Card key={t.id} className={`border ${t.isActive ? 'border-blue-100' : 'border-gray-200 opacity-60'}`}>
+            <Card key={t.id} className={`border ${t.isActive ? 'border-border dark:border-blue-900/30' : 'border-border opacity-60'}`}>
               <CardContent className="p-5">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex gap-0.5">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className={`h-4 w-4 ${i < t.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
+                      <Star key={i} className={`h-4 w-4 ${i < t.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground dark:text-muted-foreground/30'}`} />
                     ))}
                   </div>
                   <div className="flex gap-1">
@@ -99,16 +99,16 @@ export function CmsTestimonialsPage() {
                     <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => deleteMutation.mutate(t.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
                   </div>
                 </div>
-                <p className="text-sm text-gray-600 italic mb-3 line-clamp-3">&ldquo;{t.feedback}&rdquo;</p>
+                <p className="text-sm text-muted-foreground italic mb-3 line-clamp-3">&ldquo;{t.feedback}&rdquo;</p>
                 <div className="flex items-center gap-2">
                   {t.avatar ? (
                     <img src={t.avatar} alt="" className="h-8 w-8 rounded-full object-cover" />
                   ) : (
-                    <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">{t.name?.charAt(0)}</div>
+                    <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 flex items-center justify-center text-xs font-bold">{t.name?.charAt(0)}</div>
                   )}
                   <div>
                     <p className="text-sm font-medium">{t.name}</p>
-                    <p className="text-xs text-gray-400">{t.position}{t.company ? ` at ${t.company}` : ''}</p>
+                    <p className="text-xs text-muted-foreground">{t.position}{t.company ? ` at ${t.company}` : ''}</p>
                   </div>
                 </div>
               </CardContent>
@@ -133,7 +133,7 @@ export function CmsTestimonialsPage() {
                 <div className="flex gap-1 h-10 items-center">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <button key={i} onClick={() => setForm({ ...form, rating: i + 1 })}>
-                      <Star className={`h-7 w-7 cursor-pointer ${i < form.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
+                      <Star className={`h-7 w-7 cursor-pointer ${i < form.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground dark:text-muted-foreground/30'}`} />
                     </button>
                   ))}
                 </div>

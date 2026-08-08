@@ -80,8 +80,8 @@ export function CmsTermsPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Terms & Privacy</h1>
-        <p className="text-gray-500 text-sm">Edit Terms of Service and Data Privacy Consent</p>
+        <h1 className="text-2xl font-bold text-foreground">Terms & Privacy</h1>
+        <p className="text-muted-foreground text-sm">Edit Terms of Service and Data Privacy Consent</p>
       </div>
 
       {isLoading ? (
@@ -106,7 +106,7 @@ export function CmsTermsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="text-lg">Terms of Service</CardTitle>
-                    <p className="text-sm text-gray-500">Version {effectiveTerms.version}</p>
+                    <p className="text-sm text-muted-foreground">Version {effectiveTerms.version}</p>
                   </div>
                   <Badge>terms_of_service</Badge>
                 </div>
@@ -144,7 +144,7 @@ export function CmsTermsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="text-lg">Data Privacy Consent</CardTitle>
-                    <p className="text-sm text-gray-500">Version {effectivePrivacy.version}</p>
+                    <p className="text-sm text-muted-foreground">Version {effectivePrivacy.version}</p>
                   </div>
                   <Badge>data_privacy_consent</Badge>
                 </div>

@@ -126,7 +126,7 @@ export function ServicesPage() {
       </section>
 
       {/* Services */}
-      <section className="py-16 md:py-20 bg-white">
+      <section className="py-16 md:py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto space-y-8">
             {services.map((service, i) => (
@@ -138,7 +138,7 @@ export function ServicesPage() {
                 custom={i}
                 variants={fadeUp}
               >
-                <Card className="overflow-hidden border-blue-100 hover:shadow-lg transition-shadow">
+                <Card className="overflow-hidden border-border dark:border-blue-900/30 hover:shadow-lg transition-shadow">
                   <div className="flex flex-col md:flex-row">
                     <div className="md:w-1/3 bg-gradient-to-br from-blue-700 to-blue-900 p-6 flex items-center justify-center text-white">
                       <div className="text-center">
@@ -148,10 +148,10 @@ export function ServicesPage() {
                     </div>
                     <div className="md:w-2/3">
                       <CardContent className="p-6">
-                        <p className="text-gray-600 leading-relaxed mb-4">{service.desc}</p>
+                        <p className="text-muted-foreground leading-relaxed mb-4">{service.desc}</p>
                         <ul className="space-y-2">
                           {service.details.map((detail, j) => (
-                            <li key={j} className="flex items-start gap-2 text-sm text-gray-700">
+                            <li key={j} className="flex items-start gap-2 text-sm text-foreground">
                               <ArrowRight className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
                               <span>{detail}</span>
                             </li>
@@ -170,10 +170,10 @@ export function ServicesPage() {
       {/* CTA */}
       <section className="py-16 bg-fira-gradient-soft">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
             {language === 'fil' ? 'Handa ka na bang Magsimula?' : 'Ready to Get Started?'}
           </h2>
-          <p className="text-gray-600 max-w-lg mx-auto mb-8">
+          <p className="text-muted-foreground max-w-lg mx-auto mb-8">
             {language === 'fil'
               ? 'Mag-browse ng aming mga available na trabaho o magparehistro para magsimula ang iyong application.'
               : 'Browse our available jobs or register to start your application.'}

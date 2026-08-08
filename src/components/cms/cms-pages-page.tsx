@@ -83,8 +83,8 @@ export function CmsPagesPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">CMS Pages</h1>
-          <p className="text-gray-500 text-sm">Manage website content pages</p>
+          <h1 className="text-2xl font-bold text-foreground">CMS Pages</h1>
+          <p className="text-muted-foreground text-sm">Manage website content pages</p>
         </div>
         <Button onClick={openNew} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> New Page</Button>
       </div>
@@ -148,18 +148,18 @@ export function CmsPagesPage() {
 
 function PageList({ pages, onEdit, onDelete, isLoading }: { pages: any[]; onEdit: (p: any) => void; onDelete: (id: string) => void; isLoading: boolean }) {
   if (isLoading) return <div className="space-y-3">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)}</div>
-  if (pages.length === 0) return <Card className="p-8 text-center"><FileText className="h-10 w-10 mx-auto text-gray-300 mb-2" /><p className="text-gray-500">No pages found</p></Card>
+  if (pages.length === 0) return <Card className="p-8 text-center"><FileText className="h-10 w-10 mx-auto text-muted-foreground mb-2" /><p className="text-muted-foreground">No pages found</p></Card>
   return (
     <div className="space-y-3">
       {pages.map((page: any) => (
-        <Card key={page.id} className="border-blue-100">
+        <Card key={page.id} className="border-border dark:border-blue-900/30">
           <CardContent className="p-4 flex items-center justify-between">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h3 className="font-medium">{page.title}</h3>
                 <Badge variant={page.status === 'published' ? 'default' : 'secondary'} className="text-xs">{page.status}</Badge>
               </div>
-              <p className="text-sm text-gray-500">/{page.slug}</p>
+              <p className="text-sm text-muted-foreground">/{page.slug}</p>
             </div>
             <div className="flex gap-1 shrink-0">
               <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onEdit(page)}><Edit className="h-4 w-4" /></Button>

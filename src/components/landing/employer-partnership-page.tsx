@@ -152,14 +152,14 @@ export function EmployerPartnershipPage() {
       </section>
 
       {/* How It Works */}
-      <section className="py-16 md:py-20 bg-white">
+      <section className="py-16 md:py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <Badge className="bg-blue-100 text-blue-700 border-blue-200 mb-3">Process</Badge>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+            <Badge className="bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 mb-3">Process</Badge>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
               {language === 'fil' ? 'Paano ito Gumagana' : 'How It Works'}
             </h2>
-            <p className="text-gray-500 max-w-lg mx-auto">
+            <p className="text-muted-foreground max-w-lg mx-auto">
               {language === 'fil'
                 ? 'Tatlong simpleng hakbang upang makuha ang iyong kinakailangan sa workforce.'
                 : 'Three simple steps to get the workforce you need.'}
@@ -177,7 +177,7 @@ export function EmployerPartnershipPage() {
                 variants={fadeUp}
                 className="relative"
               >
-                <Card className="h-full text-center border-blue-100 hover:shadow-lg transition-shadow">
+                <Card className="h-full text-center border-border dark:border-blue-900/30 hover:shadow-lg transition-shadow">
                   <CardContent className="p-6 md:p-8 flex flex-col items-center">
                     <div className="relative mb-4">
                       <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center text-white shadow-lg shadow-blue-600/25">
@@ -187,8 +187,8 @@ export function EmployerPartnershipPage() {
                         {i + 1}
                       </div>
                     </div>
-                    <h3 className="font-bold text-gray-900 mb-2">{step.title}</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">{step.desc}</p>
+                    <h3 className="font-bold text-foreground mb-2">{step.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
                     {i < steps.length - 1 && (
                       <ArrowRight className="hidden sm:block absolute -right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-blue-300 z-10" />
                     )}
@@ -204,11 +204,11 @@ export function EmployerPartnershipPage() {
       <section className="py-16 md:py-20 bg-fira-gradient-soft">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <Badge className="bg-blue-100 text-blue-700 border-blue-200 mb-3">Why FIRA</Badge>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+            <Badge className="bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 mb-3">Why FIRA</Badge>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
               {language === 'fil' ? 'Benepisyo ng Pagsasama' : 'Benefits of Partnering'}
             </h2>
-            <p className="text-gray-500 max-w-lg mx-auto">
+            <p className="text-muted-foreground max-w-lg mx-auto">
               {language === 'fil'
                 ? 'Bakit pipiliin ang FIRA bilang iyong recruitment partner.'
                 : 'Why choose FIRA as your recruitment partner.'}
@@ -225,13 +225,13 @@ export function EmployerPartnershipPage() {
                 custom={i}
                 variants={fadeUp}
               >
-                <Card className="h-full border-blue-100 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-shadow">
+                <Card className="h-full border-border dark:border-blue-900/30 bg-card/80 backdrop-blur-sm hover:shadow-lg transition-shadow">
                   <CardContent className="p-6 md:p-8">
-                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
+                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300">
                       <benefit.icon className="h-6 w-6" />
                     </div>
-                    <h3 className="font-bold text-gray-900 mb-2">{benefit.title}</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">{benefit.desc}</p>
+                    <h3 className="font-bold text-foreground mb-2">{benefit.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{benefit.desc}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -241,22 +241,22 @@ export function EmployerPartnershipPage() {
       </section>
 
       {/* Contact Form */}
-      <section className="py-16 md:py-20 bg-white flex-1">
+      <section className="py-16 md:py-20 bg-background flex-1">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-10">
-              <Badge className="bg-blue-100 text-blue-700 border-blue-200 mb-3">Inquiry</Badge>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+              <Badge className="bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 mb-3">Inquiry</Badge>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
                 {language === 'fil' ? 'Magpadala ng Partnership Inquiry' : 'Send a Partnership Inquiry'}
               </h2>
-              <p className="text-gray-500 max-w-lg mx-auto">
+              <p className="text-muted-foreground max-w-lg mx-auto">
                 {language === 'fil'
                   ? 'I-fill out ang form sa ibaba at makikipag-ugnay kami sa iyo sa loob ng 24 oras.'
                   : 'Fill out the form below and we will get back to you within 24 hours.'}
               </p>
             </div>
 
-            <Card className="border-blue-100 overflow-hidden">
+            <Card className="border-border dark:border-blue-900/30 overflow-hidden">
               <div className="bg-gradient-to-r from-blue-700 to-blue-900 p-6 md:p-8">
                 <div className="flex items-center gap-3 text-white">
                   <Building2 className="h-8 w-8" />
@@ -277,10 +277,10 @@ export function EmployerPartnershipPage() {
                     <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
                       <CheckCircle className="h-8 w-8 text-green-600" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    <h3 className="text-xl font-bold text-foreground mb-2">
                       {language === 'fil' ? 'Matagumpay na Naipadala!' : 'Successfully Submitted!'}
                     </h3>
-                    <p className="text-gray-500">
+                    <p className="text-muted-foreground">
                       {language === 'fil'
                         ? 'Salamat sa iyong interes. Makikipag-ugnay kami sa iyo sa lalong madaling panahon.'
                         : 'Thank you for your interest. We will reach out to you shortly.'}
@@ -408,14 +408,14 @@ export function EmployerPartnershipPage() {
                 { icon: Mail, label: 'Email', value: 'manpower@filinternational.ma' },
                 { icon: Globe, label: 'Location', value: 'Casablanca, Morocco' },
               ].map((item) => (
-                <Card key={item.label} className="border-blue-100 hover:shadow-md transition-shadow">
+                <Card key={item.label} className="border-border dark:border-blue-900/30 hover:shadow-md transition-shadow">
                   <CardContent className="p-4 flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300">
                       <item.icon className="h-5 w-5" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs text-gray-500 font-medium">{item.label}</p>
-                      <p className="text-sm text-gray-900 font-semibold truncate">{item.value}</p>
+                      <p className="text-xs text-muted-foreground font-medium">{item.label}</p>
+                      <p className="text-sm text-foreground font-semibold truncate">{item.value}</p>
                     </div>
                   </CardContent>
                 </Card>

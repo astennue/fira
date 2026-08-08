@@ -171,7 +171,7 @@ export function JobListingPage() {
                 >
                   <CardContent className="p-5">
                     <div className="flex items-start justify-between mb-3">
-                      <Badge className={`text-xs ${categoryColors[job.category] || 'bg-gray-100 text-gray-800'}`}>
+                      <Badge className={`text-xs ${categoryColors[job.category] || 'bg-muted text-foreground'}`}>
                         {job.category?.replace(/_/g, ' ') || 'General'}
                       </Badge>
                       {job.slots > 1 && (

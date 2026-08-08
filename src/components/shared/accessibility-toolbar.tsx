@@ -22,8 +22,8 @@ function ToggleBtn({ active, onClick, icon: Icon, label }: { active: boolean; on
     >
       <Icon className="h-4 w-4 shrink-0" />
       <span className="flex-1">{label}</span>
-      <div className={cn('w-8 h-5 rounded-full transition-colors relative', active ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600')}>
-        <div className={cn('absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform', active ? 'left-3.5' : 'left-0.5')} />
+      <div className={cn('w-8 h-5 rounded-full transition-colors relative', active ? 'bg-blue-600' : 'bg-muted-foreground/40')}>
+        <div className={cn('absolute top-0.5 h-4 w-4 rounded-full bg-background shadow transition-transform', active ? 'left-3.5' : 'left-0.5')} />
       </div>
     </button>
   )
@@ -53,7 +53,7 @@ function AccessSlider({ value, min, max, step, color, onMinus, onPlus, label, un
       </div>
       <div className="flex items-center gap-2">
         <button onClick={onMinus} className="h-8 w-8 rounded-lg border bg-background flex items-center justify-center hover:bg-accent transition" aria-label={`Decrease ${label}`}><Minus className="h-3 w-3" /></button>
-        <div className="flex-1 h-2 rounded-full bg-gray-200 dark:bg-gray-700 relative">
+        <div className="flex-1 h-2 rounded-full bg-muted relative">
           <div className="absolute left-0 top-0 h-full rounded-full transition-all" style={{ width: `${((value - min) / (max - min)) * 100}%`, backgroundColor: color }} />
         </div>
         <button onClick={onPlus} className="h-8 w-8 rounded-lg border bg-background flex items-center justify-center hover:bg-accent transition" aria-label={`Increase ${label}`}><Plus className="h-3 w-3" /></button>
@@ -141,7 +141,7 @@ export function AccessibilityToolbar() {
         onClick={() => setAccessibilityOpen(!accessibilityOpen)}
         className={cn(
           'fixed bottom-5 right-5 z-[100] flex items-center gap-2 rounded-full px-4 py-3 shadow-lg transition-all hover:shadow-xl',
-          accessibilityOpen ? 'bg-gray-900 text-white' : 'bg-blue-600 text-white hover:bg-blue-700',
+          accessibilityOpen ? 'bg-foreground text-background' : 'bg-blue-600 text-white hover:bg-blue-700',
         )}
         aria-label="Accessibility"
       >
@@ -189,7 +189,7 @@ export function AccessibilityToolbar() {
               </div>
               <div className="grid grid-cols-3 gap-2">
                 {(['none', 'high', 'inverted'] as const).map((mode) => (
-                  <button key={mode} onClick={() => setHighContrast(mode)} className={cn('rounded-lg border-2 px-2 py-2 text-xs font-medium transition-all', highContrast === mode ? 'border-blue-600 bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300' : 'border-transparent bg-background hover:border-gray-300')}>
+                  <button key={mode} onClick={() => setHighContrast(mode)} className={cn('rounded-lg border-2 px-2 py-2 text-xs font-medium transition-all', highContrast === mode ? 'border-blue-600 bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300' : 'border-transparent bg-background hover:border-border')}>
                     {mode === 'none' ? (isFil ? 'Normal' : 'Normal') : mode === 'high' ? (isFil ? 'Taas' : 'High') : (isFil ? 'Baliktad' : 'Inverted')}
                   </button>
                 ))}
@@ -205,7 +205,7 @@ export function AccessibilityToolbar() {
               </div>
               <div className="flex gap-2 flex-wrap">
                 {COLOR_OVERLAYS.map((c) => (
-                  <button key={c.hex} onClick={() => setColorOverlay(colorOverlay === c.color ? null : c.color)} className={cn('w-8 h-8 rounded-full border-2 transition-all hover:scale-110', colorOverlay === c.color ? 'border-blue-600 ring-2 ring-blue-300' : 'border-gray-300')} style={{ backgroundColor: c.hex }} title={c.label} aria-label={`${c.label} overlay`} />
+                  <button key={c.hex} onClick={() => setColorOverlay(colorOverlay === c.color ? null : c.color)} className={cn('w-8 h-8 rounded-full border-2 transition-all hover:scale-110', colorOverlay === c.color ? 'border-blue-600 ring-2 ring-blue-300' : 'border-border')} style={{ backgroundColor: c.hex }} title={c.label} aria-label={`${c.label} overlay`} />
                 ))}
               </div>
             </div>

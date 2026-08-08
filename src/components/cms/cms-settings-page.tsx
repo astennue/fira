@@ -77,8 +77,8 @@ export function CmsSettingsPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Site Settings</h1>
-          <p className="text-gray-500 text-sm">Configure general site information</p>
+          <h1 className="text-2xl font-bold text-foreground">Site Settings</h1>
+          <p className="text-muted-foreground text-sm">Configure general site information</p>
         </div>
         <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} className="rounded-xl">
           <Save className="mr-2 h-4 w-4" /> {saveMutation.isPending ? 'Saving...' : 'Save All'}

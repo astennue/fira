@@ -77,7 +77,7 @@ export function CmsOrgChartPage() {
     const children = getChildren(member.id)
     return (
       <div key={member.id} className="flex flex-col items-center">
-        <Card className={`border ${member.isActive ? 'border-blue-200' : 'border-gray-200 opacity-60'} w-56 mb-3`}>
+        <Card className={`border ${member.isActive ? 'border-border dark:border-blue-800' : 'border-border opacity-60'} w-56 mb-3`}>
           <CardContent className="p-4 text-center">
             {member.avatar ? (
               <img src={member.avatar} alt={member.name} className="h-12 w-12 rounded-full mx-auto mb-2 object-cover" />
@@ -87,7 +87,7 @@ export function CmsOrgChartPage() {
               </div>
             )}
             <h4 className="font-semibold text-sm">{member.name}</h4>
-            <p className="text-xs text-gray-500">{member.position}</p>
+            <p className="text-xs text-muted-foreground">{member.position}</p>
             {member.department && <Badge variant="outline" className="text-xs mt-1">{member.department}</Badge>}
             <div className="flex justify-center gap-1 mt-2">
               <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(member)}><Edit className="h-3.5 w-3.5" /></Button>
@@ -98,12 +98,12 @@ export function CmsOrgChartPage() {
         </Card>
         {children.length > 0 && (
           <>
-            <div className="w-px h-4 bg-blue-300" />
+            <div className="w-px h-4 bg-blue-300 dark:bg-blue-700" />
             <div className="flex gap-6 relative">
-              {children.length > 1 && <div className="absolute top-0 h-px bg-blue-300" style={{ left: '25%', right: '25%' }} />}
+              {children.length > 1 && <div className="absolute top-0 h-px bg-blue-300 dark:bg-blue-700" style={{ left: '25%', right: '25%' }} />}
               {children.map((child: any) => (
                 <div key={child.id} className="flex flex-col items-center">
-                  <div className="w-px h-4 bg-blue-300" />
+                  <div className="w-px h-4 bg-blue-300 dark:bg-blue-700" />
                   {renderMember(child, level + 1)}
                 </div>
               ))}
@@ -118,8 +118,8 @@ export function CmsOrgChartPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Org Chart</h1>
-          <p className="text-gray-500 text-sm">Manage organizational structure</p>
+          <h1 className="text-2xl font-bold text-foreground">Org Chart</h1>
+          <p className="text-muted-foreground text-sm">Manage organizational structure</p>
         </div>
         <Button onClick={() => openNew()} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> Add Member</Button>
       </div>
@@ -128,9 +128,9 @@ export function CmsOrgChartPage() {
         <Skeleton className="h-96 rounded-xl" />
       ) : members.length === 0 ? (
         <Card className="p-12 text-center">
-          <Building2 className="h-16 w-16 mx-auto text-gray-300 mb-3" />
+          <Building2 className="h-16 w-16 mx-auto text-muted-foreground mb-3" />
           <h3 className="font-semibold text-lg mb-1">No org chart yet</h3>
-          <p className="text-gray-500 mb-4">Add members to build your organizational chart</p>
+          <p className="text-muted-foreground mb-4">Add members to build your organizational chart</p>
           <Button onClick={() => openNew()} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> Add First Member</Button>
         </Card>
       ) : (

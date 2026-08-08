@@ -44,7 +44,7 @@ export function ContactPage() {
       </section>
 
       {/* Contact Info */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
             {[
@@ -60,13 +60,13 @@ export function ContactPage() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className="text-center hover:shadow-lg transition-shadow border-blue-100">
+                <Card className="text-center hover:shadow-lg transition-shadow border-border dark:border-blue-900/30">
                   <CardContent className="p-6">
-                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
+                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300">
                       <item.icon className="h-6 w-6" />
                     </div>
                     <h3 className="font-semibold mb-2">{item.title}</h3>
-                    <p className="text-sm text-gray-600 whitespace-pre-line">{item.info}</p>
+                    <p className="text-sm text-muted-foreground whitespace-pre-line">{item.info}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -96,7 +96,7 @@ export function ContactPage() {
                 </div>
                 <CardContent className="p-6">
                   <h3 className="font-semibold mb-3">Find Us</h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
                     FIRA is conveniently located on Boulevard Zerktouni in the heart of Casablanca, Morocco. Visit our office during business hours for face-to-face consultations.
                   </p>
                 </CardContent>

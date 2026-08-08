@@ -84,7 +84,7 @@ export function ApplicantJobsPage() {
               <Card className="hover:shadow-md hover:border-primary/30 transition-all h-full" onClick={() => navigate('job-detail', { jobId: job.id })}>
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between mb-3">
-                    <Badge className={`text-xs ${categoryColors[job.category] || 'bg-gray-100 text-gray-800'}`}>{job.category?.replace(/_/g, ' ')}</Badge>
+                    <Badge className={`text-xs ${categoryColors[job.category] || 'bg-muted text-foreground'}`}>{job.category?.replace(/_/g, ' ')}</Badge>
                     <Heart className="h-4 w-4 text-muted-foreground hover:text-red-500 cursor-pointer" />
                   </div>
                   <h3 className="font-semibold mb-2 line-clamp-2">{job.title}</h3>

@@ -96,7 +96,7 @@ export function TermsPublicPage() {
       </section>
 
       {/* Content Section */}
-      <section className="py-12 md:py-16 bg-white flex-1">
+      <section className="py-12 md:py-16 bg-background flex-1">
         <div className="container mx-auto px-4 max-w-4xl">
           {isLoading ? (
             <div className="space-y-6">
@@ -131,18 +131,18 @@ export function TermsPublicPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Card className="border-blue-100">
+                  <Card className="border-border dark:border-blue-900/30">
                     <CardContent className="p-6 md:p-8">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
-                        <h2 className="text-xl font-bold text-gray-900">
+                        <h2 className="text-xl font-bold text-foreground">
                           {tos?.title || 'Terms of Service'}
                         </h2>
-                        <Badge variant="outline" className="w-fit text-xs border-blue-200 text-blue-700">
+                        <Badge variant="outline" className="w-fit text-xs border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300">
                           v{termsVersion}
                         </Badge>
                       </div>
                       <div
-                        className="prose prose-sm md:prose-base max-w-none text-gray-700 leading-relaxed [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900 [&_h2]:mt-6 [&_h2]:mb-3 [&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1"
+                        className="prose prose-sm md:prose-base max-w-none text-foreground leading-relaxed [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-foreground [&_h2]:mt-6 [&_h2]:mb-3 [&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1"
                         dangerouslySetInnerHTML={{ __html: termsContent }}
                       />
                     </CardContent>
@@ -156,18 +156,18 @@ export function TermsPublicPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Card className="border-blue-100">
+                  <Card className="border-border dark:border-blue-900/30">
                     <CardContent className="p-6 md:p-8">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
-                        <h2 className="text-xl font-bold text-gray-900">
+                        <h2 className="text-xl font-bold text-foreground">
                           {dpc?.title || 'Data Privacy Consent'}
                         </h2>
-                        <Badge variant="outline" className="w-fit text-xs border-blue-200 text-blue-700">
+                        <Badge variant="outline" className="w-fit text-xs border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300">
                           v{privacyVersion}
                         </Badge>
                       </div>
                       <div
-                        className="prose prose-sm md:prose-base max-w-none text-gray-700 leading-relaxed [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900 [&_h2]:mt-6 [&_h2]:mb-3 [&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1"
+                        className="prose prose-sm md:prose-base max-w-none text-foreground leading-relaxed [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-foreground [&_h2]:mt-6 [&_h2]:mb-3 [&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1"
                         dangerouslySetInnerHTML={{ __html: privacyContent }}
                       />
                     </CardContent>

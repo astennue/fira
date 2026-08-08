@@ -62,18 +62,18 @@ export function SuperAdminUsersPage() {
   const filteredUsers = Array.isArray(users) ? users : []
 
   const roleColor: Record<string, string> = {
-    super_admin: 'bg-red-100 text-red-800',
-    applicant: 'bg-blue-100 text-blue-800',
-    local_agency: 'bg-green-100 text-green-800',
-    international_agency: 'bg-purple-100 text-purple-800',
-    employer: 'bg-amber-100 text-amber-800',
+    super_admin: 'bg-red-100 dark:bg-red-950/50 text-red-800 dark:text-red-300',
+    applicant: 'bg-blue-100 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300',
+    local_agency: 'bg-green-100 dark:bg-green-950/50 text-green-800 dark:text-green-300',
+    international_agency: 'bg-purple-100 dark:bg-purple-950/50 text-purple-800 dark:text-purple-300',
+    employer: 'bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300',
   }
 
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Manage Users</h1>
-        <p className="text-gray-500 text-sm">View and manage all platform users</p>
+        <h1 className="text-2xl font-bold text-foreground">Manage Users</h1>
+        <p className="text-muted-foreground text-sm">View and manage all platform users</p>
       </div>
 
       {/* Filters */}
@@ -81,7 +81,7 @@ export function SuperAdminUsersPage() {
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search by name or email..."
                 className="pl-9"
@@ -111,32 +111,32 @@ export function SuperAdminUsersPage() {
         <div className="space-y-3">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)}</div>
       ) : filteredUsers.length === 0 ? (
         <Card className="p-12 text-center">
-          <Users className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-          <p className="text-gray-500">No users found</p>
+          <Users className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+          <p className="text-muted-foreground">No users found</p>
         </Card>
       ) : (
         <div className="space-y-3">
           {filteredUsers.map((user: any) => (
-            <Card key={user.id} className={`border ${!user.isActive ? 'border-red-100 opacity-60' : 'border-blue-100'}`}>
+            <Card key={user.id} className={`border ${!user.isActive ? 'border-red-100 dark:border-red-900/50 opacity-60' : 'border-border dark:border-blue-900/30'}`}>
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
                   <Avatar className="h-10 w-10">
-                    <AvatarFallback className={`text-xs font-semibold ${user.isActive ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500'}`}>
+                    <AvatarFallback className={`text-xs font-semibold ${user.isActive ? 'bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300' : 'bg-muted text-muted-foreground'}`}>
                       {user.name?.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-medium text-sm">{user.name}</h3>
-                      <Badge className={`text-xs ${roleColor[user.role] || 'bg-gray-100'}`}>
+                      <Badge className={`text-xs ${roleColor[user.role] || 'bg-muted'}`}>
                         {roleDisplayNames[user.role as keyof typeof roleDisplayNames]?.en || user.role}
                       </Badge>
                       {!user.isApproved && <Badge variant="destructive" className="text-xs">Pending</Badge>}
                       {!user.isActive && <Badge variant="secondary" className="text-xs">Inactive</Badge>}
                     </div>
-                    <p className="text-xs text-gray-500">{user.email}</p>
+                    <p className="text-xs text-muted-foreground">{user.email}</p>
                   </div>
-                  <div className="text-right text-xs text-gray-400 shrink-0 hidden sm:block">
+                  <div className="text-right text-xs text-muted-foreground shrink-0 hidden sm:block">
                     <p>{formatDistanceToNow(new Date(user.createdAt), { addSuffix: true })}</p>
                   </div>
                   <div className="flex gap-1 shrink-0">
@@ -180,19 +180,19 @@ export function SuperAdminUsersPage() {
             <div className="space-y-4">
               <div className="text-center">
                 <Avatar className="h-16 w-16 mx-auto mb-3">
-                  <AvatarFallback className="bg-blue-100 text-blue-700 text-lg font-bold">
+                  <AvatarFallback className="bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 text-lg font-bold">
                     {selectedUser.name?.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)}
                   </AvatarFallback>
                 </Avatar>
                 <h3 className="font-semibold text-lg">{selectedUser.name}</h3>
-                <p className="text-sm text-gray-500">{selectedUser.email}</p>
+                <p className="text-sm text-muted-foreground">{selectedUser.email}</p>
                 <Badge className="mt-2">{roleDisplayNames[selectedUser.role as keyof typeof roleDisplayNames]?.en || selectedUser.role}</Badge>
               </div>
-              <div className="space-y-2 text-sm bg-gray-50 rounded-lg p-4">
-                <div className="flex justify-between"><span className="text-gray-500">Status</span><span>{selectedUser.isActive ? 'Active' : 'Inactive'}</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Approved</span><span>{selectedUser.isApproved ? 'Yes' : 'No'}</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Phone</span><span>{selectedUser.phone || 'N/A'}</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Joined</span><span>{new Date(selectedUser.createdAt).toLocaleDateString()}</span></div>
+              <div className="space-y-2 text-sm bg-muted rounded-lg p-4">
+                <div className="flex justify-between"><span className="text-muted-foreground">Status</span><span>{selectedUser.isActive ? 'Active' : 'Inactive'}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Approved</span><span>{selectedUser.isApproved ? 'Yes' : 'No'}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Phone</span><span>{selectedUser.phone || 'N/A'}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Joined</span><span>{new Date(selectedUser.createdAt).toLocaleDateString()}</span></div>
               </div>
               <div className="flex gap-2">
                 {!selectedUser.isApproved && (

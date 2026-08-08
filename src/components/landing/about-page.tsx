@@ -36,18 +36,18 @@ export function AboutPage() {
       </section>
 
       {/* About Content */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-background">
         <div className="container mx-auto px-4 max-w-5xl">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <motion.h2 variants={fadeUp} custom={0} className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
+            <motion.h2 variants={fadeUp} custom={0} className="text-2xl md:text-3xl font-bold text-foreground mb-6">
               {language === 'fil' ? 'Ang Fil International Recruitment Agency' : 'Fil International Recruitment Agency'}
             </motion.h2>
-            <motion.p variants={fadeUp} custom={1} className="text-gray-600 leading-relaxed mb-6">
+            <motion.p variants={fadeUp} custom={1} className="text-muted-foreground leading-relaxed mb-6">
               {language === 'fil'
                 ? 'Ang Fil International Recruitment Agency (FIRA), na nakabase sa 59 Boulevard Zerktouni, Casablanca, Morocco, ay isang full-service recruitment agency na nakatuon sa pagkonekta ng bihasang Pilipinong manggagawa sa mga respetadong empleyador sa buong mundo. Itinatag namin ang FIRA na may isang malinaw na misyon: magbigay ng ligtas, legal, at transparent na recruitment services para sa bawat Filipino worker na nagnanais na magkaroon ng mas magandang buhay sa labas ng bansa.'
                 : 'Fil International Recruitment Agency (FIRA), located at 59 Boulevard Zerktouni, Casablanca, Morocco, is a full-service recruitment agency dedicated to connecting skilled Filipino workers with reputable employers worldwide. We founded FIRA with a clear mission: to provide safe, legal, and transparent recruitment services for every Filipino worker seeking a better life abroad.'}
             </motion.p>
-            <motion.p variants={fadeUp} custom={2} className="text-gray-600 leading-relaxed">
+            <motion.p variants={fadeUp} custom={2} className="text-muted-foreground leading-relaxed">
               {language === 'fil'
                 ? 'Sa pamamagitan ng aming komprehensibong network ng partner agencies sa Pilipinas at mga employers sa Morocco at iba pang bansa, aming sinisiguro na bawat deployment ay etikal, propesyonal, at nakabubuti sa parehong manggagawa at empleyador.'
                 : 'Through our comprehensive network of partner agencies in the Philippines and employers in Morocco and other countries, we ensure that every deployment is ethical, professional, and mutually beneficial for both the worker and the employer.'}
@@ -72,7 +72,7 @@ export function AboutPage() {
                     <h3 className="text-xl font-bold">{item.title}</h3>
                   </div>
                   <CardContent className="p-6">
-                    <p className="text-gray-600 leading-relaxed">{item.desc}</p>
+                    <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -82,10 +82,10 @@ export function AboutPage() {
       </section>
 
       {/* Why Choose FIRA */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
               {language === 'fil' ? 'Bakit Piliin ang FIRA?' : 'Why Choose FIRA?'}
             </h2>
           </div>
@@ -99,11 +99,11 @@ export function AboutPage() {
               <motion.div key={item.title} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i} variants={fadeUp}>
                 <Card className="h-full hover:shadow-lg transition-shadow text-center">
                   <CardContent className="p-6">
-                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
+                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300">
                       <item.icon className="h-6 w-6" />
                     </div>
                     <h3 className="font-semibold mb-2">{item.title}</h3>
-                    <p className="text-sm text-gray-600">{item.desc}</p>
+                    <p className="text-sm text-muted-foreground">{item.desc}</p>
                   </CardContent>
                 </Card>
               </motion.div>

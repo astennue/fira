@@ -292,17 +292,17 @@ export function CmsFaqPage() {
   // ── Category Color Map ────────────────────────────────────────────────────
 
   const categoryColorMap: Record<string, string> = {
-    General: 'bg-blue-100 text-blue-700 border-blue-200',
-    'For Applicants': 'bg-emerald-100 text-emerald-700 border-emerald-200',
-    'For Employers': 'bg-violet-100 text-violet-700 border-violet-200',
-    Deployment: 'bg-amber-100 text-amber-700 border-amber-200',
-    Documents: 'bg-cyan-100 text-cyan-700 border-cyan-200',
-    'Fees & Payments': 'bg-rose-100 text-rose-700 border-rose-200',
-    Other: 'bg-gray-100 text-gray-600 border-gray-200',
+    General: 'bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+    'For Applicants': 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+    'For Employers': 'bg-violet-100 dark:bg-violet-950/50 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-800',
+    Deployment: 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+    Documents: 'bg-cyan-100 dark:bg-cyan-950/50 text-cyan-700 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800',
+    'Fees & Payments': 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',
+    Other: 'bg-muted text-muted-foreground border-border',
   }
 
   const getCategoryStyle = (category: string) => {
-    return categoryColorMap[category] || 'bg-sky-100 text-sky-700 border-sky-200'
+    return categoryColorMap[category] || 'bg-sky-100 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800'
   }
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -315,7 +315,7 @@ export function CmsFaqPage() {
           <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-700 to-sky-600 bg-clip-text text-transparent">
             {t('FAQ Management')}
           </h1>
-          <p className="text-gray-500 text-sm">
+          <p className="text-muted-foreground text-sm">
             Manage frequently asked questions and organize them by category
           </p>
         </div>
@@ -330,7 +330,7 @@ export function CmsFaqPage() {
 
       {/* ─── Stats Bar ───────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-        <Card className="bg-gradient-to-br from-blue-50 to-sky-50 border-blue-100">
+        <Card className="bg-blue-50 dark:bg-blue-950/30 border-border dark:border-blue-900/30">
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
               <MessageCircleQuestion className="h-4 w-4 text-blue-500" />
@@ -339,7 +339,7 @@ export function CmsFaqPage() {
             <p className="text-xl font-bold text-blue-800 mt-1">{faqs.length}</p>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-100">
+        <Card className="bg-emerald-50 dark:bg-emerald-950/30 border-border dark:border-emerald-900/30">
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
               <HelpCircle className="h-4 w-4 text-emerald-500" />
@@ -350,7 +350,7 @@ export function CmsFaqPage() {
             </p>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-amber-100">
+        <Card className="bg-amber-50 dark:bg-amber-950/30 border-border dark:border-amber-900/30">
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
               <Filter className="h-4 w-4 text-amber-500" />
@@ -359,7 +359,7 @@ export function CmsFaqPage() {
             <p className="text-xl font-bold text-amber-800 mt-1">{categories.length}</p>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-to-br from-violet-50 to-purple-50 border-violet-100">
+        <Card className="bg-violet-50 dark:bg-violet-950/30 border-border dark:border-violet-900/30">
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
               <GripVertical className="h-4 w-4 text-violet-500" />
@@ -373,24 +373,24 @@ export function CmsFaqPage() {
       {/* ─── Filters ─────────────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search questions or answers..."
-            className="pl-9 rounded-xl border-blue-100 focus:border-blue-300 focus:ring-blue-200"
+            className="pl-9 rounded-xl border-border dark:border-blue-900/30 focus:border-blue-300 dark:focus:border-blue-700 focus:ring-blue-200 dark:focus:ring-blue-800"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             >
               <X className="h-3.5 w-3.5" />
             </button>
           )}
         </div>
         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-          <SelectTrigger className="w-full sm:w-[200px] rounded-xl border-blue-100">
+          <SelectTrigger className="w-full sm:w-[200px] rounded-xl border-border dark:border-blue-900/30">
             <SelectValue placeholder="All Categories" />
           </SelectTrigger>
           <SelectContent>
@@ -412,11 +412,11 @@ export function CmsFaqPage() {
           ))}
         </div>
       ) : filteredFaqs.length === 0 ? (
-        <Card className="border-blue-100">
+        <Card className="border-border dark:border-blue-900/30">
           <CardContent className="p-12 text-center">
             <HelpCircle className="h-12 w-12 mx-auto text-blue-200 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-600 mb-1">No FAQs found</h3>
-            <p className="text-sm text-gray-400 mb-4">
+            <h3 className="text-lg font-semibold text-muted-foreground mb-1">No FAQs found</h3>
+            <p className="text-sm text-muted-foreground mb-4">
               {searchQuery || categoryFilter !== 'all'
                 ? 'Try adjusting your filters or search query.'
                 : 'Get started by adding your first FAQ.'}
@@ -425,7 +425,7 @@ export function CmsFaqPage() {
               <Button
                 onClick={openNew}
                 variant="outline"
-                className="rounded-xl border-blue-200 text-blue-600 hover:bg-blue-50"
+                className="rounded-xl border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30"
               >
                 <Plus className="mr-2 h-4 w-4" />
                 Add First FAQ
@@ -449,7 +449,7 @@ export function CmsFaqPage() {
                   <Badge className={`text-xs font-medium border ${getCategoryStyle(category)}`}>
                     {category}
                   </Badge>
-                  <span className="text-xs text-gray-400">{items.length} item{items.length !== 1 ? 's' : ''}</span>
+                  <span className="text-xs text-muted-foreground">{items.length} item{items.length !== 1 ? 's' : ''}</span>
                 </div>
 
                 {/* FAQ Cards */}
@@ -469,14 +469,14 @@ export function CmsFaqPage() {
                           <Card
                             className={`border transition-all duration-200 ${
                               faq.isActive
-                                ? 'border-blue-100 hover:border-blue-200 hover:shadow-md hover:shadow-blue-50'
-                                : 'border-gray-200 opacity-60 hover:opacity-80'
+                                ? 'border-border dark:border-blue-900/30 hover:border-blue-200 dark:hover:border-blue-800 hover:shadow-md hover:shadow-blue-50 dark:hover:shadow-blue-900/20'
+                                : 'border-border opacity-60 hover:opacity-80'
                             }`}
                           >
                             <CardContent className="p-0">
                               <div className="flex items-start gap-3 p-4">
                                 {/* Drag Handle / Order Indicator */}
-                                <div className="flex flex-col items-center pt-0.5 text-gray-300">
+                                <div className="flex flex-col items-center pt-0.5 text-muted-foreground">
                                   <GripVertical className="h-4 w-4" />
                                   <span className="text-[10px] mt-0.5 font-mono">#{faq.order ?? 0}</span>
                                 </div>
@@ -489,13 +489,13 @@ export function CmsFaqPage() {
                                       className="text-left flex-1 min-w-0 group"
                                     >
                                       <div className="flex items-center gap-2">
-                                        <h3 className="font-semibold text-gray-800 group-hover:text-blue-700 transition-colors truncate">
+                                        <h3 className="font-semibold text-foreground group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors truncate">
                                           {faq.question}
                                         </h3>
                                         {isExpanded ? (
-                                          <ChevronUp className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                                          <ChevronUp className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                                         ) : (
-                                          <ChevronDown className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                                          <ChevronDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                                         )}
                                       </div>
                                     </button>
@@ -511,7 +511,7 @@ export function CmsFaqPage() {
                                         transition={{ duration: 0.2 }}
                                         className="overflow-hidden"
                                       >
-                                        <p className="text-sm text-gray-600 mt-2 leading-relaxed whitespace-pre-wrap">
+                                        <p className="text-sm text-muted-foreground mt-2 leading-relaxed whitespace-pre-wrap">
                                           {faq.answer}
                                         </p>
                                       </motion.div>
@@ -520,7 +520,7 @@ export function CmsFaqPage() {
 
                                   {/* Collapsed Preview */}
                                   {!isExpanded && (
-                                    <p className="text-sm text-gray-400 mt-1 line-clamp-1">
+                                    <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
                                       {faq.answer}
                                     </p>
                                   )}
@@ -546,7 +546,7 @@ export function CmsFaqPage() {
                                     <Button
                                       variant="ghost"
                                       size="icon"
-                                      className="h-7 w-7 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                      className="h-7 w-7 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30"
                                       onClick={() => openEdit(faq)}
                                     >
                                       <Edit className="h-3.5 w-3.5" />
@@ -562,7 +562,7 @@ export function CmsFaqPage() {
                                     </Button>
                                   </div>
                                   <div className="flex items-center gap-2">
-                                    <span className="text-[10px] text-gray-400">
+                                    <span className="text-[10px] text-muted-foreground">
                                       {faq.isActive ? 'Active' : 'Inactive'}
                                     </span>
                                     <Switch
@@ -595,7 +595,7 @@ export function CmsFaqPage() {
             <DialogTitle className="text-lg font-bold bg-gradient-to-r from-blue-700 to-sky-600 bg-clip-text text-transparent">
               {editId ? 'Edit FAQ' : 'Add New FAQ'}
             </DialogTitle>
-            <DialogDescription className="text-sm text-gray-500">
+            <DialogDescription className="text-sm text-muted-foreground">
               {editId
                 ? 'Update the question, answer, category, and order of this FAQ.'
                 : 'Fill in the details to create a new frequently asked question.'}
@@ -605,7 +605,7 @@ export function CmsFaqPage() {
           <div className="space-y-5 pt-2">
             {/* Question */}
             <div className="space-y-2">
-              <Label htmlFor="faq-question" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="faq-question" className="text-sm font-medium text-foreground">
                 Question <span className="text-red-400">*</span>
               </Label>
               <Input
@@ -613,13 +613,13 @@ export function CmsFaqPage() {
                 value={form.question}
                 onChange={(e) => setForm({ ...form, question: e.target.value })}
                 placeholder="e.g., What documents do I need to apply?"
-                className="rounded-xl border-blue-100 focus:border-blue-300 focus:ring-blue-200"
+                className="rounded-xl border-border dark:border-blue-900/30 focus:border-blue-300 dark:focus:border-blue-700 focus:ring-blue-200 dark:focus:ring-blue-800"
               />
             </div>
 
             {/* Answer */}
             <div className="space-y-2">
-              <Label htmlFor="faq-answer" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="faq-answer" className="text-sm font-medium text-foreground">
                 Answer <span className="text-red-400">*</span>
               </Label>
               <Textarea
@@ -627,21 +627,21 @@ export function CmsFaqPage() {
                 value={form.answer}
                 onChange={(e) => setForm({ ...form, answer: e.target.value })}
                 placeholder="Provide a clear and detailed answer..."
-                className="min-h-[140px] rounded-xl border-blue-100 focus:border-blue-300 focus:ring-blue-200 resize-none"
+                className="min-h-[140px] rounded-xl border-border dark:border-blue-900/30 focus:border-blue-300 dark:focus:border-blue-700 focus:ring-blue-200 dark:focus:ring-blue-800 resize-none"
               />
             </div>
 
             {/* Category & Order */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="faq-category" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="faq-category" className="text-sm font-medium text-foreground">
                   Category
                 </Label>
                 <Select
                   value={form.category}
                   onValueChange={(val) => setForm({ ...form, category: val })}
                 >
-                  <SelectTrigger className="rounded-xl border-blue-100">
+                  <SelectTrigger className="rounded-xl border-border dark:border-blue-900/30">
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
@@ -656,11 +656,11 @@ export function CmsFaqPage() {
                   value={form.category}
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
                   placeholder="Or type a new category..."
-                  className="rounded-xl border-blue-100 focus:border-blue-300 focus:ring-blue-200 text-sm"
+                  className="rounded-xl border-border dark:border-blue-900/30 focus:border-blue-300 dark:focus:border-blue-700 focus:ring-blue-200 dark:focus:ring-blue-800 text-sm"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="faq-order" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="faq-order" className="text-sm font-medium text-foreground">
                   Display Order
                 </Label>
                 <Input
@@ -669,9 +669,9 @@ export function CmsFaqPage() {
                   min={0}
                   value={form.order}
                   onChange={(e) => setForm({ ...form, order: parseInt(e.target.value) || 0 })}
-                  className="rounded-xl border-blue-100 focus:border-blue-300 focus:ring-blue-200"
+                  className="rounded-xl border-border dark:border-blue-900/30 focus:border-blue-300 dark:focus:border-blue-700 focus:ring-blue-200 dark:focus:ring-blue-800"
                 />
-                <p className="text-[11px] text-gray-400">
+                <p className="text-[11px] text-muted-foreground">
                   Lower numbers appear first
                 </p>
               </div>
@@ -679,10 +679,10 @@ export function CmsFaqPage() {
 
             {/* Active Toggle (Edit mode only) */}
             {editId && (
-              <div className="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-muted border border-border">
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">Active Status</Label>
-                  <p className="text-[11px] text-gray-400">
+                  <Label className="text-sm font-medium text-foreground">Active Status</Label>
+                  <p className="text-[11px] text-muted-foreground">
                     Inactive FAQs will not be shown to visitors
                   </p>
                 </div>

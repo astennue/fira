@@ -56,7 +56,7 @@ export function ApplicantProfilePage() {
     valid: { icon: CheckCircle, color: 'text-emerald-600', label: 'Valid' },
     expired: { icon: XCircle, color: 'text-red-500', label: 'Expired' },
     processing: { icon: Clock, color: 'text-amber-500', label: 'Processing' },
-    none: { icon: XCircle, color: 'text-gray-400', label: 'None' },
+    none: { icon: XCircle, color: 'text-muted-foreground', label: 'None' },
     passed: { icon: CheckCircle, color: 'text-emerald-600', label: 'Passed' },
     failed: { icon: XCircle, color: 'text-red-500', label: 'Failed' },
     scheduled: { icon: Clock, color: 'text-blue-500', label: 'Scheduled' },

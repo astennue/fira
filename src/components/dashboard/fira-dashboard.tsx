@@ -307,14 +307,14 @@ export function FiraDashboard() {
     if (status === 'pending_employer_review') return { bg: 'bg-blue-100 dark:bg-blue-900/40', text: 'text-blue-700 dark:text-blue-400', border: 'border-blue-300 dark:border-blue-700' }
     if (status === 'employer_accepted') return { bg: 'bg-green-100 dark:bg-green-900/40', text: 'text-green-700 dark:text-green-400', border: 'border-green-300 dark:border-green-700' }
     if (status === 'employer_declined') return { bg: 'bg-red-100 dark:bg-red-900/40', text: 'text-red-700 dark:text-red-400', border: 'border-red-300 dark:border-red-700' }
-    return { bg: 'bg-gray-100 dark:bg-gray-800/40', text: 'text-gray-700 dark:text-gray-400', border: 'border-gray-300 dark:border-gray-700' }
+    return { bg: 'bg-muted', text: 'text-muted-foreground', border: 'border-border' }
   }
 
   function getJobStatusBadge(status: string) {
     if (status === 'open') return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border-emerald-300 dark:border-emerald-700'
     if (status === 'closed') return 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400 border-red-300 dark:border-red-700'
     if (status === 'filled') return 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 border-amber-300 dark:border-amber-700'
-    return 'bg-gray-100 text-gray-700 dark:bg-gray-800/40 dark:text-gray-400 border-gray-300 dark:border-gray-700'
+    return 'bg-muted text-foreground border-border'
   }
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -509,7 +509,7 @@ export function FiraDashboard() {
                 })}
                 {recentEndorsements.length === 0 && (
                   <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <div className="p-4 rounded-full bg-gray-100 dark:bg-gray-800/50 mb-3">
+                    <div className="p-4 rounded-full bg-muted mb-3">
                       <Activity className="h-8 w-8 text-muted-foreground" />
                     </div>
                     <p className="text-sm text-muted-foreground">
@@ -571,7 +571,7 @@ export function FiraDashboard() {
                 ))}
                 {recentUsers.length === 0 && (
                   <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <div className="p-4 rounded-full bg-gray-100 dark:bg-gray-800/50 mb-3">
+                    <div className="p-4 rounded-full bg-muted mb-3">
                       <Users className="h-8 w-8 text-muted-foreground" />
                     </div>
                     <p className="text-sm text-muted-foreground">
@@ -611,7 +611,7 @@ export function FiraDashboard() {
                       onClick={() => navigate(action.view)}
                     >
                       <span className="flex items-center gap-2.5">
-                        <div className="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition-colors">
+                        <div className="p-1.5 rounded-lg bg-muted group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition-colors">
                           <action.icon className="h-3.5 w-3.5 text-muted-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
                         </div>
                         <span className="text-sm font-medium">{action.label}</span>
@@ -657,7 +657,7 @@ export function FiraDashboard() {
             <CardContent className="pt-0">
               {jobs.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-10 text-center">
-                  <div className="p-4 rounded-full bg-gray-100 dark:bg-gray-800/50 mb-3">
+                  <div className="p-4 rounded-full bg-muted mb-3">
                     <Briefcase className="h-8 w-8 text-muted-foreground" />
                   </div>
                   <p className="text-xs text-muted-foreground">

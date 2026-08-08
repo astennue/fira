@@ -88,8 +88,8 @@ export function CmsSocialPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Social Media</h1>
-          <p className="text-gray-500 text-sm">Manage social media links and profiles</p>
+          <h1 className="text-2xl font-bold text-foreground">Social Media</h1>
+          <p className="text-muted-foreground text-sm">Manage social media links and profiles</p>
         </div>
         <Button onClick={openNew} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> Add Link</Button>
       </div>
@@ -101,9 +101,9 @@ export function CmsSocialPage() {
           {links.map((link: any) => {
             const Icon = platformIcons[link.platform] || Globe
             return (
-              <Card key={link.id} className={`border ${link.isActive ? 'border-blue-100' : 'border-gray-200 opacity-60'}`}>
+              <Card key={link.id} className={`border ${link.isActive ? 'border-border dark:border-blue-900/30' : 'border-border opacity-60'}`}>
                 <CardContent className="p-4 flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                  <div className="h-10 w-10 rounded-xl bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 flex items-center justify-center shrink-0">
                     <Icon className="h-5 w-5" />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -111,7 +111,7 @@ export function CmsSocialPage() {
                       <p className="font-medium capitalize">{link.platform}</p>
                       {link.title && <Badge variant="outline" className="text-xs">{link.title}</Badge>}
                     </div>
-                    <p className="text-sm text-gray-500 truncate">{link.url}</p>
+                    <p className="text-sm text-muted-foreground truncate">{link.url}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Switch checked={link.isActive} disabled />

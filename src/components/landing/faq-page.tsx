@@ -66,10 +66,10 @@ export function FaqPage() {
       </section>
 
       {/* Search & Filter */}
-      <section className="py-8 bg-white border-b">
+      <section className="py-8 bg-background border-b">
         <div className="container mx-auto px-4 max-w-3xl">
-          <div className="flex items-center bg-gray-50 rounded-xl p-1.5 mb-6">
-            <Search className="h-5 w-5 text-gray-400 ml-3 shrink-0" />
+          <div className="flex items-center bg-muted rounded-xl p-1.5 mb-6">
+            <Search className="h-5 w-5 text-muted-foreground ml-3 shrink-0" />
             <Input
               type="search"
               placeholder={language === 'fil' ? 'Maghanap ng tanong...' : 'Search questions...'}
@@ -103,8 +103,8 @@ export function FaqPage() {
             </div>
           ) : filteredFaqs.length === 0 ? (
             <Card className="p-8 text-center rounded-xl">
-              <HelpCircle className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-              <p className="text-gray-500">
+              <HelpCircle className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+              <p className="text-muted-foreground">
                 {language === 'fil' ? 'Walang natagpuang FAQ.' : 'No FAQs found.'}
               </p>
             </Card>
@@ -117,11 +117,11 @@ export function FaqPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
                 >
-                  <AccordionItem value={`faq-${i}`} className="bg-white rounded-xl px-6 border border-blue-100 data-[state=open]:shadow-md transition-shadow">
-                    <AccordionTrigger className="text-left text-gray-900 font-medium hover:no-underline py-5">
+                  <AccordionItem value={`faq-${i}`} className="bg-card rounded-xl px-6 border border-border dark:border-blue-900/30 data-[state=open]:shadow-md transition-shadow">
+                    <AccordionTrigger className="text-left text-foreground font-medium hover:no-underline py-5">
                       {faq.question}
                     </AccordionTrigger>
-                    <AccordionContent className="text-gray-600 leading-relaxed pb-5">
+                    <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
                       {faq.answer}
                     </AccordionContent>
                   </AccordionItem>

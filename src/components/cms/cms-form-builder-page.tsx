@@ -97,8 +97,8 @@ export function CmsFormBuilderPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Form Builder</h1>
-          <p className="text-gray-500 text-sm">Build and customize the application form</p>
+          <h1 className="text-2xl font-bold text-foreground">Form Builder</h1>
+          <p className="text-muted-foreground text-sm">Build and customize the application form</p>
         </div>
         <Button onClick={openNew} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> Add Field</Button>
       </div>
@@ -109,16 +109,16 @@ export function CmsFormBuilderPage() {
         <div className="space-y-6">
           {sections.map((section) => (
             <div key={section}>
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3 px-1">{section}</h3>
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-1">{section}</h3>
               <div className="space-y-2">
                 {sortedFields.filter((f: any) => (f.section || 'Personal Information') === section).map((field: any, i: number) => {
                   const ft = fieldTypes.find(t => t.value === field.fieldType)
                   const Icon = ft?.icon || Type
                   return (
-                    <Card key={field.id} className={`border ${field.isActive ? 'border-blue-100' : 'border-gray-200 opacity-60'}`}>
+                    <Card key={field.id} className={`border ${field.isActive ? 'border-border dark:border-blue-900/30' : 'border-border opacity-60'}`}>
                       <CardContent className="p-3 flex items-center gap-3">
-                        <GripVertical className="h-5 w-5 text-gray-300 shrink-0" />
-                        <div className="h-8 w-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                        <GripVertical className="h-5 w-5 text-muted-foreground shrink-0" />
+                        <div className="h-8 w-8 rounded-lg bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
                           <Icon className="h-4 w-4" />
                         </div>
                         <div className="flex-1 min-w-0">
