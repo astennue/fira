@@ -7,7 +7,6 @@ import {
   Menu, Search, Bell, Moon, Sun, LogOut, User, LayoutDashboard,
   Briefcase, Building2, ChevronDown, Globe,
   HelpCircle, Home, Info, MessageCircle, Phone,
-  Minus, Plus,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -45,7 +44,6 @@ export function AppNav() {
     sidebarOpen, setSidebarOpen,
     searchQuery, setSearchQuery,
     language, setLanguage,
-    fontSize, setFontSize,
     currentView,
   } = useAppStore()
   const { theme, setTheme } = useTheme()
@@ -95,11 +93,6 @@ export function AppNav() {
     } else {
       navigate('landing')
     }
-  }
-
-  const cycleFontSize = (direction: 'up' | 'down') => {
-    const step = direction === 'up' ? 2 : -2
-    setFontSize(fontSize + step)
   }
 
   return (
@@ -246,31 +239,6 @@ export function AppNav() {
                 )}
               </Button>
             )}
-
-            {/* Font size +/- buttons */}
-            <div className="flex items-center gap-0.5">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 text-foreground hover:text-foreground hover:bg-accent"
-                onClick={() => cycleFontSize('down')}
-                disabled={fontSize <= 12}
-                title="Decrease font size (A-)"
-              >
-                <Minus className="h-3 w-3" />
-              </Button>
-              <span className="text-[10px] text-muted-foreground w-6 text-center tabular-nums">{fontSize}</span>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 text-foreground hover:text-foreground hover:bg-accent"
-                onClick={() => cycleFontSize('up')}
-                disabled={fontSize >= 28}
-                title="Increase font size (A+)"
-              >
-                <Plus className="h-3 w-3" />
-              </Button>
-            </div>
 
             {/* Theme toggle */}
             <Button
