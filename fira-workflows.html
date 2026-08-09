@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FIRA System Workflows</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #F8FAFC; color: #1F2937; line-height: 1.6; }
+  .page { max-width: 1100px; margin: 0 auto; padding: 40px 32px; }
+  h1 { font-size: 32px; font-weight: 800; color: #0F172A; margin-bottom: 8px; letter-spacing: -0.5px; }
+  h1 span { color: #2563EB; }
+  .subtitle { color: #64748B; font-size: 14px; margin-bottom: 40px; }
+  h2 { font-size: 22px; font-weight: 700; color: #0F172A; margin: 48px 0 8px; padding-bottom: 8px; border-bottom: 3px solid #2563EB; display: inline-block; }
+  h3 { font-size: 16px; font-weight: 700; color: #334155; margin: 24px 0 12px; }
+  p { color: #475569; font-size: 13.5px; margin-bottom: 12px; }
+
+  /* ── ROLE BADGES ── */
+  .role-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin: 2px; }
+  .role-applicant { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+  .role-agency { background: #F0FDF4; color: #065F46; border: 1px solid #A7F3D0; }
+  .role-fira { background: #F5F3FF; color: #5B21B6; border: 1px solid #DDD6FE; }
+  .role-employer { background: #FFF7ED; color: #92400E; border: 1px solid #FED7AA; }
+  .role-admin { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+  .role-public { background: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; }
+
+  /* ── FLOWCHART ── */
+  .flow-container { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 28px; margin: 16px 0 24px; }
+  .phase-group { margin-bottom: 20px; border-left: 4px solid #94A3B8; padding: 16px 20px; background: #F8FAFC; border-radius: 0 8px 8px 0; }
+  .phase-group:last-child { margin-bottom: 0; }
+  .phase-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #64748B; margin-bottom: 12px; }
+  .phase-title span { background: #E2E8F0; padding: 2px 10px; border-radius: 4px; }
+  .phase-steps { display: flex; flex-direction: column; gap: 8px; }
+  .step { display: flex; align-items: flex-start; gap: 12px; }
+  .step-num { min-width: 28px; height: 28px; border-radius: 50%; background: #2563EB; color: white; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-content { flex: 1; }
+  .step-title { font-size: 13.5px; font-weight: 600; color: #1F2937; }
+  .step-desc { font-size: 12px; color: #64748B; margin-top: 2px; }
+  .step-action { font-size: 11px; color: #2563EB; font-weight: 600; margin-top: 4px; }
+  .arrow-down { text-align: center; color: #94A3B8; font-size: 18px; margin: 4px 0; padding-left: 8px; }
+
+  /* ── ROLE-COLORED PHASES ── */
+  .phase-blue { border-left-color: #2563EB; }
+  .phase-blue .phase-title span { background: #DBEAFE; color: #1D4ED8; }
+  .phase-blue .step-num { background: #2563EB; }
+  .phase-green { border-left-color: #059669; }
+  .phase-green .phase-title span { background: #D1FAE5; color: #065F46; }
+  .phase-green .step-num { background: #059669; }
+  .phase-amber { border-left-color: #D97706; }
+  .phase-amber .phase-title span { background: #FEF3C7; color: #92400E; }
+  .phase-amber .step-num { background: #D97706; }
+  .phase-purple { border-left-color: #7C3AED; }
+  .phase-purple .phase-title span { background: #EDE9FE; color: #5B21B6; }
+  .phase-purple .step-num { background: #7C3AED; }
+  .phase-red { border-left-color: #DC2626; }
+  .phase-red .phase-title span { background: #FEE2E2; color: #991B1B; }
+  .phase-red .step-num { background: #DC2626; }
+  .phase-slate { border-left-color: #475569; }
+  .phase-slate .phase-title span { background: #E2E8F0; color: #334155; }
+  .phase-slate .step-num { background: #475569; }
+
+  /* ── DECISION NODE ── */
+  .decision { background: #FFF7ED; border: 1.5px dashed #F59E0B; border-radius: 8px; padding: 12px 16px; margin: 8px 0; }
+  .decision-title { font-size: 13px; font-weight: 700; color: #92400E; }
+  .decision-branches { display: flex; gap: 16px; margin-top: 8px; }
+  .decision-branch { flex: 1; font-size: 12px; }
+  .decision-branch .yes { color: #059669; font-weight: 600; }
+  .decision-branch .no { color: #DC2626; font-weight: 600; }
+
+  /* ── PIPELINE STATUS FLOW ── */
+  .pipeline { display: flex; align-items: center; gap: 0; flex-wrap: wrap; margin: 16px 0; }
+  .pipeline-stage { background: #F8FAFC; border: 1.5px solid #CBD5E1; border-radius: 8px; padding: 10px 14px; text-align: center; min-width: 120px; }
+  .pipeline-stage .stage-name { font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 2px; }
+  .pipeline-stage .stage-role { font-size: 10px; color: #94A3B8; }
+  .pipeline-arrow { color: #94A3B8; font-size: 18px; padding: 0 4px; }
+  .pipeline-active { border-color: #2563EB; background: #EFF6FF; }
+  .pipeline-active .stage-name { color: #1D4ED8; }
+
+  /* ── ENTITY MAP ── */
+  .entity-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 16px 0; }
+  .entity-card { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 14px; }
+  .entity-card .entity-name { font-size: 13px; font-weight: 700; color: #1F2937; margin-bottom: 4px; }
+  .entity-card .entity-fields { font-size: 11px; color: #64748B; }
+  .entity-card .entity-fields div { padding: 1px 0; }
+  .entity-card .field-name { font-weight: 600; color: #475569; }
+
+  /* ── TABLE ── */
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 12px 0; }
+  th { background: #F1F5F9; text-align: left; padding: 8px 12px; font-weight: 600; color: #334155; border-bottom: 2px solid #CBD5E1; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td { padding: 8px 12px; border-bottom: 1px solid #F1F5F9; color: #475569; vertical-align: top; }
+  tr:hover td { background: #F8FAFC; }
+
+  /* ── NOTES ── */
+  .note { background: #FEF3C7; border-left: 4px solid #F59E0B; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 16px 0; font-size: 12.5px; color: #92400E; }
+  .note strong { color: #78350F; }
+  .info { background: #EFF6FF; border-left: 4px solid #2563EB; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 16px 0; font-size: 12.5px; color: #1E40AF; }
+  .info strong { color: #1D4ED8; }
+
+  /* ── STATUS BADGE ── */
+  .status { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .status-active { background: #D1FAE5; color: #065F46; }
+  .status-pending { background: #FEF3C7; color: #92400E; }
+  .status-inactive { background: #F1F5F9; color: #64748B; }
+
+  /* ── PRINT ── */
+  @media print { body { background: white; } .page { padding: 20px; } h2 { page-break-before: auto; } .flow-container { break-inside: avoid; } }
+  .page-break { page-break-before: always; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- COVER -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div style="text-align:center; padding: 60px 0 40px;">
+  <div style="font-size:48px; font-weight:800; color:#0F172A; letter-spacing:-1px;">FIRA <span style="color:#2563EB;">System Workflows</span></div>
+  <div style="font-size:16px; color:#64748B; margin-top:8px;">Fil International Recruitment Agency — Complete System Workflow Documentation</div>
+  <div style="font-size:12px; color:#94A3B8; margin-top:16px;">For review and correction before system implementation</div>
+  <div style="margin-top:24px;">
+    <span class="role-tag role-applicant">Applicant</span>
+    <span class="role-tag role-agency">Local Agency (PH)</span>
+    <span class="role-tag role-fira">FIRA / International</span>
+    <span class="role-tag role-employer">Employer</span>
+    <span class="role-tag role-admin">Super Admin</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- 1. SYSTEM OVERVIEW -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<h2>1. System Overview — User Roles & Access</h2>
+
+<table>
+  <tr><th>Role</th><th>Tagalog Name</th><th>Dashboard</th><th>Can Register?</th><th>Needs Approval?</th></tr>
+  <tr><td><span class="role-tag role-admin">Super Admin</span></td><td>Super Admin</td><td>fira-dashboard</td><td>No (created manually)</td><td>N/A</td></tr>
+  <tr><td><span class="role-tag role-fira">FIRA Staff</span></td><td>Staff ng FIRA</td><td>fira-dashboard</td><td>No (created by admin)</td><td>No</td></tr>
+  <tr><td><span class="role-tag role-fira">International Agency</span></td><td>Admin ng FIRA</td><td>fira-dashboard</td><td>No (created by admin)</td><td>Yes (isApproved)</td></tr>
+  <tr><td><span class="role-tag role-agency">Local Agency (PH)</span></td><td>Ahensya (PH)</td><td>agency-dashboard</td><td>No (created by admin)</td><td>Yes (isApproved)</td></tr>
+  <tr><td><span class="role-tag role-employer">Employer</span></td><td>Empleyador</td><td>employer-dashboard</td><td>No (created by admin)</td><td>Yes (isApproved)</td></tr>
+  <tr><td><span class="role-tag role-applicant">Applicant</span></td><td>Aplikante</td><td>applicant-dashboard</td><td><strong>Yes (self-service)</strong></td><td>Yes (isApproved)</td></tr>
+</table>
+
+<div class="info">
+  <strong>Key Design Notes:</strong><br>
+  • Only <strong>Applicants</strong> can self-register via the Sign In modal. All other roles are created by Super Admin via <em>Manage Users</em>.<br>
+  • <code>isApproved</code> flag controls whether a user can fully access their dashboard features.<br>
+  • Super Admin and Staff share the same dashboard and navigation (full system access).<br>
+  • International Agency and FIRA Staff share the same dashboard but International Agency has a subset of nav items.<br>
+  • <strong>FIRA = Fil International Recruitment Agency</strong> (the international agency in Morocco). Local Agencies are partner agencies in the Philippines.
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- 2. MAIN RECRUITMENT LIFECYCLE -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<h2>2. Main Recruitment Lifecycle (End-to-End)</h2>
+
+<div class="pipeline">
+  <div class="pipeline-stage"><div class="stage-name">1. Registration</div><div class="stage-role">Applicant</div></div>
+  <div class="pipeline-arrow">→</div>
+  <div class="pipeline-stage"><div class="stage-name">2. Profile Building</div><div class="stage-role">Applicant</div></div>
+  <div class="pipeline-arrow">→</div>
+  <div class="pipeline-stage"><div class="stage-name">3. Job Search & Apply</div><div class="stage-role">Applicant</div></div>
+  <div class="pipeline-arrow">→</div>
+  <div class="pipeline-stage"><div class="stage-name">4. Screening</div><div class="stage-role">Local Agency</div></div>
+  <div class="pipeline-arrow">→</div>
+  <div class="pipeline-stage"><div class="stage-name">5. Endorsement</div><div class="stage-role">Agency → FIRA → Employer</div></div>
+  <div class="pipeline-arrow">→</div>
+  <div class="pipeline-stage"><div class="stage-name">6. Deployment</div><div class="stage-role">Agency + FIRA</div></div>
+</div>
+
+<div class="note">
+  <strong>⚠️ For Review:</strong> Stages 4-6 (Screening, Endorsement approval, Deployment processing) are partially built in the current system. The <em>Endorsement Pipeline</em> (status flow) is implemented, but actual document processing, medical clearance scheduling, PDOS, and deployment tracking are <strong>not yet built</strong>. Please confirm the exact process for these stages.
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- 3. APPLICANT WORKFLOW -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<h2>3. Applicant Workflow</h2>
+
+<div class="flow-container">
+  <div class="phase-group phase-blue">
+    <div class="phase-title"><span>Phase 1 — Registration & Onboarding</span></div>
+    <div class="phase-steps">
+      <div class="step"><div class="step-num">1</div><div class="step-content"><div class="step-title">Visit FIRA Website (Public)</div><div class="step-desc">Views: Landing Page, About, Services, FAQ, Contact, Job Listings, Employer Partnership</div></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-content"><div class="step-title">Create Account</div><div class="step-desc">Clicks "Register" → fills name, email, phone, password, agrees to Terms → auto-creates as <span class="role-tag role-applicant">Applicant</span> role</div><div class="step-action">API: POST /api/auth { action: 'register', role: 'applicant' }</div></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-content"><div class="step-title">Complete Profile (Multi-Step Form)</div><div class="step-desc">View: My Profile → Personal Info, Education, Work Experience, Skills, Languages, Certifications, References, Documents, Trainings</div><div class="step-desc">Profile has <code>formStep</code> (0-9) and <code>isComplete</code> flag</div></div></div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <div class="phase-group phase-blue">
+    <div class="phase-title"><span>Phase 2 — Job Search & Application</span></div>
+    <div class="phase-steps">
+      <div class="step"><div class="step-num">4</div><div class="step-content"><div class="step-title">Browse Jobs</div><div class="step-desc">View: Find Jobs → filter by country, category, search keyword. Sees public jobs only (visibility='public', status='open').</div><div class="step-action">API: GET /api/jobs?public=true&country=...&category=...&search=...</div></div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-content"><div class="step-title">View Job Details</div><div class="step-desc">View: Job Detail → sees title, description, requirements, benefits, skills, salary, location, agency info, slots available</div><div class="step-action">API: GET /api/jobs/[id]</div></div></div>
+      <div class="step"><div class="step-num">6</div><div class="step-content"><div class="step-title">Apply for Job</div><div class="step-desc">Clicks "Apply" → creates Application record with status='applied', optionally fills cover letter and custom field responses</div><div class="step-action">API: POST /api/applications { applicantId, jobOrderId, coverLetter, customResponses }</div></div></div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <div class="phase-group phase-green">
+    <div class="phase-title"><span>Phase 3 — AI-Powered Enhancement</span></div>
+    <div class="phase-steps">
+      <div class="step"><div class="step-num">7</div><div class="step-content"><div class="step-title">AI Resume Boost</div><div class="step-desc">View: AI Resume Boost → pastes current resume text + target job description → AI enhances the resume to better match the job</div><div class="step-action">API: POST /api/ai/resume-enhance → stores result in ResumeEnhancement table</div></div></div>
+      <div class="step"><div class="step-num">8</div><div class="step-content"><div class="step-title">Track Applications</div><div class="step-desc">View: My Applications → sees all applied jobs with status (applied, screening, endorsed, accepted, deployed, rejected)</div><div class="step-action">API: GET /api/applications?applicantId=[id]</div></div></div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <div class="phase-group phase-slate">
+    <div class="phase-title"><span>Phase 4 — Communication</span></div>
+    <div class="phase-steps">
+      <div class="step"><div class="step-num">9</div><div class="step-content"><div class="step-title">Messaging</div><div class="step-desc">View: Messages → real-time messaging with agencies, FIRA staff, and other users. Can send/receive messages.</div></div></div>
+      <div class="step"><div class="step-num">10</div><div class="step-content"><div class="step-title">Notifications</div><div class="step-desc">Receives in-app notifications (bell icon in navbar) for: application status changes, new messages, endorsement updates</div></div></div>
+      <div class="step"><div class="step-num">11</div><div class="step-content"><div class="step-title">Account Settings</div><div class="step-desc">View: Settings → change password, update profile info, manage accessibility preferences</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- 4. LOCAL AGENCY (PH) WORKFLOW -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<h2>4. Local Agency (PH) Workflow</h2>
+
+<div class="flow-container">
+  <div class="phase-group phase-green">
+    <div class="phase-title"><span>Phase 1 — Job Management</span></div>
+    <div class="phase-steps">
+      <div class="step"><div class="step-num">1</div><div class="step-content"><div class="step-title">View Dashboard</div><div class="step-desc">Stats: Active Jobs, Total Applicants, Pending Endorsements, FIRA Approved count. Quick actions: Manage Jobs, View Applicants.</div></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-content"><div class="step-title">Create / Manage Job Orders</div><div class="step-desc">View: Jobs → create new job orders with title, description, country, city, category, salary, requirements, benefits, skills, custom fields. Edit existing jobs. Close jobs when filled.</div><div class="step-action">API: POST/PUT/DELETE /api/jobs — jobs linked to agency via agencyId</div></div></div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <div class="phase-group phase-amber">
+    <div class="phase-title"><span>Phase 2 — Applicant Management & Endorsement</span></div>
+    <div class="phase-steps">
+      <div class="step"><div class="step-num">3</div><div class="step-content"><div class="step-title">Review Applicants</div><div class="step-desc">View: Applicants → see all applicants who applied to agency's jobs. Filter by job, status, search. View full applicant profile.</div><div class="step-action">API: GET /api/applicants?agencyId=[id]</div></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-content"><div class="step-title">Endorse Applicant to Employer</div><div class="step-desc">View: Endorsements → selects application → writes cover note → submits endorsement. Status becomes <code>pending_fira_review</code>.</div><div class="step-action">API: POST /api/endorsements { applicationId, coverNote, employerId }</div></div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-content"><div class="step-title">Track Endorsement Status</div><div class="step-desc">Follows endorsement through pipeline: <span class="status status-pending">Pending FIRA Review</span> → <span class="status status-active">FIRA Approved</span> → <span class="status status-pending">Pending Employer Review</span> → <span class="status status-active">Employer Accepted</span></div></div></div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <div class="phase-group phase-purple">
+    <div class="phase-title"><span>Phase 3 — ATS Pipeline</span></div>
+    <div class="phase-steps">
+      <div class="step"><div class="step-num">6</div><div class="step-content"><div class="step-title">Manage ATS Pipeline</div><div class="step-desc">View: ATS Pipeline → selects a job order → sees Kanban board with stages (Applied, Screening, Interview, Medical, Document Processing, Approved, Deployed). Can drag applications between stages.</div><div class="step-action">API: GET /api/ats/stages?jobOrderId=[id], PUT /api/ats/move</div></div></div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <div class="phase-group phase-slate">
+    <div class="phase-title"><span>Phase 4 — Team & Communication</span></div>
+    <div class="phase-steps">
+      <div class="step"><div class="step-num">7</div><div class="step-content"><div class="step-title">Manage Members</div><div class="step-desc">View: Members → see agency team members (admin, recruiter, processor, deployment_officer). [COMING SOON - placeholder page]</div></div></div>
+      <div class="step"><div class="step-num">8</div><div class="step-content"><div class="step-title">Messages</div><div class="step-desc">Communicate with FIRA staff, employers, and applicants in real-time.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="note">
+  <strong>⚠️ For Review:</strong>
+  • Can a Local Agency create job orders independently, or must jobs come from FIRA/Employers first?<br>
+  • What is the exact screening process before endorsement? (Skills test? Interview? Document check?)<br>
+  • Should the ATS Pipeline stages be customizable per job, or fixed?<br>
+  • Members page is currently a placeholder — what member management features are needed?
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- 5. FIRA / INTERNATIONAL AGENCY WORKFLOW -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<h2>5. FIRA / International Agency Workflow</h2>
+
+<div class="flow-container">
+  <div class="phase-group phase-purple">
+    <div class="phase-title"><span>Phase 1 — Oversight & Management</span></div>
+    <div class="phase-steps">
+      <div class="step"><div class="step-num">1</div><div class="step-content"><div class="step-title">Command Center Dashboard</div><div class="step-desc">Stats: Total Agencies, Employers, Applicants, Jobs, Pending Approvals. Recent jobs, messages, quick actions for each entity.</div></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-content"><div class="step-title">Manage Agencies (Local PH Partners)</div><div class="step-desc">View: Agencies → view all local agencies, approve/reject new ones, see license info, contact details, status</div><div class="step-action">API: GET/PUT /api/agencies — approve/reject via isApproved flag</div></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-content"><div class="step-title">Manage Employers (International)</div><div class="step-desc">View: Employers → view all international employers, company profiles, country, industry, contact info, job orders</div><div class="step-action">API: GET /api/employers</div></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-content"><div class="step-title">Manage All Applicants</div><div class="step-desc">View: Applicants → see ALL applicants across all agencies, filter by status, type (domestic_helper/skills_professional), search</div><div class="step-action">API: GET /api/applicants</div></div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-content"><div class="step-title">Manage All Jobs</div><div class="step-desc">View: All Jobs → see every job order across all agencies, create jobs directly, manage status (open/closed/filled)</div><div class="step-action">API: GET/POST/PUT /api/jobs</div></div></div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <div class="phase-group phase-amber">
+    <div class="phase-title"><span>Phase 2 — Endorsement Review</span></div>
+    <div class="phase-steps">
+      <div class="step"><div class="step-num">6</div><div class="step-content"><div class="step-title">Review Endorsements from Agencies</div><div class="step-desc">When a Local Agency endorses an applicant, FIRA reviews: checks applicant profile completeness, verifies documents, validates job match.</div><div class="step-action">Status: <span class="status status-pending">pending_fira_review</span> → approve or reject</div></div></div>
+      <div class="step"><div class="step-num">7</div><div class="step-content"><div class="step-title">Forward to Employer</div><div class="step-desc">After FIRA approves, the endorsement is sent to the employer for final review. Adds <code>firaNote</code> with review comments.</div><div class="step-action">Status: <span class="status status-active">fira_approved</span> → <span class="status status-pending">pending_employer_review</span></div></div></div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <div class="phase-group phase-blue">
+    <div class="phase-title"><span>Phase 3 — AI & Intelligence</span></div>
+    <div class="phase-steps">
+      <div class="step"><div class="step-num">8</div><div class="step-content"><div class="step-title">AI Matching</div><div class="step-desc">View: AI Matching → selects a job order → runs AI matching algorithm → sees ranked list of candidates with match scores, matched/missing skills, explanations</div><div class="step-action">API: POST /api/ai/match → stores results in AIAnalysisResult table</div></div></div>
+      <div class="step"><div class="step-num">9</div><div class="step-content"><div class="step-title">ATS Pipeline (Full View)</div><div class="step-desc">Same Kanban board as Agency but with cross-agency visibility</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- 6. EMPLOYER WORKFLOW -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<h2>6. Employer Workflow</h2>
+
+<div class="flow-container">
+  <div class="phase-group phase-amber">
+    <div class="phase-title"><span>Phase 1 — Job Order Management</span></div>
+    <div class="phase-steps">
+      <div class="step"><div class="step-num">1</div><div class="step-content"><div class="step-title">View Dashboard</div><div class="step-desc">Stats: Active Jobs, Endorsed Candidates, Accepted count. Quick actions to manage jobs and view endorsed candidates.</div></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-content"><div class="step-title">Manage Job Orders</div><div class="step-desc">View: My Jobs → see all jobs posted by this employer. Jobs are created by FIRA on behalf of the employer, or the employer can request new job orders.</div></div></div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <div class="phase-group phase-green">
+    <div class="phase-title"><span>Phase 2 — Candidate Review</span></div>
+    <div class="phase-steps">
+      <div class="step"><div class="step-num">3</div><div class="step-content"><div class="step-title">Review Endorsed Candidates</div><div class="step-desc">View: Endorsed Candidates → sees all candidates endorsed by agencies and approved by FIRA. Sees cover note, agency note, FIRA note.</div></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-content"><div class="step-title">Accept or Decline Candidates</div><div class="step-desc">Reviews candidate profile → clicks Accept or Decline → adds <code>employerNote</code> with decision reason.</div><div class="step-action">Status: <span class="status status-active">employer_accepted</span> or <span class="status status-inactive">employer_declined</span></div></div></div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <div class="phase-group phase-blue">
+    <div class="phase-title"><span>Phase 3 — AI Matching</span></div>
+    <div class="phase-steps">
+      <div class="step"><div class="step-num">5</div><div class="step-content"><div class="step-title">AI Matching</div><div class="step-desc">View: AI Matching → select a job → run AI to find best-matched candidates from the applicant pool</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="note">
+  <strong>⚠️ For Review:</strong>
+  • Can Employers create job orders directly, or only through FIRA?<br>
+  • What happens after an employer accepts a candidate? (Contract generation? Payment? Scheduling?)<br>
+  • Should employers see candidate documents, or just the profile summary?<br>
+  • Do employers need to sign/approve employment contracts in the system?
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- 7. SUPER ADMIN / STAFF WORKFLOW -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<h2>7. Super Admin / Staff Workflow</h2>
+
+<div class="flow-container">
+  <div class="phase-group phase-red">
+    <div class="phase-title"><span>Phase 1 — User & Access Management</span></div>
+    <div class="phase-steps">
+      <div class="step"><div class="step-num">1</div><div class="step-content"><div class="step-title">Manage Users</div><div class="step-desc">View: Manage Users → create/edit/deactivate users. Assign roles: super_admin, staff, applicant, local_agency, international_agency, employer. Toggle isApproved and isActive.</div><div class="step-action">API: GET/POST/PUT/DELETE /api/users</div></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-content"><div class="step-title">Agency & Employer Approval</div><div class="step-desc">Review and approve/reject new agency and employer registrations. This controls who can post jobs and receive endorsements.</div></div></div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <div class="phase-group phase-purple">
+    <div class="phase-title"><span>Phase 2 — CMS (Content Management)</span></div>
+    <div class="phase-steps">
+      <div class="step"><div class="step-num">3</div><div class="step-content"><div class="step-title">CMS Pages</div><div class="step-desc">Create/edit website content pages (About, Services, etc.). Supports rich text, draft/published status, ordering.</div></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-content"><div class="step-title">FAQ Management</div><div class="step-desc">Manage frequently asked questions. Categorize, reorder, toggle active/inactive. Shows on public FAQ page.</div></div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-content"><div class="step-title">Testimonials</div><div class="step-desc">Manage deployed worker testimonials. Name, position, company, feedback, rating, avatar. Shows on landing page carousel.</div></div></div>
+      <div class="step"><div class="step-num">6</div><div class="step-content"><div class="step-title">Social Media Links</div><div class="step-desc">Manage social media platform links (Facebook, Instagram, LinkedIn, etc.) shown on website footer.</div></div></div>
+      <div class="step"><div class="step-num">7</div><div class="step-content"><div class="step-title">Org Chart</div><div class="step-desc">Manage organizational chart members. Tree structure with name, position, department, contact info.</div></div></div>
+      <div class="step"><div class="step-num">8</div><div class="step-content"><div class="step-title">Terms & Privacy</div><div class="step-desc">Manage Terms of Service and Data Privacy Consent content. Supports versioning.</div></div></div>
+      <div class="step"><div class="step-num">9</div><div class="step-content"><div class="step-title">Form Builder</div><div class="step-desc">Build custom form fields for job applications (text, textarea, select, multiselect, checkbox, date, number, file, email, phone). Fields appear on job detail pages.</div></div></div>
+      <div class="step"><div class="step-num">10</div><div class="step-content"><div class="step-title">Site Settings</div><div class="step-desc">Global site configuration key-value pairs (company name, contact info, etc.).</div></div></div>
+    </div>
+  </div>
+
+  <div class="arrow-down">▼</div>
+
+  <div class="phase-group phase-slate">
+    <div class="phase-title"><span>Phase 3 — Full System Access</span></div>
+    <div class="phase-steps">
+      <div class="step"><div class="step-num">11</div><div class="step-content"><div class="step-title">Everything FIRA Has</div><div class="step-desc">Super Admin and Staff have access to ALL FIRA dashboard features: Agencies, Employers, Applicants, Jobs, ATS Pipeline, AI Matching, Messages.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- 8. ENDORSEMENT PIPELINE DETAIL -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<h2>8. Endorsement Pipeline — Detailed Status Flow</h2>
+
+<div class="pipeline" style="flex-wrap:nowrap; overflow-x:auto;">
+  <div class="pipeline-stage pipeline-active"><div class="stage-name">① Applied</div><div class="stage-role">Applicant</div></div>
+  <div class="pipeline-arrow">→</div>
+  <div class="pipeline-stage"><div class="stage-name">② Endorsed</div><div class="stage-role">Local Agency</div></div>
+  <div class="pipeline-arrow">→</div>
+  <div class="pipeline-stage"><div class="stage-name">③ FIRA Review</div><div class="stage-role">FIRA Staff</div></div>
+  <div class="pipeline-arrow">→</div>
+  <div class="pipeline-stage"><div class="stage-name">④ FIRA Approved</div><div class="stage-role">FIRA Staff</div></div>
+  <div class="pipeline-arrow">→</div>
+  <div class="pipeline-stage"><div class="stage-name">⑤ Employer Review</div><div class="stage-role">Employer</div></div>
+  <div class="pipeline-arrow">→</div>
+  <div class="pipeline-stage"><div class="stage-name">⑥ Accepted</div><div class="stage-role">Employer</div></div>
+</div>
+
+<table>
+  <tr><th>Status Code</th><th>Label (EN)</th><th>Label (FIL)</th><th>Who Acts</th><th>Action</th><th>Next Status</th></tr>
+  <tr><td><code>applied</code></td><td>Applied</td><td>Na-apply</td><td>Applicant</td><td>Submits job application</td><td>—</td></tr>
+  <tr><td><code>pending_fira_review</code></td><td>Pending FIRA Review</td><td>Pending Review ng FIRA</td><td>Local Agency</td><td>Submits endorsement with cover note</td><td>fira_approved or fira_rejected</td></tr>
+  <tr><td><code>fira_approved</code></td><td>FIRA Approved</td><td>Na-aprubahan ng FIRA</td><td>FIRA Staff</td><td>Reviews applicant, adds firaNote, approves</td><td>pending_employer_review</td></tr>
+  <tr><td><code>fira_rejected</code></td><td>FIRA Rejected</td><td>Hinagisan ng FIRA</td><td>FIRA Staff</td><td>Rejects endorsement, adds firaNote</td><td>— (terminal)</td></tr>
+  <tr><td><code>pending_employer_review</code></td><td>Pending Employer Review</td><td>Pending Review ng Empleyador</td><td>FIRA (auto-forward)</td><td>Endorsement sent to employer</td><td>employer_accepted or employer_declined</td></tr>
+  <tr><td><code>employer_accepted</code></td><td>Employer Accepted</td><td>Tinanggap ng Empleyador</td><td>Employer</td><td>Accepts candidate, adds employerNote</td><td>— (terminal, ready for deployment)</td></tr>
+  <tr><td><code>employer_declined</code></td><td>Employer Declined</td><td>Tinanggihan ng Empleyador</td><td>Employer</td><td>Declines candidate, adds employerNote</td><td>— (terminal)</td></tr>
+</table>
+
+<div class="note">
+  <strong>⚠️ For Review:</strong>
+  • Should there be a status between "Applied" and "Endorsed" for agency screening?<br>
+  • Can an employer request revisions / send back to FIRA?<br>
+  • What happens after "Employer Accepted"? (Deployment tracking? Contract signing?)<br>
+  • Should declined endorsements be re-submittable?<br>
+  • Are notifications sent at every status transition? (Currently: only on creation, not on status change)
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- 9. ATS PIPELINE DETAIL -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<h2>9. ATS Pipeline — Kanban Stages</h2>
+
+<div class="info">
+  <strong>How ATS Works:</strong> Each Job Order has its own set of customizable stages. Applications flow through these stages. When an application is moved to a new stage, an <code>ATSStageHistory</code> record is created for auditing.
+</div>
+
+<div class="pipeline" style="flex-wrap:nowrap; overflow-x:auto;">
+  <div class="pipeline-stage pipeline-active"><div class="stage-name">Applied</div><div class="stage-role">Order: 0</div></div>
+  <div class="pipeline-arrow">→</div>
+  <div class="pipeline-stage"><div class="stage-name">Screening</div><div class="stage-role">Order: 1</div></div>
+  <div class="pipeline-arrow">→</div>
+  <div class="pipeline-stage"><div class="stage-name">Interview</div><div class="stage-role">Order: 2</div></div>
+  <div class="pipeline-arrow">→</div>
+  <div class="pipeline-stage"><div class="stage-name">Medical</div><div class="stage-role">Order: 3</div></div>
+  <div class="pipeline-arrow">→</div>
+  <div class="pipeline-stage"><div class="stage-name">Document Processing</div><div class="stage-role">Order: 4</div></div>
+  <div class="pipeline-arrow">→</div>
+  <div class="pipeline-stage"><div class="stage-name">Approved</div><div class="stage-role">Order: 5</div></div>
+  <div class="pipeline-arrow">→</div>
+  <div class="pipeline-stage"><div class="stage-name">Deployed</div><div class="stage-role">Order: 6</div></div>
+</div>
+
+<table>
+  <tr><th>Feature</th><th>Details</th></tr>
+  <tr><td>Stage Model</td><td><code>ATSStage</code> — linked to JobOrder. Has name, order, color, isDefault flag.</td></tr>
+  <tr><td>Stage History</td><td><code>ATSStageHistory</code> — tracks every move: applicationId, fromStageId, toStageId, movedBy (userId), notes, timestamp.</td></tr>
+  <tr><td>Application Link</td><td><code>Application.currentStageId</code> points to the applicant's current ATS stage.</td></tr>
+  <tr><td>Kanban View</td><td>Columns = stages, Cards = applications. Drag-and-drop to move between stages.</td></tr>
+  <tr><td>Access</td><td>Local Agency and FIRA Staff/International Agency can view ATS Pipeline.</td></tr>
+  <tr><td>Default Stages</td><td>7 default stages are auto-created when a new job is posted (Applied through Deployed).</td></tr>
+</table>
+
+<div class="note">
+  <strong>⚠️ For Review:</strong>
+  • Are the 7 default stages correct? (Applied, Screening, Interview, Medical, Document Processing, Approved, Deployed)<br>
+  • Should stages be customizable per job, or global?<br>
+  • What triggers a move from one stage to the next? (Manual drag? Automatic after certain actions?)<br>
+  • Should the ATS pipeline sync with the endorsement status?
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- 10. SERVICE FLOWS -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<h2>10. Service-Specific Flows</h2>
+
+<h3>10a. AI Matching Service</h3>
+<div class="flow-container">
+  <div class="phase-steps">
+    <div class="step"><div class="step-num">1</div><div class="step-content"><div class="step-title">Select Job Order</div><div class="step-desc">User (FIRA or Employer) selects a job order from dropdown</div></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content"><div class="step-title">Run AI Matching</div><div class="step-desc">System analyzes job requirements/skills against all applicant profiles → calculates match score (0-100%), semantic score, matched skills, missing skills, explanation</div><div class="step-action">API: POST /api/ai/match { jobOrderId } → returns ranked candidates</div></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content"><div class="step-title">Review Results</div><div class="step-desc">Ranked list shows: applicant name, match score, matched skills (green tags), missing skills (red tags), AI explanation</div></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-content"><div class="step-title">Action</div><div class="step-desc">From results, user can navigate to applicant profile, create endorsement, or view full application</div></div></div>
+  </div>
+</div>
+
+<h3>10b. AI Resume Enhancement Service</h3>
+<div class="flow-container">
+  <div class="phase-steps">
+    <div class="step"><div class="step-num">1</div><div class="step-content"><div class="step-title">Paste Job Description</div><div class="step-desc">Applicant pastes the target job description text</div></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content"><div class="step-title">Paste Current Resume</div><div class="step-desc">Applicant pastes their current resume text</div></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content"><div class="step-title">Enhance</div><div class="step-desc">AI rewrites the resume to better match the job description. Returns enhanced text + changes summary.</div><div class="step-action">API: POST /api/ai/resume-enhance → stores in ResumeEnhancement table</div></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-content"><div class="step-title">Review & Use</div><div class="step-desc">Applicant sees original vs enhanced side-by-side with highlighted changes. Can copy or use the enhanced version.</div></div></div>
+  </div>
+</div>
+
+<h3>10c. Messaging Service</h3>
+<div class="flow-container">
+  <div class="phase-steps">
+    <div class="step"><div class="step-num">1</div><div class="step-content"><div class="step-title">Open Messages</div><div class="step-desc">Available to ALL logged-in users. Shows conversation list on the left, message thread on the right.</div></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content"><div class="step-title">Select/Create Conversation</div><div class="step-desc">Click existing conversation or start a new one. Conversations are between two users (peer-to-peer).</div></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content"><div class="step-title">Send & Receive Messages</div><div class="step-desc">Real-time messaging (WebSocket-based via socket.io). Messages stored in database.</div><div class="step-action">WebSocket: io('/?XTransformPort=3001') — real-time bidirectional</div></div></div>
+  </div>
+</div>
+
+<h3>10d. Notification Service</h3>
+<div class="flow-container">
+  <div class="phase-steps">
+    <div class="step"><div class="step-num">1</div><div class="step-content"><div class="step-title">Notification Triggers</div><div class="step-desc">System creates notifications for: new messages, application status changes, endorsement updates, new job postings near preferred country</div></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content"><div class="step-title">In-App Display</div><div class="step-desc">Bell icon in navbar shows unread count badge. Clicking opens notification dropdown.</div><div class="step-action">API: GET /api/notifications?userId=[id]</div></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content"><div class="step-title">Mark as Read</div><div class="step-desc">Clicking a notification marks it as read and optionally navigates to the relevant page.</div></div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- 11. DATA MODEL SUMMARY -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<h2>11. Data Model — Key Entities & Relationships</h2>
+
+<div class="entity-grid">
+  <div class="entity-card"><div class="entity-name">User</div><div class="entity-fields"><div><span class="field-name">id</span> (cuid)</div><div><span class="field-name">email</span> (unique)</div><div><span class="field-name">role</span> (6 types)</div><div><span class="field-name">isApproved</span></div><div><span class="field-name">isActive</span></div><div><span class="field-name">agencyId</span> (optional)</div></div></div>
+  <div class="entity-card"><div class="entity-name">Agency</div><div class="entity-fields"><div><span class="field-name">agencyType</span> local | international</div><div><span class="field-name">licenseNo</span></div><div><span class="field-name">isApproved</span></div><div><span class="field-name">country</span></div><div>→ has Members, JobOrders</div></div></div>
+  <div class="entity-card"><div class="entity-name">EmployerProfile</div><div class="entity-fields"><div><span class="field-name">companyName</span></div><div><span class="field-name">country</span></div><div><span class="field-name">industry</span></div><div>→ has JobOrders, Endorsements</div></div></div>
+  <div class="entity-card"><div class="entity-name">ApplicantProfile</div><div class="entity-fields"><div><span class="field-name">applicantType</span> domestic_helper | skills_professional</div><div><span class="field-name">passportNo</span></div><div><span class="field-name">medicalStatus</span></div><div><span class="field-name">visaStatus</span></div><div><span class="field-name">isComplete</span></div><div>→ has Education, Experience, Skills, Languages, Certifications, References, Documents, Trainings</div></div></div>
+  <div class="entity-card"><div class="entity-name">JobOrder</div><div class="entity-fields"><div><span class="field-name">category</span> (8 types)</div><div><span class="field-name">salaryMin/Max</span></div><div><span class="field-name">slots / filledSlots</span></div><div><span class="field-name">status</span> open | closed | filled</div><div><span class="field-name">visibility</span> public | private</div><div>→ has Applications, ATSStages, CustomFields</div></div></div>
+  <div class="entity-card"><div class="entity-name">Application</div><div class="entity-fields"><div><span class="field-name">status</span> (varies)</div><div><span class="field-name">matchScore</span> (from AI)</div><div><span class="field-name">currentStageId</span> → ATSStage</div><div>→ has Endorsements, AIAnalysis, CustomResponses, StageHistory</div></div></div>
+  <div class="entity-card"><div class="entity-name">Endorsement</div><div class="entity-fields"><div><span class="field-name">status</span> (6 states)</div><div><span class="field-name">coverNote</span> (agency)</div><div><span class="field-name">firaNote</span> (FIRA review)</div><div><span class="field-name">employerNote</span> (employer decision)</div><div>→ links Application → Agency → FIRA → Employer</div></div></div>
+  <div class="entity-card"><div="entity-name">AIAnalysisResult</div><div class="entity-fields"><div><span class="field-name">matchScore</span></div><div><span class="field-name">semanticScore</span></div><div><span class="field-name">matchedSkills</span> (JSON)</div><div><span class="field-name">missingSkills</span> (JSON)</div></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- 12. API ENDPOINTS SUMMARY -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<h2>12. API Endpoints Summary</h2>
+
+<table>
+  <tr><th>Endpoint</th><th>Method</th><th>Access</th><th>Purpose</th></tr>
+  <tr><td><code>/api/auth</code></td><td>POST</td><td>Public</td><td>Login ({ action: 'login' }) and Register ({ action: 'register', role: 'applicant' })</td></tr>
+  <tr><td><code>/api/jobs</code></td><td>GET/POST/PUT</td><td>Public (GET), Agency/FIRA (POST/PUT)</td><td>List jobs (?public=true), Create/Update job orders</td></tr>
+  <tr><td><code>/api/jobs/[id]</code></td><td>GET</td><td>Public</td><td>Get single job details</td></tr>
+  <tr><td><code>/api/applications</code></td><td>GET/POST</td><td>Applicant (POST), Agency/FIRA (GET)</td><td>List applications, Submit new application</td></tr>
+  <tr><td><code>/api/endorsements</code></td><td>GET/POST/PUT</td><td>Agency (POST), FIRA (PUT review), Employer (PUT accept/decline)</td><td>Endorsement lifecycle</td></tr>
+  <tr><td><code>/api/agencies</code></td><td>GET/PUT</td><td>FIRA Admin</td><td>List/approve/reject agencies</td></tr>
+  <tr><td><code>/api/employers</code></td><td>GET</td><td>FIRA Admin</td><td>List employers with profiles</td></tr>
+  <tr><td><code>/api/applicants</code></td><td>GET</td><td>Agency/FIRA</td><td>List applicants with profiles</td></tr>
+  <tr><td><code>/api/users</code></td><td>GET/POST/PUT/DELETE</td><td>Super Admin</td><td>Full user CRUD</td></tr>
+  <tr><td><code>/api/notifications</code></td><td>GET</td><td>Authenticated</td><td>Get user notifications</td></tr>
+  <tr><td><code>/api/ats/stages</code></td><td>GET</td><td>Agency/FIRA</td><td>Get stages for a job order</td></tr>
+ <tr><td><code>/api/ats/move</code></td><td>PUT</td><td>Agency/FIRA</td><td>Move application to new stage</td></tr>
+  <tr><td><code>/api/ai/match</code></td><td>POST</td><td>FIRA/Employer</td><td>Run AI matching for a job</td></tr>
+ <tr><td><code>/api/ai/resume-enhance</code></td><td>POST</td><td>Applicant</td><td>AI resume enhancement</td></tr>
+  <tr><td><code>/api/cms/...</code></td><td>CRUD</td><td>Super Admin/Staff</td><td>FAQ, Testimonials, Social, Pages, Terms, Org Chart, Form Fields, Settings</td></tr>
+ <tr><td><code>/api/messages</code></td><td>GET/POST</td><td>Authenticated (WebSocket)</td><td>Real-time messaging</td></tr>
+</table>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- 13. MISSING / TODO FEATURES -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<h2>13. Features Not Yet Built (For Your Review)</h2>
+
+<table>
+  <tr><th>Feature</th><th>Current State</th><th>Questions for You</th></tr>
+  <tr><td>Document Upload/Verification</td><td>ApplicantDocument model exists but no upload API or UI</td><td>What documents are required? (Passport, NBI, Medical, etc.) Who verifies them?</td></tr>
+  <tr><td>Medical Clearance Scheduling</td><td>ApplicantProfile has medicalStatus/medicalExpiry fields only</td><td>Should the system schedule medical exams? Or just track status?</td></tr>
+  <tr><td>PDOS (Pre-Departure Orientation)</td><td>Not built. Listed as a service on the website.</td><td>Is PDOS tracked in the system? Or handled externally?</td></tr>
+  <tr><td>Visa Processing</td><td>ApplicantProfile has visaStatus/visaExpiry fields only</td><td>Should visa processing be tracked? Who initiates it?</td></tr>
+  <tr><td>Contract Generation</td><td>Not built</td><td>Should the system generate employment contracts? Template-based?</td></tr>
+ <tr><td>Payment/Placement Fee</td><td>Not built</td><td>Is there a payment flow? What fees apply?</td></tr>
+  <tr><td>Deployment Tracking</td><td>Not built. Final ATS stage is "Deployed" but no tracking.</td><td>Should we track: flight booking, arrival confirmation, welfare check-ins?</td></tr>
+  <tr><td>Post-Deployment Welfare</td><td>Not built. Listed as a service on the website.</td><td>Should deployed workers check in? How often? Who monitors?</td></tr>
+  <tr><td>Contract Renewal</td><td>Not built</td><td>Should the system handle contract extensions/renewals?</td></tr>
+  <tr><td>Repatriation Support</td><td>Not built. Listed as a service on the website.</td><td>Should there be an emergency repatriation workflow?</td></tr>
+  <tr><td>Agency Member Management</td><td>Placeholder page only</td><td>What can members do? Role-based access within agency?</td></tr>
+  <tr><td>Email Verification</td><td>VerificationCode model exists, no sending logic</td><td>Should users verify email before first login?</td></tr>
+ <tr><td>Password Reset</td><td>VerificationCode model supports it, no UI/flow</td><td>Should there be a "Forgot Password" flow?</td></tr>
+  <tr><td>Employer Job Creation</td><td>Currently only FIRA/Agency can create jobs</td><td>Can employers request/create their own job orders?</td></tr>
+  <tr><td>Notification on Status Change</td><td>Notifications only created on endorsement creation</td><td>Should every status change send a notification?</td></tr>
+</table>
+
+<div style="text-align:center; margin-top:48px; padding:24px; background:#F1F5F9; border-radius:12px;">
+  <div style="font-size:14px; color:#334155; font-weight:600;">📝 Review & Correct</div>
+  <div style="font-size:12px; color:#64748B; margin-top:4px;">Please review each workflow above and note any corrections, additions, or changes. I'll update the system accordingly.</div>
+</div>
+
+</div>
+</body>
+</html>
