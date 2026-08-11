@@ -306,7 +306,7 @@ export function AppNav() {
                 <Button
                   size="sm"
                   className="rounded-xl"
-                  onClick={() => setAuthModalOpen(true)}
+                  onClick={() => setAuthModalOpen(true, 'register')}
                 >
                   {language === 'fil' ? 'Magparehistro' : 'Register'}
                 </Button>

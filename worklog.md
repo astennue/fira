@@ -187,3 +187,24 @@ Stage Summary:
 - Zero remaining border-blue-100 across all 5 files
 - Zero remaining bg-white across all 5 files
 - ~25 individual class replacements across 3 files
+
+---
+Task ID: 8a
+Agent: Main
+Task: Fix registration bug + create FIRA workflow document with user corrections
+
+Work Log:
+- Fixed registration bug #1: auth-modal.tsx Tabs used `value={authModalDefaultTab}` (controlled) without `onValueChange` → changed to `defaultValue={authModalDefaultTab}` so users can switch between Sign In and Register tabs
+- Fixed registration bug #2: app-nav.tsx Register button called `setAuthModalOpen(true)` without passing `'register'` tab → fixed to `setAuthModalOpen(true, 'register')`
+- Browser-verified registration: opened modal on Register tab, filled form, submitted, redirected to applicant dashboard successfully
+- Created comprehensive FIRA_WORKFLOW_DOCUMENT.md with user's 5 corrections applied:
+  1. Only FIRA creates job orders (not employers)
+  2. Employer accreditation: FIRA creates account for evaluation → employer submits requirements → FIRA evaluates → approved account used as admin for company
+  3. ATS pipeline has default stages + per-job/per-applicant customization capability
+  4. (Confirmed) Agencies can endorse candidates with FIRA review
+  5. No payment processing in the system
+- Workflow covers: 5 user roles, 10 service modules, 3 end-to-end cross-role flows, business rules, screen mappings
+
+Stage Summary:
+- Registration bug fixed (2 code changes in auth-modal.tsx and app-nav.tsx)
+- FIRA_WORKFLOW_DOCUMENT.md created at project root for user review before implementation

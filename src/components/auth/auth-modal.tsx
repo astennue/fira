@@ -170,7 +170,7 @@ export function AuthModal() {
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs value={authModalDefaultTab} className="w-full">
+        <Tabs defaultValue={authModalDefaultTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 bg-blue-50 dark:bg-blue-950/50">
             <TabsTrigger value="login" className="data-[state=active]:bg-blue-700 data-[state=active]:text-white rounded-lg">
               {language === 'fil' ? 'Mag-sign In' : 'Sign In'}
