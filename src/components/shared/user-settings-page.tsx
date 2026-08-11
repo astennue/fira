@@ -13,6 +13,7 @@ import { Separator } from '@/components/ui/separator'
 import { Progress } from '@/components/ui/progress'
 import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
+import { apiFetch } from '@/lib/fetch'
 
 function getPasswordStrength(password: string) {
   const checks = [
@@ -59,7 +60,7 @@ export function UserSettingsPage() {
   const profileMutation = useMutation({
     mutationFn: async () => {
       if (!user?.id) throw new Error('No user')
-      const res = await fetch(`/api/users/${user.id}`, {
+      const res = await apiFetch(`/api/users/${user.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, phone }),
@@ -79,7 +80,7 @@ export function UserSettingsPage() {
       if (!user?.id) throw new Error('No user')
       const formData = new FormData()
       formData.append('avatar', file)
-      const res = await fetch(`/api/users/avatar?userId=${user.id}`, {
+      const res = await apiFetch(`/api/users/avatar?userId=${user.id}`, {
         method: 'POST',
         body: formData,
       })
@@ -104,7 +105,7 @@ export function UserSettingsPage() {
 
   const sendCodeMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch('/api/auth/send-verification', {
+      const res = await apiFetch('/api/auth/send-verification', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: user?.email, type: 'password_change' }),
@@ -124,7 +125,7 @@ export function UserSettingsPage() {
 
   const verifyCodeMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch('/api/auth/verify-code', {
+      const res = await apiFetch('/api/auth/verify-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: user?.email, code: verificationCode, type: 'password_change' }),
@@ -142,7 +143,7 @@ export function UserSettingsPage() {
   const passwordMutation = useMutation({
     mutationFn: async () => {
       if (newPassword !== confirmPassword) throw new Error('Passwords do not match')
-      const res = await fetch('/api/auth/change-password', {
+      const res = await apiFetch('/api/auth/change-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: user?.email, currentPassword, newPassword }),
@@ -162,8 +163,8 @@ export function UserSettingsPage() {
   })
 
   return (
-    <div className="space-y-6">
-      <div className="mb-2">
+    <div className="view-transition space-y-6 pb-8">
+      <div>
         <h1 className="text-2xl font-bold">{language === 'fil' ? 'Settings' : 'Settings'}</h1>
         <p className="text-muted-foreground text-sm">{language === 'fil' ? 'Pamahalaan ang iyong account' : 'Manage your account preferences'}</p>
       </div>
@@ -171,7 +172,7 @@ export function UserSettingsPage() {
       <div className="max-w-2xl space-y-6">
         {/* Profile Picture + Completion */}
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
               <Camera className="h-5 w-5 text-blue-600" />
               {language === 'fil' ? 'Profile Picture' : 'Profile Picture'}
@@ -212,7 +213,7 @@ export function UserSettingsPage() {
 
         {/* Personal Info */}
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
               <User className="h-5 w-5 text-blue-600" />
               {language === 'fil' ? 'Personal na Impormasyon' : 'Personal Information'}
@@ -242,7 +243,7 @@ export function UserSettingsPage() {
 
         {/* Change Password */}
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
               <Lock className="h-5 w-5 text-blue-600" />
               {language === 'fil' ? 'Palitan ang Password' : 'Change Password'}
@@ -345,7 +346,7 @@ export function UserSettingsPage() {
 
         {/* Font Size */}
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
               <Type className="h-5 w-5 text-blue-600" />
               {language === 'fil' ? 'Laki ng Font' : 'Font Size'}

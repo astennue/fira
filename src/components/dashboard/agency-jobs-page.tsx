@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore } from '@/store/app-store'
+import { apiFetch } from '@/lib/fetch'
 
 export function AgencyJobsPage() {
   const { navigate, language } = useAppStore()
@@ -15,7 +16,7 @@ export function AgencyJobsPage() {
   const { data: jobsData, isLoading } = useQuery({
     queryKey: ['agency-jobs-list'],
     queryFn: async () => {
-      const res = await fetch('/api/jobs?userRole=local_agency')
+      const res = await apiFetch('/api/jobs?userRole=local_agency')
       if (!res.ok) return { jobs: [] }
       return res.json()
     },
@@ -47,7 +48,7 @@ export function AgencyJobsPage() {
       ) : jobs.length === 0 ? (
         <Card className="p-8 text-center"><Briefcase className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">{language === 'fil' ? 'Wala pang trabaho.' : 'No jobs yet.'}</p></Card>
       ) : (
-        <div className="grid sm:grid-cols-2 gap-4 max-h-[calc(100vh-16rem)] overflow-y-auto">
+        <div className="grid sm:grid-cols-2 gap-4 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar">
           {jobs.map((job: any, i: number) => (
             <motion.div key={job.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
               <Card className="hover:shadow-sm transition-shadow cursor-pointer" onClick={() => navigate('ats-pipeline', { jobId: job.id })}>

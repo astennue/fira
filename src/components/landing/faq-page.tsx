@@ -13,6 +13,7 @@ import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from '@/components/ui/accordion'
 import { useAppStore } from '@/store/app-store'
+import { apiFetch } from '@/lib/fetch'
 
 export function FaqPage() {
   const { language } = useAppStore()
@@ -22,7 +23,7 @@ export function FaqPage() {
   const { data: faqsData, isLoading } = useQuery({
     queryKey: ['all-faqs'],
     queryFn: async () => {
-      const res = await fetch('/api/cms/faqs?public=true&all=true')
+      const res = await apiFetch('/api/cms/faqs?public=true&all=true')
       if (!res.ok) return []
       return res.json()
     },

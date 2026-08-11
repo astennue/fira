@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, Edit, Trash2, Save, FileText } from 'lucide-react'
+import { Plus, Edit, Trash2, Save, Loader2, FileText } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,7 +12,19 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { toast } from 'sonner'
+import { apiFetch } from '@/lib/fetch'
 
 export function CmsPagesPage() {
   
@@ -24,7 +36,7 @@ export function CmsPagesPage() {
   const { data: pages = [], isLoading } = useQuery({
     queryKey: ['cms-pages'],
     queryFn: async () => {
-      const res = await fetch('/api/cms/pages')
+      const res = await apiFetch('/api/cms/pages')
       if (!res.ok) return []
       return res.json()
     },
@@ -34,7 +46,7 @@ export function CmsPagesPage() {
     mutationFn: async () => {
       const url = editId ? `/api/cms/pages?id=${editId}` : '/api/cms/pages'
       const method = editId ? 'PUT' : 'POST'
-      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+      const res = await apiFetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
       if (!res.ok) throw new Error('Failed to save')
       return res.json()
     },
@@ -50,12 +62,15 @@ export function CmsPagesPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/cms/pages?id=${id}`, { method: 'DELETE' })
+      const res = await apiFetch(`/api/cms/pages?id=${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete')
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cms-pages'] })
       toast.success('Page deleted!')
+    },
+    onError: () => {
+      toast.error('Failed to delete page')
     },
   })
 
@@ -136,7 +151,7 @@ export function CmsPagesPage() {
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
               <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-                <Save className="mr-2 h-4 w-4" /> {saveMutation.isPending ? 'Saving...' : 'Save'}
+                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? 'Saving...' : 'Save'}
               </Button>
             </div>
           </div>
@@ -147,10 +162,12 @@ export function CmsPagesPage() {
 }
 
 function PageList({ pages, onEdit, onDelete, isLoading }: { pages: any[]; onEdit: (p: any) => void; onDelete: (id: string) => void; isLoading: boolean }) {
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
+
   if (isLoading) return <div className="space-y-3">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)}</div>
   if (pages.length === 0) return <Card className="p-8 text-center"><FileText className="h-10 w-10 mx-auto text-muted-foreground mb-2" /><p className="text-muted-foreground">No pages found</p></Card>
   return (
-    <div className="space-y-3">
+    <div className="space-y-6 pb-8">
       {pages.map((page: any) => (
         <Card key={page.id} className="border-border dark:border-blue-900/30">
           <CardContent className="p-4 flex items-center justify-between">
@@ -163,7 +180,21 @@ function PageList({ pages, onEdit, onDelete, isLoading }: { pages: any[]; onEdit
             </div>
             <div className="flex gap-1 shrink-0">
               <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onEdit(page)}><Edit className="h-4 w-4" /></Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => onDelete(page.id)}><Trash2 className="h-4 w-4" /></Button>
+              <AlertDialog open={!!deleteTarget && deleteTarget === page.id} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+                <AlertDialogTrigger asChild>
+                  <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30" onClick={() => setDeleteTarget(page.id)}><Trash2 className="h-4 w-4" /></Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => { onDelete(page.id); setDeleteTarget(null) }} className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </CardContent>
         </Card>

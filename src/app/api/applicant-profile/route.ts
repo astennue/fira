@@ -1,12 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { requireAuth, requireFira } from '@/lib/auth'
+
+const FIRA_ROLES = ['super_admin', 'staff', 'international_agency'] as const
+
+function checkProfileAccess(auth: { userId: string; userRole: string }, requestUserId: string): NextResponse | null {
+  // FIRA roles can access any profile
+  if (FIRA_ROLES.includes(auth.userRole as any)) return null
+  // Otherwise, user can only access their own profile
+  if (auth.userId !== requestUserId) {
+    return NextResponse.json({ error: 'You can only access your own profile' }, { status: 403 })
+  }
+  return null
+}
 
 export async function GET(request: NextRequest) {
+  const auth = requireAuth(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('userId')
 
     if (!userId) return NextResponse.json({ error: 'userId is required' }, { status: 400 })
+
+    // Check access: own profile or FIRA role
+    const accessCheck = checkProfileAccess(auth, userId)
+    if (accessCheck) return accessCheck
 
     const profile = await db.applicantProfile.findUnique({
       where: { userId },
@@ -32,10 +52,17 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = requireAuth(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const body = await request.json()
     const { userId, ...data } = body
     if (!userId) return NextResponse.json({ error: 'userId is required' }, { status: 400 })
+
+    // Check access: own profile or FIRA role
+    const accessCheck = checkProfileAccess(auth, userId)
+    if (accessCheck) return accessCheck
 
     const existing = await db.applicantProfile.findUnique({ where: { userId } })
     if (existing) return NextResponse.json({ error: 'Profile already exists. Use PUT to update.' }, { status: 409 })
@@ -49,10 +76,17 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
+  const auth = requireAuth(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const body = await request.json()
     const { userId, ...data } = body
     if (!userId) return NextResponse.json({ error: 'userId is required' }, { status: 400 })
+
+    // Check access: own profile or FIRA role
+    const accessCheck = checkProfileAccess(auth, userId)
+    if (accessCheck) return accessCheck
 
     // Update profile
     const profileFields: Record<string, unknown> = {}

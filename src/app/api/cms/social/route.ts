@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { requireFira } from '@/lib/auth'
 
 export async function GET() {
   try {
@@ -15,6 +16,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = requireFira(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const body = await request.json()
     const { platform, title, url, icon, order, isActive } = body
@@ -42,6 +46,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
+  const auth = requireFira(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
@@ -71,6 +78,9 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  const auth = requireFira(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')

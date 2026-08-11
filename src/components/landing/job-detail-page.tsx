@@ -13,6 +13,8 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
+import { apiFetch } from '@/lib/fetch'
+import { convertToPHP, formatPHP, getCurrencySymbol } from '@/lib/currency'
 
 export function JobDetailPage() {
   const { navigate, viewParams, user, language } = useAppStore()
@@ -24,7 +26,7 @@ export function JobDetailPage() {
   const { data: jobsData, isLoading } = useQuery({
     queryKey: ['job-detail', jobId],
     queryFn: async () => {
-      const res = await fetch(`/api/jobs/${jobId}`)
+      const res = await apiFetch(`/api/jobs/${jobId}`)
       if (!res.ok) return null
       return res.json()
     },
@@ -33,7 +35,7 @@ export function JobDetailPage() {
 
   const applyMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch('/api/applications', {
+      const res = await apiFetch('/api/applications', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ applicantId: user!.id, jobOrderId: jobId }),
@@ -48,6 +50,7 @@ export function JobDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['job-detail', jobId] })
       toast.success(language === 'fil' ? 'Matagumpay na na-apply!' : 'Application submitted successfully!')
     },
+    onError: (err: any) => toast.error(err.message || (language === 'fil' ? 'Hindi matagumpay ang pag-apply.' : 'Failed to submit application')),
     onSettled: () => setIsApplying(false),
   })
 
@@ -111,7 +114,15 @@ export function JobDetailPage() {
             <div className="flex flex-wrap items-center gap-4 mt-2 text-muted-foreground">
               <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" />{job.city ? `${job.city}, ` : ''}{job.country}</span>
               {job.duration && <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" />{job.duration}</span>}
-              <span className="flex items-center gap-1.5"><DollarSign className="h-4 w-4" />${job.salaryMin ?? '?'} - ${job.salaryMax ?? '?'} {job.salaryCurrency || 'USD'}/{job.salaryPeriod || 'month'}</span>
+              <span className="flex items-center gap-1.5">
+                <DollarSign className="h-4 w-4" />
+                {getCurrencySymbol(job.salaryCurrency || 'USD')}{job.salaryMin ?? '?'} - {getCurrencySymbol(job.salaryCurrency || 'USD')}{job.salaryMax ?? '?'} {job.salaryCurrency || 'USD'}/{job.salaryPeriod || 'month'}
+              </span>
+              {job.salaryCurrency && job.salaryCurrency !== 'PHP' && job.salaryMin != null && (
+                <span className="text-xs text-muted-foreground">
+                  ≈ {formatPHP(Number(job.salaryMin) * (convertToPHP(1, job.salaryCurrency) || 1))}{job.salaryMax ? ` – ${formatPHP(Number(job.salaryMax) * (convertToPHP(1, job.salaryCurrency) || 1))}` : ''} / {job.salaryPeriod?.toLowerCase() || 'month'}
+                </span>
+              )}
               {job.slots && <span className="flex items-center gap-1.5"><Briefcase className="h-4 w-4" />{job.slots} slots</span>}
             </div>
           </motion.div>

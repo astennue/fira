@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { requireAuth } from '@/lib/auth'
 
 function excludePassword<T extends Record<string, unknown>>(user: T): Omit<T, 'password'> {
   const { password: _pw, ...rest } = user as T & { password: unknown }
@@ -7,12 +8,20 @@ function excludePassword<T extends Record<string, unknown>>(user: T): Omit<T, 'p
 }
 
 export async function POST(request: NextRequest) {
+  const auth = requireAuth(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('userId')
 
     if (!userId) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 })
+    }
+
+    // Ensure user can only upload their own avatar
+    if (auth.userId !== userId) {
+      return NextResponse.json({ error: 'You can only upload your own avatar' }, { status: 403 })
     }
 
     const user = await db.user.findUnique({ where: { id: userId } })

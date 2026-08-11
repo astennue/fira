@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Sparkles, Wand2, Copy, Check } from 'lucide-react'
+import { Sparkles, Wand2, Copy, Check, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -21,7 +21,7 @@ export function ResumeEnhancementPage() {
     if (!resume.trim()) return
     setIsLoading(true)
     setEnhanced('')
-    // Simulated enhancement (in production, would call AI service)
+    // TODO: Replace with real AI API call
     await new Promise(resolve => setTimeout(resolve, 2000))
 
     const enhancedText = `
@@ -99,7 +99,7 @@ ${jobDesc ? `\n### Job Alignment Analysis:\nBased on the job description provide
             </div>
             <Button onClick={enhance} disabled={!resume.trim() || isLoading} className="w-full">
               {isLoading ? (
-                <><Wand2 className="mr-2 h-4 w-4 animate-spin" />{language === 'fil' ? 'Pinapahusay...' : 'Enhancing...'}</>
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{language === 'fil' ? 'Pinapahusay...' : 'Enhancing...'}</>
               ) : (
                 <><Sparkles className="mr-2 h-4 w-4" />{language === 'fil' ? 'Pahusayin ang Resume' : 'Enhance Resume'}</>
               )}
@@ -120,7 +120,7 @@ ${jobDesc ? `\n### Job Alignment Analysis:\nBased on the job description provide
           <CardContent>
             {isLoading ? (
               <div className="space-y-3">
-                {Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-4 bg-muted rounded animate-pulse" style={{ width: `${70 + Math.random() * 30}%`, animationDelay: `${i * 0.1}s` }} />)}
+                {Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-4 bg-muted rounded animate-pulse" style={{ width: `${80 - i * 5}%`, animationDelay: `${i * 0.1}s` }} />)}
               </div>
             ) : enhanced ? (
               <div className="prose prose-sm dark:prose-invert max-w-none text-sm whitespace-pre-line">{enhanced}</div>

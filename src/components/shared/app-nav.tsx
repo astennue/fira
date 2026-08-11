@@ -1,5 +1,6 @@
 'use client'
 
+import { apiFetch } from "@/lib/fetch"
 import { useState, useEffect } from 'react'
 import { useTheme } from 'next-themes'
 import { useQuery } from '@tanstack/react-query'
@@ -60,7 +61,7 @@ export function AppNav() {
     queryKey: ['notifications', user?.id],
     queryFn: async () => {
       if (!user?.id) return []
-      const res = await fetch(`/api/notifications?userId=${user.id}`)
+      const res = await apiFetch(`/api/notifications?userId=${user.id}`)
       if (!res.ok) return []
       const data = await res.json()
       return (data.notifications || data || []) as Array<{ id: string; title: string; read: boolean }>

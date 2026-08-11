@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query'
-import { Sparkles, Search, ArrowDown, Send, CheckCircle, XCircle } from 'lucide-react'
+import { Sparkles, Search, ArrowDown, Send, CheckCircle, XCircle, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Progress } from '@/components/ui/progress'
 import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
+import { apiFetch } from '@/lib/fetch'
 
 export function AiMatchingPage() {
   const { language } = useAppStore()
@@ -22,7 +23,7 @@ export function AiMatchingPage() {
   const { data: jobsData } = useQuery({
     queryKey: ['ai-matching-jobs'],
     queryFn: async () => {
-      const res = await fetch('/api/jobs')
+      const res = await apiFetch('/api/jobs')
       if (!res.ok) return { jobs: [] }
       return res.json()
     },
@@ -35,7 +36,7 @@ export function AiMatchingPage() {
     setIsMatching(true)
     setResults(null)
     try {
-      const res = await fetch('/api/matching', {
+      const res = await apiFetch('/api/matching', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ jobOrderId: selectedJobId }),
@@ -82,7 +83,7 @@ export function AiMatchingPage() {
             </div>
             <Button size="lg" onClick={runMatching} disabled={!selectedJobId || isMatching} className="shrink-0">
               {isMatching ? (
-                <><Sparkles className="mr-2 h-5 w-5 animate-spin" />{language === 'fil' ? 'Nagmamanipula...' : 'Matching...'}</>
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{language === 'fil' ? 'Nagmamanipula...' : 'Matching...'}</>
               ) : (
                 <><Sparkles className="mr-2 h-5 w-5" />{language === 'fil' ? 'I-run ang AI Matching' : 'Run AI Matching'}</>
               )}
@@ -108,7 +109,7 @@ export function AiMatchingPage() {
               <p className="text-muted-foreground">{language === 'fil' ? 'Walang nahanap na kandidato.' : 'No candidates found.'}</p>
             </Card>
           ) : (
-            <div className="space-y-3 max-h-[calc(100vh-24rem)] overflow-y-auto">
+            <div className="space-y-3 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar">
               {results.map((candidate: any, i: number) => (
                 <motion.div key={candidate.applicantId} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
                   <Card>

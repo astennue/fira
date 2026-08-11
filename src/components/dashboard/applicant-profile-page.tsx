@@ -1,11 +1,12 @@
 'use client'
 
+import { apiFetch } from "@/lib/fetch"
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import {
   User, FileText, GraduationCap, Briefcase, Globe, Award,
   Languages, FolderOpen, AlertTriangle, CheckCircle, XCircle,
-  Shield, Stamp, Stethoscope, Clock, Edit,
+  Shield, Stamp, Stethoscope, Clock, Edit, BookOpen, Users as UsersIcon,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -19,7 +20,7 @@ export function ApplicantProfilePage() {
   const { data: profileData, isLoading } = useQuery({
     queryKey: ['my-profile', user?.id],
     queryFn: async () => {
-      const res = await fetch(`/api/applicant-profile?userId=${user?.id}`)
+      const res = await apiFetch(`/api/applicant-profile?userId=${user?.id}`)
       if (!res.ok) return null
       return res.json()
     },
@@ -90,6 +91,36 @@ export function ApplicantProfilePage() {
           {language === 'fil' ? 'I-edit' : 'Edit'}
         </Button>
       </div>
+
+      {/* Resume */}
+      {(() => {
+        const resumeDoc = documents.find((d: any) => d.documentType === 'resume')
+        if (!resumeDoc) return null
+        return (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+            <Card className="border-primary/20 bg-primary/5">
+              <CardContent className="py-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-primary/10">
+                    <FileText className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold">{resumeDoc.fileName}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Resume • {resumeDoc.fileSize ? `${(resumeDoc.fileSize / 1024).toFixed(1)} KB` : ''}
+                    </p>
+                  </div>
+                  {resumeDoc.isVerified ? (
+                    <Badge className="text-xs bg-emerald-100 text-emerald-800">Verified</Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-xs">Pending</Badge>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )
+      })()}
 
       {/* Personal Info */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
@@ -319,11 +350,14 @@ export function ApplicantProfilePage() {
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {documents.map((d: any) => (
                     <div key={d.id} className="flex items-center justify-between p-2 rounded border">
-                      <span className="text-sm">{d.documentType?.replace(/_/g, ' ')}</span>
+                      <div className="flex items-center gap-2 min-w-0">
+                        {d.documentType === 'resume' && <FileText className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />}
+                        <span className="text-sm truncate">{d.fileName || d.documentType?.replace(/_/g, ' ')}</span>
+                      </div>
                       {d.isVerified ? (
-                        <Badge className="text-xs bg-emerald-100 text-emerald-800">{language === 'fil' ? 'Verified' : 'Verified'}</Badge>
+                        <Badge className="text-xs bg-emerald-100 text-emerald-800 shrink-0">Verified</Badge>
                       ) : (
-                        <Badge variant="outline" className="text-xs">{language === 'fil' ? 'Pending' : 'Pending'}</Badge>
+                        <Badge variant="outline" className="text-xs shrink-0">Pending</Badge>
                       )}
                     </div>
                   ))}
@@ -332,7 +366,63 @@ export function ApplicantProfilePage() {
             </CardContent>
           </Card>
         </motion.div>
+
+        {/* References */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.21 }}>
+          <Card>
+            <CardHeader><CardTitle><UsersIcon className="h-4 w-4 mr-2" />{language === 'fil' ? 'Mga Reference' : 'References'}</CardTitle></CardHeader>
+            <CardContent>
+              {references.length === 0 ? (
+                <p className="text-sm text-muted-foreground">{language === 'fil' ? 'Wala pang idagdag.' : 'No entries yet.'}</p>
+              ) : (
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {references.map((r: any) => (
+                    <div key={r.id} className="p-3 rounded-lg border">
+                      <p className="font-medium text-sm">{r.name}</p>
+                      <p className="text-xs text-muted-foreground">{r.position}{r.company ? ` at ${r.company}` : ''}</p>
+                      <div className="flex gap-3 mt-1">
+                        {r.relationship && <p className="text-xs text-muted-foreground">{r.relationship}</p>}
+                        {r.yearsKnown && <p className="text-xs text-muted-foreground">{r.yearsKnown} yrs</p>}
+                      </div>
+                      <div className="flex gap-3 mt-1">
+                        {r.phone && <p className="text-xs text-muted-foreground">{r.phone}</p>}
+                        {r.email && <p className="text-xs text-muted-foreground">{r.email}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
+
+      {/* Trainings */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.22 }}>
+        <Card>
+          <CardHeader><CardTitle><BookOpen className="h-4 w-4 mr-2" />{language === 'fil' ? 'Mga Pagsasanay' : 'Trainings'}</CardTitle></CardHeader>
+          <CardContent>
+            {trainings.length === 0 ? (
+              <p className="text-sm text-muted-foreground">{language === 'fil' ? 'Wala pang idagdag.' : 'No entries yet.'}</p>
+            ) : (
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {trainings.map((t: any) => (
+                  <div key={t.id} className="p-3 rounded-lg border">
+                    <p className="font-medium text-sm">{t.trainingName}</p>
+                    <p className="text-xs text-muted-foreground">{t.institution || ''}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {t.startDate ? new Date(t.startDate).toLocaleDateString() : ''}
+                      {t.startDate && t.endDate ? ' - ' : ''}
+                      {t.endDate ? new Date(t.endDate).toLocaleDateString() : ''}
+                      {t.hours ? ` • ${t.hours} hrs` : ''}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import bcrypt from 'bcryptjs';
+import { requireRole } from '@/lib/auth';
 
 function excludePassword<T extends Record<string, unknown>>(user: T): Omit<T, 'password'> {
   const { password: _pw, ...rest } = user as T & { password: unknown };
@@ -9,6 +10,9 @@ function excludePassword<T extends Record<string, unknown>>(user: T): Omit<T, 'p
 
 // GET all users (super-admin)
 export async function GET(request: NextRequest) {
+  const auth = requireRole(request, ['super_admin'])
+  if (auth instanceof NextResponse) return auth
+
   try {
     const { searchParams } = new URL(request.url);
     const role = searchParams.get('role');
@@ -49,6 +53,9 @@ export async function GET(request: NextRequest) {
 
 // POST - create user (super-admin)
 export async function POST(request: NextRequest) {
+  const auth = requireRole(request, ['super_admin'])
+  if (auth instanceof NextResponse) return auth
+
   try {
     const body = await request.json();
     const { email, password, name, role, phone, isActive, isApproved } = body;
@@ -93,6 +100,9 @@ export async function POST(request: NextRequest) {
 
 // PUT - update user (super-admin)
 export async function PUT(request: NextRequest) {
+  const auth = requireRole(request, ['super_admin'])
+  if (auth instanceof NextResponse) return auth
+
   try {
     const body = await request.json();
     const { id, name, email, phone, role, isActive, isApproved, password } = body;
@@ -132,6 +142,9 @@ export async function PUT(request: NextRequest) {
 
 // DELETE - delete user (super-admin)
 export async function DELETE(request: NextRequest) {
+  const auth = requireRole(request, ['super_admin'])
+  if (auth instanceof NextResponse) return auth
+
   try {
     const body = await request.json();
     const { id } = body;

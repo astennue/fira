@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Save, Settings, Globe, Phone, Mail, MapPin, Building } from 'lucide-react'
+import { Save, Loader2, Settings, Globe, Phone, Mail, MapPin, Building } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
+import { apiFetch } from '@/lib/fetch'
 
 const defaultSettings: Record<string, string> = {
   site_name: 'FIRA - Fil International Recruitment Agency',
@@ -37,7 +38,7 @@ export function CmsSettingsPage() {
   const { data: settingsData = [], isLoading } = useQuery({
     queryKey: ['cms-settings'],
     queryFn: async () => {
-      const res = await fetch('/api/cms/settings')
+      const res = await apiFetch('/api/cms/settings')
       if (!res.ok) return []
       return res.json()
     },
@@ -54,7 +55,7 @@ export function CmsSettingsPage() {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch('/api/cms/settings', {
+      const res = await apiFetch('/api/cms/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(effectiveSettings),
@@ -74,14 +75,14 @@ export function CmsSettingsPage() {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
+    <div className="space-y-6 pb-8">
+      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Site Settings</h1>
           <p className="text-muted-foreground text-sm">Configure general site information</p>
         </div>
         <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} className="rounded-xl">
-          <Save className="mr-2 h-4 w-4" /> {saveMutation.isPending ? 'Saving...' : 'Save All'}
+          {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? 'Saving...' : 'Save All'}
         </Button>
       </div>
 
@@ -94,7 +95,7 @@ export function CmsSettingsPage() {
         <div className="space-y-6 max-w-4xl">
           {/* General Settings */}
           <Card>
-            <CardHeader>
+            <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Globe className="h-5 w-5 text-blue-600" /> General
               </CardTitle>
@@ -125,7 +126,7 @@ export function CmsSettingsPage() {
 
           {/* Contact Settings */}
           <Card>
-            <CardHeader>
+            <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Building className="h-5 w-5 text-blue-600" /> Contact Information
               </CardTitle>
@@ -158,7 +159,7 @@ export function CmsSettingsPage() {
 
           {/* Social Media Settings */}
           <Card>
-            <CardHeader>
+            <CardHeader className="pb-3">
               <CardTitle className="text-lg">Social Media URLs</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">

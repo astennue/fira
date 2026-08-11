@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Save, ScrollText, FileCheck } from 'lucide-react'
+import { Save, Loader2, ScrollText, FileCheck } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
+import { apiFetch } from '@/lib/fetch'
 
 const defaultTerms = { title: 'Terms of Service', content: '', version: '1.0' }
 const defaultPrivacy = { title: 'Data Privacy Consent', content: '', version: '1.0' }
@@ -27,7 +28,7 @@ export function CmsTermsPage() {
   const { data: termsData = [], isLoading } = useQuery({
     queryKey: ['cms-terms'],
     queryFn: async () => {
-      const res = await fetch('/api/cms/terms')
+      const res = await apiFetch('/api/cms/terms')
       if (!res.ok) return []
       return res.json()
     },
@@ -47,7 +48,7 @@ export function CmsTermsPage() {
 
   const saveTermsMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch('/api/cms/terms', {
+      const res = await apiFetch('/api/cms/terms', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'terms_of_service', ...effectiveTerms }),
@@ -59,11 +60,14 @@ export function CmsTermsPage() {
       queryClient.invalidateQueries({ queryKey: ['cms-terms'] })
       toast.success('Terms of Service updated!')
     },
+    onError: () => {
+      toast.error('Failed to update Terms of Service')
+    },
   })
 
   const savePrivacyMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch('/api/cms/terms', {
+      const res = await apiFetch('/api/cms/terms', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'data_privacy_consent', ...effectivePrivacy }),
@@ -74,6 +78,9 @@ export function CmsTermsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cms-terms'] })
       toast.success('Data Privacy Consent updated!')
+    },
+    onError: () => {
+      toast.error('Failed to update Data Privacy Consent')
     },
   })
 
@@ -131,7 +138,7 @@ export function CmsTermsPage() {
                 </div>
                 <div className="flex justify-end">
                   <Button onClick={() => saveTermsMutation.mutate()} disabled={saveTermsMutation.isPending} className="rounded-xl">
-                    <Save className="mr-2 h-4 w-4" /> {saveTermsMutation.isPending ? 'Saving...' : 'Save Changes'}
+                    {saveTermsMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveTermsMutation.isPending ? 'Saving...' : 'Save Changes'}
                   </Button>
                 </div>
               </CardContent>
@@ -169,7 +176,7 @@ export function CmsTermsPage() {
                 </div>
                 <div className="flex justify-end">
                   <Button onClick={() => savePrivacyMutation.mutate()} disabled={savePrivacyMutation.isPending} className="rounded-xl">
-                    <Save className="mr-2 h-4 w-4" /> {savePrivacyMutation.isPending ? 'Saving...' : 'Save Changes'}
+                    {savePrivacyMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {savePrivacyMutation.isPending ? 'Saving...' : 'Save Changes'}
                   </Button>
                 </div>
               </CardContent>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, Edit, Trash2, Star, Save, X, Eye, EyeOff } from 'lucide-react'
+import { Plus, Edit, Trash2, Star, Save, Loader2, X, Eye, EyeOff } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,8 +11,20 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
+import { apiFetch } from '@/lib/fetch'
 
 export function CmsTestimonialsPage() {
   const { language } = useAppStore()
@@ -24,7 +36,7 @@ export function CmsTestimonialsPage() {
   const { data: testimonials = [], isLoading } = useQuery({
     queryKey: ['cms-testimonials'],
     queryFn: async () => {
-      const res = await fetch('/api/cms/testimonials')
+      const res = await apiFetch('/api/cms/testimonials')
       if (!res.ok) return []
       return res.json()
     },
@@ -34,7 +46,7 @@ export function CmsTestimonialsPage() {
     mutationFn: async () => {
       const url = editId ? `/api/cms/testimonials?id=${editId}` : '/api/cms/testimonials'
       const method = editId ? 'PUT' : 'POST'
-      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+      const res = await apiFetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
       if (!res.ok) throw new Error('Failed to save')
       return res.json()
     },
@@ -48,14 +60,20 @@ export function CmsTestimonialsPage() {
     onError: () => toast.error('Failed to save testimonial'),
   })
 
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
+
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/cms/testimonials?id=${id}`, { method: 'DELETE' })
+      const res = await apiFetch(`/api/cms/testimonials?id=${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete')
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cms-testimonials'] })
       toast.success('Testimonial deleted!')
+      setDeleteTarget(null)
+    },
+    onError: () => {
+      toast.error('Failed to delete testimonial')
     },
   })
 
@@ -96,7 +114,21 @@ export function CmsTestimonialsPage() {
                   </div>
                   <div className="flex gap-1">
                     <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(t)}><Edit className="h-3.5 w-3.5" /></Button>
-                    <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => deleteMutation.mutate(t.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
+                    <AlertDialog open={!!deleteTarget && deleteTarget === t.id} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30" onClick={() => setDeleteTarget(t.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>{language === 'fil' ? 'Sigurado ka ba?' : 'Are you sure?'}</AlertDialogTitle>
+                          <AlertDialogDescription>{language === 'fil' ? 'Hindi na maibabalik ang aksyong ito.' : 'This action cannot be undone.'}</AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>{language === 'fil' ? 'Kanselahin' : 'Cancel'}</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => { deleteMutation.mutate(t.id); setDeleteTarget(null) }} className="bg-red-600 hover:bg-red-700">{language === 'fil' ? 'Tanggalin' : 'Delete'}</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground italic mb-3 line-clamp-3">&ldquo;{t.feedback}&rdquo;</p>
@@ -160,7 +192,7 @@ export function CmsTestimonialsPage() {
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
               <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-                <Save className="mr-2 h-4 w-4" /> {saveMutation.isPending ? 'Saving...' : 'Save'}
+                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? 'Saving...' : 'Save'}
               </Button>
             </div>
           </div>

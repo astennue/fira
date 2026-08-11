@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { requireFira } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
+  const auth = requireFira(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const { searchParams } = new URL(request.url)
     const agencyType = searchParams.get('agencyType')
@@ -30,6 +34,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  const auth = requireFira(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const body = await request.json()
     const { agencyId, action } = body

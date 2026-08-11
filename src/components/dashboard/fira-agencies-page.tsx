@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { Search, Building, CheckCircle, XCircle, Clock, Shield } from 'lucide-react'
+import { Search, Building, CheckCircle, XCircle, Clock, Shield, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,6 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
+import { apiFetch } from '@/lib/fetch'
 
 export function FiraAgenciesPage() {
   const { language } = useAppStore()
@@ -25,7 +26,7 @@ export function FiraAgenciesPage() {
       const params = new URLSearchParams()
       if (search) params.set('search', search)
       if (typeFilter !== 'all') params.set('agencyType', typeFilter)
-      const res = await fetch(`/api/agencies?${params}`)
+      const res = await apiFetch(`/api/agencies?${params}`)
       if (!res.ok) return { agencies: [] }
       return res.json()
     },
@@ -35,7 +36,7 @@ export function FiraAgenciesPage() {
 
   const approveMutation = useMutation({
     mutationFn: async ({ agencyId, action }: { agencyId: string; action: string }) => {
-      const res = await fetch('/api/agencies', {
+      const res = await apiFetch('/api/agencies', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ agencyId, action }),
@@ -45,7 +46,10 @@ export function FiraAgenciesPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['fira-agencies'] })
-      toast.success(language === 'fil' ? 'Na-update!' : 'Updated!')
+      toast.success(language === 'fil' ? 'Na-update!' : 'Agency updated successfully')
+    },
+    onError: () => {
+      toast.error(language === 'fil' ? 'Nabigo ang pag-update.' : 'Failed to update agency')
     },
   })
 
@@ -76,7 +80,7 @@ export function FiraAgenciesPage() {
       ) : agencies.length === 0 ? (
         <Card className="p-8 text-center"><Building className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">{language === 'fil' ? 'Walang ahensya.' : 'No agencies found.'}</p></Card>
       ) : (
-        <div className="space-y-3 max-h-[calc(100vh-18rem)] overflow-y-auto">
+        <div className="space-y-3 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar">
           {agencies.map((agency: any, i: number) => (
             <motion.div key={agency.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }}>
               <Card>
@@ -97,8 +101,8 @@ export function FiraAgenciesPage() {
                     {!agency.isApproved ? (
                       <>
                         <Badge variant="secondary" className="text-xs text-amber-600"><Clock className="h-3 w-3 mr-1" />Pending</Badge>
-                        <Button size="sm" onClick={() => approveMutation.mutate({ agencyId: agency.id, action: 'approve' })}>
-                          <CheckCircle className="h-3.5 w-3.5 mr-1" />{language === 'fil' ? 'Aprubahan' : 'Approve'}
+                        <Button size="sm" onClick={() => approveMutation.mutate({ agencyId: agency.id, action: 'approve' })} disabled={approveMutation.isPending}>
+                          {approveMutation.isPending ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <CheckCircle className="h-3.5 w-3.5 mr-1" />}{language === 'fil' ? 'Aprubahan' : 'Approve'}
                         </Button>
                       </>
                     ) : (

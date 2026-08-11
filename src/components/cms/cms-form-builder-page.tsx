@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, Edit, Trash2, Save, GripVertical, ArrowUp, ArrowDown, X, Type, AlignLeft, List, CheckSquare, Calendar, Hash, Mail, Phone, FileUp } from 'lucide-react'
+import { Plus, Edit, Trash2, Save, Loader2, GripVertical, ArrowUp, ArrowDown, X, Type, AlignLeft, List, CheckSquare, Calendar, Hash, Mail, Phone, FileUp } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,8 +11,20 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Switch } from '@/components/ui/switch'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
+import { apiFetch } from '@/lib/fetch'
 
 const fieldTypes = [
   { value: 'text', label: 'Text', icon: Type },
@@ -37,7 +49,7 @@ export function CmsFormBuilderPage() {
   const { data: fields = [], isLoading } = useQuery({
     queryKey: ['cms-form-fields'],
     queryFn: async () => {
-      const res = await fetch('/api/cms/form-fields')
+      const res = await apiFetch('/api/cms/form-fields')
       if (!res.ok) return []
       return res.json()
     },
@@ -47,7 +59,7 @@ export function CmsFormBuilderPage() {
     mutationFn: async () => {
       const url = editId ? `/api/cms/form-fields?id=${editId}` : '/api/cms/form-fields'
       const method = editId ? 'PUT' : 'POST'
-      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+      const res = await apiFetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
       if (!res.ok) throw new Error('Failed to save')
       return res.json()
     },
@@ -61,14 +73,20 @@ export function CmsFormBuilderPage() {
     onError: () => toast.error('Failed to save field'),
   })
 
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
+
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/cms/form-fields?id=${id}`, { method: 'DELETE' })
+      const res = await apiFetch(`/api/cms/form-fields?id=${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete')
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cms-form-fields'] })
       toast.success('Field deleted!')
+      setDeleteTarget(null)
+    },
+    onError: () => {
+      toast.error('Failed to delete field')
     },
   })
 
@@ -130,7 +148,21 @@ export function CmsFormBuilderPage() {
                         </div>
                         <div className="flex gap-1 shrink-0">
                           <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(field)}><Edit className="h-3.5 w-3.5" /></Button>
-                          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => deleteMutation.mutate(field.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
+                          <AlertDialog open={!!deleteTarget && deleteTarget === field.id} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30" onClick={() => setDeleteTarget(field.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => { deleteMutation.mutate(field.id); setDeleteTarget(null) }} className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </CardContent>
                     </Card>
@@ -185,7 +217,7 @@ export function CmsFormBuilderPage() {
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
               <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-                <Save className="mr-2 h-4 w-4" /> {saveMutation.isPending ? 'Saving...' : 'Save'}
+                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? 'Saving...' : 'Save'}
               </Button>
             </div>
           </div>

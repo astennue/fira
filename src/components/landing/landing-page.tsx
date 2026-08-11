@@ -21,6 +21,7 @@ import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from '@/components/ui/accordion'
 import { useAppStore } from '@/store/app-store'
+import { apiFetch } from '@/lib/fetch'
 
 /* ============================================================
    ANIMATION VARIANTS
@@ -209,7 +210,7 @@ export function LandingPage() {
   const { data: jobsData, isLoading } = useQuery({
     queryKey: ['public-jobs'],
     queryFn: async () => {
-      const res = await fetch('/api/jobs?public=true')
+      const res = await apiFetch('/api/jobs?public=true')
       if (!res.ok) return { jobs: [] }
       return res.json()
     },
@@ -218,7 +219,7 @@ export function LandingPage() {
   const { data: testimonialsData } = useQuery({
     queryKey: ['public-testimonials'],
     queryFn: async () => {
-      const res = await fetch('/api/cms/testimonials?public=true')
+      const res = await apiFetch('/api/cms/testimonials?public=true')
       if (!res.ok) return []
       return res.json()
     },
@@ -227,7 +228,7 @@ export function LandingPage() {
   const { data: faqsData } = useQuery({
     queryKey: ['public-faqs'],
     queryFn: async () => {
-      const res = await fetch('/api/cms/faqs?public=true')
+      const res = await apiFetch('/api/cms/faqs?public=true')
       if (!res.ok) return []
       return res.json()
     },

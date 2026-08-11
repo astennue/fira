@@ -1,11 +1,12 @@
 'use client'
 
+import { apiFetch } from "@/lib/fetch"
 import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
   Briefcase, FileText, Clock, Sparkles, ArrowRight, Users,
-  Eye, Heart, Bell, CalendarDays,
-  TrendingUp, MessageSquare, Star, Target, ClipboardList, ChevronRight,
+  Bell, CalendarDays,
+  Target, ClipboardList, ChevronRight,
   Zap, MapPin, DollarSign, CheckCircle2, AlertCircle
 } from 'lucide-react'
 import { motion, useSpring, useTransform, useMotionValue } from 'framer-motion'
@@ -97,26 +98,32 @@ function BannerPattern() {
   )
 }
 
-/* ─── Mock Data ─────────────────────────────────────────────── */
-const mockRecommendedJobs = [
-  { id: 'rj1', title: 'Domestic Helper', country: 'Hong Kong', company: 'ABC Employment', salary: 'HKD 5,500/mo', matchScore: 92 },
-  { id: 'rj2', title: 'Caregiver', country: 'Canada', company: 'CareWell Agency', salary: 'CAD 3,200/mo', matchScore: 87 },
-  { id: 'rj3', title: 'Factory Worker', country: 'Taiwan', company: 'TechParts Inc.', salary: 'TWD 24,000/mo', matchScore: 81 },
-  { id: 'rj4', title: 'Hotel Staff', country: 'UAE', company: 'Desert Sands Hospitality', salary: 'AED 2,500/mo', matchScore: 78 },
-]
+/* ─── Relative Time Formatter ──────────────────────────────── */
+function formatTimeAgo(dateStr: string): string {
+  const date = new Date(dateStr)
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const diffMin = Math.floor(diffMs / 60000)
+  const diffHr = Math.floor(diffMs / 3600000)
+  const diffDay = Math.floor(diffMs / 86400000)
 
-const mockNotifications = [
-  { id: 'n1', title: 'Application Updated', desc: 'Your application for Domestic Helper (Hong Kong) has been shortlisted.', time: '2h ago', read: false },
-  { id: 'n2', title: 'New Job Match', desc: 'A new Caregiver position in Canada matches your profile.', time: '5h ago', read: false },
-  { id: 'n3', title: 'Document Reminder', desc: 'Please upload your updated passport copy.', time: '1d ago', read: true },
-  { id: 'n4', title: 'Interview Scheduled', desc: 'Your interview with ABC Employment is on March 15.', time: '2d ago', read: true },
-]
+  if (diffMin < 1) return 'Just now'
+  if (diffMin < 60) return `${diffMin}m ago`
+  if (diffHr < 24) return `${diffHr}h ago`
+  if (diffDay < 7) return `${diffDay}d ago`
+  return date.toLocaleDateString()
+}
 
-const mockTasks = [
-  { id: 't1', title: 'Upload passport copy', deadline: 'Mar 12', urgent: true },
-  { id: 't2', title: 'Complete medical exam', deadline: 'Mar 18', urgent: false },
-  { id: 't3', title: 'Submit signed contract', deadline: 'Mar 22', urgent: false },
-]
+/* ─── Salary Formatter ─────────────────────────────────────── */
+function formatSalary(job: any): string {
+  if (job.salaryMin != null && job.salaryMax != null) {
+    return `${job.salaryCurrency || ''} ${Number(job.salaryMin).toLocaleString()} - ${Number(job.salaryMax).toLocaleString()}${job.salaryPeriod ? '/' + job.salaryPeriod : ''}`
+  }
+  if (job.salaryMin != null) {
+    return `${job.salaryCurrency || ''} ${Number(job.salaryMin).toLocaleString()}${job.salaryPeriod ? '/' + job.salaryPeriod : ''}`
+  }
+  return ''
+}
 
 /* ─── Framer Motion Variants ───────────────────────────────── */
 const containerVariants = {
@@ -148,7 +155,7 @@ export function ApplicantDashboard() {
   const { data: appsData, isLoading: appsLoading } = useQuery({
     queryKey: ['my-applications', user?.id],
     queryFn: async () => {
-      const res = await fetch(`/api/applications?applicantId=${user?.id}`)
+      const res = await apiFetch(`/api/applications?applicantId=${user?.id}`)
       if (!res.ok) return { applications: [] }
       return res.json()
     },
@@ -158,7 +165,7 @@ export function ApplicantDashboard() {
   const { data: profileData } = useQuery({
     queryKey: ['my-profile', user?.id],
     queryFn: async () => {
-      const res = await fetch(`/api/applicant-profile?userId=${user?.id}`)
+      const res = await apiFetch(`/api/applicant-profile?userId=${user?.id}`)
       if (!res.ok) return null
       return res.json()
     },
@@ -168,37 +175,48 @@ export function ApplicantDashboard() {
   const { data: notifData } = useQuery({
     queryKey: ['my-notifications', user?.id],
     queryFn: async () => {
-      const res = await fetch(`/api/notifications?userId=${user?.id}`)
+      const res = await apiFetch(`/api/notifications?userId=${user?.id}`)
       if (!res.ok) return { notifications: [] }
       return res.json()
     },
     enabled: !!user?.id,
   })
 
+  const { data: publicJobsData, isLoading: jobsLoading } = useQuery({
+    queryKey: ['recommended-jobs'],
+    queryFn: async () => {
+      const res = await apiFetch('/api/jobs?public=true')
+      if (!res.ok) return { jobs: [] }
+      return res.json()
+    },
+  })
+
   /* ─── Derived Data ──────────────────────────────────────── */
   const applications = Array.isArray(appsData?.applications) ? appsData.applications : []
   const profile = profileData?.profile
-  const notifications = Array.isArray(notifData?.notifications) && notifData.notifications.length > 0
-    ? notifData.notifications
-    : mockNotifications
+  const notifications = Array.isArray(notifData?.notifications) ? notifData.notifications : []
+  const publicJobs = Array.isArray(publicJobsData?.jobs) ? publicJobsData.jobs : []
+  const recommendedJobs = publicJobs.slice(0, 4)
 
   const profileComplete = profile?.isComplete
-  const profilePercent = profile?.formStep
-    ? Math.min(Math.round((profile.formStep / 7) * 100), 100)
-    : 65
+  const profilePercent = profile?.isComplete
+    ? 100
+    : profile?.formStep
+      ? Math.min(Math.round((profile.formStep / 7) * 100), 100)
+      : 0
   const activeApps = applications.filter(
     (a: any) => !['rejected', 'withdrawn', 'hired', 'deployed', 'completed'].includes(a.status)
   ).length
   const avgMatch =
     applications.length > 0
       ? Math.round(
-          applications.reduce((sum: number, a: any) => sum + (a.matchScore || 0), 0) /
+          applications.reduce((sum: number, a: any) => sum + (a.aiAnalysis?.matchScore || 0), 0) /
             applications.length
         )
       : 0
 
   const firstName = user?.name?.split(' ')[0] || 'User'
-  const unreadCount = notifications.filter((n: any) => !n.read).length
+  const unreadCount = notifications.filter((n: any) => !n.isRead).length
 
   /* ─── Stat Cards Config ────────────────────────────────── */
   const stats = [
@@ -207,18 +225,6 @@ export function ApplicantDashboard() {
       value: activeApps,
       icon: FileText,
       gradient: 'from-blue-500 to-blue-600',
-    },
-    {
-      label: isFil ? 'Profile Views' : 'Profile Views',
-      value: 24,
-      icon: Eye,
-      gradient: 'from-amber-500 to-amber-600',
-    },
-    {
-      label: isFil ? 'Na-save na Trabaho' : 'Saved Jobs',
-      value: 8,
-      icon: Heart,
-      gradient: 'from-rose-500 to-rose-600',
     },
     {
       label: isFil ? 'Average na Match' : 'Avg Match Score',
@@ -311,11 +317,11 @@ export function ApplicantDashboard() {
       </motion.div>
 
       {/* ═══════════════════════════════════════════════════════ */}
-      {/*  2. QUICK STATS ROW (4 cards)                          */}
+      {/*  2. QUICK STATS ROW                                     */}
       {/* ═══════════════════════════════════════════════════════ */}
       <motion.div
         variants={itemVariants}
-        className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4"
+        className="grid grid-cols-2 lg:grid-cols-2 gap-4"
       >
         {stats.map((stat, i) => (
           <motion.div
@@ -345,12 +351,6 @@ export function ApplicantDashboard() {
                   >
                     <stat.icon className="h-4 w-4 md:h-5 md:w-5 text-white" />
                   </div>
-                </div>
-                <div className="mt-2.5 flex items-center gap-1 text-[11px] md:text-xs text-emerald-600 dark:text-emerald-400 font-medium">
-                  <TrendingUp className="h-3 w-3" />
-                  <span>
-                    +12% {isFil ? 'sa linggong ito' : 'this week'}
-                  </span>
                 </div>
               </CardContent>
             </GlassCard>
@@ -445,8 +445,8 @@ export function ApplicantDashboard() {
                           </div>
                         </div>
                         <div className="flex items-center gap-2 ml-3 shrink-0">
-                          {app.matchScore != null && (
-                            <MatchScoreBadge score={app.matchScore} />
+                          {app.aiAnalysis?.matchScore != null && app.aiAnalysis.matchScore > 0 && (
+                            <MatchScoreBadge score={app.aiAnalysis.matchScore} />
                           )}
                           <StatusBadge status={app.status} />
                         </div>
@@ -479,42 +479,53 @@ export function ApplicantDashboard() {
               )}
             </CardHeader>
             <CardContent className="pt-0 flex-1 flex flex-col">
-              <div className="space-y-2 max-h-80 overflow-y-auto pr-1 flex-1">
-                {notifications.slice(0, 5).map((notif: any, idx: number) => (
-                  <motion.div
-                    key={notif.id}
-                    initial={{ opacity: 0, x: 12 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 + idx * 0.05 }}
-                    className={`p-3 rounded-xl border transition-all duration-200 ${
-                      !notif.read
-                        ? 'bg-blue-50/60 dark:bg-blue-950/20 border-blue-200/60 dark:border-blue-800/60'
-                        : 'border-border hover:bg-muted/50'
-                    }`}
-                  >
-                    <div className="flex items-start gap-2.5">
-                      {!notif.read && (
-                        <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 shrink-0" />
-                      )}
-                      {notif.read && (
-                        <div className="w-2 h-2 rounded-full bg-transparent mt-1.5 shrink-0" />
-                      )}
-                      <div className="min-w-0 flex-1">
-                        <p className={`text-sm truncate ${!notif.read ? 'font-semibold text-foreground' : 'font-medium text-foreground'}`}>
-                          {notif.title}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-                          {notif.desc}
-                        </p>
-                        <p className="text-[11px] text-muted-foreground mt-1.5 flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {notif.time}
-                        </p>
+              {notifications.length === 0 ? (
+                <div className="flex-1 flex items-center justify-center py-8 text-center">
+                  <div>
+                    <Bell className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground">
+                      {isFil ? 'Wala pang notipikasyon' : 'No notifications yet'}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2 max-h-80 overflow-y-auto pr-1 flex-1">
+                  {notifications.slice(0, 5).map((notif: any, idx: number) => (
+                    <motion.div
+                      key={notif.id}
+                      initial={{ opacity: 0, x: 12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.2 + idx * 0.05 }}
+                      className={`p-3 rounded-xl border transition-all duration-200 ${
+                        !notif.isRead
+                          ? 'bg-blue-50/60 dark:bg-blue-950/20 border-blue-200/60 dark:border-blue-800/60'
+                          : 'border-border hover:bg-muted/50'
+                      }`}
+                    >
+                      <div className="flex items-start gap-2.5">
+                        {!notif.isRead && (
+                          <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 shrink-0" />
+                        )}
+                        {notif.isRead && (
+                          <div className="w-2 h-2 rounded-full bg-transparent mt-1.5 shrink-0" />
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <p className={`text-sm truncate ${!notif.isRead ? 'font-semibold text-foreground' : 'font-medium text-foreground'}`}>
+                            {notif.title}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
+                            {notif.message}
+                          </p>
+                          <p className="text-[11px] text-muted-foreground mt-1.5 flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {formatTimeAgo(notif.createdAt)}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </GlassCard>
         </motion.div>
@@ -545,139 +556,164 @@ export function ApplicantDashboard() {
               </Button>
             </CardHeader>
             <CardContent className="pt-0">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {mockRecommendedJobs.map((job, idx) => (
-                  <motion.div
-                    key={job.id}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 + idx * 0.07 }}
-                    className="p-4 rounded-xl border border-border hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md transition-all duration-200 cursor-pointer group"
-                    onClick={() => navigate('job-detail')}
-                  >
-                    {/* Header: Title + Match Score */}
-                    <div className="flex items-start justify-between mb-2.5">
-                      <div className="min-w-0 flex-1">
+              {jobsLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <Skeleton key={i} className="h-36 rounded-xl" />
+                  ))}
+                </div>
+              ) : recommendedJobs.length === 0 ? (
+                <div className="text-center py-12">
+                  <Briefcase className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
+                  <p className="text-sm text-muted-foreground">
+                    {isFil ? 'Wala pang mga trabahong available' : 'No jobs available right now'}
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {recommendedJobs.map((job: any, idx) => (
+                    <motion.div
+                      key={job.id}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 + idx * 0.07 }}
+                      className="p-4 rounded-xl border border-border hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md transition-all duration-200 cursor-pointer group"
+                      onClick={() => navigate('job-detail', { jobId: job.id })}
+                    >
+                      {/* Header: Title */}
+                      <div className="mb-2.5">
                         <p className="font-semibold text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
                           {job.title}
                         </p>
                         <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                          {job.company}
+                          {job.employer?.companyName || job.agency?.name || ''}
                         </p>
                       </div>
-                      <div className={`px-2 py-0.5 rounded-md text-xs font-bold shrink-0 ml-2 ${
-                        job.matchScore >= 85
-                          ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
-                          : 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
-                      }`}>
-                        {job.matchScore}%
+
+                      {/* Meta: Country + Salary */}
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
+                        <span className="flex items-center gap-1">
+                          <MapPin className="h-3 w-3" />
+                          {job.country}
+                        </span>
+                        {formatSalary(job) && (
+                          <span className="flex items-center gap-1">
+                            <DollarSign className="h-3 w-3" />
+                            {formatSalary(job)}
+                          </span>
+                        )}
                       </div>
-                    </div>
 
-                    {/* Meta: Country + Salary */}
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
-                      <span className="flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        {job.country}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <DollarSign className="h-3 w-3" />
-                        {job.salary}
-                      </span>
-                    </div>
-
-                    {/* Apply Button */}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="w-full text-xs h-8 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all duration-200"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        navigate('job-detail')
-                      }}
-                    >
-                      {isFil ? 'Mag-apply Na' : 'Apply Now'}
-                      <ArrowRight className="h-3 w-3 ml-1" />
-                    </Button>
-                  </motion.div>
-                ))}
-              </div>
+                      {/* Apply Button */}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-full text-xs h-8 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all duration-200"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          navigate('job-detail', { jobId: job.id })
+                        }}
+                      >
+                        {isFil ? 'Tingnan Detalye' : 'View Details'}
+                        <ArrowRight className="h-3 w-3 ml-1" />
+                      </Button>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </GlassCard>
         </motion.div>
 
-        {/* ─── RIGHT: Upcoming Tasks & Quick Actions ─────── */}
+        {/* ─── RIGHT: Next Steps & Quick Actions ──────────── */}
         <motion.div variants={itemVariants}>
           <GlassCard className="h-full flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <CardTitle className="flex items-center gap-2 text-base md:text-lg">
-                <div className="p-1.5 rounded-lg bg-rose-100 dark:bg-rose-900/50">
-                  <CalendarDays className="h-4 w-4 text-rose-600 dark:text-rose-400" />
+                <div className="p-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/50">
+                  <ClipboardList className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                 </div>
-                {isFil ? 'Mga Darating na Gawain' : 'Upcoming Tasks'}
+                {isFil ? 'Mga Susunod na Hakbang' : 'Next Steps'}
               </CardTitle>
-              <Badge variant="secondary" className="text-[11px] bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300">
-                {mockTasks.filter((t) => t.urgent).length} {isFil ? 'mahalaga' : 'urgent'}
-              </Badge>
             </CardHeader>
             <CardContent className="pt-0 flex-1 flex flex-col">
-              {/* Task List */}
+              {/* Next Steps List */}
               <div className="space-y-2 flex-1">
-                {mockTasks.map((task, idx) => (
-                  <motion.div
-                    key={task.id}
-                    initial={{ opacity: 0, x: 12 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.35 + idx * 0.06 }}
-                    className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 ${
-                      task.urgent
-                        ? 'bg-rose-50/60 dark:bg-rose-950/20 border-rose-200/60 dark:border-rose-800/60'
-                        : 'border-border hover:bg-muted/50'
+                <motion.div
+                  initial={{ opacity: 0, x: 12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.35 }}
+                  className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 ${
+                    profileComplete
+                      ? 'border-emerald-200/60 dark:border-emerald-800/60 bg-emerald-50/40 dark:bg-emerald-950/20'
+                      : 'bg-blue-50/60 dark:bg-blue-950/20 border-blue-200/60 dark:border-blue-800/60'
+                  }`}
+                >
+                  <div
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                      profileComplete
+                        ? 'bg-emerald-100 dark:bg-emerald-900/50'
+                        : 'bg-blue-100 dark:bg-blue-900/50'
                     }`}
                   >
-                    <div
-                      className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                        task.urgent
-                          ? 'bg-rose-100 dark:bg-rose-900/50'
-                          : 'bg-muted'
-                      }`}
-                    >
-                      {task.urgent ? (
-                        <AlertCircle className="h-4 w-4 text-rose-600 dark:text-rose-400" />
-                      ) : (
-                        <ClipboardList className="h-4 w-4 text-muted-foreground" />
-                      )}
+                    {profileComplete ? (
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                    ) : (
+                      <AlertCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className={`text-sm ${profileComplete ? 'font-medium text-foreground' : 'font-semibold text-foreground'}`}>
+                      {isFil ? 'Kumpletuhin ang Profile' : 'Complete Your Profile'}
+                    </p>
+                    <p className="text-xs mt-0.5 text-muted-foreground">
+                      {profileComplete
+                        ? (isFil ? 'Ang profile mo ay kumpleto na!' : 'Your profile is complete!')
+                        : `${profilePercent}% ${isFil ? 'nakumpleto na' : 'completed'}`
+                      }
+                    </p>
+                  </div>
+                  {!profileComplete && (
+                    <ChevronRight
+                      className="h-4 w-4 text-muted-foreground shrink-0 cursor-pointer hover:text-foreground"
+                      onClick={() => navigate('applicant-profile')}
+                    />
+                  )}
+                </motion.div>
+
+                {activeApps === 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, x: 12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="flex items-center gap-3 p-3 rounded-xl border border-border hover:bg-muted/50 transition-all duration-200"
+                  >
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-muted">
+                      <Briefcase className="h-4 w-4 text-muted-foreground" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className={`text-sm truncate ${task.urgent ? 'font-semibold text-foreground' : 'font-medium text-foreground'}`}>
-                        {task.title}
+                      <p className="text-sm font-medium text-foreground">
+                        {isFil ? 'Mag-apply sa Trabaho' : 'Apply to a Job'}
                       </p>
-                      <p className={`text-xs mt-0.5 flex items-center gap-1 ${
-                        task.urgent
-                          ? 'text-rose-600 dark:text-rose-400 font-medium'
-                          : 'text-muted-foreground'
-                      }`}>
-                        <Clock className="h-3 w-3" />
-                        {task.deadline}
-                        {task.urgent && (
-                          <Badge
-                            variant="outline"
-                            className="ml-1.5 text-[10px] h-4 px-1.5 border-rose-300 text-rose-600 dark:border-rose-700 dark:text-rose-400"
-                          >
-                            {isFil ? 'Mahalaga' : 'Urgent'}
-                          </Badge>
-                        )}
+                      <p className="text-xs mt-0.5 text-muted-foreground">
+                        {isFil
+                          ? 'Magsimula sa pag-aaply sa mga trabaho'
+                          : 'Browse and apply to open positions'
+                        }
                       </p>
                     </div>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <ChevronRight
+                      className="h-4 w-4 text-muted-foreground shrink-0 cursor-pointer hover:text-foreground"
+                      onClick={() => navigate('applicant-jobs')}
+                    />
                   </motion.div>
-                ))}
+                )}
               </div>
 
               {/* ─── Quick Actions ──────────────────────────── */}
               <div className="mt-4 pt-4 border-t border-border">
                 <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider mb-3">
-                  {isFil ? 'Mabilis na Aksyon' : 'Quick Actions'}
+                  {isFil ? 'Mabilisang Aksyon' : 'Quick Actions'}
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   <Button
@@ -713,7 +749,7 @@ export function ApplicantDashboard() {
                     className="h-auto py-2.5 text-xs justify-start gap-1.5"
                     onClick={() => navigate('applicant-applications')}
                   >
-                    <MessageSquare className="h-3.5 w-3.5" />
+                    <FileText className="h-3.5 w-3.5" />
                     {isFil ? 'Aplikasyon' : 'Applications'}
                   </Button>
                 </div>

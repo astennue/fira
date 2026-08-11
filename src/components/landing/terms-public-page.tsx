@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useQuery } from '@tanstack/react-query'
 import { useAppStore } from '@/store/app-store'
+import { apiFetch } from '@/lib/fetch'
 
 const DEFAULT_TERMS = `
 <h2 class="text-xl font-bold mb-3">1. Acceptance of Terms</h2>
@@ -61,7 +62,7 @@ export function TermsPublicPage() {
   const { data: termsData = [], isLoading } = useQuery({
     queryKey: ['cms-terms-public'],
     queryFn: async () => {
-      const res = await fetch('/api/cms/terms?public=true')
+      const res = await apiFetch('/api/cms/terms?public=true')
       if (!res.ok) return []
       return res.json()
     },

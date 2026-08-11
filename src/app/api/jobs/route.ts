@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { requireAuth, requireFira } from '@/lib/auth'
 
 const DEFAULT_STAGES = [
   'New Application', 'Document Review', 'Initial Screening', 'Interview Scheduled',
@@ -11,11 +12,18 @@ const DEFAULT_STAGES = [
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
+    const isPublic = searchParams.get('public')
+
+    // Public access only when public=true param is present
+    if (isPublic !== 'true') {
+      const auth = requireAuth(request)
+      if (auth instanceof NextResponse) return auth
+    }
+
     const country = searchParams.get('country')
     const category = searchParams.get('category')
     const status = searchParams.get('status')
     const visibility = searchParams.get('visibility')
-    const isPublic = searchParams.get('public')
     const search = searchParams.get('search')
     const userRole = searchParams.get('userRole')
     const jobId = searchParams.get('jobId')
@@ -73,6 +81,9 @@ function buildVisibilityFilter(visibility: string | null, userRole: string | nul
 }
 
 export async function POST(request: NextRequest) {
+  const auth = requireFira(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const body = await request.json()
     const { userId, userRole } = body
@@ -120,6 +131,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  const auth = requireFira(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const body = await request.json()
     const { jobId, status } = body

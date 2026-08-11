@@ -16,6 +16,7 @@ import {
   GripVertical,
   MessageCircleQuestion,
   X,
+  Loader2,
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -39,8 +40,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { useAppStore, useT } from '@/store/app-store'
 import { toast } from 'sonner'
+import { apiFetch } from '@/lib/fetch'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -127,7 +140,7 @@ export function CmsFaqPage() {
   const { data: faqs = [], isLoading } = useQuery<FaqItem[]>({
     queryKey: ['cms-faqs'],
     queryFn: async () => {
-      const res = await fetch('/api/cms/faqs')
+      const res = await apiFetch('/api/cms/faqs')
       if (!res.ok) return []
       return res.json()
     },
@@ -189,7 +202,7 @@ export function CmsFaqPage() {
         ? { id: editId, question: form.question, answer: form.answer, category: form.category, order: form.order, isActive: form.isActive }
         : { question: form.question, answer: form.answer, category: form.category, order: form.order }
 
-      const res = await fetch(url, {
+      const res = await apiFetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -211,7 +224,7 @@ export function CmsFaqPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch('/api/cms/faqs', {
+      const res = await apiFetch('/api/cms/faqs', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id }),
@@ -229,7 +242,7 @@ export function CmsFaqPage() {
 
   const toggleActiveMutation = useMutation({
     mutationFn: async ({ id, isActive }: { id: string; isActive: boolean }) => {
-      const res = await fetch('/api/cms/faqs', {
+      const res = await apiFetch('/api/cms/faqs', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, isActive }),
@@ -285,9 +298,7 @@ export function CmsFaqPage() {
     saveMutation.mutate()
   }
 
-  const handleDelete = (id: string) => {
-    deleteMutation.mutate(id)
-  }
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
 
   // ── Category Color Map ────────────────────────────────────────────────────
 
@@ -551,15 +562,28 @@ export function CmsFaqPage() {
                                     >
                                       <Edit className="h-3.5 w-3.5" />
                                     </Button>
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-7 w-7 text-destructive hover:text-destructive hover:bg-red-50"
-                                      onClick={() => handleDelete(faq.id)}
-                                      disabled={deleteMutation.isPending}
-                                    >
-                                      <Trash2 className="h-3.5 w-3.5" />
-                                    </Button>
+                                    <AlertDialog open={!!deleteTarget && deleteTarget === faq.id} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+                                      <AlertDialogTrigger asChild>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
+                                          onClick={(e) => { e.stopPropagation(); setDeleteTarget(faq.id) }}
+                                        >
+                                          <Trash2 className="h-3.5 w-3.5" />
+                                        </Button>
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle>{language === 'fil' ? 'Sigurado ka ba?' : 'Are you sure?'}</AlertDialogTitle>
+                                          <AlertDialogDescription>{language === 'fil' ? 'Hindi na maibabalik ang aksyong ito.' : 'This action cannot be undone.'}</AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                          <AlertDialogCancel>{language === 'fil' ? 'Kanselahin' : 'Cancel'}</AlertDialogCancel>
+                                          <AlertDialogAction onClick={() => { deleteMutation.mutate(faq.id); setDeleteTarget(null) }} className="bg-red-600 hover:bg-red-700">{language === 'fil' ? 'Tanggalin' : 'Delete'}</AlertDialogAction>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
                                   </div>
                                   <div className="flex items-center gap-2">
                                     <span className="text-[10px] text-muted-foreground">
@@ -707,7 +731,7 @@ export function CmsFaqPage() {
                 disabled={saveMutation.isPending}
                 className="rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 shadow-md shadow-blue-500/20"
               >
-                <Save className="mr-2 h-4 w-4" />
+                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
                 {saveMutation.isPending ? 'Saving...' : editId ? 'Update FAQ' : 'Create FAQ'}
               </Button>
             </div>

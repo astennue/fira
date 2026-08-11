@@ -2,13 +2,14 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { CheckCircle, XCircle, UserCheck, Eye, ArrowRight, Building2 } from 'lucide-react'
+import { CheckCircle, XCircle, UserCheck, Eye, ArrowRight, Building2, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
+import { apiFetch } from '@/lib/fetch'
 
 export function EmployerEndorsedPage() {
   const { language } = useAppStore()
@@ -17,7 +18,7 @@ export function EmployerEndorsedPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['employer-endorsements-list'],
     queryFn: async () => {
-      const res = await fetch('/api/endorsements')
+      const res = await apiFetch('/api/endorsements')
       if (!res.ok) return { endorsements: [] }
       return res.json()
     },
@@ -27,7 +28,7 @@ export function EmployerEndorsedPage() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ endorsementId, action }: { endorsementId: string; action: string }) => {
-      const res = await fetch('/api/endorsements', {
+      const res = await apiFetch('/api/endorsements', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ endorsementId, action }),
@@ -56,7 +57,7 @@ export function EmployerEndorsedPage() {
       ) : endorsements.length === 0 ? (
         <Card className="p-8 text-center"><UserCheck className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">{language === 'fil' ? 'Wala pang endorsed na kandidato.' : 'No endorsed candidates yet.'}</p></Card>
       ) : (
-        <div className="space-y-3 max-h-[calc(100vh-16rem)] overflow-y-auto">
+        <div className="space-y-3 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar">
           {endorsements.map((e: any, i: number) => {
             const applicant = e.application?.applicant
             const job = e.application?.jobOrder
@@ -95,10 +96,10 @@ export function EmployerEndorsedPage() {
                       {isPending && (
                         <div className="flex gap-2 pt-2 border-t">
                           <Button size="sm" className="flex-1" onClick={() => updateMutation.mutate({ endorsementId: e.id, action: 'employer_accept' })} disabled={updateMutation.isPending}>
-                            <CheckCircle className="h-4 w-4 mr-1" />{language === 'fil' ? 'Accept' : 'Accept'}
+                            {updateMutation.isPending ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <CheckCircle className="h-4 w-4 mr-1" />}{language === 'fil' ? 'Accept' : 'Accept'}
                           </Button>
                           <Button size="sm" variant="outline" className="flex-1" onClick={() => updateMutation.mutate({ endorsementId: e.id, action: 'employer_decline' })} disabled={updateMutation.isPending}>
-                            <XCircle className="h-4 w-4 mr-1" />{language === 'fil' ? 'Decline' : 'Decline'}
+                            {updateMutation.isPending ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <XCircle className="h-4 w-4 mr-1" />}{language === 'fil' ? 'Decline' : 'Decline'}
                           </Button>
                         </div>
                       )}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { requireFira } from '@/lib/auth'
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000'
 
@@ -9,7 +10,7 @@ function computeFallbackScore(applicantSkills: string[], requiredSkills: string[
   const matched = applicantSkills.filter((s: string) => reqLower.includes(s.toLowerCase()))
   const missing = requiredSkills.filter((s: string) => !appLower.includes(s.toLowerCase()))
   const ratio = requiredSkills.length > 0 ? matched.length / requiredSkills.length : 0.5
-  const semantic = ratio * 0.8 + 0.15 + Math.random() * 0.05
+  const semantic = ratio * 0.8 + 0.15
   const matchScore = Math.round((semantic * 0.7 + ratio * 0.3) * 100 * 10) / 10
 
   let explanation: string
@@ -21,6 +22,9 @@ function computeFallbackScore(applicantSkills: string[], requiredSkills: string[
 }
 
 export async function POST(request: NextRequest) {
+  const auth = requireFira(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const body = await request.json()
     const { jobOrderId } = body

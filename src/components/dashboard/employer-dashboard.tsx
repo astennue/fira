@@ -28,6 +28,7 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore, type ViewName } from '@/store/app-store'
 import { cn } from '@/lib/utils'
+import { apiFetch } from '@/lib/fetch'
 
 /* ------------------------------------------------------------------ */
 /*  Animated Counter                                                   */
@@ -151,9 +152,9 @@ function InitialsCircle({
 /* ------------------------------------------------------------------ */
 function DashboardSkeleton() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
       {/* Header skeleton */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div className="space-y-2">
           <Skeleton className="h-8 w-64" />
           <Skeleton className="h-4 w-80" />
@@ -161,7 +162,7 @@ function DashboardSkeleton() {
         <Skeleton className="h-9 w-32" />
       </div>
       {/* Stats skeleton */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
@@ -281,7 +282,7 @@ export function EmployerDashboard() {
   const { data: endorseData, isLoading: endorseLoading } = useQuery({
     queryKey: ['employer-endorsements'],
     queryFn: async () => {
-      const res = await fetch('/api/endorsements')
+      const res = await apiFetch('/api/endorsements')
       if (!res.ok) return { endorsements: [] }
       return res.json()
     },
@@ -290,7 +291,7 @@ export function EmployerDashboard() {
   const { data: jobsData } = useQuery({
     queryKey: ['employer-jobs'],
     queryFn: async () => {
-      const res = await fetch('/api/jobs')
+      const res = await apiFetch('/api/jobs')
       if (!res.ok) return { jobs: [] }
       return res.json()
     },
@@ -299,7 +300,7 @@ export function EmployerDashboard() {
   const { data: notifData } = useQuery({
     queryKey: ['employer-notifications', user?.id],
     queryFn: async () => {
-      const res = await fetch(`/api/notifications?userId=${user?.id}`)
+      const res = await apiFetch(`/api/notifications?userId=${user?.id}`)
       if (!res.ok) return { notifications: [] }
       return res.json()
     },
@@ -461,7 +462,7 @@ export function EmployerDashboard() {
       {/* ================================================================ */}
       {/*  STATS — 4 cards, 2x2 mobile, 4 across desktop                  */}
       {/* ================================================================ */}
-      <motion.div variants={item} className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <motion.div variants={item} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, i) => (
           <StatCard
             key={stat.label}
@@ -750,29 +751,6 @@ export function EmployerDashboard() {
         </motion.div>
       </div>
 
-      {/* ================================================================ */}
-      {/*  INLINE STYLES — Custom scrollbar + dark mode vars              */}
-      {/* ================================================================ */}
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 5px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(16, 185, 129, 0.2);
-          border-radius: 999px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(16, 185, 129, 0.4);
-        }
-        @media (prefers-color-scheme: dark) {
-          .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(16, 185, 129, 0.25);
-          }
-        }
-      `}</style>
     </motion.div>
   )
 }

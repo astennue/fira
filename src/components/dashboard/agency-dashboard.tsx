@@ -11,7 +11,9 @@ import { motion, useSpring, useTransform, useMotionValue } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore } from '@/store/app-store'
+import { apiFetch } from '@/lib/fetch'
 
 /* ─── Animated Counter ─── */
 function AnimatedCounter({ target, duration = 1.5 }: { target: number; duration?: number }) {
@@ -52,6 +54,35 @@ function StatusBadge({ status }: { status: string }) {
     >
       {status?.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
     </span>
+  )
+}
+
+/* ─── Dashboard Skeleton ─── */
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-6 pb-8">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-4 w-80" />
+        </div>
+        <Skeleton className="h-9 w-32" />
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="h-28 rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-[var(--color-card)]/60 backdrop-blur-xl">
+            <div className="p-5 space-y-3">
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="h-7 w-12" />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="h-72 rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-[var(--color-card)]/60 backdrop-blur-xl" />
+        <div className="lg:col-span-2 h-72 rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-[var(--color-card)]/60 backdrop-blur-xl" />
+      </div>
+    </div>
   )
 }
 
@@ -128,19 +159,19 @@ export function AgencyDashboard() {
   const isFil = language === 'fil'
 
   /* ── API Queries ── */
-  const { data: jobsData } = useQuery({
+  const { data: jobsData, isLoading: jobsLoading } = useQuery({
     queryKey: ['agency-jobs'],
     queryFn: async () => {
-      const res = await fetch('/api/jobs?userRole=local_agency')
+      const res = await apiFetch('/api/jobs?userRole=local_agency')
       if (!res.ok) return { jobs: [] }
       return res.json()
     },
   })
 
-  const { data: endorseData } = useQuery({
+  const { data: endorseData, isLoading: endorseLoading } = useQuery({
     queryKey: ['agency-endorsements'],
     queryFn: async () => {
-      const res = await fetch('/api/endorsements')
+      const res = await apiFetch('/api/endorsements')
       if (!res.ok) return { endorsements: [] }
       return res.json()
     },
@@ -149,7 +180,7 @@ export function AgencyDashboard() {
   const { data: usersData } = useQuery({
     queryKey: ['agency-applicants'],
     queryFn: async () => {
-      const res = await fetch('/api/users?role=applicant')
+      const res = await apiFetch('/api/users?role=applicant')
       if (!res.ok) return { users: [], total: 0 }
       return res.json()
     },
@@ -158,12 +189,14 @@ export function AgencyDashboard() {
   const { data: notifData } = useQuery({
     queryKey: ['agency-notifications', user?.id],
     queryFn: async () => {
-      const res = await fetch(`/api/notifications?userId=${user?.id}`)
+      const res = await apiFetch(`/api/notifications?userId=${user?.id}`)
       if (!res.ok) return { notifications: [] }
       return res.json()
     },
     enabled: !!user?.id,
   })
+
+  const isLoading = jobsLoading || endorseLoading
 
   /* ── Derived Data ── */
   const jobs = Array.isArray(jobsData?.jobs) ? jobsData.jobs : []
@@ -243,8 +276,10 @@ export function AgencyDashboard() {
     show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
   }
 
+  if (isLoading) return <DashboardSkeleton />
+
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
+    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 pb-8">
       {/* ═══════════════════════════════════════════════════════
           HEADER
          ═══════════════════════════════════════════════════════ */}
@@ -278,7 +313,7 @@ export function AgencyDashboard() {
       {/* ═══════════════════════════════════════════════════════
           STATS (2x2 mobile, 4 across desktop)
          ═══════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, i) => (
           <GlassStatCard key={stat.label} {...stat} delay={0.1 + i * 0.08} />
         ))}
@@ -287,7 +322,7 @@ export function AgencyDashboard() {
       {/* ═══════════════════════════════════════════════════════
           MAIN CONTENT: 3 columns on desktop
          ═══════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ──── COLUMN 1: Pipeline Status (1/3) ──── */}
         <motion.div variants={item}>
           <GlassCard className="h-full">
@@ -436,7 +471,7 @@ export function AgencyDashboard() {
       {/* ═══════════════════════════════════════════════════════
           BOTTOM ROW: Your Jobs (2/3) + Quick Actions (1/3)
          ═══════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ──── LEFT: Your Jobs (2/3) ──── */}
         <motion.div variants={item} className="lg:col-span-2">
           <GlassCard>
@@ -548,28 +583,6 @@ export function AgencyDashboard() {
         </motion.div>
       </div>
 
-      {/* ── Global scrollbar style ── */}
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 5px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(180, 130, 60, 0.3);
-          border-radius: 999px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(180, 130, 60, 0.5);
-        }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(245, 158, 11, 0.25);
-        }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(245, 158, 11, 0.4);
-        }
-      `}</style>
     </motion.div>
   )
 }

@@ -1,5 +1,6 @@
 'use client'
 
+import { apiFetch } from "@/lib/fetch"
 import { useQuery } from '@tanstack/react-query'
 import { Building2, Globe, Search, CheckCircle, Clock } from 'lucide-react'
 import { useState } from 'react'
@@ -21,7 +22,7 @@ export function FiraEmployersPage() {
       const params = new URLSearchParams()
       params.set('role', 'employer')
       if (search) params.set('search', search)
-      const res = await fetch(`/api/users?${params}`)
+      const res = await apiFetch(`/api/users?${params}`)
       if (!res.ok) return { users: [] }
       return res.json()
     },
@@ -46,7 +47,7 @@ export function FiraEmployersPage() {
       ) : users.length === 0 ? (
         <Card className="p-8 text-center"><Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">{language === 'fil' ? 'Walang empleyador.' : 'No employers found.'}</p></Card>
       ) : (
-        <div className="space-y-3 max-h-[calc(100vh-18rem)] overflow-y-auto">
+        <div className="space-y-3 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar">
           {users.map((u: any, i: number) => {
             const ep = u.employerProfile
             return (

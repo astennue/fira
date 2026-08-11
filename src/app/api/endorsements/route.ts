@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { requireRole, requireFira } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
+  const auth = requireRole(request, ['super_admin', 'staff', 'international_agency', 'local_agency', 'employer'])
+  if (auth instanceof NextResponse) return auth
+
   try {
     const { searchParams } = new URL(request.url)
     const applicationId = searchParams.get('applicationId')
@@ -36,6 +40,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = requireRole(request, ['super_admin', 'staff', 'international_agency', 'local_agency'])
+  if (auth instanceof NextResponse) return auth
+
   try {
     const body = await request.json()
     const { applicationId, endorsedById, employerId, coverNote, agencyNote } = body
@@ -63,8 +70,28 @@ export async function PATCH(request: NextRequest) {
     const { endorsementId, action, notes } = body
     if (!endorsementId || !action) return NextResponse.json({ error: 'endorsementId and action are required' }, { status: 400 })
 
+    // Role-based check depending on the action
+    let auth: any
+    if (action === 'fira_approve' || action === 'fira_reject') {
+      auth = requireFira(request)
+      if (auth instanceof NextResponse) return auth
+    } else if (action === 'employer_accept' || action === 'employer_decline') {
+      auth = requireRole(request, ['employer'])
+      if (auth instanceof NextResponse) return auth
+    } else {
+      return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+    }
+
     const endorsement = await db.endorsement.findUnique({ where: { id: endorsementId } })
     if (!endorsement) return NextResponse.json({ error: 'Endorsement not found' }, { status: 404 })
+
+    // Employer can only update their own endorsements
+    if (action === 'employer_accept' || action === 'employer_decline') {
+      const employerProfile = await db.employerProfile.findUnique({ where: { userId: auth.userId } })
+      if (!employerProfile || employerProfile.id !== endorsement.employerId) {
+        return NextResponse.json({ error: 'You can only update endorsements addressed to you' }, { status: 403 })
+      }
+    }
 
     let updateData: Record<string, unknown> = {}
     switch (action) {
@@ -72,7 +99,6 @@ export async function PATCH(request: NextRequest) {
       case 'fira_reject': updateData = { status: 'fira_rejected', firaNote: notes || endorsement.firaNote }; break
       case 'employer_accept': updateData = { status: 'employer_accepted', employerNote: notes || endorsement.employerNote }; break
       case 'employer_decline': updateData = { status: 'employer_declined', employerNote: notes || endorsement.employerNote }; break
-      default: return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
     }
 
     const updated = await db.endorsement.update({ where: { id: endorsementId }, data: updateData })

@@ -36,7 +36,9 @@ import { motion, useSpring, useTransform, useMotionValue } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore } from '@/store/app-store'
+import { apiFetch } from '@/lib/fetch'
 
 // ─── Animated Counter ─────────────────────────────────────────────────────────
 function AnimatedCounter({ target, duration = 2 }: { target: number; duration?: number }) {
@@ -101,43 +103,71 @@ function getCountryFlag(country: string): string {
   return flags[country] || '🌍'
 }
 
+// ─── FIRA Dashboard Skeleton ──────────────────────────────────────────────
+function FiraDashboardSkeleton() {
+  return (
+    <div className="space-y-6 pb-8">
+      {/* Header skeleton */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-4 w-80" />
+        </div>
+        <Skeleton className="h-9 w-32" />
+      </div>
+      {/* Stats skeleton — 6 cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} className="h-28 rounded-xl" />
+        ))}
+      </div>
+      {/* Main content skeleton */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Skeleton className="h-[500px] rounded-xl" />
+        <Skeleton className="h-[500px] rounded-xl" />
+        <Skeleton className="h-[500px] rounded-xl" />
+      </div>
+    </div>
+  )
+}
+
 // ─── Main Dashboard ──────────────────────────────────────────────────────────
 export function FiraDashboard() {
   const { navigate, language, user } = useAppStore()
   const isFil = language === 'fil'
 
   // ── Data queries ────────────────────────────────────────────────────────────
-  const { data: usersData } = useQuery({
+  const { data: usersData, isLoading: usersLoading } = useQuery({
     queryKey: ['fira-users'],
     queryFn: async () => {
-      const res = await fetch('/api/users')
+      const res = await apiFetch('/api/users')
       if (!res.ok) return { users: [], total: 0 }
       return res.json()
     },
   })
 
-  const { data: jobsData } = useQuery({
+  const { data: jobsData, isLoading: jobsLoading } = useQuery({
     queryKey: ['fira-jobs'],
     queryFn: async () => {
-      const res = await fetch('/api/jobs')
+      const res = await apiFetch('/api/jobs')
       if (!res.ok) return { jobs: [] }
       return res.json()
     },
   })
 
-  const { data: endorseData } = useQuery({
+  const { data: endorseData, isLoading: endorseLoading } = useQuery({
     queryKey: ['fira-endorsements'],
     queryFn: async () => {
-      const res = await fetch('/api/endorsements')
+      const res = await apiFetch('/api/endorsements')
       if (!res.ok) return { endorsements: [] }
       return res.json()
     },
   })
 
-  const { data: agenciesData } = useQuery({
+  const { data: agenciesData, isLoading: agenciesLoading } = useQuery({
     queryKey: ['fira-agencies'],
     queryFn: async () => {
-      const res = await fetch('/api/agencies')
+      const res = await apiFetch('/api/agencies')
       if (!res.ok) return { agencies: [] }
       return res.json()
     },
@@ -146,11 +176,13 @@ export function FiraDashboard() {
   const { data: notifData } = useQuery({
     queryKey: ['fira-notifications'],
     queryFn: async () => {
-      const res = await fetch('/api/notifications')
+      const res = await apiFetch('/api/notifications')
       if (!res.ok) return { notifications: [] }
       return res.json()
     },
   })
+
+  const isLoading = usersLoading || jobsLoading || endorseLoading || agenciesLoading
 
   // ── Data extraction ───────────────────────────────────────────────────────
   const users = Array.isArray(usersData?.users) ? usersData.users : []
@@ -164,6 +196,7 @@ export function FiraDashboard() {
   const employerCount = users.filter((u: any) => u.role === 'employer').length
   const activeJobs = jobs.filter((j: any) => j.status === 'open').length
   const pendingEndorse = endorsements.filter((e: any) => e.status === 'pending_fira_review').length
+  const partnerAgencies = agencies.filter((a: any) => a.isApproved === true).length
   const pendingAgencies = agencies.filter((a: any) => !a.isApproved).length
   const totalEndorsements = endorsements.length
   const unreadNotifs = notifications.filter((n: any) => !n.read).length
@@ -204,8 +237,8 @@ export function FiraDashboard() {
   // ── Stats configuration ───────────────────────────────────────────────────
   const stats = [
     {
-      label: isFil ? 'Kabuuang Ahensya' : 'Total Agencies',
-      value: agencies.length,
+      label: isFil ? 'Mga Ahensyang Partner' : 'Partner Agencies',
+      value: partnerAgencies,
       icon: Building,
       gradient: 'from-blue-500 to-blue-600',
       shadowColor: 'shadow-blue-500/25',
@@ -318,6 +351,8 @@ export function FiraDashboard() {
   }
 
   // ──────────────────────────────────────────────────────────────────────────
+  if (isLoading) return <FiraDashboardSkeleton />
+
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 pb-8">
       {/* ═══════════════ HEADER ═══════════════ */}

@@ -1,5 +1,6 @@
 'use client'
 
+import { apiFetch } from "@/lib/fetch"
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { FileText, MapPin, Clock, Sparkles, ExternalLink, AlertCircle } from 'lucide-react'
@@ -16,7 +17,7 @@ export function ApplicantApplicationsPage() {
   const { data: appsData, isLoading } = useQuery({
     queryKey: ['my-applications', user?.id],
     queryFn: async () => {
-      const res = await fetch(`/api/applications?applicantId=${user?.id}`)
+      const res = await apiFetch(`/api/applications?applicantId=${user?.id}`)
       if (!res.ok) return { applications: [] }
       return res.json()
     },
@@ -48,7 +49,7 @@ export function ApplicantApplicationsPage() {
           <Button onClick={() => navigate('applicant-jobs')}>{language === 'fil' ? 'Maghanap ng Trabaho' : 'Find Jobs'}</Button>
         </Card>
       ) : (
-        <div className="space-y-4 max-h-[calc(100vh-16rem)] overflow-y-auto">
+        <div className="space-y-4 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar">
           {applications.map((app: any, i: number) => {
             const job = app.jobOrder
             const stage = app.currentStage

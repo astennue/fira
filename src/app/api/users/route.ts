@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { requireRole } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
+  const auth = requireRole(request, ['super_admin'])
+  if (auth instanceof NextResponse) return auth
+
   try {
     const { searchParams } = new URL(request.url)
     const role = searchParams.get('role')
@@ -28,6 +32,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  const auth = requireRole(request, ['super_admin'])
+  if (auth instanceof NextResponse) return auth
+
   try {
     const body = await request.json()
     const { userId, action } = body

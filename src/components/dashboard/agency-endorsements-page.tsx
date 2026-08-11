@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
+import { apiFetch } from '@/lib/fetch'
 
 export function AgencyEndorsementsPage() {
   const { language } = useAppStore()
@@ -17,7 +18,7 @@ export function AgencyEndorsementsPage() {
   const { data: data, isLoading } = useQuery({
     queryKey: ['agency-endorsements'],
     queryFn: async () => {
-      const res = await fetch('/api/endorsements')
+      const res = await apiFetch('/api/endorsements')
       if (!res.ok) return { endorsements: [] }
       return res.json()
     },
@@ -46,7 +47,7 @@ export function AgencyEndorsementsPage() {
       ) : endorsements.length === 0 ? (
         <Card className="p-8 text-center"><Send className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">{language === 'fil' ? 'Wala pang endorsement.' : 'No endorsements yet.'}</p></Card>
       ) : (
-        <div className="space-y-3 max-h-[calc(100vh-16rem)] overflow-y-auto">
+        <div className="space-y-3 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar">
           {endorsements.map((e: any, i: number) => {
             const cfg = statusConfig[e.status] || statusConfig.pending_fira_review
             const StatusIcon = cfg.icon

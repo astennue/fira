@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { requireAuth, requireFira, requireRole } from '@/lib/auth';
 
 function excludePassword<T extends Record<string, unknown>>(user: T): Omit<T, 'password'> {
   const { password: _pw, ...rest } = user as T & { password: unknown };
@@ -10,6 +11,9 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const auth = requireRole(request, ['super_admin'])
+  if (auth instanceof NextResponse) return auth
+
   try {
     const { id } = await params;
 
@@ -39,8 +43,19 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Allow own profile update (requireAuth) or FIRA admin update (requireFira)
+  const authCheck = requireAuth(request)
+  if (authCheck instanceof NextResponse) return authCheck
+
+  // If not FIRA, ensure user is updating their own profile
+  const { id } = await params
+  if (authCheck.userRole !== 'super_admin' && authCheck.userRole !== 'staff' && authCheck.userRole !== 'international_agency') {
+    if (authCheck.userId !== id) {
+      return NextResponse.json({ error: 'You can only update your own profile' }, { status: 403 })
+    }
+  }
+
   try {
-    const { id } = await params;
     const body = await request.json();
     const { name, phone, avatar, role, isActive, isApproved } = body;
 
@@ -73,6 +88,9 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const auth = requireRole(request, ['super_admin'])
+  if (auth instanceof NextResponse) return auth
+
   try {
     const { id } = await params;
 

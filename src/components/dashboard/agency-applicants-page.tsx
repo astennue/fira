@@ -1,5 +1,6 @@
 'use client'
 
+import { apiFetch } from "@/lib/fetch"
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Search, Users, Eye, CheckCircle, XCircle, Clock } from 'lucide-react'
@@ -24,7 +25,7 @@ export function AgencyApplicantsPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['agency-applicants', search, filter],
     queryFn: async () => {
-      const res = await fetch(`/api/users?${queryParams}`)
+      const res = await apiFetch(`/api/users?${queryParams}`)
       if (!res.ok) return { users: [], total: 0 }
       return res.json()
     },
@@ -63,7 +64,7 @@ export function AgencyApplicantsPage() {
       ) : filteredUsers.length === 0 ? (
         <Card className="p-8 text-center"><Users className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">{language === 'fil' ? 'Walang nahanap na aplikante.' : 'No applicants found.'}</p></Card>
       ) : (
-        <div className="space-y-3 max-h-[calc(100vh-20rem)] overflow-y-auto">
+        <div className="space-y-3 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar">
           {filteredUsers.map((u: any, i: number) => {
             const p = u.applicantProfile
             return (

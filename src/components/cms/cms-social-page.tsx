@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, Edit, Trash2, Save, Facebook, Instagram, Linkedin, Twitter, Youtube, Globe } from 'lucide-react'
+import { Plus, Edit, Trash2, Save, Loader2, Facebook, Instagram, Linkedin, Twitter, Youtube, Globe } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,8 +11,20 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Switch } from '@/components/ui/switch'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
+import { apiFetch } from '@/lib/fetch'
 
 const platformIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   facebook: Facebook,
@@ -35,7 +47,7 @@ export function CmsSocialPage() {
   const { data: links = [], isLoading } = useQuery({
     queryKey: ['cms-social'],
     queryFn: async () => {
-      const res = await fetch('/api/cms/social')
+      const res = await apiFetch('/api/cms/social')
       if (!res.ok) return []
       return res.json()
     },
@@ -45,7 +57,7 @@ export function CmsSocialPage() {
     mutationFn: async () => {
       const url = editId ? `/api/cms/social?id=${editId}` : '/api/cms/social'
       const method = editId ? 'PUT' : 'POST'
-      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+      const res = await apiFetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
       if (!res.ok) throw new Error('Failed to save')
       return res.json()
     },
@@ -59,14 +71,20 @@ export function CmsSocialPage() {
     onError: () => toast.error('Failed to save'),
   })
 
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
+
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/cms/social?id=${id}`, { method: 'DELETE' })
+      const res = await apiFetch(`/api/cms/social?id=${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete')
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cms-social'] })
       toast.success('Social link deleted!')
+      setDeleteTarget(null)
+    },
+    onError: () => {
+      toast.error('Failed to delete social link')
     },
   })
 
@@ -85,8 +103,8 @@ export function CmsSocialPage() {
   const platforms = ['facebook', 'instagram', 'linkedin', 'twitter', 'youtube', 'tiktok', 'whatsapp', 'website']
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
+    <div className="space-y-6 pb-8">
+      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Social Media</h1>
           <p className="text-muted-foreground text-sm">Manage social media links and profiles</p>
@@ -97,7 +115,7 @@ export function CmsSocialPage() {
       {isLoading ? (
         <div className="space-y-3">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)}</div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {links.map((link: any) => {
             const Icon = platformIcons[link.platform] || Globe
             return (
@@ -116,7 +134,21 @@ export function CmsSocialPage() {
                   <div className="flex items-center gap-2">
                     <Switch checked={link.isActive} disabled />
                     <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(link)}><Edit className="h-4 w-4" /></Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteMutation.mutate(link.id)}><Trash2 className="h-4 w-4" /></Button>
+                    <AlertDialog open={!!deleteTarget && deleteTarget === link.id} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30" onClick={() => setDeleteTarget(link.id)}><Trash2 className="h-4 w-4" /></Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                          <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => { deleteMutation.mutate(link.id); setDeleteTarget(null) }} className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </CardContent>
               </Card>
@@ -156,7 +188,7 @@ export function CmsSocialPage() {
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
               <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-                <Save className="mr-2 h-4 w-4" /> {saveMutation.isPending ? 'Saving...' : 'Save'}
+                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? 'Saving...' : 'Save'}
               </Button>
             </div>
           </div>

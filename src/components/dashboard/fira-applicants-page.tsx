@@ -1,5 +1,6 @@
 'use client'
 
+import { apiFetch } from "@/lib/fetch"
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Search, Users, Eye, CheckCircle, Clock } from 'lucide-react'
@@ -24,7 +25,7 @@ export function FiraApplicantsPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['fira-applicants', search, filter],
     queryFn: async () => {
-      const res = await fetch(`/api/users?${queryParams}`)
+      const res = await apiFetch(`/api/users?${queryParams}`)
       if (!res.ok) return { users: [], total: 0 }
       return res.json()
     },
@@ -60,7 +61,7 @@ export function FiraApplicantsPage() {
       ) : filtered.length === 0 ? (
         <Card className="p-8 text-center"><Users className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">{language === 'fil' ? 'Walang nahanap.' : 'No applicants found.'}</p></Card>
       ) : (
-        <div className="space-y-3 max-h-[calc(100vh-18rem)] overflow-y-auto">
+        <div className="space-y-3 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar">
           {filtered.map((u: any, i: number) => {
             const p = u.applicantProfile
             return (

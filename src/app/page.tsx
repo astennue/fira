@@ -42,6 +42,7 @@ const FiraAgenciesPage = lazy(() => import('@/components/dashboard/fira-agencies
 const FiraEmployersPage = lazy(() => import('@/components/dashboard/fira-employers-page').then(m => ({ default: m.FiraEmployersPage })))
 const FiraApplicantsPage = lazy(() => import('@/components/dashboard/fira-applicants-page').then(m => ({ default: m.FiraApplicantsPage })))
 const FiraJobsPage = lazy(() => import('@/components/dashboard/fira-jobs-page').then(m => ({ default: m.FiraJobsPage })))
+const FiraJobCreatePage = lazy(() => import('@/components/dashboard/fira-job-create-page').then(m => ({ default: m.FiraJobCreatePage })))
 const AtsPipelinePage = lazy(() => import('@/components/dashboard/ats-pipeline-page').then(m => ({ default: m.AtsPipelinePage })))
 const AiMatchingPage = lazy(() => import('@/components/dashboard/ai-matching-page').then(m => ({ default: m.AiMatchingPage })))
 const ResumeEnhancementPage = lazy(() => import('@/components/dashboard/resume-enhancement-page').then(m => ({ default: m.ResumeEnhancementPage })))
@@ -56,6 +57,7 @@ const CmsSettingsPage = lazy(() => import('@/components/cms/cms-settings-page').
 const UserSettingsPage = lazy(() => import('@/components/shared/user-settings-page').then(m => ({ default: m.UserSettingsPage })))
 const SuperAdminUsersPage = lazy(() => import('@/components/shared/super-admin-users-page').then(m => ({ default: m.SuperAdminUsersPage })))
 const MessagingPage = lazy(() => import('@/components/shared/messaging-page').then(m => ({ default: m.MessagingPage })))
+const ApplicantProfileEditPage = lazy(() => import('@/components/dashboard/applicant-profile-edit-page').then(m => ({ default: m.ApplicantProfileEditPage })))
 
 const publicViews: ViewName[] = ['landing', 'job-listing', 'job-detail', 'about', 'services', 'faq', 'contact', 'terms-public', 'employer-partnership']
 
@@ -195,7 +197,7 @@ function ViewRenderer({ view }: { view: ViewName }) {
           </div>
         )
       case 'applicant-profile-edit':
-        return <ApplicantProfilePage />
+        return <ApplicantProfileEditPage />
       case 'fira-applicant-detail':
         return (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
@@ -203,13 +205,7 @@ function ViewRenderer({ view }: { view: ViewName }) {
             <Button variant="outline" onClick={() => navigate('fira-applicants')}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button>
           </div>
         )
-      case 'fira-job-create':
-        return (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <h2 className="text-xl font-semibold">Create Job - Coming Soon</h2>
-            <Button variant="outline" onClick={() => navigate('fira-jobs')}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button>
-          </div>
-        )
+      case 'fira-job-create': return <FiraJobCreatePage />
       case 'agency-job-create':
         return (
           <div className="flex flex-col items-center justify-center py-20 gap-4">

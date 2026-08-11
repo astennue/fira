@@ -1,5 +1,6 @@
 'use client'
 
+import { apiFetch } from "@/lib/fetch"
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
@@ -65,7 +66,7 @@ export function JobListingPage() {
   const { data: jobsData, isLoading } = useQuery({
     queryKey: ['jobs', country, category, search],
     queryFn: async () => {
-      const res = await fetch(`/api/jobs?${queryParams.toString()}`)
+      const res = await apiFetch(`/api/jobs?${queryParams.toString()}`)
       if (!res.ok) return { jobs: [] }
       return res.json()
     },

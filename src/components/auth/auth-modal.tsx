@@ -21,6 +21,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Checkbox } from '@/components/ui/checkbox'
 import { useAppStore, getDashboardView, type UserRole, roleDisplayNames } from '@/store/app-store'
 import { toast } from 'sonner'
+import { apiFetch } from '@/lib/fetch'
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email'),
@@ -94,7 +95,7 @@ export function AuthModal() {
 
   const loginMutation = useMutation({
     mutationFn: async (data: LoginFormData) => {
-      const res = await fetch('/api/auth', {
+      const res = await apiFetch('/api/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'login', ...data }),
@@ -127,7 +128,7 @@ export function AuthModal() {
   const registerMutation = useMutation({
     mutationFn: async (data: RegisterFormData) => {
       const { confirmPassword, agreeTerms, ...payload } = data as RegisterFormData & { confirmPassword: string; agreeTerms: boolean }
-      const res = await fetch('/api/auth', {
+      const res = await apiFetch('/api/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'register', role: 'applicant', ...payload }),

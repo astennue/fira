@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { useAppStore, roleDisplayNames } from '@/store/app-store'
 import { toast } from 'sonner'
 import { formatDistanceToNow } from 'date-fns'
+import { apiFetch } from '@/lib/fetch'
 
 export function SuperAdminUsersPage() {
   const { language } = useAppStore()
@@ -32,7 +33,7 @@ export function SuperAdminUsersPage() {
       const params = new URLSearchParams()
       if (search) params.set('search', search)
       if (roleFilter !== 'all') params.set('role', roleFilter)
-      const res = await fetch(`/api/users?admin=true&${params.toString()}`)
+      const res = await apiFetch(`/api/users?admin=true&${params.toString()}`)
       if (!res.ok) return []
       return res.json()
     },
@@ -40,7 +41,7 @@ export function SuperAdminUsersPage() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ userId, action }: { userId: string; action: string }) => {
-      const res = await fetch('/api/users', {
+      const res = await apiFetch('/api/users', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, action }),
@@ -70,14 +71,14 @@ export function SuperAdminUsersPage() {
   }
 
   return (
-    <div>
-      <div className="mb-6">
+    <div className="view-transition space-y-6 pb-8">
+      <div>
         <h1 className="text-2xl font-bold text-foreground">Manage Users</h1>
         <p className="text-muted-foreground text-sm">View and manage all platform users</p>
       </div>
 
       {/* Filters */}
-      <Card className="mb-6">
+      <Card>
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">

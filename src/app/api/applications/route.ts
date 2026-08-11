@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { requireAuth, requireFiraOrAgency } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
+  const auth = requireAuth(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const { searchParams } = new URL(request.url)
     const applicantId = searchParams.get('applicantId')
@@ -32,6 +36,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = requireAuth(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const body = await request.json()
     const { applicantId, jobOrderId, coverLetter } = body
@@ -42,7 +49,31 @@ export async function POST(request: NextRequest) {
     const jobExists = await db.jobOrder.findUnique({ where: { id: jobOrderId } })
     if (!jobExists) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
 
-    const firstStage = await db.aTSStage.findFirst({ where: { jobOrderId }, orderBy: { order: 'asc' } })
+    // Auto-create default ATS stages if none exist for this job
+    const DEFAULT_APPLICATION_STAGES = [
+      { name: 'Applied', color: '#3b82f6' },
+      { name: 'Screening', color: '#06b6d4' },
+      { name: 'Interview', color: '#8b5cf6' },
+      { name: 'Assessment', color: '#f59e0b' },
+      { name: 'Offer', color: '#10b981' },
+      { name: 'Deployed', color: '#84cc16' },
+    ]
+
+    const existingStages = await db.aTSStage.findMany({ where: { jobOrderId }, select: { id: true } })
+    let firstStage: { id: string } | null = null
+    if (existingStages.length === 0) {
+      const stageData = DEFAULT_APPLICATION_STAGES.map((s, i) => ({
+        jobOrderId,
+        name: s.name,
+        order: i + 1,
+        color: s.color,
+        isDefault: true,
+      }))
+      await db.aTSStage.createMany({ data: stageData })
+      firstStage = await db.aTSStage.findFirst({ where: { jobOrderId, name: 'Applied' } })
+    } else {
+      firstStage = await db.aTSStage.findFirst({ where: { jobOrderId }, orderBy: { order: 'asc' } })
+    }
 
     try {
       const application = await db.application.create({
@@ -62,11 +93,11 @@ export async function POST(request: NextRequest) {
       await db.aIAnalysisResult.create({
         data: {
           applicationId: application.id,
-          matchScore: 75.0,
-          semanticScore: 0.75,
+          matchScore: 0,
+          semanticScore: 0,
           matchedSkills: '[]',
           missingSkills: '[]',
-          explanation: 'Initial analysis - AI matching pending.',
+          explanation: null,
         },
       })
 
@@ -85,6 +116,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  const auth = requireFiraOrAgency(request)
+  if (auth instanceof NextResponse) return auth
+
   try {
     const body = await request.json()
     const { applicationId, status } = body
