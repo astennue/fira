@@ -78,7 +78,9 @@ export async function POST(request: NextRequest) {
     const { userId, userRole } = body
 
     if (!userId || !userRole) return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
-    const allowedRoles = ['international_agency', 'local_agency']
+    // Only FIRA (super_admin, staff, international_agency) can create job orders
+    // Employers inquire, FIRA creates the job order on their behalf
+    const allowedRoles = ['international_agency', 'super_admin', 'staff']
     if (!allowedRoles.includes(userRole)) return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 })
 
     const { title, description, country, city, category, jobType, salaryMin, salaryMax, salaryCurrency, salaryPeriod, contractType, duration, slots, requirements, benefits, requiredSkills, visibility, deadline, employerId, agencyId } = body

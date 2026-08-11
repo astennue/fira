@@ -8,7 +8,6 @@ type UserPayload = {
   name: string;
   role: string;
   phone?: string;
-  agencyName?: string;
 };
 
 function excludePassword<T extends Record<string, unknown>>(user: T): Omit<T, 'password'> {
@@ -84,9 +83,9 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const validRoles = ['applicant', 'local_agency', 'international_agency', 'employer'];
-      if (!validRoles.includes(role)) {
-        return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
+      // Only applicants can self-register. Agencies and employers are created by FIRA.
+      if (role !== 'applicant') {
+        return NextResponse.json({ error: 'Registration is only available for applicants. Contact FIRA for agency/employer accounts.' }, { status: 403 });
       }
 
       const existing = await db.user.findUnique({ where: { email } });
@@ -95,8 +94,7 @@ export async function POST(request: NextRequest) {
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
-      // Only applicants are auto-approved; others need FIRA approval
-      const isApproved = role === 'applicant';
+      // Applicants are auto-approved upon registration
 
       const user = await db.user.create({
         data: {
@@ -105,43 +103,13 @@ export async function POST(request: NextRequest) {
           name,
           role,
           phone: phone || null,
-          isApproved,
+          isApproved: true,
           isActive: true,
         },
       });
 
-      // If agency role, create the agency and membership
-      if ((role === 'local_agency' || role === 'international_agency') && agencyName) {
-        const agencyType = role === 'local_agency' ? 'local' : 'international';
-
-        const agency = await db.agency.create({
-          data: {
-            name: agencyName,
-            agencyType,
-            isActive: true,
-            isApproved: false, // FIRA must approve the agency
-          },
-        });
-
-        await db.agencyMember.create({
-          data: {
-            userId: user.id,
-            agencyId: agency.id,
-            role: 'admin',
-          },
-        });
-      }
-
-      // If employer, create employer profile placeholder
-      if (role === 'employer') {
-        await db.employerProfile.create({
-          data: {
-            userId: user.id,
-            companyName: name,
-            country: '',
-          },
-        });
-      }
+      // Note: Agencies and employers are created by FIRA admin, not via self-registration.
+      // See User Management (super-admin-users) for creating those accounts.
 
       return NextResponse.json(
         { user: excludePassword(user) },

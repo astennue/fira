@@ -1,7 +1,7 @@
 # FIRA — Complete System Workflow Document
 
 > **Fil International Recruitment Agency (FIRA)** — Full System Workflow per User Role & Service
-> Version 1.0 | For Review & Correction Before Implementation
+> Version 1.1 | Reviewed & Corrected — Code Changes Applied
 
 ---
 
@@ -874,5 +874,27 @@ FIRA Admin → "Form Builder"
 
 ---
 
+## 7. Code Changes Already Applied
+
+The following code changes have been applied to enforce the workflow rules:
+
+| File | Change | Reason |
+|------|--------|--------|
+| `src/components/auth/auth-modal.tsx` | `value=` -> `defaultValue=` on Tabs | Fix: Register tab was not switchable (controlled without onValueChange) |
+| `src/components/shared/app-nav.tsx` | Register button: `setAuthModalOpen(true)` -> `setAuthModalOpen(true, 'register')` | Fix: Register button opened Sign In tab instead of Register |
+| `src/app/api/auth/route.ts` | Registration locked to `role === 'applicant'` only | Rule: Only applicants self-register; agencies/employers created by FIRA |
+| `src/app/api/auth/route.ts` | Removed agency/employer creation code from register handler | Rule: Dead code -- agencies/employers created via User Management |
+| `src/app/api/jobs/route.ts` | `allowedRoles` changed from `[international_agency, local_agency]` -> `[international_agency, super_admin, staff]` | Rule: Only FIRA creates job orders, not agencies |
+
+### Verified Already Correct (No Changes Needed)
+- No payment processing code exists in the system
+- Employer partnership page is inquiry-based (sends to `/api/cms/partner-inquiry`), not self-registration
+- No "Create Job" button exists for employer or agency dashboards
+- Default ATS pipeline (14 stages) is created automatically when FIRA creates a job order
+- Endorsement flow: Agency -> FIRA Review -> Employer Decision (status chain enforced)
+
+---
+
 > **END OF WORKFLOW DOCUMENT**
-> Please review and provide corrections. Once approved, this will be applied to the system.
+> Version 1.1 -- Workflow rules reviewed, corrected, and code-enforced.
+> Ready for next session to implement remaining features (job creation UI, employer accreditation flow, etc.).
