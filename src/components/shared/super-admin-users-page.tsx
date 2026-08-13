@@ -52,12 +52,13 @@ export function SuperAdminUsersPage() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] })
       setDialogOpen(false)
-      if (variables.action === 'approve') toast.success('User approved!')
-      else if (variables.action === 'reject') toast.success('User rejected!')
-      else if (variables.action === 'deactivate') toast.success('User deactivated!')
-      else if (variables.action === 'activate') toast.success('User activated!')
+      const isFil = language === 'fil'
+      if (variables.action === 'approve') toast.success(isFil ? 'Na-approve na ang user!' : 'User approved!')
+      else if (variables.action === 'reject') toast.success(isFil ? 'Na-reject na ang user!' : 'User rejected!')
+      else if (variables.action === 'deactivate') toast.success(isFil ? 'Na-deactivate na ang user!' : 'User deactivated!')
+      else if (variables.action === 'activate') toast.success(isFil ? 'Na-activate na ang user!' : 'User activated!')
     },
-    onError: () => toast.error('Failed to update user'),
+    onError: () => toast.error(language === 'fil' ? 'Hindi na-update ang user.' : 'Failed to update user.'),
   })
 
   const filteredUsers = Array.isArray(users) ? users : []
