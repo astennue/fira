@@ -3,7 +3,7 @@ import { db } from '@/lib/db'
 import { requireRole } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
-  const auth = requireRole(request, ['super_admin'])
+  const auth = requireRole(request, ['super_admin', 'staff', 'international_agency', 'local_agency'])
   if (auth instanceof NextResponse) return auth
 
   try {

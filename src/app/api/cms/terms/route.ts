@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireFira } from '@/lib/auth'
+import { requireCmsAdmin } from '@/lib/auth'
 
 export async function GET() {
   try {
@@ -14,7 +14,7 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
-  const auth = requireFira(request)
+  const auth = requireCmsAdmin(request)
   if (auth instanceof NextResponse) return auth
 
   try {

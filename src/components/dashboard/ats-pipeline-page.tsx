@@ -2,10 +2,14 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, useCallback, useMemo } from 'react'
-import { Columns, Plus, ChevronRight, Loader2, Trash2, User, Eye, ArrowRight, GripVertical, Inbox } from 'lucide-react'
+import {
+  Columns3, Plus, ChevronRight, Loader2, Trash2, User, Eye, ArrowRight,
+  GripVertical, Inbox, MapPin, Briefcase, Calendar, Star, FileText,
+  CheckCircle2, Clock, AlertCircle, Phone, Mail, GraduationCap, CircleDot,
+} from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -13,8 +17,15 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet'
+import { Separator } from '@/components/ui/separator'
+import { Progress } from '@/components/ui/progress'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
+} from '@/components/ui/dialog'
+import {
+  Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription,
+} from '@/components/ui/sheet'
 import {
   DndContext,
   DragOverlay,
@@ -62,13 +73,104 @@ const measuring = {
   droppable: { strategy: MeasuringStrategy.Always },
 }
 
+// ─── Helpers ───────────────────────────────────────────────────────────────
+function getScoreStyle(score: number | null | undefined) {
+  if (score == null) return ''
+  if (score >= 80) return 'text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/50 border-emerald-300 dark:border-emerald-700'
+  if (score >= 50) return 'text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/50 border-amber-300 dark:border-amber-700'
+  return 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950/50 border-red-300 dark:border-red-700'
+}
+
+function getScoreDot(score: number | null | undefined) {
+  if (score == null) return 'bg-gray-400'
+  if (score >= 80) return 'bg-emerald-500'
+  if (score >= 50) return 'bg-amber-500'
+  return 'bg-red-500'
+}
+
+function parseJsonSkills(str: string | null | undefined): string[] {
+  if (!str) return []
+  try { return JSON.parse(str) } catch { return [] }
+}
+
+function formatDate(dateStr: string | null | undefined, isFil: boolean) {
+  if (!dateStr) return isFil ? 'N/A' : 'N/A'
+  const d = new Date(dateStr)
+  const now = new Date()
+  const diffMs = now.getTime() - d.getTime()
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+  if (diffDays === 0) return isFil ? 'Ngayon' : 'Today'
+  if (diffDays === 1) return isFil ? 'Kahapon' : 'Yesterday'
+  if (diffDays < 7) return `${diffDays}d ago`
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`
+  return d.toLocaleDateString()
+}
+
+function getInitials(name: string) {
+  return (name || 'U').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
+}
+
+// ─── Loading Skeleton ──────────────────────────────────────────────────────
+function PipelineSkeleton() {
+  return (
+    <div className="space-y-6 animate-in fade-in duration-500">
+      {/* Header skeleton */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-56" />
+          <Skeleton className="h-4 w-80" />
+        </div>
+        <Skeleton className="h-9 w-28 rounded-xl" />
+      </div>
+      {/* Job selector skeleton */}
+      <div className="space-y-1.5">
+        <Skeleton className="h-4 w-36" />
+        <Skeleton className="h-11 w-80" />
+      </div>
+      {/* Summary bar skeleton */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {[0, 1, 2].map((i) => (
+          <Card key={i} className="p-4">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-10 w-10 rounded-xl" />
+              <div className="space-y-1.5 flex-1">
+                <Skeleton className="h-3 w-24" />
+                <Skeleton className="h-6 w-12" />
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+      {/* Kanban columns skeleton */}
+      <ScrollArea className="w-full">
+        <div className="flex gap-4 pb-4" style={{ minWidth: '1200px' }}>
+          {[0, 1, 2, 3].map((col) => (
+            <div key={col} className="w-[280px] shrink-0 space-y-2">
+              <div className="flex items-center gap-2 px-1">
+                <Skeleton className="h-3 w-3 rounded-full" />
+                <Skeleton className="h-4 w-24 flex-1" />
+                <Skeleton className="h-5 w-6 rounded-full" />
+              </div>
+              <div className="min-h-[280px] rounded-xl border border-border/50 bg-muted/30 dark:bg-muted/10 p-2 space-y-2">
+                {[0, 1, 2].map((card) => (
+                  <Skeleton key={card} className="h-[104px] w-full rounded-lg" />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+    </div>
+  )
+}
+
 // ─── Sortable Applicant Card ────────────────────────────────────────────────
 function SortableApplicantCard({
   app,
   stageColor,
   stageIdx,
   stagesLength,
-  isLastStage,
   isFil,
   onMoveToNext,
   onCardClick,
@@ -77,7 +179,6 @@ function SortableApplicantCard({
   stageColor: string
   stageIdx: number
   stagesLength: number
-  isLastStage: boolean
   isFil: boolean
   onMoveToNext: (app: any) => void
   onCardClick: (app: any) => void
@@ -85,12 +186,11 @@ function SortableApplicantCard({
   const applicant = app.applicant
   const profile = applicant?.applicantProfile
   const ai = app.aiAnalysis
-  const initials = (applicant?.name || 'U')
-    .split(' ')
-    .map((n: string) => n[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase()
+  const initials = getInitials(applicant?.name)
+  const isLastStage = stageIdx === stagesLength - 1
+
+  const matchedSkills = parseJsonSkills(ai?.matchedSkills)
+  const displaySkills = matchedSkills.slice(0, 3)
 
   const {
     attributes,
@@ -101,65 +201,95 @@ function SortableApplicantCard({
     isDragging,
   } = useSortable({ id: app.id, data: { type: 'applicant', app } })
 
-  const style = {
+  const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.4 : 1,
+  zIndex: isDragging ? 50 : undefined,
+  position: 'relative' as const,
   }
-
-  const scoreColor = ai?.matchScore != null
-    ? ai.matchScore >= 80
-      ? 'text-emerald-600 border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950/30'
-      : ai.matchScore >= 50
-        ? 'text-amber-600 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/30'
-        : 'text-red-500 border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-950/30'
-    : ''
 
   return (
     <div ref={setNodeRef} style={style}>
-      <Card className="shadow-sm hover:shadow-md transition-shadow cursor-pointer group">
-        <CardContent className="p-3">
-          <div className="flex items-center gap-2 mb-2">
+      <Card className="shadow-sm hover:shadow-md border-border/60 dark:border-border/40 hover:border-border transition-all cursor-pointer group">
+        <CardContent className="p-3 space-y-2.5">
+          {/* Top row: drag handle + avatar + name */}
+          <div className="flex items-start gap-2">
             <button
               {...attributes}
               {...listeners}
-              className="cursor-grab active:cursor-grabbing p-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity touch-none"
-              aria-label="Drag handle"
+              className="cursor-grab active:cursor-grabbing mt-1.5 p-0.5 rounded-md opacity-0 group-hover:opacity-60 hover:!opacity-100 transition-all hover:bg-muted touch-none"
+              aria-label="Drag to reorder"
             >
               <GripVertical className="h-3.5 w-3.5 text-muted-foreground" />
             </button>
             <div
-              className="h-8 w-8 rounded-full flex items-center justify-center text-xs font-semibold shrink-0"
-              style={{ background: stageColor + '20', color: stageColor }}
+              className="h-9 w-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 shadow-sm"
+              style={{ background: stageColor + '18', color: stageColor }}
             >
               {initials}
             </div>
-            <div className="min-w-0 flex-1" onClick={() => onCardClick(app)}>
-              <p className="text-xs font-semibold truncate">{applicant?.name || 'Unknown'}</p>
-              {profile?.applicantType && (
-                <p className="text-[10px] text-muted-foreground capitalize">{profile.applicantType?.replace('_', ' ')}</p>
-              )}
+            <div className="min-w-0 flex-1 pt-0.5" onClick={() => onCardClick(app)}>
+              <p className="text-sm font-semibold truncate leading-tight">{applicant?.name || 'Unknown'}</p>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                {profile?.applicantType && (
+                  <span className="text-[10px] text-muted-foreground capitalize">
+                    {profile.applicantType.replace(/_/g, ' ')}
+                  </span>
+                )}
+                {profile?.phone && (
+                  <span className="text-[10px] text-muted-foreground">• {profile.phone}</span>
+                )}
+              </div>
             </div>
           </div>
-          <div className="flex items-center justify-between gap-2 mb-2 pl-7">
+
+          {/* Score + Date row */}
+          <div className="flex items-center gap-2 pl-7">
             {ai?.matchScore != null && (
-              <Badge variant="outline" className={`text-[10px] px-1.5 ${scoreColor}`}>
-                {Math.round(ai.matchScore)}%
-              </Badge>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge
+                    variant="outline"
+                    className={`text-[11px] px-1.5 py-0 font-semibold tabular-nums ${getScoreStyle(ai.matchScore)}`}
+                  >
+                    <span className={`mr-1 h-1.5 w-1.5 rounded-full ${getScoreDot(ai.matchScore)}`} />
+                    {Math.round(ai.matchScore)}%
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {isFil ? 'AI Match Score' : 'AI Match Score'}: {Math.round(ai.matchScore)}%
+                </TooltipContent>
+              </Tooltip>
             )}
-            {app.createdAt && (
-              <span className="text-[10px] text-muted-foreground ml-auto">
-                {new Date(app.createdAt).toLocaleDateString()}
-              </span>
-            )}
+            <span className="text-[10px] text-muted-foreground ml-auto flex items-center gap-1">
+              <Calendar className="h-3 w-3" />
+              {formatDate(app.createdAt, isFil)}
+            </span>
           </div>
-          <div className="flex items-center gap-1.5 pl-7">
+
+          {/* Skills pills */}
+          {displaySkills.length > 0 && (
+            <div className="flex flex-wrap gap-1 pl-7" onClick={() => onCardClick(app)}>
+              {displaySkills.map((skill: string) => (
+                <span
+                  key={skill}
+                  className="inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium rounded-md bg-muted text-muted-foreground"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Action buttons */}
+          <div className="flex items-center gap-1.5 pl-7 pt-0.5">
             {!isLastStage && (
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-7 text-[11px] gap-1 text-muted-foreground hover:text-foreground rounded-lg flex-1"
-                onClick={() => onMoveToNext(app)}
+                className="h-7 text-[11px] gap-1 text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 rounded-lg flex-1"
+                onClick={(e) => { e.stopPropagation(); onMoveToNext(app) }}
               >
                 <ChevronRight className="h-3 w-3" />
                 {isFil ? 'Susunod' : 'Next'}
@@ -168,8 +298,8 @@ function SortableApplicantCard({
             <Button
               size="sm"
               variant="ghost"
-              className="h-7 text-[11px] gap-1 text-muted-foreground hover:text-foreground rounded-lg flex-1"
-              onClick={() => onCardClick(app)}
+              className="h-7 text-[11px] gap-1 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-lg flex-1"
+              onClick={(e) => { e.stopPropagation(); onCardClick(app) }}
             >
               <Eye className="h-3 w-3" />
               {isFil ? 'Tingnan' : 'View'}
@@ -214,58 +344,105 @@ function DroppableColumn({
   const stageAppIds = apps.map(a => a.id)
 
   return (
-    <div className="w-72 shrink-0">
+    <div className="w-[280px] shrink-0 group">
       {/* Column Header */}
-      <div
-        className="flex items-center gap-2 mb-1 px-1"
-      >
-        <div className="h-2.5 w-2.5 rounded-full shrink-0" style={{ background: color }} />
-        <h3 className="text-sm font-semibold truncate flex-1">{stage.name}</h3>
+      <div className="flex items-center gap-2 mb-2 px-1">
+        <div
+          className="h-3 w-3 rounded-sm shrink-0 ring-2 ring-offset-1 ring-offset-background"
+          style={{ background: color, ringColor: color + '60', boxShadow: `0 0 0 2px ${color}30` }}
+        />
+        <div className="min-w-0 flex-1">
+          <h3 className="text-sm font-semibold truncate leading-tight">{stage.name}</h3>
+          <p className="text-[10px] text-muted-foreground leading-tight">
+            {isFil ? 'Yugto' : 'Stage'} {stageIdx + 1}/{stagesLength}
+          </p>
+        </div>
         <Badge
-          variant="secondary"
-          className="text-xs ml-auto"
-          style={{ backgroundColor: color + '18', color, border: `1px solid ${color}30` }}
+          variant="outline"
+          className="text-[11px] font-bold tabular-nums h-6 min-w-[24px] justify-center px-1.5 rounded-md"
+          style={{
+            backgroundColor: color + '14',
+            color,
+            borderColor: color + '30',
+          }}
         >
           {apps.length}
         </Badge>
         {isFira && !stage.isDefault && stagesLength > 2 && (
-          <button
-            onClick={() => onDeleteStage(stage)}
-            className="p-0.5 rounded opacity-0 group-hover:opacity-100 hover:text-destructive transition-opacity"
-            aria-label="Delete stage"
-          >
-            <Trash2 className="h-3 w-3 text-muted-foreground hover:text-destructive" />
-          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => onDeleteStage(stage)}
+                className="p-1 rounded-md opacity-0 group-hover:opacity-100 hover:text-destructive hover:bg-destructive/10 transition-all"
+                aria-label={isFil ? 'I-delete ang stage' : 'Delete stage'}
+              >
+                <Trash2 className="h-3 w-3 text-muted-foreground" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>{isFil ? 'I-delete ang stage' : 'Delete stage'}</TooltipContent>
+          </Tooltip>
         )}
       </div>
+
       {/* Column Body */}
       <div
         ref={setNodeRef}
-        className={`space-y-2 min-h-[220px] bg-muted/30 dark:bg-muted/10 rounded-xl p-2 border transition-colors ${
-          isOver ? 'ring-2 ring-primary/50 border-primary/50 bg-primary/5' : 'border-border/50'
+        className={`space-y-2 min-h-[280px] rounded-xl p-2 border-2 transition-all duration-200 ${
+          isOver
+            ? 'border-primary/60 bg-primary/[0.03] shadow-lg shadow-primary/10'
+            : 'border-border/40 bg-muted/20 dark:bg-muted/5 hover:border-border/60'
         }`}
-        style={{ borderLeftColor: color + '60', borderLeftWidth: '3px' }}
+        style={{ borderLeftColor: color + '70', borderLeftWidth: '3px' }}
       >
         {apps.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-32 text-muted-foreground/40 gap-2">
-            <Inbox className="h-8 w-8" />
-            <p className="text-xs">{isFil ? 'Walang aplikante' : 'No applicants'}</p>
+          <div className="flex flex-col items-center justify-center h-48 text-muted-foreground/30 gap-3 select-none">
+            <div
+              className="h-12 w-12 rounded-xl flex items-center justify-center"
+              style={{ background: color + '10' }}
+            >
+              {isLastStage ? (
+                <CheckCircle2 className="h-6 w-6" style={{ color: color + '40' }} />
+              ) : (
+                <Inbox className="h-6 w-6" style={{ color: color + '40' }} />
+              )}
+            </div>
+            <div className="text-center">
+              <p className="text-xs font-medium text-muted-foreground/50">
+                {isFil
+                  ? isLastStage ? 'Wala pang na-deploy' : 'Walang aplikante'
+                  : isLastStage ? 'No one deployed yet' : 'No applicants'}
+              </p>
+              <p className="text-[10px] text-muted-foreground/30 mt-0.5">
+                {isFil
+                  ? isLastStage ? 'I-drag ang mga aplikante dito' : 'I-drag ang mga aplikante dito'
+                  : 'Drag applicants here'}
+              </p>
+            </div>
           </div>
         ) : (
           <SortableContext items={stageAppIds} strategy={verticalListSortingStrategy}>
-            {apps.map((app: any) => (
-              <SortableApplicantCard
-                key={app.id}
-                app={app}
-                stageColor={color}
-                stageIdx={stageIdx}
-                stagesLength={stagesLength}
-                isLastStage={isLastStage}
-                isFil={isFil}
-                onMoveToNext={onMoveToNext}
-                onCardClick={onCardClick}
-              />
-            ))}
+            <AnimatePresence>
+              {apps.map((app: any) => (
+                <motion.div
+                  key={app.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <SortableApplicantCard
+                    app={app}
+                    stageColor={color}
+                    stageIdx={stageIdx}
+                    stagesLength={stagesLength}
+                    isLastStage={isLastStage}
+                    isFil={isFil}
+                    onMoveToNext={onMoveToNext}
+                    onCardClick={onCardClick}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </SortableContext>
         )}
       </div>
@@ -302,9 +479,9 @@ export function AtsPipelinePage() {
   const { data: stagesData, isLoading: stagesLoading } = useQuery({
     queryKey: ['ats-stages', selectedJobId],
     queryFn: async () => {
-      if (!selectedJobId) return []
+      if (!selectedJobId) return { stages: [] }
       const res = await apiFetch(`/api/ats/stages?jobOrderId=${selectedJobId}`)
-      if (!res.ok) return []
+      if (!res.ok) return { stages: [] }
       return res.json()
     },
     enabled: !!selectedJobId,
@@ -325,7 +502,7 @@ export function AtsPipelinePage() {
   const addStageMutation = useMutation({
     mutationFn: async () => {
       if (!selectedJobId || !newStageName) throw new Error('Name required')
-      const maxOrder = (stagesData || []).length
+      const maxOrder = stages.length
       const res = await apiFetch('/api/ats/stages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -348,13 +525,14 @@ export function AtsPipelinePage() {
       const res = await apiFetch('/api/ats/move-stage', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ applicationId, stageId, notes: moveNotes }),
+        body: JSON.stringify({ applicationId, newStageId: stageId, notes: moveNotes }),
       })
       if (!res.ok) throw new Error('Failed to move')
       return res.json()
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['ats-applications'] })
+      queryClient.invalidateQueries({ queryKey: ['ats-stages'] })
       setShowAppDetail(false)
       setSelectedApp(null)
       setMoveNotes('')
@@ -381,9 +559,10 @@ export function AtsPipelinePage() {
   // ── Data extraction ────────────────────────────────────────────────────────
   const jobs = Array.isArray(jobsData?.jobs) ? jobsData.jobs : []
   const applications = Array.isArray(appData?.applications) ? appData.applications : []
-  const stages = Array.isArray(stagesData) ? stagesData : []
+  const stages = Array.isArray(stagesData?.stages) ? stagesData.stages : []
 
   const isFira = user?.role === 'super_admin' || user?.role === 'staff' || user?.role === 'international_agency'
+  const selectedJob = jobs.find((j: any) => j.id === selectedJobId)
 
   // Group applications by stage
   const stageMap: Record<string, any[]> = {}
@@ -402,6 +581,15 @@ export function AtsPipelinePage() {
     if (scores.length === 0) return 0
     return Math.round(scores.reduce((sum: number, s: number) => sum + s, 0) / scores.length)
   }, [applications])
+
+  // Pipeline conversion rate
+  const conversionRate = useMemo(() => {
+    if (stages.length === 0 || applications.length === 0) return 0
+    const firstStageApps = (stageMap[stages[0]?.id] || []).length
+    const lastStageApps = (stageMap[stages[stages.length - 1]?.id] || []).length
+    if (firstStageApps === 0) return 0
+    return Math.round((lastStageApps / firstStageApps) * 100)
+  }, [stages, stageMap, applications])
 
   // ── DnD sensors ────────────────────────────────────────────────────────────
   const sensors = useSensors(
@@ -422,15 +610,14 @@ export function AtsPipelinePage() {
     const activeApp = applications.find((a: any) => a.id === active.id)
     if (!activeApp) return
 
-    // Find which column the card was dropped into
     const targetStage = stages.find((s: any) => s.id === over.id)
     if (targetStage && targetStage.id !== activeApp.currentStageId) {
       moveStageMutation.mutate({ applicationId: activeApp.id, stageId: targetStage.id })
     }
   }, [applications, stages, moveStageMutation])
 
-  const handleDragOver = useCallback((event: DragOverEvent) => {
-    // Visual feedback is handled via isOver in useSortable
+  const handleDragOver = useCallback((_event: DragOverEvent) => {
+    // Visual feedback handled via isOver in useSortable
   }, [])
 
   // ── Quick actions ──────────────────────────────────────────────────────────
@@ -468,27 +655,36 @@ export function AtsPipelinePage() {
 
   // ── Active dragging card overlay ──────────────────────────────────────────
   const activeApp = activeId ? applications.find((a: any) => a.id === activeId) : null
+  const activeAppStage = activeApp ? stages.find((s: any) => s.id === activeApp.currentStageId) : null
+  const activeColor = activeAppStage
+    ? (activeAppStage.color || stageColorPalette[stages.indexOf(activeAppStage) % stageColorPalette.length])
+    : '#3b82f6'
+
+  // ── Loading check ──────────────────────────────────────────────────────────
+  const isLoading = selectedJobId && (stagesLoading || appsLoading)
 
   return (
     <div className="view-transition space-y-6">
       {/* ── Header ───────────────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-            <Columns className="h-7 w-7 text-blue-600" />
-            ATS Pipeline
+          <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-md">
+              <Columns3 className="h-5 w-5 text-white" />
+            </div>
+            {isFil ? 'ATS Pipeline' : 'ATS Pipeline'}
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground mt-1.5">
             {isFil
-              ? 'Subaybayan ang end-to-end recruitment at deployment pipeline para sa job order na ito'
-              : 'Track the end-to-end recruitment and deployment pipeline for this job order'}
+              ? 'Subaybayan ang end-to-end recruitment at deployment pipeline'
+              : 'Track the end-to-end recruitment and deployment pipeline'}
           </p>
         </div>
         <div className="flex items-center gap-2">
           {isFira && selectedJobId && (
-            <Button size="sm" className="rounded-xl gap-1" onClick={() => setShowAddStage(true)}>
+            <Button size="sm" className="rounded-xl gap-1.5 shadow-sm" onClick={() => setShowAddStage(true)}>
               <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">{isFil ? 'Dagdag' : 'Add Stage'}</span>
+              <span className="hidden sm:inline">{isFil ? 'Dagdag Stage' : 'Add Stage'}</span>
             </Button>
           )}
         </div>
@@ -496,39 +692,64 @@ export function AtsPipelinePage() {
 
       {/* ── Job Selector ─────────────────────────────────────────────────── */}
       <div className="space-y-1.5">
-        <Label className="text-sm font-medium">{isFil ? 'Pumili ng Job Order' : 'Select Job Order'}</Label>
+        <Label className="text-sm font-medium flex items-center gap-1.5">
+          <Briefcase className="h-3.5 w-3.5 text-muted-foreground" />
+          {isFil ? 'Pumili ng Job Order' : 'Select Job Order'}
+        </Label>
         <Select value={selectedJobId} onValueChange={setSelectedJobId}>
-          <SelectTrigger className="w-full sm:w-80 h-11">
+          <SelectTrigger className="w-full sm:w-96 h-11 rounded-xl">
             <SelectValue placeholder={isFil ? 'Pumili ng job order...' : 'Select a job order...'} />
           </SelectTrigger>
           <SelectContent>
             {jobs.map((j: any) => (
-              <SelectItem key={j.id} value={j.id}>{j.title} — {j.country}</SelectItem>
+              <SelectItem key={j.id} value={j.id}>
+                <span className="flex items-center gap-2">
+                  <MapPin className="h-3 w-3 text-muted-foreground" />
+                  {j.title} — {j.country}
+                </span>
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
+        {selectedJob && (
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{selectedJob.country}</span>
+            <span className="flex items-center gap-1"><User className="h-3 w-3" />{totalApplicants} {isFil ? 'aplikante' : 'applicants'}</span>
+            {selectedJob.slots && (
+              <span className="flex items-center gap-1"><Briefcase className="h-3 w-3" />{selectedJob.slots - selectedJob.filledSlots} {isFil ? 'slot' : 'slots'}</span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* ── Empty State: No Job Selected ────────────────────────────────── */}
       {!selectedJobId ? (
-        <Card className="p-12 text-center">
-          <Columns className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
+        <Card className="p-16 text-center border-dashed">
+          <div className="mx-auto mb-4 h-16 w-16 rounded-2xl bg-muted/50 flex items-center justify-center">
+            <Columns3 className="h-8 w-8 text-muted-foreground/50" />
+          </div>
           <h3 className="text-lg font-semibold mb-2">{isFil ? 'Pumili ng Job Order' : 'Select a Job Order'}</h3>
-          <p className="text-sm text-muted-foreground">{isFil ? 'Pumili muna ng job order para makita ang pipeline.' : 'Choose a job order to view the pipeline.'}</p>
+          <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+            {isFil
+              ? 'Pumili muna ng job order sa itaas para makita ang recruitment pipeline.'
+              : 'Choose a job order above to view the recruitment pipeline and manage candidates.'}
+          </p>
         </Card>
-      ) : stagesLoading || appsLoading ? (
-        <div className="flex gap-4 overflow-x-auto">
-          {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-80 w-72 rounded-xl shrink-0" />)}
-        </div>
+      ) : isLoading ? (
+        <PipelineSkeleton />
       ) : stages.length === 0 ? (
-        <Card className="p-12 text-center">
-          <Columns className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
+        <Card className="p-16 text-center border-dashed">
+          <div className="mx-auto mb-4 h-14 w-14 rounded-2xl bg-muted/50 flex items-center justify-center">
+            <CircleDot className="h-7 w-7 text-muted-foreground/50" />
+          </div>
           <h3 className="text-lg font-semibold mb-2">{isFil ? 'Walang Stages' : 'No Stages Yet'}</h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            {isFil ? 'Mag-dagdag ng stages para simulan ang pipeline.' : 'Add stages to start building your pipeline.'}
+          <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
+            {isFil
+              ? 'Mag-dagdag ng stages para simulan ang pipeline at subaybayan ang mga aplikante.'
+              : 'Add stages to start building your pipeline and tracking candidates.'}
           </p>
           {isFira && (
-            <Button onClick={() => setShowAddStage(true)} className="rounded-xl gap-2">
+            <Button onClick={() => setShowAddStage(true)} className="rounded-xl gap-2 shadow-sm">
               <Plus className="h-4 w-4" />
               {isFil ? 'Dagdag ng Unang Stage' : 'Add First Stage'}
             </Button>
@@ -540,12 +761,12 @@ export function AtsPipelinePage() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-1 sm:grid-cols-3 gap-3"
+            className="grid grid-cols-1 sm:grid-cols-4 gap-3"
           >
             {/* Total Applicants */}
             <Card className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-md">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-md">
                   <User className="h-4 w-4 text-white" />
                 </div>
                 <div>
@@ -554,35 +775,45 @@ export function AtsPipelinePage() {
                 </div>
               </div>
             </Card>
-            {/* Funnel Progress */}
-            <Card className="p-4">
-              <p className="text-xs text-muted-foreground mb-1.5">{isFil ? 'Funnel Progress' : 'Funnel Progress'}</p>
-              <div className="flex items-center gap-1 flex-wrap">
-                {stages.map((stage: any, idx: number) => {
-                  const count = (stageMap[stage.id] || []).length
-                  const color = stage.color || stageColorPalette[idx % stageColorPalette.length]
-                  return (
-                    <span key={stage.id} className="flex items-center gap-1 text-xs">
-                      <span className="font-semibold" style={{ color }}>
-                        {count}
-                      </span>
-                      <span className="text-muted-foreground hidden sm:inline">{stage.name}</span>
-                      {idx < stages.length - 1 && <ArrowRight className="h-3 w-3 text-muted-foreground" />}
-                    </span>
-                  )
-                })}
-              </div>
-            </Card>
-            {/* Average Match Score */}
+            {/* Avg Match Score */}
             <Card className="p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 shadow-md">
-                  <Eye className="h-4 w-4 text-white" />
+                  <Star className="h-4 w-4 text-white" />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">{isFil ? 'Average na Score' : 'Avg. Match Score'}</p>
                   <p className="text-xl font-bold tabular-nums">{avgMatchScore}%</p>
                 </div>
+              </div>
+            </Card>
+            {/* Conversion Rate */}
+            <Card className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-md">
+                  <ArrowRight className="h-4 w-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">{isFil ? 'Conversion Rate' : 'Conversion Rate'}</p>
+                  <p className="text-xl font-bold tabular-nums">{conversionRate}%</p>
+                </div>
+              </div>
+            </Card>
+            {/* Pipeline Stages */}
+            <Card className="p-4">
+              <p className="text-xs text-muted-foreground mb-2">{isFil ? 'Funnel Overview' : 'Funnel Overview'}</p>
+              <div className="flex items-center gap-1 flex-wrap">
+                {stages.map((stage: any, idx: number) => {
+                  const count = (stageMap[stage.id] || []).length
+                  const clr = stage.color || stageColorPalette[idx % stageColorPalette.length]
+                  return (
+                    <span key={stage.id} className="flex items-center gap-1 text-[11px]">
+                      <span className="h-2 w-2 rounded-sm" style={{ background: clr }} />
+                      <span className="font-bold tabular-nums" style={{ color: clr }}>{count}</span>
+                      {idx < stages.length - 1 && <ChevronRight className="h-2.5 w-2.5 text-muted-foreground/40" />}
+                    </span>
+                  )
+                })}
               </div>
             </Card>
           </motion.div>
@@ -599,7 +830,7 @@ export function AtsPipelinePage() {
             <ScrollArea className="w-full">
               <div
                 className="flex gap-4 min-h-[60vh] pb-4"
-                style={{ minWidth: `${Math.max(stages.length * 290, 800)}px` }}
+                style={{ minWidth: `${Math.max(stages.length * 300, 800)}px` }}
               >
                 <AnimatePresence>
                   {stages.map((stage: any, idx: number) => {
@@ -637,13 +868,23 @@ export function AtsPipelinePage() {
             {/* Drag Overlay */}
             <DragOverlay dropAnimation={dropAnimation}>
               {activeApp ? (
-                <Card className="w-64 shadow-xl opacity-90">
+                <Card className="w-72 shadow-2xl opacity-90 rotate-2">
                   <CardContent className="p-3">
-                    <div className="flex items-center gap-2">
-                      <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-semibold">
-                        {(activeApp.applicant?.name || 'U').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+                    <div className="flex items-center gap-2.5">
+                      <div
+                        className="h-9 w-9 rounded-lg flex items-center justify-center text-xs font-bold shadow-sm"
+                        style={{ background: activeColor + '20', color: activeColor }}
+                      >
+                        {getInitials(activeApp.applicant?.name)}
                       </div>
-                      <p className="text-xs font-semibold truncate">{activeApp.applicant?.name || 'Unknown'}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold truncate">{activeApp.applicant?.name || 'Unknown'}</p>
+                        {activeApp.aiAnalysis?.matchScore != null && (
+                          <Badge variant="outline" className={`text-[10px] px-1.5 mt-0.5 ${getScoreStyle(activeApp.aiAnalysis.matchScore)}`}>
+                            {Math.round(activeApp.aiAnalysis.matchScore)}%
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -655,75 +896,220 @@ export function AtsPipelinePage() {
 
       {/* ── Applicant Detail Sheet ──────────────────────────────────────── */}
       <Sheet open={showAppDetail} onOpenChange={(open) => { setShowAppDetail(open); if (!open) setSelectedApp(null) }}>
-        <SheetContent className="sm:max-w-md overflow-y-auto">
+        <SheetContent className="sm:max-w-lg overflow-y-auto">
           {selectedApp && (
             <>
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5 text-blue-600" />
-                  {selectedApp.applicant?.name || 'Unknown Applicant'}
+                  <User className="h-5 w-5 text-primary" />
+                  {isFil ? 'Detalye ng Aplikante' : 'Applicant Details'}
                 </SheetTitle>
                 <SheetDescription>
-                  {isFil ? 'Detalye ng aplikante at mabilisang aksyon' : 'Applicant details and quick actions'}
+                  {isFil ? 'Impormasyon at mabilisang aksyon' : 'Information and quick actions'}
                 </SheetDescription>
               </SheetHeader>
-              <div className="mt-6 space-y-6">
-                {/* Profile Info */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div className="h-14 w-14 rounded-full bg-gradient-to-br from-blue-400 to-violet-500 flex items-center justify-center text-white text-lg font-bold shadow-md">
-                      {(selectedApp.applicant?.name || 'U').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
-                    </div>
-                    <div>
-                      <p className="font-semibold">{selectedApp.applicant?.name || 'Unknown'}</p>
-                      {selectedApp.applicant?.email && (
-                        <p className="text-sm text-muted-foreground">{selectedApp.applicant.email}</p>
+
+              <div className="mt-6 space-y-5">
+                {/* Profile Header */}
+                <div className="flex items-start gap-4">
+                  <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center text-white text-lg font-bold shadow-lg shrink-0">
+                    {getInitials(selectedApp.applicant?.name)}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-bold text-lg leading-tight">{selectedApp.applicant?.name || 'Unknown'}</p>
+                    {selectedApp.applicant?.email && (
+                      <p className="text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
+                        <Mail className="h-3 w-3" />{selectedApp.applicant.email}
+                      </p>
+                    )}
+                    <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                      {selectedApp.applicant?.applicantProfile?.applicantType && (
+                        <Badge variant="secondary" className="capitalize text-xs">
+                          {selectedApp.applicant.applicantProfile.applicantType.replace(/_/g, ' ')}
+                        </Badge>
                       )}
+                      <Badge variant="outline" className="text-xs">
+                        <Clock className="h-3 w-3 mr-1" />
+                        {formatDate(selectedApp.createdAt, isFil)}
+                      </Badge>
                     </div>
                   </div>
-                  {selectedApp.applicant?.applicantProfile?.applicantType && (
-                    <Badge variant="secondary" className="capitalize">
-                      {selectedApp.applicant.applicantProfile.applicantType.replace('_', ' ')}
-                    </Badge>
+                </div>
+
+                <Separator />
+
+                {/* Match Score & Progress */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">{isFil ? 'AI Match Score' : 'AI Match Score'}</span>
+                    {selectedApp.aiAnalysis?.matchScore != null && (
+                      <span className={`text-sm font-bold tabular-nums ${
+                        selectedApp.aiAnalysis.matchScore >= 80 ? 'text-emerald-600 dark:text-emerald-400'
+                          : selectedApp.aiAnalysis.matchScore >= 50 ? 'text-amber-600 dark:text-amber-400'
+                          : 'text-red-600 dark:text-red-400'
+                      }`}>
+                        {Math.round(selectedApp.aiAnalysis.matchScore)}%
+                      </span>
+                    )}
+                  </div>
+                  {selectedApp.aiAnalysis?.matchScore != null && (
+                    <Progress value={selectedApp.aiAnalysis.matchScore} className="h-2" />
+                  )}
+                  {selectedApp.aiAnalysis?.explanation && (
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      {selectedApp.aiAnalysis.explanation}
+                    </p>
                   )}
                 </div>
 
-                {/* Stats Grid */}
+                {/* Matched / Missing Skills */}
+                {(parseJsonSkills(selectedApp.aiAnalysis?.matchedSkills).length > 0 || parseJsonSkills(selectedApp.aiAnalysis?.missingSkills).length > 0) && (
+                  <div className="space-y-2.5">
+                    {parseJsonSkills(selectedApp.aiAnalysis?.matchedSkills).length > 0 && (
+                      <div>
+                        <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 mb-1.5 flex items-center gap-1">
+                          <CheckCircle2 className="h-3 w-3" />
+                          {isFil ? 'Kinukumpirmang Kakayahan' : 'Matched Skills'}
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {parseJsonSkills(selectedApp.aiAnalysis?.matchedSkills).map((s: string) => (
+                            <Badge key={s} variant="outline" className="text-[10px] border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30">
+                              {s}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {parseJsonSkills(selectedApp.aiAnalysis?.missingSkills).length > 0 && (
+                      <div>
+                        <p className="text-xs font-medium text-red-600 dark:text-red-400 mb-1.5 flex items-center gap-1">
+                          <AlertCircle className="h-3 w-3" />
+                          {isFil ? 'Kakulangan sa Kakayahan' : 'Missing Skills'}
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {parseJsonSkills(selectedApp.aiAnalysis?.missingSkills).map((s: string) => (
+                            <Badge key={s} variant="outline" className="text-[10px] border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30">
+                              {s}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <Separator />
+
+                {/* Profile Details Grid */}
                 <div className="grid grid-cols-2 gap-3">
-                  <Card className="p-3 text-center">
-                    <p className="text-xs text-muted-foreground">{isFil ? 'Match Score' : 'Match Score'}</p>
-                    <p className="text-2xl font-bold mt-1">
-                      {selectedApp.aiAnalysis?.matchScore != null ? `${Math.round(selectedApp.aiAnalysis.matchScore)}%` : 'N/A'}
+                  <Card className="p-3">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                      <Phone className="h-3 w-3" />{isFil ? 'Telepono' : 'Phone'}
+                    </p>
+                    <p className="text-sm font-medium mt-1">
+                      {selectedApp.applicant?.applicantProfile?.phone || 'N/A'}
                     </p>
                   </Card>
-                  <Card className="p-3 text-center">
-                    <p className="text-xs text-muted-foreground">{isFil ? 'Petsa ng Pag-apply' : 'Applied Date'}</p>
-                    <p className="text-sm font-semibold mt-1">
-                      {selectedApp.createdAt ? new Date(selectedApp.createdAt).toLocaleDateString() : 'N/A'}
+                  <Card className="p-3">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />{isFil ? 'Lokasyon' : 'Location'}
+                    </p>
+                    <p className="text-sm font-medium mt-1">
+                      {selectedApp.applicant?.applicantProfile?.city || 'N/A'}
+                    </p>
+                  </Card>
+                  <Card className="p-3">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                      <GraduationCap className="h-3 w-3" />{isFil ? 'Edukasyon' : 'Education'}
+                    </p>
+                    <p className="text-sm font-medium mt-1">
+                      {selectedApp.applicant?.applicantProfile?.highestEducation || 'N/A'}
+                    </p>
+                  </Card>
+                  <Card className="p-3">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                      <Briefcase className="h-3 w-3" />{isFil ? 'Karanasan' : 'Experience'}
+                    </p>
+                    <p className="text-sm font-medium mt-1">
+                      {selectedApp.applicant?.applicantProfile?.yearsExperience != null
+                        ? `${selectedApp.applicant.applicantProfile.yearsExperience} ${isFil ? 'taon' : 'years'}`
+                        : 'N/A'}
                     </p>
                   </Card>
                 </div>
 
-                {/* Current Stage */}
+                {/* Passport Info */}
+                {selectedApp.applicant?.applicantProfile?.passportNo && (
+                  <Card className="p-3">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                      <FileText className="h-3 w-3" />{isFil ? 'Pasaporte' : 'Passport'}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-mono font-medium">{selectedApp.applicant.applicantProfile.passportNo}</span>
+                      {selectedApp.applicant.applicantProfile.passportExpiry && (
+                        <Badge variant="outline" className="text-[10px]">
+                          {isFil ? 'Eksperyado' : 'Exp'}: {new Date(selectedApp.applicant.applicantProfile.passportExpiry).toLocaleDateString()}
+                        </Badge>
+                      )}
+                    </div>
+                    {selectedApp.applicant.applicantProfile.passportStatus && (
+                      <Badge variant="secondary" className="text-[10px] mt-1.5 capitalize">
+                        {selectedApp.applicant.applicantProfile.passportStatus.replace(/_/g, ' ')}
+                      </Badge>
+                    )}
+                  </Card>
+                )}
+
+                <Separator />
+
+                {/* Current Stage & Pipeline Progress */}
                 {stages.length > 0 && (
-                  <div className="space-y-1.5">
-                    <Label className="text-xs text-muted-foreground">{isFil ? 'Kasalukuyang Stage' : 'Current Stage'}</Label>
-                    <div className="flex items-center gap-2">
+                  <div className="space-y-3">
+                    <Label className="text-xs text-muted-foreground uppercase tracking-wider">
+                      {isFil ? 'Pipeline Progress' : 'Pipeline Progress'}
+                    </Label>
+                    {/* Stage progress bar */}
+                    <div className="flex items-center gap-1">
+                      {stages.map((stage: any, idx: number) => {
+                        const currentIdx = stages.findIndex((s: any) => s.id === selectedApp.currentStageId)
+                        const isActive = idx === currentIdx
+                        const isPast = idx < currentIdx
+                        const clr = stage.color || stageColorPalette[idx % stageColorPalette.length]
+                        return (
+                          <Tooltip key={stage.id}>
+                            <TooltipTrigger asChild>
+                              <div className="flex-1 flex items-center gap-0.5">
+                                <div
+                                  className={`h-2 flex-1 rounded-full transition-all ${
+                                    isPast ? 'opacity-100' : isActive ? 'opacity-100 scale-y-125' : 'opacity-30'
+                                  }`}
+                                  style={{ background: isPast || isActive ? clr : undefined, backgroundColor: !(isPast || isActive) ? 'hsl(var(--muted))' : undefined }}
+                                />
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent side="bottom">
+                              <span className="font-medium">{stage.name}</span>
+                              {isActive && <span className="text-primary ml-1">({isFil ? 'Kasalukuyan' : 'Current'})</span>}
+                            </TooltipContent>
+                          </Tooltip>
+                        )
+                      })}
+                    </div>
+                    {/* Current & next stage labels */}
+                    <div className="flex items-center gap-2 text-sm">
                       {(() => {
                         const currentIdx = stages.findIndex((s: any) => s.id === selectedApp.currentStageId)
-                        const stage = stages[currentIdx] || stages[0]
+                        const stage = stages[currentIdx >= 0 ? currentIdx : 0]
                         const color = stage?.color || stageColorPalette[0]
                         return (
                           <>
                             <div className="h-3 w-3 rounded-full" style={{ background: color }} />
-                            <span className="text-sm font-medium">{stage?.name || 'Unknown'}</span>
-                            {currentIdx < stages.length - 1 && (
-                              <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                            )}
-                            {currentIdx < stages.length - 1 && (
-                              <span className="text-xs text-muted-foreground">
-                                {stages[currentIdx + 1]?.name}
-                              </span>
+                            <span className="font-medium">{stage?.name || isFil ? 'Hindi alam' : 'Unknown'}</span>
+                            {currentIdx >= 0 && currentIdx < stages.length - 1 && (
+                              <>
+                                <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />
+                                <span className="text-muted-foreground">{stages[currentIdx + 1]?.name}</span>
+                              </>
                             )}
                           </>
                         )
@@ -732,20 +1118,34 @@ export function AtsPipelinePage() {
                   </div>
                 )}
 
+                {/* Notes for move */}
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">
+                    {isFil ? 'Notes (Opsyonal)' : 'Notes (Optional)'}
+                  </Label>
+                  <Textarea
+                    value={moveNotes}
+                    onChange={(e) => setMoveNotes(e.target.value)}
+                    placeholder={isFil ? 'Magdagdag ng note...' : 'Add a note...'}
+                    rows={2}
+                    className="text-sm"
+                  />
+                </div>
+
                 {/* Quick Actions */}
-                <div className="space-y-2 pt-2">
-                  <Button className="w-full gap-2" onClick={handleViewProfile}>
+                <div className="space-y-2 pt-1">
+                  <Button className="w-full gap-2 rounded-xl" onClick={handleViewProfile}>
                     <Eye className="h-4 w-4" />
                     {isFil ? 'Tingnan ang Buong Profile' : 'View Full Profile'}
                   </Button>
                   {(() => {
                     const currentIdx = stages.findIndex((s: any) => s.id === selectedApp.currentStageId)
-                    const isLastStage = currentIdx >= stages.length - 1
+                    const isLast = currentIdx >= stages.length - 1
                     return (
                       <Button
                         variant="outline"
-                        className="w-full gap-2"
-                        disabled={isLastStage || moveStageMutation.isPending}
+                        className="w-full gap-2 rounded-xl"
+                        disabled={isLast || moveStageMutation.isPending}
                         onClick={handleSendToNext}
                       >
                         {moveStageMutation.isPending ? (
@@ -754,24 +1154,11 @@ export function AtsPipelinePage() {
                           <ChevronRight className="h-4 w-4" />
                         )}
                         {isFil
-                          ? isLastStage ? 'Huling Stage Na' : 'Ipadala sa Susunod na Stage'
-                          : isLastStage ? 'Final Stage' : 'Send to Next Stage'}
+                          ? isLast ? 'Huling Stage Na' : 'Ipadala sa Susunod na Stage'
+                          : isLast ? 'Final Stage' : 'Send to Next Stage'}
                       </Button>
                     )
                   })()}
-                </div>
-
-                {/* Notes for move */}
-                <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground">
-                    {isFil ? 'Notes (Opsyonal - kapag nagmo-move)' : 'Notes (Optional — when moving)'}
-                  </Label>
-                  <Textarea
-                    value={moveNotes}
-                    onChange={(e) => setMoveNotes(e.target.value)}
-                    placeholder="Add a note..."
-                    rows={2}
-                  />
                 </div>
               </div>
             </>
@@ -784,7 +1171,7 @@ export function AtsPipelinePage() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Plus className="h-5 w-5 text-blue-600" />
+              <Plus className="h-5 w-5 text-primary" />
               {isFil ? 'Dagdag na Stage' : 'Add New Stage'}
             </DialogTitle>
             <DialogDescription>
@@ -794,8 +1181,16 @@ export function AtsPipelinePage() {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label>{isFil ? 'Pangalan ng Stage' : 'Stage Name'}</Label>
-              <Input value={newStageName} onChange={(e) => setNewStageName(e.target.value)} placeholder="e.g., Medical Check" />
+              <Input
+                value={newStageName}
+                onChange={(e) => setNewStageName(e.target.value)}
+                placeholder="e.g., Medical Check"
+                className="rounded-xl"
+                onKeyDown={(e) => { if (e.key === 'Enter' && newStageName) addStageMutation.mutate() }}
+              />
             </div>
+
+            {/* Preset quick-pick */}
             <div>
               <Label className="text-xs text-muted-foreground">{isFil ? 'Mabilisang Pagpili (Preset)' : 'Quick Select (Preset)'}</Label>
               <div className="flex flex-wrap gap-1.5 mt-1.5">
@@ -803,13 +1198,19 @@ export function AtsPipelinePage() {
                   <button
                     key={preset}
                     onClick={() => setNewStageName(preset)}
-                    className={`px-2.5 py-1 rounded-full text-xs border transition-colors ${newStageName === preset ? 'bg-blue-600 text-white border-blue-600' : 'border-border hover:border-blue-400'}`}
+                    className={`px-2.5 py-1 rounded-full text-xs border transition-all ${
+                      newStageName === preset
+                        ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                        : 'border-border hover:border-primary/50 hover:bg-muted'
+                    }`}
                   >
                     {preset}
                   </button>
                 ))}
               </div>
             </div>
+
+            {/* Color picker */}
             <div className="space-y-2">
               <Label>{isFil ? 'Kulay' : 'Color'}</Label>
               <div className="flex gap-2 flex-wrap">
@@ -817,15 +1218,34 @@ export function AtsPipelinePage() {
                   <button
                     key={c}
                     onClick={() => setNewStageColor(c)}
-                    className={`h-7 w-7 rounded-full border-2 transition-transform ${newStageColor === c ? 'border-foreground scale-110' : 'border-transparent'}`}
+                    className={`h-8 w-8 rounded-lg border-2 transition-all hover:scale-110 ${
+                      newStageColor === c
+                        ? 'border-foreground scale-110 shadow-md'
+                        : 'border-transparent hover:border-muted-foreground/30'
+                    }`}
                     style={{ background: c }}
+                    aria-label={`Color ${c}`}
                   />
                 ))}
               </div>
+              {/* Color preview */}
+              <div className="flex items-center gap-2 mt-2">
+                <div className="h-3 w-3 rounded-sm" style={{ background: newStageColor }} />
+                <span className="text-xs text-muted-foreground">
+                  {newStageName || (isFil ? 'Pangalan ng stage' : 'Stage name')}
+                </span>
+              </div>
             </div>
+
             <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setShowAddStage(false)}>{isFil ? 'Kanselahin' : 'Cancel'}</Button>
-              <Button onClick={() => addStageMutation.mutate()} disabled={addStageMutation.isPending || !newStageName} className="rounded-xl">
+              <Button variant="outline" onClick={() => setShowAddStage(false)} className="rounded-xl">
+                {isFil ? 'Kanselahin' : 'Cancel'}
+              </Button>
+              <Button
+                onClick={() => addStageMutation.mutate()}
+                disabled={addStageMutation.isPending || !newStageName}
+                className="rounded-xl"
+              >
                 {addStageMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isFil ? 'Dagdagin' : 'Add Stage'}
               </Button>
@@ -849,11 +1269,14 @@ export function AtsPipelinePage() {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteConfirmStage(null)}>{isFil ? 'Kanselahin' : 'Cancel'}</Button>
+            <Button variant="outline" onClick={() => setDeleteConfirmStage(null)} className="rounded-xl">
+              {isFil ? 'Kanselahin' : 'Cancel'}
+            </Button>
             <Button
               variant="destructive"
               onClick={() => deleteConfirmStage && deleteStageMutation.mutate(deleteConfirmStage.id)}
               disabled={deleteStageMutation.isPending}
+              className="rounded-xl"
             >
               {deleteStageMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isFil ? 'I-delete' : 'Delete'}

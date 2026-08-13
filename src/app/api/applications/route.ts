@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireAuth, requireFiraOrAgency } from '@/lib/auth'
+import { requireAuth, requireFiraOrAgency, type AuthResult } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   const auth = requireAuth(request)
@@ -13,8 +13,11 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status')
 
     const where: Record<string, unknown> = {}
-    if (applicantId) where.applicantId = applicantId
-    if (jobOrderId) where.jobOrderId = jobOrderId
+
+    // Role-based filtering: restrict which applications a user can view
+    const accessDenied = buildApplicationWhereClause(auth, where, applicantId, jobOrderId)
+    if (accessDenied) return accessDenied
+
     if (status) where.status = status
 
     const applications = await db.application.findMany({
@@ -35,9 +38,61 @@ export async function GET(request: NextRequest) {
   }
 }
 
+/**
+ * Build WHERE clause for applications based on user role.
+ * Returns a 403 NextResponse if access is denied, or null if access is allowed.
+ */
+function buildApplicationWhereClause(
+  auth: AuthResult,
+  where: Record<string, unknown>,
+  applicantId: string | null,
+  jobOrderId: string | null,
+): NextResponse | null {
+  const firaRoles = ['super_admin', 'staff', 'international_agency']
+
+  if (firaRoles.includes(auth.userRole)) {
+    // FIRA can view all applicants — no filtering needed
+    if (applicantId) where.applicantId = applicantId
+    if (jobOrderId) where.jobOrderId = jobOrderId
+    return null
+  }
+
+  if (auth.userRole === 'local_agency') {
+    // Local agency can only view applicants for jobs assigned to their agency
+    if (jobOrderId) where.jobOrderId = jobOrderId
+    if (applicantId) where.applicantId = applicantId
+    // Filter to only applications for jobs assigned to this user's agency
+    where.jobOrder = { agency: { members: { some: { userId: auth.userId } } } }
+    return null
+  }
+
+  if (auth.userRole === 'employer') {
+    // Employer can only view endorsed candidates for their company
+    where.jobOrder = { employer: { userId: auth.userId } }
+    if (applicantId) where.applicantId = applicantId
+    if (jobOrderId) where.jobOrderId = jobOrderId
+    return null
+  }
+
+  if (auth.userRole === 'applicant') {
+    // Applicant can only view their own applications
+    where.applicantId = auth.userId
+    if (jobOrderId) where.jobOrderId = jobOrderId
+    return null
+  }
+
+  return NextResponse.json({ error: 'Insufficient permissions to view applications' }, { status: 403 })
+}
+
 export async function POST(request: NextRequest) {
   const auth = requireAuth(request)
   if (auth instanceof NextResponse) return auth
+
+  // Only applicants can apply for jobs; FIRA staff can also create applications on behalf
+  const firaRoles = ['super_admin', 'staff', 'international_agency']
+  if (auth.userRole !== 'applicant' && !firaRoles.includes(auth.userRole)) {
+    return NextResponse.json({ error: 'Only applicants can apply for jobs' }, { status: 403 })
+  }
 
   try {
     const body = await request.json()
@@ -45,6 +100,11 @@ export async function POST(request: NextRequest) {
 
     if (!applicantId || !jobOrderId)
       return NextResponse.json({ error: 'applicantId and jobOrderId are required' }, { status: 400 })
+
+    // If applicant, ensure they are applying as themselves
+    if (auth.userRole === 'applicant' && applicantId !== auth.userId) {
+      return NextResponse.json({ error: 'You can only apply on your own behalf' }, { status: 403 })
+    }
 
     const jobExists = await db.jobOrder.findUnique({ where: { id: jobOrderId } })
     if (!jobExists) return NextResponse.json({ error: 'Job not found' }, { status: 404 })

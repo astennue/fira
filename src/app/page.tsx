@@ -43,6 +43,7 @@ const FiraEmployersPage = lazy(() => import('@/components/dashboard/fira-employe
 const FiraApplicantsPage = lazy(() => import('@/components/dashboard/fira-applicants-page').then(m => ({ default: m.FiraApplicantsPage })))
 const FiraJobsPage = lazy(() => import('@/components/dashboard/fira-jobs-page').then(m => ({ default: m.FiraJobsPage })))
 const FiraJobCreatePage = lazy(() => import('@/components/dashboard/fira-job-create-page').then(m => ({ default: m.FiraJobCreatePage })))
+const FiraApplicantDetailPage = lazy(() => import('@/components/dashboard/fira-applicant-detail-page').then(m => ({ default: m.FiraApplicantDetailPage })))
 const AtsPipelinePage = lazy(() => import('@/components/dashboard/ats-pipeline-page').then(m => ({ default: m.AtsPipelinePage })))
 const AiMatchingPage = lazy(() => import('@/components/dashboard/ai-matching-page').then(m => ({ default: m.AiMatchingPage })))
 const ResumeEnhancementPage = lazy(() => import('@/components/dashboard/resume-enhancement-page').then(m => ({ default: m.ResumeEnhancementPage })))
@@ -198,13 +199,7 @@ function ViewRenderer({ view }: { view: ViewName }) {
         )
       case 'applicant-profile-edit':
         return <ApplicantProfileEditPage />
-      case 'fira-applicant-detail':
-        return (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <h2 className="text-xl font-semibold">Applicant Detail - Coming Soon</h2>
-            <Button variant="outline" onClick={() => navigate('fira-applicants')}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button>
-          </div>
-        )
+      case 'fira-applicant-detail': return <FiraApplicantDetailPage />
       case 'fira-job-create': return <FiraJobCreatePage />
       case 'agency-job-create':
         return (

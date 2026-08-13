@@ -4,10 +4,10 @@ import { apiFetch } from "@/lib/fetch"
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Search, MapPin, Filter, Briefcase, ArrowRight, Clock, Heart, FileText } from 'lucide-react'
+import { Search, MapPin, Filter, Briefcase, Heart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -53,7 +53,7 @@ export function ApplicantJobsPage() {
   }
 
   return (
-    <div className="view-transition space-y-6">
+    <div className="view-transition space-y-6 pb-8">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Maghanap ng Trabaho' : 'Find Jobs'}</h1>
         <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Mag-browse at mag-apply sa mga trabaho' : 'Browse and apply for job openings'}</p>
@@ -83,7 +83,7 @@ export function ApplicantJobsPage() {
           {jobs.map((job: any, i: number) => (
             <motion.div key={job.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.03, 0.2) }}>
               <Card className="hover:shadow-md hover:border-primary/30 transition-all h-full" onClick={() => navigate('job-detail', { jobId: job.id })}>
-                <CardContent className="p-5">
+                <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-3">
                     <Badge className={`text-xs ${categoryColors[job.category] || 'bg-muted text-foreground'}`}>{job.category?.replace(/_/g, ' ')}</Badge>
                     <Heart className="h-4 w-4 text-muted-foreground hover:text-red-500 cursor-pointer" />

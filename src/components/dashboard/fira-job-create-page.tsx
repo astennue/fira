@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { ArrowLeft, Loader2, Plus } from 'lucide-react'
+import { useState, useCallback } from 'react'
+import { ArrowLeft, Loader2, Plus, MapPin, Banknote, Briefcase, AlertCircle } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,7 +9,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { useAppStore, useT } from '@/store/app-store'
+import { Separator } from '@/components/ui/separator'
+import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
 import { apiFetch } from '@/lib/fetch'
 import { convertToPHP, formatPHP, getCurrencySymbol } from '@/lib/currency'
@@ -60,10 +61,13 @@ const VISIBILITIES = [
   { value: 'agency_only', label: 'Agency Only', labelFil: 'Ahensya Lamang' },
 ] as const
 
+type FormErrors = Record<string, string>
+
 export function FiraJobCreatePage() {
   const { user, navigate, language } = useAppStore()
-  const t = useT()
   const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState<FormErrors>({})
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
 
   // Form state
   const [title, setTitle] = useState('')
@@ -108,12 +112,60 @@ export function FiraJobCreatePage() {
   })
   const agencies = Array.isArray(agenciesData?.agencies) ? agenciesData.agencies : []
 
+  const isFil = language === 'fil'
+
+  // Validation
+  const validate = useCallback((): FormErrors => {
+    const newErrors: FormErrors = {}
+    if (!title.trim()) newErrors.title = isFil ? 'Kinakailangan ang posisyon.' : 'Job title is required.'
+    if (!description.trim()) newErrors.description = isFil ? 'Kinakailangan ang deskripsyon.' : 'Description is required.'
+    if (!country.trim()) newErrors.country = isFil ? 'Kinakailangan ang bansa.' : 'Country is required.'
+    if (!category) newErrors.category = isFil ? 'Pumili ng kategorya.' : 'Please select a category.'
+    if (!requirements.trim()) newErrors.requirements = isFil ? 'Kinakailangan ang mga kinakailangan.' : 'Requirements are required.'
+    if (!requiredSkills.trim()) newErrors.requiredSkills = isFil ? 'Kinakailangan ang mga kasanayan.' : 'Required skills are required.'
+    if (salaryMin && salaryMax && Number(salaryMax) < Number(salaryMin)) {
+      newErrors.salaryMax = isFil ? 'Hindi dapat mas mababa sa minimum.' : 'Must not be less than minimum.'
+    }
+    if (salaryMin && Number(salaryMin) < 0) {
+      newErrors.salaryMin = isFil ? 'Hindi dapat negatibo.' : 'Must not be negative.'
+    }
+    return newErrors
+  }, [title, description, country, category, requirements, requiredSkills, salaryMin, salaryMax, isFil])
+
+  const clearFieldError = (field: string) => {
+    setErrors((prev) => {
+      if (!prev[field]) return prev
+      const next = { ...prev }
+      delete next[field]
+      return next
+    })
+  }
+
+  const markTouched = (field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }))
+  }
+
+  const showFieldError = (field: string) => touched[field] && errors[field]
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!user) return
 
-    if (!title || !description || !country || !category || !requirements || !requiredSkills) {
-      toast.error(language === 'fil' ? 'Punan ang mga kinakailangang field.' : 'Please fill in all required fields.')
+    const validationErrors = validate()
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors)
+      // Mark all required fields as touched so errors show
+      setTouched({
+        title: true,
+        description: true,
+        country: true,
+        category: true,
+        requirements: true,
+        requiredSkills: true,
+        salaryMin: true,
+        salaryMax: true,
+      })
+      toast.error(isFil ? 'May mga maling field. Pakiayusin.' : 'There are errors. Please fix them.')
       return
     }
 
@@ -153,16 +205,21 @@ export function FiraJobCreatePage() {
         throw new Error(err.error || 'Failed to create job order')
       }
 
-      toast.success(language === 'fil' ? 'Matagumpay na nagawa ang job order!' : 'Job order created successfully!')
+      toast.success(isFil ? 'Matagumpay na nagawa ang job order!' : 'Job order created successfully!')
       navigate('fira-jobs')
     } catch (error: any) {
-      toast.error(error.message || (language === 'fil' ? 'Nag-error. Subukan muli.' : 'An error occurred. Please try again.'))
+      toast.error(error.message || (isFil ? 'Nag-error. Subukan muli.' : 'An error occurred. Please try again.'))
     } finally {
       setLoading(false)
     }
   }
 
-  const isFil = language === 'fil'
+  // PHP conversion values
+  const phpMin = salaryMin && Number(salaryMin) > 0 ? convertToPHP(Number(salaryMin), salaryCurrency) : null
+  const phpMax = salaryMax && Number(salaryMax) > 0 ? convertToPHP(Number(salaryMax), salaryCurrency) : null
+  const periodLabel = salaryPeriod
+    ? salaryPeriod.toLowerCase()
+    : isFil ? 'buwan' : 'month'
 
   return (
     <div className="view-transition space-y-6">
@@ -182,11 +239,31 @@ export function FiraJobCreatePage() {
         </div>
       </div>
 
+      {/* Summary validation error banner */}
+      {Object.keys(errors).length > 0 && touched.title && (
+        <div className="flex items-start gap-3 rounded-lg border border-destructive/50 bg-destructive/5 px-4 py-3">
+          <AlertCircle className="h-5 w-5 text-destructive mt-0.5 shrink-0" />
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-destructive">
+              {isFil ? 'May mga kinakailangang field na hindi pa napupunan:' : 'Some required fields need your attention:'}
+            </p>
+            <ul className="text-sm text-muted-foreground list-disc list-inside space-y-0.5">
+              {Object.values(errors).map((err, i) => (
+                <li key={i}>{err}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Section: Job Details */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg">{isFil ? 'Detalye ng Trabaho' : 'Job Details'}</CardTitle>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Briefcase className="h-5 w-5" />
+              {isFil ? 'Detalye ng Trabaho' : 'Job Details'}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -198,10 +275,16 @@ export function FiraJobCreatePage() {
                 <Input
                   id="title"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e) => { setTitle(e.target.value); clearFieldError('title') }}
+                  onBlur={() => markTouched('title')}
                   placeholder={isFil ? 'Hal. Domestic Helper sa Dubai' : 'e.g. Domestic Helper in Dubai'}
-                  required
+                  className={showFieldError('title') ? 'border-destructive focus-visible:ring-destructive' : ''}
                 />
+                {showFieldError('title') && (
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />{errors.title}
+                  </p>
+                )}
               </div>
 
               {/* Category */}
@@ -209,8 +292,8 @@ export function FiraJobCreatePage() {
                 <Label htmlFor="category">
                   {isFil ? 'Kategorya' : 'Category'} <span className="text-destructive">*</span>
                 </Label>
-                <Select value={category} onValueChange={setCategory} required>
-                  <SelectTrigger id="category">
+                <Select value={category} onValueChange={(v) => { setCategory(v); clearFieldError('category'); markTouched('category') }}>
+                  <SelectTrigger id="category" className={showFieldError('category') ? 'border-destructive' : ''}>
                     <SelectValue placeholder={isFil ? 'Pumili ng kategorya...' : 'Select category...'} />
                   </SelectTrigger>
                   <SelectContent>
@@ -219,6 +302,11 @@ export function FiraJobCreatePage() {
                     ))}
                   </SelectContent>
                 </Select>
+                {showFieldError('category') && (
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />{errors.category}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -230,40 +318,64 @@ export function FiraJobCreatePage() {
               <Textarea
                 id="description"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(e) => { setDescription(e.target.value); clearFieldError('description') }}
+                onBlur={() => markTouched('description')}
                 rows={3}
                 placeholder={isFil ? 'Ilarawan ang trabaho...' : 'Describe the job role and responsibilities...'}
-                required
+                className={showFieldError('description') ? 'border-destructive focus-visible:ring-destructive' : ''}
               />
+              {showFieldError('description') && (
+                <p className="text-xs text-destructive flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />{errors.description}
+                </p>
+              )}
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              {/* Country */}
-              <div className="space-y-2">
-                <Label htmlFor="country">
-                  {isFil ? 'Bansa' : 'Country'} <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="country"
-                  value={country}
-                  onChange={(e) => setCountry(e.target.value)}
-                  placeholder={isFil ? 'Hal. United Arab Emirates' : 'e.g. United Arab Emirates'}
-                  required
-                />
-              </div>
+            <Separator className="my-2" />
 
-              {/* City */}
-              <div className="space-y-2">
-                <Label htmlFor="city">{isFil ? 'Lungsod' : 'City'}</Label>
-                <Input
-                  id="city"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  placeholder={isFil ? 'Hal. Dubai' : 'e.g. Dubai'}
-                />
+            {/* Location sub-group */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <MapPin className="h-4 w-4" />
+                {isFil ? 'Lokasyon' : 'Location'}
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {/* Country */}
+                <div className="space-y-2">
+                  <Label htmlFor="country">
+                    {isFil ? 'Bansa' : 'Country'} <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="country"
+                    value={country}
+                    onChange={(e) => { setCountry(e.target.value); clearFieldError('country') }}
+                    onBlur={() => markTouched('country')}
+                    placeholder={isFil ? 'Hal. United Arab Emirates' : 'e.g. United Arab Emirates'}
+                    className={showFieldError('country') ? 'border-destructive focus-visible:ring-destructive' : ''}
+                  />
+                  {showFieldError('country') && (
+                    <p className="text-xs text-destructive flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />{errors.country}
+                    </p>
+                  )}
+                </div>
+
+                {/* City */}
+                <div className="space-y-2">
+                  <Label htmlFor="city">{isFil ? 'Lungsod' : 'City'}</Label>
+                  <Input
+                    id="city"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder={isFil ? 'Hal. Dubai' : 'e.g. Dubai'}
+                  />
+                </div>
               </div>
             </div>
 
+            <Separator className="my-2" />
+
+            {/* Employment details sub-group */}
             <div className="grid gap-4 sm:grid-cols-3">
               {/* Job Type */}
               <div className="space-y-2">
@@ -294,7 +406,7 @@ export function FiraJobCreatePage() {
               {/* Number of Slots */}
               <div className="space-y-2">
                 <Label htmlFor="slots">
-                  {isFil ? 'Bilang ng Slot' : 'Number of Slots'} <span className="text-destructive">*</span>
+                  {isFil ? 'Bilang ng Slot' : 'Number of Slots'}
                 </Label>
                 <Input
                   id="slots"
@@ -302,7 +414,6 @@ export function FiraJobCreatePage() {
                   min="1"
                   value={slots}
                   onChange={(e) => setSlots(e.target.value)}
-                  required
                 />
               </div>
             </div>
@@ -312,7 +423,10 @@ export function FiraJobCreatePage() {
         {/* Section: Compensation */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg">{isFil ? 'Kompensasyon' : 'Compensation'}</CardTitle>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Banknote className="h-5 w-5" />
+              {isFil ? 'Kompensasyon' : 'Compensation'}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -325,9 +439,16 @@ export function FiraJobCreatePage() {
                   min="0"
                   step="0.01"
                   value={salaryMin}
-                  onChange={(e) => setSalaryMin(e.target.value)}
+                  onChange={(e) => { setSalaryMin(e.target.value); clearFieldError('salaryMin') }}
+                  onBlur={() => markTouched('salaryMin')}
                   placeholder="0.00"
+                  className={showFieldError('salaryMin') ? 'border-destructive focus-visible:ring-destructive' : ''}
                 />
+                {showFieldError('salaryMin') && (
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />{errors.salaryMin}
+                  </p>
+                )}
               </div>
 
               {/* Salary Max */}
@@ -339,9 +460,16 @@ export function FiraJobCreatePage() {
                   min="0"
                   step="0.01"
                   value={salaryMax}
-                  onChange={(e) => setSalaryMax(e.target.value)}
+                  onChange={(e) => { setSalaryMax(e.target.value); clearFieldError('salaryMax') }}
+                  onBlur={() => markTouched('salaryMax')}
                   placeholder="0.00"
+                  className={showFieldError('salaryMax') ? 'border-destructive focus-visible:ring-destructive' : ''}
                 />
+                {showFieldError('salaryMax') && (
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />{errors.salaryMax}
+                  </p>
+                )}
               </div>
 
               {/* Salary Currency */}
@@ -377,21 +505,26 @@ export function FiraJobCreatePage() {
               </div>
             </div>
 
-            {/* Salary preview */}
-            {salaryMin && (
-              <div className="rounded-lg border bg-muted/40 px-4 py-2.5 space-y-1">
-                <p className="text-sm text-muted-foreground">{isFil ? 'Preview ng Sahod' : 'Salary Preview'}</p>
-                <p className="text-lg font-semibold">
-                  {CURRENCIES.find((c) => c.code === salaryCurrency)?.symbol || '$'}
-                  {Number(salaryMin).toLocaleString()}
-                  {salaryMax ? ` – ${Number(salaryMax).toLocaleString()}` : ''}
-                  {salaryPeriod ? ` / ${salaryPeriod.toLowerCase()}` : ''}
+            {/* Salary preview with PHP conversion */}
+            {(salaryMin || salaryMax) && Number(salaryMin || salaryMax) > 0 && (
+              <div className="rounded-lg border bg-muted/40 px-4 py-3 space-y-2">
+                <p className="text-sm font-medium text-muted-foreground">
+                  {isFil ? 'Preview ng Sahod' : 'Salary Preview'}
                 </p>
-                {salaryCurrency !== 'PHP' && (
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                  <p className="text-lg font-semibold">
+                    {getCurrencySymbol(salaryCurrency)}
+                    {salaryMin && Number(salaryMin) > 0 ? Number(salaryMin).toLocaleString() : '0'}
+                    {salaryMax && Number(salaryMax) > 0 ? ` – ${Number(salaryMax).toLocaleString()}` : ''}
+                    <span className="text-sm font-normal text-muted-foreground"> / {periodLabel}</span>
+                  </p>
+                </div>
+                {/* PHP conversion */}
+                {salaryCurrency !== 'PHP' && (phpMin !== null || phpMax !== null) && (
                   <p className="text-sm text-muted-foreground">
-                    ≈ {formatPHP(Number(salaryMin) * (convertToPHP(1, salaryCurrency) || 1))}
-                    {salaryMax ? ` – ${formatPHP(Number(salaryMax) * (convertToPHP(1, salaryCurrency) || 1))}` : ''}
-                    {salaryPeriod ? ` / ${salaryPeriod.toLowerCase()}` : ''}
+                    ≈ {formatPHP(phpMin || 0)}
+                    {phpMax !== null ? ` – ${formatPHP(phpMax)}` : ''}
+                    /{periodLabel} (PHP)
                   </p>
                 )}
               </div>
@@ -413,13 +546,19 @@ export function FiraJobCreatePage() {
               <Textarea
                 id="requirements"
                 value={requirements}
-                onChange={(e) => setRequirements(e.target.value)}
+                onChange={(e) => { setRequirements(e.target.value); clearFieldError('requirements') }}
+                onBlur={() => markTouched('requirements')}
                 rows={4}
                 placeholder={isFil
                   ? 'Ilista ang mga kinakailangan (edad, karanasan, lisensya, atbp.)...'
                   : 'List the requirements (age, experience, license, etc.)...'}
-                required
+                className={showFieldError('requirements') ? 'border-destructive focus-visible:ring-destructive' : ''}
               />
+              {showFieldError('requirements') && (
+                <p className="text-xs text-destructive flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />{errors.requirements}
+                </p>
+              )}
             </div>
 
             {/* Benefits */}
@@ -444,12 +583,18 @@ export function FiraJobCreatePage() {
               <Input
                 id="requiredSkills"
                 value={requiredSkills}
-                onChange={(e) => setRequiredSkills(e.target.value)}
+                onChange={(e) => { setRequiredSkills(e.target.value); clearFieldError('requiredSkills') }}
+                onBlur={() => markTouched('requiredSkills')}
                 placeholder={isFil
                   ? 'Hal. caregiving, first aid, communication'
                   : 'e.g. caregiving, first aid, communication'}
-                required
+                className={showFieldError('requiredSkills') ? 'border-destructive focus-visible:ring-destructive' : ''}
               />
+              {showFieldError('requiredSkills') && (
+                <p className="text-xs text-destructive flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />{errors.requiredSkills}
+                </p>
+              )}
               <p className="text-xs text-muted-foreground">
                 {isFil ? 'Ihiwalay ang bawat kasanayan ng kuwit (,)' : 'Separate each skill with a comma (,)'}
               </p>
@@ -473,7 +618,7 @@ export function FiraJobCreatePage() {
             <div className="grid gap-4 sm:grid-cols-2">
               {/* Visibility */}
               <div className="space-y-2">
-                <Label htmlFor="visibility">{isFil ? 'Visibility' : 'Visibility'}</Label>
+                <Label htmlFor="visibility">{isFil ? 'Pagkakakitaan' : 'Visibility'}</Label>
                 <Select value={visibility} onValueChange={setVisibility}>
                   <SelectTrigger id="visibility">
                     <SelectValue />
@@ -500,15 +645,25 @@ export function FiraJobCreatePage() {
               </div>
             </div>
 
+            <Separator className="my-2" />
+
             <div className="grid gap-4 sm:grid-cols-2">
               {/* Assign to Employer */}
               <div className="space-y-2">
                 <Label htmlFor="employerId">{isFil ? 'I-assign sa Empleyador' : 'Assign to Employer'}</Label>
                 <Select value={employerId} onValueChange={setEmployerId}>
                   <SelectTrigger id="employerId">
-                    <SelectValue placeholder={isFil ? 'Pumili ng empleyador...' : 'Select employer...'} />
+                    <SelectValue placeholder={isFil
+                      ? (employers.length === 0 ? 'Walang nahanap na empleyador' : 'Pumili ng empleyador...')
+                      : (employers.length === 0 ? 'No employers found' : 'Select employer...')
+                    } />
                   </SelectTrigger>
                   <SelectContent>
+                    {employers.length === 0 && (
+                      <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                        {isFil ? 'Walang nahanap na empleyador' : 'No employers available'}
+                      </div>
+                    )}
                     {employers.map((emp: any) => (
                       <SelectItem key={emp.id} value={emp.id}>
                         {emp.employerProfile?.companyName || emp.name}
@@ -524,9 +679,17 @@ export function FiraJobCreatePage() {
                 <Label htmlFor="agencyId">{isFil ? 'I-assign sa Ahensya' : 'Assign to Agency'}</Label>
                 <Select value={agencyId} onValueChange={setAgencyId}>
                   <SelectTrigger id="agencyId">
-                    <SelectValue placeholder={isFil ? 'Pumili ng ahensya...' : 'Select agency...'} />
+                    <SelectValue placeholder={isFil
+                      ? (agencies.length === 0 ? 'Walang nahanap na ahensya' : 'Pumili ng ahensya...')
+                      : (agencies.length === 0 ? 'No agencies found' : 'Select agency...')
+                    } />
                   </SelectTrigger>
                   <SelectContent>
+                    {agencies.length === 0 && (
+                      <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                        {isFil ? 'Walang nahanap na ahensya' : 'No agencies available'}
+                      </div>
+                    )}
                     {agencies.map((ag: any) => (
                       <SelectItem key={ag.id} value={ag.id}>
                         {ag.name}
@@ -550,7 +713,7 @@ export function FiraJobCreatePage() {
           >
             {isFil ? 'Kanselahin' : 'Cancel'}
           </Button>
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={loading} className="min-w-[180px]">
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

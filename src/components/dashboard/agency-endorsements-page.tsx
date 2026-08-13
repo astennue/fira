@@ -1,19 +1,16 @@
 'use client'
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { Send, CheckCircle, XCircle, Clock, User, Building2, ArrowRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Send, CheckCircle, XCircle, Clock, Building2, ArrowRight } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore } from '@/store/app-store'
-import { toast } from 'sonner'
 import { apiFetch } from '@/lib/fetch'
 
 export function AgencyEndorsementsPage() {
   const { language } = useAppStore()
-  const queryClient = useQueryClient()
 
   const { data: data, isLoading } = useQuery({
     queryKey: ['agency-endorsements'],
@@ -36,7 +33,7 @@ export function AgencyEndorsementsPage() {
   }
 
   return (
-    <div className="view-transition space-y-6">
+    <div className="view-transition space-y-6 pb-8">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Mga Endorso' : 'Endorsements'}</h1>
         <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Subaybayan ang mga endorsement' : 'Track endorsement progress'}</p>
@@ -47,7 +44,7 @@ export function AgencyEndorsementsPage() {
       ) : endorsements.length === 0 ? (
         <Card className="p-8 text-center"><Send className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">{language === 'fil' ? 'Wala pang endorsement.' : 'No endorsements yet.'}</p></Card>
       ) : (
-        <div className="space-y-3 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar">
+        <div className="space-y-4 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar">
           {endorsements.map((e: any, i: number) => {
             const cfg = statusConfig[e.status] || statusConfig.pending_fira_review
             const StatusIcon = cfg.icon
@@ -57,7 +54,7 @@ export function AgencyEndorsementsPage() {
             return (
               <motion.div key={e.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
                 <Card>
-                  <CardContent className="p-4">
+                  <CardContent className="p-6">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div className="min-w-0">
                         <div className="flex items-center gap-2 mb-1 flex-wrap">

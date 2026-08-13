@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export type ApiRole = 'super_admin' | 'staff' | 'applicant' | 'local_agency' | 'international_agency' | 'employer'
 
-interface AuthResult {
+export interface AuthResult {
   userId: string
   userRole: ApiRole
 }
@@ -55,4 +55,32 @@ export function requireFira(request: NextRequest): AuthResult | NextResponse {
  */
 export function requireFiraOrAgency(request: NextRequest): AuthResult | NextResponse {
   return requireRole(request, ['super_admin', 'staff', 'international_agency', 'local_agency'])
+}
+
+/**
+ * Check if user is an employer.
+ */
+export function requireEmployer(request: NextRequest): AuthResult | NextResponse {
+  return requireRole(request, ['employer'])
+}
+
+/**
+ * Check if user is an applicant.
+ */
+export function requireApplicant(request: NextRequest): AuthResult | NextResponse {
+  return requireRole(request, ['applicant'])
+}
+
+/**
+ * Check if user can access CMS admin features (super_admin or staff only).
+ */
+export function requireCmsAdmin(request: NextRequest): AuthResult | NextResponse {
+  return requireRole(request, ['super_admin', 'staff'])
+}
+
+/**
+ * Check if user can view internal job listings (FIRA + local_agency + employer).
+ */
+export function requireJobViewer(request: NextRequest): AuthResult | NextResponse {
+  return requireRole(request, ['super_admin', 'staff', 'international_agency', 'local_agency', 'employer'])
 }

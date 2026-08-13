@@ -14,8 +14,21 @@ export async function GET(request: NextRequest) {
 
     const where: Record<string, unknown> = {}
     if (applicationId) where.applicationId = applicationId
-    if (employerId) where.employerId = employerId
     if (status) where.status = status
+
+    // Auto-filter by role: employers only see endorsements addressed to them
+    if (auth.userRole === 'employer') {
+      const employerProfile = await db.employerProfile.findUnique({ where: { userId: auth.userId } })
+      if (employerProfile) where.employerId = employerProfile.id
+    }
+    // Agencies only see endorsements they created
+    if (auth.userRole === 'local_agency') {
+      where.endorsedById = auth.userId
+    }
+    // Allow explicit employerId override for FIRA roles
+    if (employerId && ['super_admin', 'staff', 'international_agency'].includes(auth.userRole)) {
+      where.employerId = employerId
+    }
 
     const endorsements = await db.endorsement.findMany({
       where,

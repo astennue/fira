@@ -2,9 +2,9 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { CheckCircle, XCircle, UserCheck, Eye, ArrowRight, Building2, Loader2 } from 'lucide-react'
+import { CheckCircle, XCircle, UserCheck, ArrowRight, Building2, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore } from '@/store/app-store'
@@ -46,7 +46,7 @@ export function EmployerEndorsedPage() {
   })
 
   return (
-    <div className="view-transition space-y-6">
+    <div className="view-transition space-y-6 pb-8">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Mga Inindorso na Kandidato' : 'Endorsed Candidates'}</h1>
         <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Review at magdesisyon sa mga kandidato' : 'Review and decide on candidates'}</p>
@@ -57,7 +57,7 @@ export function EmployerEndorsedPage() {
       ) : endorsements.length === 0 ? (
         <Card className="p-8 text-center"><UserCheck className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">{language === 'fil' ? 'Wala pang endorsed na kandidato.' : 'No endorsed candidates yet.'}</p></Card>
       ) : (
-        <div className="space-y-3 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar">
+        <div className="space-y-4 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar">
           {endorsements.map((e: any, i: number) => {
             const applicant = e.application?.applicant
             const job = e.application?.jobOrder
@@ -67,7 +67,7 @@ export function EmployerEndorsedPage() {
             return (
               <motion.div key={e.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
                 <Card>
-                  <CardContent className="p-4">
+                  <CardContent className="p-6">
                     <div className="flex flex-col gap-3">
                       <div className="flex items-start justify-between">
                         <div className="min-w-0">

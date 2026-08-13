@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireAuth, requireFira } from '@/lib/auth'
+import { requireFira, requireJobViewer, type AuthResult } from '@/lib/auth'
 
 const DEFAULT_STAGES = [
   'New Application', 'Document Review', 'Initial Screening', 'Interview Scheduled',
@@ -10,13 +10,14 @@ const DEFAULT_STAGES = [
 ]
 
 export async function GET(request: NextRequest) {
+  let auth: any = null
   try {
     const { searchParams } = new URL(request.url)
     const isPublic = searchParams.get('public')
 
     // Public access only when public=true param is present
     if (isPublic !== 'true') {
-      const auth = requireAuth(request)
+      auth = requireJobViewer(request)
       if (auth instanceof NextResponse) return auth
     }
 
@@ -38,7 +39,7 @@ export async function GET(request: NextRequest) {
       where.visibility = 'public'
       where.status = 'open'
     } else {
-      const visFilter = buildVisibilityFilter(visibility, userRole)
+      const visFilter = buildVisibilityFilter(visibility, userRole, auth)
       Object.assign(where, visFilter)
     }
 
@@ -72,11 +73,12 @@ export async function GET(request: NextRequest) {
   }
 }
 
-function buildVisibilityFilter(visibility: string | null, userRole: string | null) {
+function buildVisibilityFilter(visibility: string | null, userRole: string | null, auth: AuthResult | null) {
   if (visibility) return { visibility }
-  if (!userRole) return { visibility: 'public' }
+  if (!userRole || !auth) return { visibility: 'public' }
   if (userRole === 'international_agency') return {}
   if (userRole === 'local_agency') return { OR: [{ visibility: 'public' }, { visibility: 'agency_only' }] }
+  if (userRole === 'employer') return { employer: { userId: auth.userId } }
   return { visibility: 'public' }
 }
 

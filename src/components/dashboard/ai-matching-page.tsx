@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { Sparkles, Search, ArrowDown, Send, CheckCircle, XCircle, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -20,7 +20,7 @@ export function AiMatchingPage() {
   const [results, setResults] = useState<any[] | null>(null)
   const [isMatching, setIsMatching] = useState(false)
 
-  const { data: jobsData } = useQuery({
+  const { data: jobsData, isLoading: jobsLoading } = useQuery({
     queryKey: ['ai-matching-jobs'],
     queryFn: async () => {
       const res = await apiFetch('/api/jobs')
@@ -68,6 +68,12 @@ export function AiMatchingPage() {
 
       <Card>
         <CardContent className="p-5">
+          {jobsLoading ? (
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex-1"><Skeleton className="h-11 w-full rounded-md" /></div>
+              <Skeleton className="h-11 w-48 rounded-md shrink-0" />
+            </div>
+          ) : (
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1">
               <Select value={selectedJobId} onValueChange={setSelectedJobId}>
@@ -89,6 +95,7 @@ export function AiMatchingPage() {
               )}
             </Button>
           </div>
+          )}
         </CardContent>
       </Card>
 

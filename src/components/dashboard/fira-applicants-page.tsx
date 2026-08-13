@@ -35,7 +35,7 @@ export function FiraApplicantsPage() {
   const filtered = filter === 'all' ? users : users.filter((u: any) => u.applicantProfile?.applicantType === filter)
 
   return (
-    <div className="view-transition space-y-6">
+    <div className="view-transition space-y-6 pb-8">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Mga Aplikante' : 'Applicants'}</h1>
         <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Lahat ng naka-rehistrong aplikante' : 'All registered applicants'}</p>
@@ -61,13 +61,13 @@ export function FiraApplicantsPage() {
       ) : filtered.length === 0 ? (
         <Card className="p-8 text-center"><Users className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">{language === 'fil' ? 'Walang nahanap.' : 'No applicants found.'}</p></Card>
       ) : (
-        <div className="space-y-3 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar">
+        <div className="space-y-4 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar">
           {filtered.map((u: any, i: number) => {
             const p = u.applicantProfile
             return (
               <motion.div key={u.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.02, 0.3) }}>
                 <Card className="hover:shadow-sm transition-shadow">
-                  <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <CardContent className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm shrink-0">
                         {u.name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}

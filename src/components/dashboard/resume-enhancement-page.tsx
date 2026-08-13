@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { Sparkles, Wand2, Copy, Check, Loader2 } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
+import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -21,10 +23,11 @@ export function ResumeEnhancementPage() {
     if (!resume.trim()) return
     setIsLoading(true)
     setEnhanced('')
-    // TODO: Replace with real AI API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    try {
+      // TODO: Replace with real AI API call
+      await new Promise(resolve => setTimeout(resolve, 2000))
 
-    const enhancedText = `
+      const enhancedText = `
 ## Enhanced Resume Summary
 
 ${resume.split('\n').map(line => line.trim()).filter(Boolean).join('\n\n')}
@@ -47,8 +50,13 @@ ${jobDesc ? `\n### Job Alignment Analysis:\nBased on the job description provide
 *Note: This is a basic enhancement. The full AI-powered enhancement will be available when the Python SBERT microservice is connected.*
 `.trim()
 
-    setEnhanced(enhancedText)
-    setIsLoading(false)
+      setEnhanced(enhancedText)
+      toast.success(language === 'fil' ? 'Matagumpay na pinahusay ang resume!' : 'Resume enhanced successfully!')
+    } catch {
+      toast.error(language === 'fil' ? 'Hindi pinahusay ang resume.' : 'Failed to enhance resume.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const copyToClipboard = () => {
@@ -120,7 +128,7 @@ ${jobDesc ? `\n### Job Alignment Analysis:\nBased on the job description provide
           <CardContent>
             {isLoading ? (
               <div className="space-y-3">
-                {Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-4 bg-muted rounded animate-pulse" style={{ width: `${80 - i * 5}%`, animationDelay: `${i * 0.1}s` }} />)}
+                {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-4 w-full" style={{ maxWidth: `${80 - i * 5}%` }} />)}
               </div>
             ) : enhanced ? (
               <div className="prose prose-sm dark:prose-invert max-w-none text-sm whitespace-pre-line">{enhanced}</div>

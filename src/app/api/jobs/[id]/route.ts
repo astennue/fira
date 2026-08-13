@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { requireAuth, requireFira } from '@/lib/auth'
+import { requireAuth, requireFira, type AuthResult } from '@/lib/auth'
 
 export async function GET(
   request: NextRequest,
@@ -27,11 +27,57 @@ export async function GET(
       return NextResponse.json({ error: 'Job not found' }, { status: 404 })
     }
 
+    // Role-based access: ensure user can view this job
+    const accessDenied = await checkJobViewAccess(auth, job)
+    if (accessDenied) return accessDenied
+
     return NextResponse.json({ job })
   } catch (error) {
     console.error('Job GET by ID error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
+}
+
+async function checkJobViewAccess(auth: AuthResult, job: { employer: { userId: string } | null; agency: { id: string } | null; id: string; visibility: string }): Promise<NextResponse | null> {
+  const firaRoles = ['super_admin', 'staff', 'international_agency']
+  if (firaRoles.includes(auth.userRole)) return null // FIRA can view any job
+
+  if (auth.userRole === 'employer') {
+    // Employer can only view their own job postings
+    if (!job.employer?.userId || job.employer.userId !== auth.userId) {
+      return NextResponse.json({ error: 'You can only view your own job postings' }, { status: 403 })
+    }
+    return null
+  }
+
+  if (auth.userRole === 'local_agency') {
+    // Local agency can only view jobs assigned to their agency
+    if (!job.agency?.id) {
+      return NextResponse.json({ error: 'You can only view jobs assigned to your agency' }, { status: 403 })
+    }
+    const member = await db.agencyMember.findFirst({
+      where: { userId: auth.userId, agencyId: job.agency.id },
+    })
+    if (!member) {
+      return NextResponse.json({ error: 'You can only view jobs assigned to your agency' }, { status: 403 })
+    }
+    return null
+  }
+
+  if (auth.userRole === 'applicant') {
+    // Applicant can only view public jobs or jobs they've applied to
+    if (job.visibility !== 'public') {
+      const hasApplied = await db.application.findFirst({
+        where: { applicantId: auth.userId, jobOrderId: job.id },
+      })
+      if (!hasApplied) {
+        return NextResponse.json({ error: 'You can only view public jobs or jobs you have applied to' }, { status: 403 })
+      }
+    }
+    return null
+  }
+
+  return NextResponse.json({ error: 'Insufficient permissions to view this job' }, { status: 403 })
 }
 
 export async function PATCH(

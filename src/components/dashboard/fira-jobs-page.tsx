@@ -32,7 +32,7 @@ export function FiraJobsPage() {
   const jobs = Array.isArray(jobsData?.jobs) ? jobsData.jobs : []
 
   return (
-    <div className="view-transition space-y-6">
+    <div className="view-transition space-y-6 pb-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Lahat ng Trabaho' : 'All Jobs'}</h1>
@@ -71,7 +71,7 @@ export function FiraJobsPage() {
           {jobs.map((job: any, i: number) => (
             <motion.div key={job.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.02, 0.3) }}>
               <Card className="hover:shadow-sm transition-shadow cursor-pointer" onClick={() => navigate('ats-pipeline', { jobId: job.id })}>
-                <CardContent className="p-5">
+                <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-2">
                     <Badge variant="secondary" className="text-xs">{job.category?.replace(/_/g, ' ')}</Badge>
                     <Badge className="text-xs capitalize">{job.status}</Badge>
