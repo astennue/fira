@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider  = "sqlite"
-  url       = "file:/home/z/my-project/db/fira.db"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // ============ CORE USER & ORG MODELS ============
@@ -33,6 +34,7 @@ model User {
 
   @@index([email])
   @@index([role])
+  @@map("User")
 }
 
 model Agency {
