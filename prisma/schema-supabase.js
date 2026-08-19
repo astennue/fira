@@ -14,7 +14,7 @@ async function main() {
 
   // Drop all tables
   const drops = [
-    '"VerificationCode"','"CmsSettings"','"CmsFormField"','"CmsTermsPrivacy"','"CmsOrgChart"',
+    '"VerificationCode"','"ContactSubmission"','"NewsletterSubscription"','"PartnerInquiry"','"CmsSettings"','"CmsFormField"','"CmsTermsPrivacy"','"CmsOrgChart"',
     '"CmsSocialMedia"','"CmsTestimonial"','"CmsFaq"','"CmsPage"','"ResumeEnhancement"',
     '"AIAnalysisResult"','"Notification"','"Endorsement"','"ATSStageHistory"',
     '"ApplicationCustomResponse"','"Application"','"ATSStage"','"JobCustomField"',
@@ -91,7 +91,7 @@ async function main() {
     ['ApplicantLanguage', '"language" TEXT NOT NULL, "proficiency" TEXT DEFAULT \'conversational\', "speaking" TEXT, "reading" TEXT, "writing" TEXT'],
     ['ApplicantCertification', '"name" TEXT NOT NULL, "issuingBody" TEXT, "issuedDate" TIMESTAMP, "expiryDate" TIMESTAMP, "credentialId" TEXT'],
     ['ApplicantReference', '"name" TEXT NOT NULL, "company" TEXT, "position" TEXT, "phone" TEXT, "email" TEXT, "relationship" TEXT, "yearsKnown" TEXT'],
-    ['ApplicantDocument', '"documentType" TEXT NOT NULL, "fileName" TEXT NOT NULL, "filePath" TEXT, "fileSize" INTEGER, "mimeType" TEXT, "isVerified" BOOLEAN DEFAULT false'],
+    ['ApplicantDocument', '"documentType" TEXT NOT NULL, "fileName" TEXT NOT NULL, "filePath" TEXT, "fileSize" INTEGER, "mimeType" TEXT, "isVerified" BOOLEAN DEFAULT false, "uploadedAt" TIMESTAMP DEFAULT NOW()'],
     ['ApplicantTraining', '"trainingName" TEXT NOT NULL, "institution" TEXT, "startDate" TIMESTAMP, "endDate" TIMESTAMP, "hours" INTEGER'],
   ]) {
     await run(client, `CREATE TABLE "${name}" (
@@ -206,6 +206,11 @@ async function main() {
   await run(client, `CREATE TABLE "CmsFormField" ("id" TEXT PRIMARY KEY, "label" TEXT NOT NULL, "fieldType" TEXT DEFAULT 'text', "options" TEXT, "isRequired" BOOLEAN DEFAULT false, "order" INTEGER DEFAULT 0, "section" TEXT DEFAULT 'Personal Information', "isActive" BOOLEAN DEFAULT true, "createdAt" TIMESTAMP DEFAULT NOW(), "updatedAt" TIMESTAMP DEFAULT NOW());`);
   await run(client, `CREATE TABLE "CmsSettings" ("id" TEXT PRIMARY KEY, "key" TEXT NOT NULL UNIQUE, "value" TEXT DEFAULT '', "updatedAt" TIMESTAMP DEFAULT NOW());`);
   await run(client, `CREATE TABLE "VerificationCode" ("id" TEXT PRIMARY KEY, "userId" TEXT NOT NULL, "code" TEXT NOT NULL, "type" TEXT DEFAULT 'email_verification', "expiresAt" TIMESTAMP NOT NULL, "usedAt" TIMESTAMP, "createdAt" TIMESTAMP DEFAULT NOW());`);
+
+  // Contact & Marketing Tables
+  await run(client, `CREATE TABLE "ContactSubmission" ("id" TEXT PRIMARY KEY, "name" TEXT NOT NULL, "email" TEXT NOT NULL, "subject" TEXT NOT NULL, "message" TEXT NOT NULL, "isRead" BOOLEAN DEFAULT false, "createdAt" TIMESTAMP DEFAULT NOW());`);
+  await run(client, `CREATE TABLE "NewsletterSubscription" ("id" TEXT PRIMARY KEY, "email" TEXT NOT NULL UNIQUE, "isActive" BOOLEAN DEFAULT true, "createdAt" TIMESTAMP DEFAULT NOW());`);
+  await run(client, `CREATE TABLE "PartnerInquiry" ("id" TEXT PRIMARY KEY, "companyName" TEXT NOT NULL, "contactName" TEXT NOT NULL, "email" TEXT NOT NULL, "phone" TEXT, "country" TEXT, "industry" TEXT, "workerCount" TEXT, "message" TEXT, "isRead" BOOLEAN DEFAULT false, "createdAt" TIMESTAMP DEFAULT NOW());`);
 
   console.log('✓ All 30+ tables created');
 
