@@ -45,6 +45,6 @@ ${profile.resumeText.slice(0, 25000)}
     return NextResponse.json({ success: true, enhancedText: enhanced })
   } catch (error: any) {
     console.error('Resume enhance error:', error)
-    return NextResponse.json({ error: `Enhancement failed: ${error?.message || 'Unknown error'}` }, { status: 500 })
+    return NextResponse.json({ error: 'Resume enhancement is currently unavailable. Please try again later.' }, { status: 500 })
   }
 }

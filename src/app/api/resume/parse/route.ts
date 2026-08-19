@@ -179,7 +179,7 @@ ${resumeText.slice(0, 30000)}
       console.error('AI parsing failed:', aiError?.message || aiError)
       return NextResponse.json({
         success: false,
-        error: `AI parsing unavailable: ${aiError?.message || 'Unknown error'}`,
+        error: 'AI resume parsing is currently unavailable. Please try again later.',
         extracted: emptyResult,
       })
     }

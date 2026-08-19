@@ -129,9 +129,14 @@ export async function POST(request: NextRequest) {
     })
   } catch (error: any) {
     console.error('Resume upload error:', error)
-    return NextResponse.json(
-      { error: error?.message || 'Internal server error' },
-      { status: 500 },
-    )
+    // Never expose technical errors (Prisma, DB, etc.) to the user
+    const msg = String(error?.message || '')
+    let userMessage = 'Something went wrong while uploading your resume. Please try again.'
+    if (msg.includes('file_size') || msg.includes('too large')) {
+      userMessage = 'The file is too large. Please choose a file under 10MB.'
+    } else if (msg.includes('column') || msg.includes('does not exist') || msg.includes('prisma') || msg.includes('invocation')) {
+      userMessage = 'Upload failed due to a system issue. Please try again or contact support.'
+    }
+    return NextResponse.json({ error: userMessage }, { status: 500 })
   }
 }
