@@ -28,6 +28,7 @@ import { apiFetch } from '@/lib/fetch'
 
 export function CmsTestimonialsPage() {
   const { language } = useAppStore()
+  const L = (en: string, fil: string) => language === 'fil' ? fil : en
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
   const [form, setForm] = useState({ name: '', position: '', company: '', feedback: '', rating: 5, avatar: '', isActive: true })
@@ -55,9 +56,9 @@ export function CmsTestimonialsPage() {
       setDialogOpen(false)
       setEditId(null)
       setForm({ name: '', position: '', company: '', feedback: '', rating: 5, avatar: '', isActive: true })
-      toast.success(editId ? 'Testimonial updated!' : 'Testimonial created!')
+      toast.success(editId ? L('Testimonial updated!', 'Na-update ang Testimonial!') : L('Testimonial created!', 'Nalikha ang Testimonial!'))
     },
-    onError: () => toast.error('Failed to save testimonial'),
+    onError: () => toast.error(L('Failed to save testimonial', 'Hindi na-save ang Testimonial')),
   })
 
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
@@ -69,11 +70,11 @@ export function CmsTestimonialsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cms-testimonials'] })
-      toast.success('Testimonial deleted!')
+      toast.success(L('Testimonial deleted!', 'Na-delete ang Testimonial!'))
       setDeleteTarget(null)
     },
     onError: () => {
-      toast.error('Failed to delete testimonial')
+      toast.error(L('Failed to delete testimonial', 'Hindi na-delete ang Testimonial'))
     },
   })
 
@@ -90,17 +91,22 @@ export function CmsTestimonialsPage() {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
+    <div className="view-transition space-y-6 pb-8">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Testimonials</h1>
-          <p className="text-muted-foreground text-sm">Manage client testimonials and reviews</p>
+          <h1 className="text-2xl font-bold text-foreground">{L('Testimonials', 'Mga Testimonial')}</h1>
+          <p className="text-muted-foreground text-sm">{L('Manage client testimonials', 'Pamahalaan ang mga testimonial ng kliyente')}</p>
         </div>
-        <Button onClick={openNew} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> Add Testimonial</Button>
+        <Button onClick={openNew} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> {L('Add Testimonial', 'Magdagdag ng Testimonial')}</Button>
       </div>
 
       {isLoading ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-48 rounded-xl" />)}</div>
+      ) : testimonials.length === 0 ? (
+        <Card className="p-8 text-center">
+          <Star className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
+          <p className="text-muted-foreground">{L('No testimonials yet. Click "Add Testimonial" to get started.', 'Wala pang testimonial. I-click ang "Magdagdag ng Testimonial" para magsimula.')}</p>
+        </Card>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {testimonials.map((t: any) => (
@@ -152,16 +158,16 @@ export function CmsTestimonialsPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>{editId ? 'Edit Testimonial' : 'Add Testimonial'}</DialogTitle>
+            <DialogTitle>{editId ? L('Edit Testimonial', 'I-edit ang Testimonial') : L('Add Testimonial', 'Magdagdag ng Testimonial')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Name</Label>
+                <Label>{L('Name', 'Pangalan')}</Label>
                 <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Full name" />
               </div>
               <div className="space-y-2">
-                <Label>Rating</Label>
+                <Label>{L('Rating', 'Rating')}</Label>
                 <div className="flex gap-1 h-10 items-center">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <button key={i} onClick={() => setForm({ ...form, rating: i + 1 })}>
@@ -173,26 +179,26 @@ export function CmsTestimonialsPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Position</Label>
+                <Label>{L('Position', 'Posisyon')}</Label>
                 <Input value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })} placeholder="Job title" />
               </div>
               <div className="space-y-2">
-                <Label>Company</Label>
+                <Label>{L('Company', 'Kumpanya')}</Label>
                 <Input value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} placeholder="Company name" />
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Feedback</Label>
+              <Label>{L('Feedback', 'Feedback')}</Label>
               <Textarea value={form.feedback} onChange={(e) => setForm({ ...form, feedback: e.target.value })} placeholder="Testimonial text..." className="min-h-[120px]" />
             </div>
             <div className="space-y-2">
-              <Label>Avatar URL</Label>
+              <Label>{L('Avatar URL', 'URL ng Avatar')}</Label>
               <Input value={form.avatar} onChange={(e) => setForm({ ...form, avatar: e.target.value })} placeholder="https://..." />
             </div>
             <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>{L('Cancel', 'Kanselahin')}</Button>
               <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? 'Saving...' : 'Save'}
+                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save', 'I-save')}
               </Button>
             </div>
           </div>

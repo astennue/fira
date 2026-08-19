@@ -4,7 +4,16 @@ import { requireCmsAdmin } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url)
+    const isPublic = searchParams.get('public') === 'true'
+
+    const where: Record<string, unknown> = {}
+    if (isPublic) {
+      where.isActive = true
+    }
+
     const testimonials = await db.cmsTestimonial.findMany({
+      where,
       orderBy: { createdAt: 'desc' },
     })
 

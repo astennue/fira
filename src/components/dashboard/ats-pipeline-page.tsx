@@ -50,6 +50,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
 import { apiFetch } from '@/lib/fetch'
+import { getInitials } from '@/components/shared/get-initials'
 
 // ─── Constants ─────────────────────────────────────────────────────────────
 const stageColorPalette = [
@@ -106,9 +107,6 @@ function formatDate(dateStr: string | null | undefined, isFil: boolean) {
   return d.toLocaleDateString()
 }
 
-function getInitials(name: string) {
-  return (name || 'U').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
-}
 
 // ─── Loading Skeleton ──────────────────────────────────────────────────────
 function PipelineSkeleton() {

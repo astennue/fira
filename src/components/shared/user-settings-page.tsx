@@ -165,7 +165,7 @@ export function UserSettingsPage() {
   return (
     <div className="view-transition space-y-6 pb-8">
       <div>
-        <h1 className="text-2xl font-bold">{language === 'fil' ? 'Settings' : 'Settings'}</h1>
+        <h1 className="text-2xl font-bold">{language === 'fil' ? 'Mga Setting' : 'Settings'}</h1>
         <p className="text-muted-foreground text-sm">{language === 'fil' ? 'Pamahalaan ang iyong account' : 'Manage your account preferences'}</p>
       </div>
 
@@ -175,7 +175,7 @@ export function UserSettingsPage() {
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
               <Camera className="h-5 w-5 text-blue-600" />
-              {language === 'fil' ? 'Profile Picture' : 'Profile Picture'}
+              {language === 'fil' ? 'Larawan ng Profile' : 'Profile Picture'}
             </CardTitle>
           </CardHeader>
           <CardContent>

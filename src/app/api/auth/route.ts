@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
       // Get agency info if applicable
       let agencyId: string | undefined;
       let agencyName: string | undefined;
-      if (user.role === 'local_agency') {
+      if (user.role === 'local_agency' || user.role === 'international_agency') {
         const member = await db.agencyMember.findFirst({
           where: { userId: user.id },
           include: { agency: { select: { id: true, name: true } } },

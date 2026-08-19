@@ -4,58 +4,19 @@ import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
   Briefcase, Users, FileText, UserCheck, ArrowRight, Send, Columns,
-  MessageSquare, Clock, TrendingUp, ChevronRight, UserPlus, BarChart3, Zap,
+  MessageSquare, Clock, ChevronRight, UserPlus, BarChart3, Zap,
   Bell,
 } from 'lucide-react'
-import { motion, useSpring, useTransform, useMotionValue } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore } from '@/store/app-store'
 import { apiFetch } from '@/lib/fetch'
-
-/* ─── Animated Counter ─── */
-function AnimatedCounter({ target, duration = 1.5 }: { target: number; duration?: number }) {
-  const [display, setDisplay] = useState(0)
-  const motionVal = useMotionValue(0)
-  const spring = useSpring(motionVal, { duration: duration * 1000 })
-  const rounded = useTransform(spring, (v) => Math.round(v))
-
-  useEffect(() => {
-    motionVal.set(target)
-    const unsub = rounded.on('change', (v) => setDisplay(v))
-    return () => unsub()
-  }, [target, motionVal, rounded])
-
-  return <>{display}</>
-}
-
-/* ─── Status Badge ─── */
-function StatusBadge({ status }: { status: string }) {
-  const s = status?.toLowerCase() || ''
-  let colorClass = ''
-  if (['hired', 'employer_accepted', 'fira_approved', 'completed'].includes(s)) {
-    colorClass =
-      'bg-emerald-100/70 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-800/50'
-  } else if (['rejected', 'withdrawn', 'employer_declined', 'fira_rejected'].includes(s)) {
-    colorClass =
-      'bg-red-100/70 text-red-700 dark:bg-red-900/40 dark:text-red-300 border-red-200/60 dark:border-red-800/50'
-  } else if (['pending', 'pending_fira_review', 'pending_employer_review'].includes(s)) {
-    colorClass =
-      'bg-amber-100/70 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-amber-200/60 dark:border-amber-800/50'
-  } else {
-    colorClass =
-      'bg-orange-100/70 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300 border-orange-200/60 dark:border-orange-800/50'
-  }
-  return (
-    <span
-      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border backdrop-blur-sm ${colorClass}`}
-    >
-      {status?.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
-    </span>
-  )
-}
+import { cn } from '@/lib/utils'
+import { AnimatedCounter } from '@/components/shared/animated-counter'
+import { StatusBadge } from '@/components/shared/status-badge'
 
 /* ─── Dashboard Skeleton ─── */
 function DashboardSkeleton() {
@@ -86,7 +47,7 @@ function DashboardSkeleton() {
   )
 }
 
-/* ─── Glassmorphism Card wrapper ─── */
+/* ─── Glassmorphism Card wrapper (local: has custom styling) ─── */
 function GlassCard({
   children,
   className = '',
@@ -95,14 +56,12 @@ function GlassCard({
   className?: string
 }) {
   return (
-    <div
-      className={`rounded-2xl border border-white/20 dark:border-white/10
-        bg-white/60 dark:bg-[var(--color-card)]/60
-        backdrop-blur-xl shadow-lg shadow-black/5 dark:shadow-black/20
-        ${className}`}
-    >
+    <Card className={cn(
+      'border border-border/50 bg-card/80 backdrop-blur-sm shadow-sm',
+      className
+    )}>
       {children}
-    </div>
+    </Card>
   )
 }
 
@@ -132,7 +91,7 @@ function GlassStatCard({
             <div className="space-y-1">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{label}</p>
               <p className="text-3xl font-extrabold tracking-tight">
-                <AnimatedCounter target={value} />
+                <AnimatedCounter value={value} />
               </p>
             </div>
             <div
@@ -140,10 +99,6 @@ function GlassStatCard({
             >
               <Icon className="h-5 w-5 text-white" />
             </div>
-          </div>
-          <div className="mt-3 flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400">
-            <TrendingUp className="h-3.5 w-3.5" />
-            <span>Active</span>
           </div>
         </CardContent>
       </GlassCard>
@@ -279,7 +234,7 @@ export function AgencyDashboard() {
   if (isLoading) return <DashboardSkeleton />
 
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 pb-8">
+    <motion.div variants={container} initial="hidden" animate="show" className="view-transition space-y-6 pb-8">
       {/* ═══════════════════════════════════════════════════════
           HEADER
          ═══════════════════════════════════════════════════════ */}

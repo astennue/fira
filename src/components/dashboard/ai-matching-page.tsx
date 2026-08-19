@@ -53,7 +53,7 @@ export function AiMatchingPage() {
   }
 
   return (
-    <div className="view-transition space-y-6">
+    <div className="view-transition space-y-6 pb-8">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
           <Sparkles className="h-7 w-7 text-primary" />

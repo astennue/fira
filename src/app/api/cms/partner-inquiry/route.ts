@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,16 +13,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // In production, this would save to database and/or send email
-    // For now, log the inquiry
-    console.log('📋 Employer Partnership Inquiry:', {
-      name,
-      company,
-      country,
-      email,
-      phone,
-      workersNeeded,
-      message: message?.slice(0, 200),
+    await db.partnerInquiry.create({
+      data: {
+        contactName: name,
+        companyName: company,
+        email,
+        phone: phone || null,
+        country: country || null,
+        workerCount: workersNeeded ? String(workersNeeded) : null,
+        message: message || null,
+      },
     });
 
     return NextResponse.json(

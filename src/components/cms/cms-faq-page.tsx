@@ -125,6 +125,7 @@ const listItemVariants = {
 export function CmsFaqPage() {
   const { language } = useAppStore()
   const t = useT()
+  const L = (en: string, fil: string) => language === 'fil' ? fil : en
 
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
@@ -327,7 +328,7 @@ export function CmsFaqPage() {
             {t('FAQ Management')}
           </h1>
           <p className="text-muted-foreground text-sm">
-            Manage frequently asked questions and organize them by category
+            {L('Manage frequently asked questions and organize them by category', 'Pamahalaan ang madalas itanong na tanong at ayusin ayon sa kategorya')}
           </p>
         </div>
         <Button
@@ -335,7 +336,7 @@ export function CmsFaqPage() {
           className="rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 shadow-md shadow-blue-500/20 transition-all"
         >
           <Plus className="mr-2 h-4 w-4" />
-          Add FAQ
+          {L('Add FAQ', 'Magdagdag ng FAQ')}
         </Button>
       </div>
 
@@ -345,7 +346,7 @@ export function CmsFaqPage() {
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
               <MessageCircleQuestion className="h-4 w-4 text-blue-500" />
-              <span className="text-xs text-blue-600 font-medium">Total FAQs</span>
+              <span className="text-xs text-blue-600 font-medium">{L('Total FAQs', 'Kabuuang FAQ')}</span>
             </div>
             <p className="text-xl font-bold text-blue-800 mt-1">{faqs.length}</p>
           </CardContent>
@@ -354,7 +355,7 @@ export function CmsFaqPage() {
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
               <HelpCircle className="h-4 w-4 text-emerald-500" />
-              <span className="text-xs text-emerald-600 font-medium">Active</span>
+              <span className="text-xs text-emerald-600 font-medium">{L('Active', 'Aktibo')}</span>
             </div>
             <p className="text-xl font-bold text-emerald-800 mt-1">
               {faqs.filter((f) => f.isActive).length}
@@ -365,7 +366,7 @@ export function CmsFaqPage() {
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
               <Filter className="h-4 w-4 text-amber-500" />
-              <span className="text-xs text-amber-600 font-medium">Categories</span>
+              <span className="text-xs text-amber-600 font-medium">{L('Categories', 'Mga Kategorya')}</span>
             </div>
             <p className="text-xl font-bold text-amber-800 mt-1">{categories.length}</p>
           </CardContent>
@@ -374,7 +375,7 @@ export function CmsFaqPage() {
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
               <GripVertical className="h-4 w-4 text-violet-500" />
-              <span className="text-xs text-violet-600 font-medium">Showing</span>
+              <span className="text-xs text-violet-600 font-medium">{L('Showing', 'Ipinapakita')}</span>
             </div>
             <p className="text-xl font-bold text-violet-800 mt-1">{filteredFaqs.length}</p>
           </CardContent>
@@ -388,7 +389,7 @@ export function CmsFaqPage() {
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search questions or answers..."
+            placeholder={L('Search questions or answers...', 'Maghanap ng tanong o sagot...')}
             className="pl-9 rounded-xl border-border dark:border-blue-900/30 focus:border-blue-300 dark:focus:border-blue-700 focus:ring-blue-200 dark:focus:ring-blue-800"
           />
           {searchQuery && (
@@ -402,10 +403,10 @@ export function CmsFaqPage() {
         </div>
         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
           <SelectTrigger className="w-full sm:w-[200px] rounded-xl border-border dark:border-blue-900/30">
-            <SelectValue placeholder="All Categories" />
+            <SelectValue placeholder={L('All Categories', 'Lahat ng Kategorya')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
+            <SelectItem value="all">{L('All Categories', 'Lahat ng Kategorya')}</SelectItem>
             {categories.map((cat) => (
               <SelectItem key={cat} value={cat}>
                 {cat}
@@ -426,11 +427,11 @@ export function CmsFaqPage() {
         <Card className="border-border dark:border-blue-900/30">
           <CardContent className="p-12 text-center">
             <HelpCircle className="h-12 w-12 mx-auto text-blue-200 mb-4" />
-            <h3 className="text-lg font-semibold text-muted-foreground mb-1">No FAQs found</h3>
+            <h3 className="text-lg font-semibold text-muted-foreground mb-1">{L('No FAQs found', 'Walang nahanap na FAQ')}</h3>
             <p className="text-sm text-muted-foreground mb-4">
               {searchQuery || categoryFilter !== 'all'
-                ? 'Try adjusting your filters or search query.'
-                : 'Get started by adding your first FAQ.'}
+                ? L('Try adjusting your filters or search query.', 'Subukan mong baguhin ang iyong filter o search query.')
+                : L('Get started by adding your first FAQ.', 'Magsimula sa pagdagdag ng iyong unang FAQ.')}
             </p>
             {!searchQuery && categoryFilter === 'all' && (
               <Button
@@ -439,7 +440,7 @@ export function CmsFaqPage() {
                 className="rounded-xl border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30"
               >
                 <Plus className="mr-2 h-4 w-4" />
-                Add First FAQ
+                {L('Add First FAQ', 'Magdagdag ng Unang FAQ')}
               </Button>
             )}
           </CardContent>
@@ -460,7 +461,7 @@ export function CmsFaqPage() {
                   <Badge className={`text-xs font-medium border ${getCategoryStyle(category)}`}>
                     {category}
                   </Badge>
-                  <span className="text-xs text-muted-foreground">{items.length} item{items.length !== 1 ? 's' : ''}</span>
+                  <span className="text-xs text-muted-foreground">{items.length} {items.length !== 1 ? L('items', 'item') : L('item', 'item')}</span>
                 </div>
 
                 {/* FAQ Cards */}
@@ -587,7 +588,7 @@ export function CmsFaqPage() {
                                   </div>
                                   <div className="flex items-center gap-2">
                                     <span className="text-[10px] text-muted-foreground">
-                                      {faq.isActive ? 'Active' : 'Inactive'}
+                                      {faq.isActive ? L('Active', 'Aktibo') : L('Inactive', 'Di-aktibo')}
                                     </span>
                                     <Switch
                                       checked={faq.isActive}
@@ -617,12 +618,12 @@ export function CmsFaqPage() {
         <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold bg-gradient-to-r from-blue-700 to-sky-600 bg-clip-text text-transparent">
-              {editId ? 'Edit FAQ' : 'Add New FAQ'}
+              {editId ? L('Edit FAQ', 'I-edit ang FAQ') : L('Add New FAQ', 'Magdagdag ng Bagong FAQ')}
             </DialogTitle>
             <DialogDescription className="text-sm text-muted-foreground">
               {editId
-                ? 'Update the question, answer, category, and order of this FAQ.'
-                : 'Fill in the details to create a new frequently asked question.'}
+                ? L('Update the question, answer, category, and order of this FAQ.', 'I-update ang tanong, sagot, kategorya, at ayos ng FAQ na ito.')
+                : L('Fill in the details to create a new frequently asked question.', 'Punanin ang detalye para lumikha ng bagong FAQ.')}
             </DialogDescription>
           </DialogHeader>
 
@@ -630,7 +631,7 @@ export function CmsFaqPage() {
             {/* Question */}
             <div className="space-y-2">
               <Label htmlFor="faq-question" className="text-sm font-medium text-foreground">
-                Question <span className="text-red-400">*</span>
+                {L('Question', 'Tanong')} <span className="text-red-400">*</span>
               </Label>
               <Input
                 id="faq-question"
@@ -644,7 +645,7 @@ export function CmsFaqPage() {
             {/* Answer */}
             <div className="space-y-2">
               <Label htmlFor="faq-answer" className="text-sm font-medium text-foreground">
-                Answer <span className="text-red-400">*</span>
+                {L('Answer', 'Sagot')} <span className="text-red-400">*</span>
               </Label>
               <Textarea
                 id="faq-answer"
@@ -659,14 +660,14 @@ export function CmsFaqPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="faq-category" className="text-sm font-medium text-foreground">
-                  Category
+                  {L('Category', 'Kategorya')}
                 </Label>
                 <Select
                   value={form.category}
                   onValueChange={(val) => setForm({ ...form, category: val })}
                 >
                   <SelectTrigger className="rounded-xl border-border dark:border-blue-900/30">
-                    <SelectValue placeholder="Select category" />
+                    <SelectValue placeholder={L('Select category', 'Pumili ng kategorya')} />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((cat) => (
@@ -685,7 +686,7 @@ export function CmsFaqPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="faq-order" className="text-sm font-medium text-foreground">
-                  Display Order
+                  {L('Display Order', 'Ayos ng Pagpapakita')}
                 </Label>
                 <Input
                   id="faq-order"
@@ -696,7 +697,7 @@ export function CmsFaqPage() {
                   className="rounded-xl border-border dark:border-blue-900/30 focus:border-blue-300 dark:focus:border-blue-700 focus:ring-blue-200 dark:focus:ring-blue-800"
                 />
                 <p className="text-[11px] text-muted-foreground">
-                  Lower numbers appear first
+                  {L('Lower numbers appear first', 'Ang mas mababang numero ay unang lalabas')}
                 </p>
               </div>
             </div>
@@ -705,9 +706,9 @@ export function CmsFaqPage() {
             {editId && (
               <div className="flex items-center justify-between p-3 rounded-xl bg-muted border border-border">
                 <div>
-                  <Label className="text-sm font-medium text-foreground">Active Status</Label>
+                  <Label className="text-sm font-medium text-foreground">{L('Active Status', 'Status ng Aktibo')}</Label>
                   <p className="text-[11px] text-muted-foreground">
-                    Inactive FAQs will not be shown to visitors
+                    {L('Inactive FAQs will not be shown to visitors', 'Ang di-aktibong FAQ ay hindi ipapakita sa mga bisita')}
                   </p>
                 </div>
                 <Switch
@@ -724,7 +725,7 @@ export function CmsFaqPage() {
                 onClick={() => setDialogOpen(false)}
                 className="rounded-xl"
               >
-                Cancel
+                {L('Cancel', 'Kanselahin')}
               </Button>
               <Button
                 onClick={handleSave}
@@ -732,7 +733,7 @@ export function CmsFaqPage() {
                 className="rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 shadow-md shadow-blue-500/20"
               >
                 {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-                {saveMutation.isPending ? 'Saving...' : editId ? 'Update FAQ' : 'Create FAQ'}
+                {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : editId ? L('Update FAQ', 'I-update ang FAQ') : L('Create FAQ', 'Lumikha ng FAQ')}
               </Button>
             </div>
           </div>

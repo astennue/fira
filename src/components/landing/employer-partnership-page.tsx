@@ -136,7 +136,7 @@ export function EmployerPartnershipPage() {
         <div className="absolute inset-0 bg-grid-pattern" />
         <div className="relative container mx-auto px-4 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <Badge className="bg-white/15 text-white/90 border-white/25 mb-4">For Employers</Badge>
+            <Badge className="bg-white/15 text-white/90 border-white/25 mb-4">{language === 'fil' ? 'Para sa mga Employer' : 'For Employers'}</Badge>
             <h1 className="text-3xl md:text-5xl font-bold mb-4">
               {language === 'fil'
                 ? 'Maging Partner ng FIRA — Hanapin ang Pinakamahuhusay na Pilipinong Manggagawa'
@@ -155,7 +155,7 @@ export function EmployerPartnershipPage() {
       <section className="py-16 md:py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <Badge className="bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 mb-3">Process</Badge>
+            <Badge className="bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 mb-3">{language === 'fil' ? 'Proseso' : 'Process'}</Badge>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
               {language === 'fil' ? 'Paano ito Gumagana' : 'How It Works'}
             </h2>
@@ -204,7 +204,7 @@ export function EmployerPartnershipPage() {
       <section className="py-16 md:py-20 bg-fira-gradient-soft">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <Badge className="bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 mb-3">Why FIRA</Badge>
+            <Badge className="bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 mb-3">{language === 'fil' ? 'Bakit FIRA' : 'Why FIRA'}</Badge>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
               {language === 'fil' ? 'Benepisyo ng Pagsasama' : 'Benefits of Partnering'}
             </h2>
@@ -245,7 +245,7 @@ export function EmployerPartnershipPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-10">
-              <Badge className="bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 mb-3">Inquiry</Badge>
+              <Badge className="bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800 mb-3">{language === 'fil' ? 'Inquiry' : 'Inquiry'}</Badge>
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
                 {language === 'fil' ? 'Magpadala ng Partnership Inquiry' : 'Send a Partnership Inquiry'}
               </h2>
@@ -404,9 +404,9 @@ export function EmployerPartnershipPage() {
             {/* Contact Info Cards */}
             <div className="grid sm:grid-cols-3 gap-4 mt-8">
               {[
-                { icon: Phone, label: 'Call Us', value: '+212 662 26 14 99' },
+                { icon: Phone, label: language === 'fil' ? 'Tumawag' : 'Call Us', value: '+212 662 26 14 99' },
                 { icon: Mail, label: 'Email', value: 'manpower@filinternational.ma' },
-                { icon: Globe, label: 'Location', value: 'Casablanca, Morocco' },
+                { icon: Globe, label: language === 'fil' ? 'Lokasyon' : 'Location', value: 'Casablanca, Morocco' },
               ].map((item) => (
                 <Card key={item.label} className="border-border dark:border-blue-900/30 hover:shadow-md transition-shadow">
                   <CardContent className="p-4 flex items-center gap-3">

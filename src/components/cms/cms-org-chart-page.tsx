@@ -26,7 +26,8 @@ import { toast } from 'sonner'
 import { apiFetch } from '@/lib/fetch'
 
 export function CmsOrgChartPage() {
-  const { fontSize } = useAppStore()
+  const { fontSize, language } = useAppStore()
+  const L = (en: string, fil: string) => language === 'fil' ? fil : en
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
   const [form, setForm] = useState({ name: '', position: '', department: '', parentId: '', avatar: '', email: '', phone: '', order: 0, isActive: true })
@@ -54,9 +55,9 @@ export function CmsOrgChartPage() {
       setDialogOpen(false)
       setEditId(null)
       setForm({ name: '', position: '', department: '', parentId: '', avatar: '', email: '', phone: '', order: 0, isActive: true })
-      toast.success(editId ? 'Member updated!' : 'Member added!')
+      toast.success(editId ? L('Member updated!', 'Na-update ang Miyembro!') : L('Member added!', 'Naidagdag ang Miyembro!'))
     },
-    onError: () => toast.error('Failed to save'),
+    onError: () => toast.error(L('Failed to save', 'Hindi na-save')),
   })
 
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
@@ -68,11 +69,11 @@ export function CmsOrgChartPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cms-org-chart'] })
-      toast.success('Member removed!')
+      toast.success(L('Member removed!', 'Naalis ang Miyembro!'))
       setDeleteTarget(null)
     },
     onError: () => {
-      toast.error('Failed to delete member')
+      toast.error(L('Failed to delete member', 'Hindi na-delete ang Miyembro'))
     },
   })
 
@@ -116,12 +117,12 @@ export function CmsOrgChartPage() {
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                      <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+                      <AlertDialogTitle>{L('Are you sure?', 'Sigurado ka ba?')}</AlertDialogTitle>
+                      <AlertDialogDescription>{L('This action cannot be undone.', 'Hindi na maibabalik ang aksyong ito.')}</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => { deleteMutation.mutate(member.id); setDeleteTarget(null) }} className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+                      <AlertDialogCancel>{L('Cancel', 'Kanselahin')}</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => { deleteMutation.mutate(member.id); setDeleteTarget(null) }} className="bg-red-600 hover:bg-red-700">{L('Delete', 'I-delete')}</AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
@@ -147,13 +148,13 @@ export function CmsOrgChartPage() {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
+    <div className="view-transition space-y-6 pb-8">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Org Chart</h1>
-          <p className="text-muted-foreground text-sm">Manage organizational structure</p>
+          <h1 className="text-2xl font-bold text-foreground">{L('Organization Chart', 'Tsart ng Organisasyon')}</h1>
+          <p className="text-muted-foreground text-sm">{L('Manage your company structure', 'Pamahalaan ang istruktura ng kumpanya')}</p>
         </div>
-        <Button onClick={() => openNew()} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> Add Member</Button>
+        <Button onClick={() => openNew()} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> {L('Add Member', 'Magdagdag ng Miyembro')}</Button>
       </div>
 
       {isLoading ? (
@@ -161,9 +162,9 @@ export function CmsOrgChartPage() {
       ) : members.length === 0 ? (
         <Card className="p-12 text-center">
           <Building2 className="h-16 w-16 mx-auto text-muted-foreground mb-3" />
-          <h3 className="font-semibold text-lg mb-1">No org chart yet</h3>
-          <p className="text-muted-foreground mb-4">Add members to build your organizational chart</p>
-          <Button onClick={() => openNew()} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> Add First Member</Button>
+          <h3 className="font-semibold text-lg mb-1">{L('No org chart yet', 'Wala pang org chart')}</h3>
+          <p className="text-muted-foreground mb-4">{L('Add members to build your organizational chart', 'Magdagdag ng miyembro para buuin ang iyong tsart ng organisasyon')}</p>
+          <Button onClick={() => openNew()} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> {L('Add First Member', 'Magdagdag ng Unang Miyembro')}</Button>
         </Card>
       ) : (
         <div className="overflow-x-auto pb-8">
@@ -176,50 +177,50 @@ export function CmsOrgChartPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>{editId ? 'Edit Member' : 'Add Member'}</DialogTitle>
+            <DialogTitle>{editId ? L('Edit Member', 'I-edit ang Miyembro') : L('Add Member', 'Magdagdag ng Miyembro')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Name</Label>
+              <Label>{L('Name', 'Pangalan')}</Label>
               <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Full name" required />
             </div>
             <div className="space-y-2">
-              <Label>Position</Label>
+              <Label>{L('Position', 'Posisyon')}</Label>
               <Input value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })} placeholder="Job title" required />
             </div>
             <div className="space-y-2">
-              <Label>Department</Label>
+              <Label>{L('Department', 'Kagawaran')}</Label>
               <Input value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })} placeholder="Department" />
             </div>
             <div className="space-y-2">
-              <Label>Email</Label>
+              <Label>{L('Email', 'Email')}</Label>
               <Input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="email@fira.ma" />
             </div>
             <div className="space-y-2">
-              <Label>Phone</Label>
+              <Label>{L('Phone', 'Telepono')}</Label>
               <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+212..." />
             </div>
             <div className="space-y-2">
-              <Label>Reports to</Label>
+              <Label>{L('Reports to', 'Nag-uulat kay')}</Label>
               <select
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                 value={form.parentId}
                 onChange={(e) => setForm({ ...form, parentId: e.target.value })}
               >
-                <option value="">None (Root)</option>
+                <option value="">{L('None (Root)', 'Wala (Root)')}</option>
                 {members.filter((m: any) => m.id !== editId).map((m: any) => (
                   <option key={m.id} value={m.id}>{m.name} — {m.position}</option>
                 ))}
               </select>
             </div>
             <div className="space-y-2">
-              <Label>Order</Label>
+              <Label>{L('Order', 'Ayos')}</Label>
               <Input type="number" value={form.order} onChange={(e) => setForm({ ...form, order: parseInt(e.target.value) || 0 })} />
             </div>
             <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>{L('Cancel', 'Kanselahin')}</Button>
               <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? 'Saving...' : 'Save'}
+                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save', 'I-save')}
               </Button>
             </div>
           </div>

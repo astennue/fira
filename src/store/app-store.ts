@@ -60,6 +60,8 @@ export type ViewName =
   | 'messages'
   // User
   | 'user-settings'
+  // Reporting
+  | 'fira-reports'
   // Super Admin
   | 'super-admin-users'
 
@@ -107,6 +109,10 @@ interface AppState {
   // Language
   language: Language
   setLanguage: (lang: Language) => void
+
+  // CMS Menu collapse state
+  cmsOpen: boolean
+  toggleCmsMenu: () => void
 
   // Accessibility
   accessibilityOpen: boolean
@@ -162,6 +168,10 @@ export const useAppStore = create<AppState>()(
       // Language
       language: 'en',
       setLanguage: (language) => set({ language }),
+
+      // CMS Menu
+      cmsOpen: false,
+      toggleCmsMenu: () => set((s) => ({ cmsOpen: !s.cmsOpen })),
 
       // Accessibility
       accessibilityOpen: false,
@@ -270,7 +280,7 @@ const labels: Record<string, Record<Language, string>> = {
   'landing.featured.subtitle': { en: 'Latest verified positions from our partner employers', fil: 'Mga pinakabagong na-verify na posisyon mula sa aming mga partner' },
   'landing.featured.viewAll': { en: 'View All Jobs', fil: 'Tingnan Lahat ng Trabaho' },
   'landing.featured.noJobs': { en: 'No featured jobs available right now. Check back soon!', fil: 'Wala pang itinatampok na trabaho. Balikan muli sa lalong madaling panahon!' },
-  'landing.footer.description': { en: 'Fil International Recruitment Agency (FIRA) — Based in Casablanca, Morocco. We recruit, deploy, monitor, and deliver results for Filipino workers seeking opportunities abroad.', fil: 'Ang Fil International Recruitment Agency (FIRA) — Nakabase sa Casablanca, Morocco. Nagnanakaw kami, nag-deploy, nag-monitor, at nagbibigay ng resulta para sa mga manggagawang Pilipino.' },
+  'landing.footer.description': { en: 'Fil International Recruitment Agency (FIRA) — Based in Casablanca, Morocco. We recruit, deploy, monitor, and deliver results for Filipino workers seeking opportunities abroad.', fil: 'Ang Fil International Recruitment Agency (FIRA) — Nakabase sa Casablanca, Morocco. Nagre-recruit kami, nag-deploy, nag-monitor, at nagbibigay ng resulta para sa mga manggagawang Pilipino na naghahanap ng oportunidad sa ibang bansa.' },
   'landing.footer.quickLinks': { en: 'Quick Links', fil: 'Mabilis na Link' },
   'landing.footer.contact': { en: 'Contact Us', fil: 'Makipag-ugnay' },
   'landing.footer.rights': { en: 'All rights reserved.', fil: 'Lahat ng karapatan ay nakalaan.' },
@@ -406,6 +416,7 @@ const labels: Record<string, Record<Language, string>> = {
   'resume.noResult': { en: 'Your enhanced resume will appear here.', fil: 'Ang iyong pinahusay na resume ay lalabas dito.' },
   // Messaging
   'Messages': { en: 'Messages', fil: 'Mensahe ' },
+  'Reports': { en: 'Reports', fil: 'Mga Ulat' },
 }
 
 export function t(key: string, lang?: Language): string {
@@ -424,7 +435,8 @@ interface NavItem {
   label: string
   labelFil: string
   icon: string
-  view: ViewName
+  view?: ViewName
+  children?: NavItem[]
 }
 
 /** Maps a UserRole to its correct dashboard ViewName */
@@ -455,16 +467,22 @@ export const getNavItems = (role: UserRole): NavItem[] => {
     case 'staff':
       return [
         ...common,
+        { label: 'Reports', labelFil: 'Mga Ulat', icon: 'FileText', view: 'fira-reports' as ViewName },
         { label: 'Messages', labelFil: 'Mensahe', icon: 'MessageCircle', view: 'messages' as ViewName },
         { label: 'Manage Users', labelFil: 'Pamahalaan ang Users', icon: 'Users', view: 'super-admin-users' as ViewName },
-        { label: 'CMS Pages', labelFil: 'Mga Pahina', icon: 'FileText', view: 'cms-pages' as ViewName },
-        { label: 'FAQ Management', labelFil: 'Pamahalaan ng FAQ', icon: 'HelpCircle', view: 'cms-faq' as ViewName },
-        { label: 'Testimonials', labelFil: 'Mga Testimonial', icon: 'MessageSquareQuote', view: 'cms-testimonials' as ViewName },
-        { label: 'Social Media', labelFil: 'Social Media', icon: 'Share2', view: 'cms-social' as ViewName },
-        { label: 'Org Chart', labelFil: 'Org Chart', icon: 'Network', view: 'cms-org-chart' as ViewName },
-        { label: 'Terms & Privacy', labelFil: 'Mga Tahunan at Privacy', icon: 'ScrollText', view: 'cms-terms' as ViewName },
-        { label: 'Form Builder', labelFil: 'Form Builder', icon: 'LayoutList', view: 'cms-form-builder' as ViewName },
-        { label: 'Site Settings', labelFil: 'Settings ng Site', icon: 'Settings', view: 'cms-settings' as ViewName },
+        {
+          label: 'CMS Admin', labelFil: 'CMS Admin', icon: 'LayoutList',
+          children: [
+            { label: 'CMS Pages', labelFil: 'Mga Pahina', icon: 'FileText', view: 'cms-pages' as ViewName },
+            { label: 'FAQ Management', labelFil: 'Pamahalaan ng FAQ', icon: 'HelpCircle', view: 'cms-faq' as ViewName },
+            { label: 'Testimonials', labelFil: 'Mga Testimonial', icon: 'MessageSquareQuote', view: 'cms-testimonials' as ViewName },
+            { label: 'Social Media', labelFil: 'Social Media', icon: 'Share2', view: 'cms-social' as ViewName },
+            { label: 'Org Chart', labelFil: 'Org Chart', icon: 'Network', view: 'cms-org-chart' as ViewName },
+            { label: 'Terms & Privacy', labelFil: 'Mga Tahunan at Privacy', icon: 'ScrollText', view: 'cms-terms' as ViewName },
+            { label: 'Form Builder', labelFil: 'Form Builder', icon: 'LayoutList', view: 'cms-form-builder' as ViewName },
+            { label: 'Site Settings', labelFil: 'Settings ng Site', icon: 'Settings', view: 'cms-settings' as ViewName },
+          ],
+        },
       ]
     case 'applicant':
       return [

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, Edit, Trash2, Save, Loader2, GripVertical, ArrowUp, ArrowDown, X, Type, AlignLeft, List, CheckSquare, Calendar, Hash, Mail, Phone, FileUp } from 'lucide-react'
+import { Plus, Edit, Trash2, Save, Loader2, GripVertical, Type, AlignLeft, List, CheckSquare, Calendar, Hash, Mail, Phone, FileUp } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -26,21 +26,39 @@ import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
 import { apiFetch } from '@/lib/fetch'
 
-const fieldTypes = [
-  { value: 'text', label: 'Text', icon: Type },
-  { value: 'textarea', label: 'Text Area', icon: AlignLeft },
-  { value: 'select', label: 'Dropdown', icon: List },
-  { value: 'multiselect', label: 'Multi-Select', icon: CheckSquare },
-  { value: 'checkbox', label: 'Checkbox', icon: CheckSquare },
-  { value: 'date', label: 'Date', icon: Calendar },
-  { value: 'number', label: 'Number', icon: Hash },
-  { value: 'email', label: 'Email', icon: Mail },
-  { value: 'phone', label: 'Phone', icon: Phone },
-  { value: 'file', label: 'File Upload', icon: FileUp },
+const fieldCategories = [
+  {
+    label: 'Basic',
+    types: [
+      { value: 'text', label: 'Text', icon: Type },
+      { value: 'textarea', label: 'Text Area', icon: AlignLeft },
+      { value: 'number', label: 'Number', icon: Hash },
+      { value: 'email', label: 'Email', icon: Mail },
+      { value: 'phone', label: 'Phone', icon: Phone },
+    ],
+  },
+  {
+    label: 'Choice',
+    types: [
+      { value: 'select', label: 'Dropdown', icon: List },
+      { value: 'multiselect', label: 'Multi-Select', icon: CheckSquare },
+      { value: 'checkbox', label: 'Checkbox', icon: CheckSquare },
+    ],
+  },
+  {
+    label: 'Advanced',
+    types: [
+      { value: 'date', label: 'Date', icon: Calendar },
+      { value: 'file', label: 'File Upload', icon: FileUp },
+    ],
+  },
 ]
 
+const allFieldTypes = fieldCategories.flatMap(c => c.types)
+
 export function CmsFormBuilderPage() {
-  
+  const { language } = useAppStore()
+  const L = (en: string, fil: string) => language === 'fil' ? fil : en
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
   const [form, setForm] = useState({ label: '', fieldType: 'text', options: '', section: 'Personal Information', isRequired: false, order: 0, isActive: true })
@@ -68,9 +86,9 @@ export function CmsFormBuilderPage() {
       setDialogOpen(false)
       setEditId(null)
       setForm({ label: '', fieldType: 'text', options: '', section: 'Personal Information', isRequired: false, order: 0, isActive: true })
-      toast.success(editId ? 'Field updated!' : 'Field created!')
+      toast.success(editId ? L('Field updated!', 'Na-update ang Field!') : L('Field created!', 'Nalikha ang Field!'))
     },
-    onError: () => toast.error('Failed to save field'),
+    onError: () => toast.error(L('Failed to save field', 'Hindi na-save ang Field')),
   })
 
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
@@ -82,11 +100,11 @@ export function CmsFormBuilderPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cms-form-fields'] })
-      toast.success('Field deleted!')
+      toast.success(L('Field deleted!', 'Na-delete ang Field!'))
       setDeleteTarget(null)
     },
     onError: () => {
-      toast.error('Failed to delete field')
+      toast.error(L('Failed to delete field', 'Hindi na-delete ang Field'))
     },
   })
 
@@ -102,27 +120,42 @@ export function CmsFormBuilderPage() {
     setDialogOpen(true)
   }
 
-  const moveField = (index: number, direction: 'up' | 'down') => {
+  const moveField = async (index: number, direction: 'up' | 'down') => {
     const newOrder = direction === 'up' ? index - 1 : index + 1
-    if (newOrder < 0 || newOrder >= fields.length) return
-    toast.info('Reorder by editing the order number')
+    if (newOrder < 0 || newOrder >= sortedFields.length) return
+    const field = sortedFields[index]
+    const swapField = sortedFields[newOrder]
+    try {
+      await Promise.all([
+        apiFetch(`/api/cms/form-fields?id=${field.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...field, order: newOrder }) }),
+        apiFetch(`/api/cms/form-fields?id=${swapField.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...swapField, order: index }) }),
+      ])
+      queryClient.invalidateQueries({ queryKey: ['cms-form-fields'] })
+    } catch {
+      toast.error(L('Failed to reorder field', 'Hindi muling maayos ang Field'))
+    }
   }
 
-  const sortedFields = [...fields].sort((a, b) => (a.order || 0) - (b.order || 0))
+  const sortedFields = [...fields].sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
   const sections = [...new Set(sortedFields.map((f: any) => f.section || 'Personal Information'))]
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
+    <div className="view-transition space-y-6 pb-8">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Form Builder</h1>
-          <p className="text-muted-foreground text-sm">Build and customize the application form</p>
+          <h1 className="text-2xl font-bold text-foreground">{L('Application Form Builder', 'Tagabuo ng Application Form')}</h1>
+          <p className="text-muted-foreground text-sm">{L('Design your custom application form', 'Idisenyo ang iyong custom na application form')}</p>
         </div>
-        <Button onClick={openNew} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> Add Field</Button>
+        <Button onClick={openNew}><Plus className="mr-2 h-4 w-4" /> {L('Add Field', 'Magdagdag ng Field')}</Button>
       </div>
 
       {isLoading ? (
-        <div className="space-y-3">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-16 rounded-xl" />)}</div>
+        <div className="space-y-3">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-16" />)}</div>
+      ) : sortedFields.length === 0 ? (
+        <Card className="p-8 text-center">
+          <GripVertical className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
+          <p className="text-muted-foreground">{L('No fields added yet', 'Wala pang naidagdag na field')}</p>
+        </Card>
       ) : (
         <div className="space-y-6">
           {sections.map((section) => (
@@ -130,20 +163,23 @@ export function CmsFormBuilderPage() {
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-1">{section}</h3>
               <div className="space-y-2">
                 {sortedFields.filter((f: any) => (f.section || 'Personal Information') === section).map((field: any, i: number) => {
-                  const ft = fieldTypes.find(t => t.value === field.fieldType)
+                  const ft = allFieldTypes.find(t => t.value === field.fieldType)
                   const Icon = ft?.icon || Type
+                  const globalIndex = sortedFields.indexOf(field)
                   return (
                     <Card key={field.id} className={`border ${field.isActive ? 'border-border dark:border-blue-900/30' : 'border-border opacity-60'}`}>
                       <CardContent className="p-3 flex items-center gap-3">
-                        <GripVertical className="h-5 w-5 text-muted-foreground shrink-0" />
-                        <div className="h-8 w-8 rounded-lg bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                        <div className="flex flex-col gap-0.5">
+                          <button onClick={() => moveField(globalIndex, 'up')} disabled={globalIndex === 0} className="p-0.5 text-muted-foreground hover:text-foreground disabled:opacity-30"><GripVertical className="h-4 w-4" /></button>
+                        </div>
+                        <div className="h-8 w-8 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
                           <Icon className="h-4 w-4" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium">{field.label}</p>
                           <div className="flex items-center gap-2">
                             <Badge variant="outline" className="text-xs">{field.fieldType}</Badge>
-                            {field.isRequired && <Badge variant="default" className="text-xs bg-red-500">Required</Badge>}
+                            {field.isRequired && <Badge variant="default" className="text-xs bg-red-500">{L('Required', 'Kinakailangan')}</Badge>}
                           </div>
                         </div>
                         <div className="flex gap-1 shrink-0">
@@ -154,12 +190,12 @@ export function CmsFormBuilderPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+                                <AlertDialogTitle>{L('Are you sure?', 'Sigurado ka ba?')}</AlertDialogTitle>
+                                <AlertDialogDescription>{L('This action cannot be undone.', 'Hindi na maibabalik ang aksyong ito.')}</AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => { deleteMutation.mutate(field.id); setDeleteTarget(null) }} className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+                                <AlertDialogCancel>{L('Cancel', 'Kanselahin')}</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => { deleteMutation.mutate(field.id); setDeleteTarget(null) }} className="bg-red-600 hover:bg-red-700">{L('Delete', 'I-delete')}</AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
                           </AlertDialog>
@@ -177,47 +213,54 @@ export function CmsFormBuilderPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>{editId ? 'Edit Field' : 'Add Form Field'}</DialogTitle>
+            <DialogTitle>{editId ? L('Edit Field', 'I-edit ang Field') : L('Add Form Field', 'Magdagdag ng Form Field')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Field Label</Label>
+              <Label>{L('Field Label', 'Label ng Field')}</Label>
               <Input value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} placeholder="e.g. Full Name" required />
             </div>
             <div className="space-y-2">
-              <Label>Field Type</Label>
-              <div className="flex flex-wrap gap-2">
-                {fieldTypes.map((ft) => (
-                  <Button key={ft.value} variant={form.fieldType === ft.value ? 'default' : 'outline'} size="sm" className="rounded-lg gap-1.5" onClick={() => setForm({ ...form, fieldType: ft.value })}>
-                    <ft.icon className="h-3.5 w-3.5" /> {ft.label}
-                  </Button>
+              <Label>{L('Field Type', 'Uri ng Field')}</Label>
+              <div className="space-y-3">
+                {fieldCategories.map((cat) => (
+                  <div key={cat.label}>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1.5">{cat.label === 'Basic' ? L('Basic', 'Pangunahin') : cat.label === 'Choice' ? L('Choice', 'Pagpipilian') : L('Advanced', 'Advanced')}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {cat.types.map((ft) => (
+                        <Button key={ft.value} variant={form.fieldType === ft.value ? 'default' : 'outline'} size="sm" className="gap-1.5" onClick={() => setForm({ ...form, fieldType: ft.value })}>
+                          <ft.icon className="h-3.5 w-3.5" /> {ft.label}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
             {(form.fieldType === 'select' || form.fieldType === 'multiselect') && (
               <div className="space-y-2">
-                <Label>Options (comma separated)</Label>
+                <Label>{L('Options (comma separated)', 'Mga Opsyon (hiwalay ng kuwit)')}</Label>
                 <Input value={form.options} onChange={(e) => setForm({ ...form, options: e.target.value })} placeholder="Option 1, Option 2, Option 3" />
               </div>
             )}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Section</Label>
+                <Label>{L('Section', 'Seksyon')}</Label>
                 <Input value={form.section} onChange={(e) => setForm({ ...form, section: e.target.value })} placeholder="Personal Information" />
               </div>
               <div className="space-y-2">
-                <Label>Order</Label>
+                <Label>{L('Order', 'Ayos')}</Label>
                 <Input type="number" value={form.order} onChange={(e) => setForm({ ...form, order: parseInt(e.target.value) || 0 })} />
               </div>
             </div>
             <div className="flex items-center gap-2">
               <Switch checked={form.isRequired} onCheckedChange={(c) => setForm({ ...form, isRequired: !!c })} />
-              <Label>Required field</Label>
+              <Label>{L('Required field', 'Kinakailangang field')}</Label>
             </div>
             <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>{L('Cancel', 'Kanselahin')}</Button>
               <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? 'Saving...' : 'Save'}
+                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save', 'I-save')}
               </Button>
             </div>
           </div>

@@ -6,8 +6,15 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const all = searchParams.get('all')
+    const isPublic = searchParams.get('public') === 'true'
+
+    const where: Record<string, unknown> = {}
+    if (isPublic) {
+      where.isActive = true
+    }
 
     const faqs = await db.cmsFaq.findMany({
+      where,
       orderBy: { order: 'asc' },
     })
 

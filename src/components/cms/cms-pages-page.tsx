@@ -25,8 +25,11 @@ import {
 } from '@/components/ui/alert-dialog'
 import { toast } from 'sonner'
 import { apiFetch } from '@/lib/fetch'
+import { useAppStore } from '@/store/app-store'
 
 export function CmsPagesPage() {
+  const { language } = useAppStore()
+  const L = (en: string, fil: string) => language === 'fil' ? fil : en
   
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
@@ -55,9 +58,9 @@ export function CmsPagesPage() {
       setDialogOpen(false)
       setEditId(null)
       setForm({ title: '', slug: '', content: '', status: 'published', order: 0 })
-      toast.success(editId ? 'Page updated!' : 'Page created!')
+      toast.success(editId ? L('Page updated!', 'Na-update ang pahina!') : L('Page created!', 'Nalikha ang pahina!'))
     },
-    onError: () => toast.error('Failed to save page'),
+    onError: () => toast.error(L('Failed to save page', 'Hindi na-save ang pahina')),
   })
 
   const deleteMutation = useMutation({
@@ -67,10 +70,10 @@ export function CmsPagesPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cms-pages'] })
-      toast.success('Page deleted!')
+      toast.success(L('Page deleted!', 'Na-delete ang pahina!'))
     },
     onError: () => {
-      toast.error('Failed to delete page')
+      toast.error(L('Failed to delete page', 'Hindi na-delete ang pahina'))
     },
   })
 
@@ -95,20 +98,20 @@ export function CmsPagesPage() {
   const draftPages = pages.filter((p: any) => p.status === 'draft')
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
+    <div className="view-transition space-y-6 pb-8">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">CMS Pages</h1>
-          <p className="text-muted-foreground text-sm">Manage website content pages</p>
+          <h1 className="text-2xl font-bold text-foreground">{L('CMS Pages', 'Mga Pahina ng CMS')}</h1>
+          <p className="text-muted-foreground text-sm">{L('Create and manage website pages', 'Lumikha at pamahalaan ang mga pahina ng website')}</p>
         </div>
-        <Button onClick={openNew} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> New Page</Button>
+        <Button onClick={openNew} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> {L('New Page', 'Bagong Pahina')}</Button>
       </div>
 
       <Tabs defaultValue="published" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="published">Published ({publishedPages.length})</TabsTrigger>
-          <TabsTrigger value="drafts">Drafts ({draftPages.length})</TabsTrigger>
-          <TabsTrigger value="all">All ({pages.length})</TabsTrigger>
+          <TabsTrigger value="published">{L('Published', 'Na-publish')} ({publishedPages.length})</TabsTrigger>
+          <TabsTrigger value="drafts">{L('Drafts', 'Mga Draft')} ({draftPages.length})</TabsTrigger>
+          <TabsTrigger value="all">{L('All', 'Lahat')} ({pages.length})</TabsTrigger>
         </TabsList>
         <TabsContent value="published">
           <PageList pages={publishedPages} onEdit={openEdit} onDelete={(id) => deleteMutation.mutate(id)} isLoading={isLoading} />
@@ -124,34 +127,34 @@ export function CmsPagesPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-3xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editId ? 'Edit Page' : 'Create Page'}</DialogTitle>
+            <DialogTitle>{editId ? L('Edit Page', 'I-edit ang Pahina') : L('Create Page', 'Lumikha ng Pahina')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Title</Label>
+                <Label>{L('Title', 'Pamagat')}</Label>
                 <Input value={form.title} onChange={(e) => handleTitleChange(e.target.value)} placeholder="Page title" />
               </div>
               <div className="space-y-2">
-                <Label>Slug</Label>
+                <Label>{L('Slug', 'Slug')}</Label>
                 <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="page-slug" />
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Status</Label>
+              <Label>{L('Status', 'Status')}</Label>
               <div className="flex gap-2">
-                <Button variant={form.status === 'draft' ? 'default' : 'outline'} size="sm" onClick={() => setForm({ ...form, status: 'draft' })}>Draft</Button>
-                <Button variant={form.status === 'published' ? 'default' : 'outline'} size="sm" onClick={() => setForm({ ...form, status: 'published' })}>Published</Button>
+                <Button variant={form.status === 'draft' ? 'default' : 'outline'} size="sm" onClick={() => setForm({ ...form, status: 'draft' })}>{L('Draft', 'Draft')}</Button>
+                <Button variant={form.status === 'published' ? 'default' : 'outline'} size="sm" onClick={() => setForm({ ...form, status: 'published' })}>{L('Published', 'Na-publish')}</Button>
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Content (HTML supported)</Label>
+              <Label>{L('Content (HTML supported)', 'Nilalaman (sumusuportang HTML)')}</Label>
               <Textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} placeholder="Write your page content here..." className="min-h-[300px] font-mono text-sm" />
             </div>
             <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>{L('Cancel', 'Kanselahin')}</Button>
               <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? 'Saving...' : 'Save'}
+                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save', 'I-save')}
               </Button>
             </div>
           </div>
@@ -162,10 +165,12 @@ export function CmsPagesPage() {
 }
 
 function PageList({ pages, onEdit, onDelete, isLoading }: { pages: any[]; onEdit: (p: any) => void; onDelete: (id: string) => void; isLoading: boolean }) {
+  const { language } = useAppStore()
+  const L = (en: string, fil: string) => language === 'fil' ? fil : en
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
 
   if (isLoading) return <div className="space-y-3">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)}</div>
-  if (pages.length === 0) return <Card className="p-8 text-center"><FileText className="h-10 w-10 mx-auto text-muted-foreground mb-2" /><p className="text-muted-foreground">No pages found</p></Card>
+  if (pages.length === 0) return <Card className="p-8 text-center"><FileText className="h-10 w-10 mx-auto text-muted-foreground mb-2" /><p className="text-muted-foreground">{L('No pages found', 'Walang nahanap na pahina')}</p></Card>
   return (
     <div className="space-y-6 pb-8">
       {pages.map((page: any) => (
@@ -186,12 +191,12 @@ function PageList({ pages, onEdit, onDelete, isLoading }: { pages: any[]; onEdit
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                    <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+                    <AlertDialogTitle>{L('Are you sure?', 'Sigurado ka ba?')}</AlertDialogTitle>
+                    <AlertDialogDescription>{L('This action cannot be undone.', 'Hindi na maibabalik ang aksyong ito.')}</AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => { onDelete(page.id); setDeleteTarget(null) }} className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+                    <AlertDialogCancel>{L('Cancel', 'Kanselahin')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => { onDelete(page.id); setDeleteTarget(null) }} className="bg-red-600 hover:bg-red-700">{L('Delete', 'I-delete')}</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>

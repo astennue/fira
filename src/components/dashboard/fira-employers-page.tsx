@@ -31,7 +31,7 @@ export function FiraEmployersPage() {
   const users = Array.isArray(data?.users) ? data.users : []
 
   return (
-    <div className="view-transition space-y-6">
+    <div className="view-transition space-y-6 pb-8">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Mga Empleyador' : 'Employers'}</h1>
         <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Listahan ng mga foreign employer' : 'List of foreign employers'}</p>
@@ -53,7 +53,7 @@ export function FiraEmployersPage() {
             return (
               <motion.div key={u.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }}>
                 <Card>
-                  <CardContent className="p-4 flex items-center justify-between">
+                  <CardContent className="p-6 flex items-center justify-between">
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm shrink-0">
                         {ep?.companyName?.charAt(0) || u.name.charAt(0)}
@@ -68,8 +68,8 @@ export function FiraEmployersPage() {
                     </div>
                     <Badge variant="outline" className="text-xs capitalize shrink-0">
                       {u.isApproved
-                        ? (language === 'fil' ? 'Approved' : 'Approved')
-                        : <span className="text-amber-600"><Clock className="h-3 w-3 inline mr-1" />Pending</span>
+                        ? (language === 'fil' ? 'Na-approve' : 'Approved')
+                        : <span className="text-amber-600"><Clock className="h-3 w-3 inline mr-1" />{language === 'fil' ? 'Pending' : 'Pending'}</span>
                       }
                     </Badge>
                   </CardContent>

@@ -21,7 +21,7 @@ import {
   Globe,
   AlertTriangle,
 } from 'lucide-react'
-import { motion, useSpring, useTransform, useMotionValue } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -29,24 +29,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore, type ViewName } from '@/store/app-store'
 import { cn } from '@/lib/utils'
 import { apiFetch } from '@/lib/fetch'
-
-/* ------------------------------------------------------------------ */
-/*  Animated Counter                                                   */
-/* ------------------------------------------------------------------ */
-function AnimatedCounter({ target, duration = 1.5 }: { target: number; duration?: number }) {
-  const [display, setDisplay] = useState(0)
-  const motionVal = useMotionValue(0)
-  const spring = useSpring(motionVal, { duration: duration * 1000 })
-  const rounded = useTransform(spring, (v) => Math.round(v))
-
-  useEffect(() => {
-    motionVal.set(target)
-    const unsub = rounded.on('change', (v) => setDisplay(v))
-    return () => unsub()
-  }, [target, motionVal, rounded])
-
-  return <>{display}</>
-}
+import { AnimatedCounter } from '@/components/shared/animated-counter'
+import { getInitials } from '@/components/shared/get-initials'
 
 /* ------------------------------------------------------------------ */
 /*  Match Score Ring  (SVG circle animation)                           */
@@ -121,14 +105,7 @@ function InitialsCircle({
   className?: string
   isPending?: boolean
 }) {
-  const initials = name
-    ? name
-        .split(' ')
-        .map((n) => n[0])
-        .slice(0, 2)
-        .join('')
-        .toUpperCase()
-    : '?'
+  const initials = getInitials(name || '')
 
   const sizeMap = { sm: 'w-8 h-8 text-xs', md: 'w-11 h-11 text-sm', lg: 'w-14 h-14 text-base' }
 
@@ -188,33 +165,6 @@ function DashboardSkeleton() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Glass Card wrapper                                                  */
-/* ------------------------------------------------------------------ */
-function GlassCard({
-  children,
-  className,
-  hover = false,
-}: {
-  children: React.ReactNode
-  className?: string
-  hover?: boolean
-}) {
-  return (
-    <div
-      className={cn(
-        'rounded-2xl border border-white/30 dark:border-white/[0.06]',
-        'bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl',
-        'shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)]',
-        hover && 'hover:shadow-[0_12px_40px_rgba(16,185,129,0.10)] dark:hover:shadow-[0_12px_40px_rgba(16,185,129,0.15)] hover:-translate-y-0.5 transition-all duration-300',
-        className
-      )}
-    >
-      {children}
-    </div>
-  )
-}
-
-/* ------------------------------------------------------------------ */
 /*  Stat Card with gradient accent                                      */
 /* ------------------------------------------------------------------ */
 function StatCard({
@@ -240,13 +190,13 @@ function StatCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 + delay * 0.07, duration: 0.4 }}
     >
-      <GlassCard hover>
+      <Card className="rounded-2xl border border-white/30 dark:border-white/[0.06] bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:shadow-[0_12px_40px_rgba(16,185,129,0.10)] dark:hover:shadow-[0_12px_40px_rgba(16,185,129,0.15)] hover:-translate-y-0.5 transition-all duration-300">
         <div className="p-4">
           <div className="flex items-start justify-between">
             <div>
               <p className="text-xs font-medium text-muted-foreground">{label}</p>
               <p className="text-2xl font-bold mt-1.5">
-                <AnimatedCounter target={value} />
+                <AnimatedCounter value={value} />
               </p>
             </div>
             <div
@@ -266,7 +216,7 @@ function StatCard({
             </div>
           )}
         </div>
-      </GlassCard>
+      </Card>
     </motion.div>
   )
 }
@@ -423,7 +373,7 @@ export function EmployerDashboard() {
 
   /* ---- Render ---- */
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
+    <motion.div variants={container} initial="hidden" animate="show" className="view-transition space-y-6 pb-8">
       {/* ================================================================ */}
       {/*  HEADER                                                          */}
       {/* ================================================================ */}
@@ -485,7 +435,7 @@ export function EmployerDashboard() {
         {/*  LEFT (2/3): Endorsed Candidates — THE MAIN FEATURE           */}
         {/* ------------------------------------------------------------ */}
         <motion.div variants={item} className="lg:col-span-2">
-          <GlassCard className="h-full">
+          <Card className="rounded-2xl border border-white/30 dark:border-white/[0.06] bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] h-full">
             <div className="p-4 md:p-5 pb-0 md:pb-0 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 rounded-lg bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20">
@@ -559,12 +509,7 @@ export function EmployerDashboard() {
                                 : 'shadow-teal-500/15'
                             )}
                           >
-                            {name
-                              .split(' ')
-                              .map((n: string) => n[0])
-                              .slice(0, 2)
-                              .join('')
-                              .toUpperCase()}
+                            {getInitials(name)}
                           </div>
 
                           <div className="min-w-0 flex-1">
@@ -637,7 +582,7 @@ export function EmployerDashboard() {
                 </div>
               )}
             </div>
-          </GlassCard>
+          </Card>
         </motion.div>
 
         {/* ------------------------------------------------------------ */}
@@ -645,7 +590,7 @@ export function EmployerDashboard() {
         {/* ------------------------------------------------------------ */}
         <motion.div variants={item} className="space-y-4">
           {/* Quick Actions */}
-          <GlassCard>
+          <Card className="rounded-2xl border border-white/30 dark:border-white/[0.06] bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
             <div className="p-4 md:p-5 pb-0 md:pb-0">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 rounded-lg bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20">
@@ -686,10 +631,10 @@ export function EmployerDashboard() {
                 </Button>
               ))}
             </div>
-          </GlassCard>
+          </Card>
 
           {/* Accept Rate */}
-          <GlassCard>
+          <Card className="rounded-2xl border border-white/30 dark:border-white/[0.06] bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
             <div className="p-4 md:p-5 pb-0 md:pb-0">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 rounded-lg bg-gradient-to-br from-teal-500/10 to-emerald-500/10 dark:from-teal-500/20 dark:to-emerald-500/20">
@@ -710,7 +655,7 @@ export function EmployerDashboard() {
                   transition={{ delay: 0.4, duration: 0.5 }}
                 >
                   <p className="text-5xl font-extrabold bg-gradient-to-br from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-300 bg-clip-text text-transparent">
-                    <AnimatedCounter target={acceptRate} />
+                    <AnimatedCounter value={acceptRate} />
                     <span className="text-3xl">%</span>
                   </p>
                 </motion.div>
@@ -723,7 +668,7 @@ export function EmployerDashboard() {
               <div className="grid grid-cols-3 gap-2 pt-4 border-t border-emerald-100 dark:border-emerald-900/40">
                 <div className="text-center">
                   <p className="text-xl font-bold text-amber-600 dark:text-amber-400">
-                    <AnimatedCounter target={pending} />
+                    <AnimatedCounter value={pending} />
                   </p>
                   <p className="text-[10px] text-muted-foreground font-medium mt-0.5">
                     {isFil ? 'Pending' : 'Pending'}
@@ -731,7 +676,7 @@ export function EmployerDashboard() {
                 </div>
                 <div className="text-center">
                   <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
-                    <AnimatedCounter target={accepted} />
+                    <AnimatedCounter value={accepted} />
                   </p>
                   <p className="text-[10px] text-muted-foreground font-medium mt-0.5">
                     {isFil ? 'Accept' : 'Accept'}
@@ -739,15 +684,15 @@ export function EmployerDashboard() {
                 </div>
                 <div className="text-center">
                   <p className="text-xl font-bold text-rose-600 dark:text-rose-400">
-                    <AnimatedCounter target={declined} />
+                    <AnimatedCounter value={declined} />
                   </p>
                   <p className="text-[10px] text-muted-foreground font-medium mt-0.5">
-                    {isFil ? 'Decline' : 'Decline'}
+                    {isFil ? 'I-decline' : 'Decline'}
                   </p>
                 </div>
               </div>
             </div>
-          </GlassCard>
+          </Card>
         </motion.div>
       </div>
 

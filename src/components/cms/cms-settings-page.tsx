@@ -31,6 +31,8 @@ const defaultSettings: Record<string, string> = {
 }
 
 export function CmsSettingsPage() {
+  const { language } = useAppStore()
+  const L = (en: string, fil: string) => language === 'fil' ? fil : en
   
   const queryClient = useQueryClient()
   const [settings, setSettings] = useState<Record<string, string> | null>(null)
@@ -65,9 +67,9 @@ export function CmsSettingsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cms-settings'] })
-      toast.success('Settings saved successfully!')
+      toast.success(L('Settings saved successfully!', 'Matagumpay na na-save ang mga Setting!'))
     },
-    onError: () => toast.error('Failed to save settings'),
+    onError: () => toast.error(L('Failed to save settings', 'Hindi na-save ang mga Setting')),
   })
 
   const updateSetting = (key: string, value: string) => {
@@ -75,14 +77,14 @@ export function CmsSettingsPage() {
   }
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="view-transition space-y-6 pb-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Site Settings</h1>
-          <p className="text-muted-foreground text-sm">Configure general site information</p>
+          <h1 className="text-2xl font-bold text-foreground">{L('Site Settings', 'Mga Setting ng Site')}</h1>
+          <p className="text-muted-foreground text-sm">{L('Configure general site information', 'I-configure ang pangkalahatang impormasyon ng site')}</p>
         </div>
         <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} className="rounded-xl">
-          {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? 'Saving...' : 'Save All'}
+          {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save All', 'I-save lahat')}
         </Button>
       </div>
 
@@ -97,29 +99,29 @@ export function CmsSettingsPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Globe className="h-5 w-5 text-blue-600" /> General
+                <Globe className="h-5 w-5 text-blue-600" /> {L('General', 'Pangkalahatan')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>Site Name</Label>
-                <Input value={settings.site_name} onChange={(e) => updateSetting('site_name', e.target.value)} />
+                <Label>{L('Site Name', 'Pangalan ng Site')}</Label>
+                <Input value={effectiveSettings.site_name} onChange={(e) => updateSetting('site_name', e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label>Tagline</Label>
-                <Input value={settings.site_tagline} onChange={(e) => updateSetting('site_tagline', e.target.value)} />
+                <Label>{L('Tagline', 'Tagline')}</Label>
+                <Input value={effectiveSettings.site_tagline} onChange={(e) => updateSetting('site_tagline', e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label>Description</Label>
-                <Textarea value={settings.site_description} onChange={(e) => updateSetting('site_description', e.target.value)} className="min-h-[80px]" />
+                <Label>{L('Description', 'Deskripsyon')}</Label>
+                <Textarea value={effectiveSettings.site_description} onChange={(e) => updateSetting('site_description', e.target.value)} className="min-h-[80px]" />
               </div>
               <div className="space-y-2">
-                <Label>Logo URL</Label>
-                <Input value={settings.logo_url} onChange={(e) => updateSetting('logo_url', e.target.value)} placeholder="https://..." />
+                <Label>{L('Logo URL', 'URL ng Logo')}</Label>
+                <Input value={effectiveSettings.logo_url} onChange={(e) => updateSetting('logo_url', e.target.value)} placeholder="https://..." />
               </div>
               <div className="space-y-2">
-                <Label>Website URL</Label>
-                <Input value={settings.website} onChange={(e) => updateSetting('website', e.target.value)} />
+                <Label>{L('Website URL', 'URL ng Website')}</Label>
+                <Input value={effectiveSettings.website} onChange={(e) => updateSetting('website', e.target.value)} />
               </div>
             </CardContent>
           </Card>
@@ -128,31 +130,31 @@ export function CmsSettingsPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Building className="h-5 w-5 text-blue-600" /> Contact Information
+                <Building className="h-5 w-5 text-blue-600" /> {L('Contact Information', 'Impormasyon sa Kontak')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> Address</Label>
-                <Input value={settings.address} onChange={(e) => updateSetting('address', e.target.value)} />
+                <Label className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {L('Address', 'Alamat')}</Label>
+                <Input value={effectiveSettings.address} onChange={(e) => updateSetting('address', e.target.value)} />
               </div>
               <div className="grid sm:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" /> Phone 1</Label>
-                  <Input value={settings.phone_1} onChange={(e) => updateSetting('phone_1', e.target.value)} />
+                  <Label className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" /> {L('Phone 1', 'Telepono 1')}</Label>
+                  <Input value={effectiveSettings.phone_1} onChange={(e) => updateSetting('phone_1', e.target.value)} />
                 </div>
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" /> Phone 2</Label>
-                  <Input value={settings.phone_2} onChange={(e) => updateSetting('phone_2', e.target.value)} />
+                  <Label className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" /> {L('Phone 2', 'Telepono 2')}</Label>
+                  <Input value={effectiveSettings.phone_2} onChange={(e) => updateSetting('phone_2', e.target.value)} />
                 </div>
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" /> Phone 3</Label>
-                  <Input value={settings.phone_3} onChange={(e) => updateSetting('phone_3', e.target.value)} />
+                  <Label className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" /> {L('Phone 3', 'Telepono 3')}</Label>
+                  <Input value={effectiveSettings.phone_3} onChange={(e) => updateSetting('phone_3', e.target.value)} />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="flex items-center gap-1"><Mail className="h-3.5 w-3.5" /> Email</Label>
-                <Input value={settings.email} onChange={(e) => updateSetting('email', e.target.value)} />
+                <Label className="flex items-center gap-1"><Mail className="h-3.5 w-3.5" /> {L('Email', 'Email')}</Label>
+                <Input value={effectiveSettings.email} onChange={(e) => updateSetting('email', e.target.value)} />
               </div>
             </CardContent>
           </Card>
@@ -160,13 +162,13 @@ export function CmsSettingsPage() {
           {/* Social Media Settings */}
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Social Media URLs</CardTitle>
+              <CardTitle className="text-lg">{L('Social Media URLs', 'Mga URL sa Social Media')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {['facebook_url', 'instagram_url', 'linkedin_url', 'twitter_url'].map((key) => (
                 <div key={key} className="space-y-2">
                   <Label className="capitalize">{key.replace('_url', '')}</Label>
-                  <Input value={settings[key] || ''} onChange={(e) => updateSetting(key, e.target.value)} placeholder="https://..." />
+                  <Input value={effectiveSettings[key] || ''} onChange={(e) => updateSetting(key, e.target.value)} placeholder="https://..." />
                 </div>
               ))}
             </CardContent>

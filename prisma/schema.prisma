@@ -3,9 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider  = "sqlite"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 // ============ CORE USER & ORG MODELS ============
@@ -31,6 +30,7 @@ model User {
   notifications        Notification[]
   resumeEnhancements  ResumeEnhancement[]
   createdJobOrders    JobOrder[] @relation("CreatedByUser")
+  verificationCodes   VerificationCode[]
 
   @@index([email])
   @@index([role])
@@ -64,7 +64,7 @@ model AgencyMember {
   role        String   @default("member") // admin, recruiter, processor, deployment_officer, member
   joinedAt    DateTime @default(now())
 
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   agency      Agency   @relation(fields: [agencyId], references: [id])
 
   @@unique([userId, agencyId])
@@ -85,7 +85,7 @@ model EmployerProfile {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  user            User     @relation(fields: [userId], references: [id])
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   jobOrders       JobOrder[]
   endorsements    Endorsement[]
 }
@@ -142,7 +142,7 @@ model ApplicantProfile {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  user            User     @relation(fields: [userId], references: [id])
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   education       ApplicantEducation[]
   experience      ApplicantExperience[]
   skills          ApplicantSkill[]
@@ -334,8 +334,8 @@ model Application {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  applicant       User     @relation(fields: [applicantId], references: [id])
-  jobOrder        JobOrder @relation(fields: [jobOrderId], references: [id])
+  applicant       User     @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  jobOrder        JobOrder @relation(fields: [jobOrderId], references: [id], onDelete: Cascade)
   currentStage    ATSStage? @relation(fields: [currentStageId], references: [id])
   atsHistory      ATSStageHistory[]
   endorsements    Endorsement[]
@@ -399,8 +399,8 @@ model Endorsement {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  application     Application    @relation(fields: [applicationId], references: [id])
-  endorser        User           @relation("EndorserUser", fields: [endorsedById], references: [id])
+  application     Application    @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  endorser        User           @relation("EndorserUser", fields: [endorsedById], references: [id], onDelete: Cascade)
   employer        EmployerProfile @relation(fields: [employerId], references: [id])
 }
 
@@ -445,7 +445,7 @@ model ResumeEnhancement {
   isUsed          Boolean  @default(false)
   createdAt       DateTime @default(now())
 
-  applicant       User     @relation(fields: [applicantId], references: [id])
+  applicant       User     @relation(fields: [applicantId], references: [id], onDelete: Cascade)
 }
 
 // ============ CMS MODELS ============
@@ -552,4 +552,39 @@ model VerificationCode {
   expiresAt   DateTime
   usedAt      DateTime?
   createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ============ CONTACT & NEWSLETTER ============
+
+model ContactSubmission {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model NewsletterSubscription {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model PartnerInquiry {
+  id            String   @id @default(cuid())
+  companyName   String
+  contactName   String
+  email         String
+  phone         String?
+  country       String?
+  industry      String?
+  workerCount   String?
+  message       String?
+  isRead        Boolean  @default(false)
+  createdAt     DateTime @default(now())
 }

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, Edit, Trash2, Save, Loader2, Facebook, Instagram, Linkedin, Twitter, Youtube, Globe } from 'lucide-react'
+import { Plus, Edit, Trash2, Save, Loader2, Facebook, Instagram, Linkedin, Twitter, Youtube, Globe, Share2 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -38,6 +38,8 @@ const platformIcons: Record<string, React.ComponentType<{ className?: string }>>
 }
 
 export function CmsSocialPage() {
+  const { language } = useAppStore()
+  const L = (en: string, fil: string) => language === 'fil' ? fil : en
   
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
@@ -66,9 +68,9 @@ export function CmsSocialPage() {
       setDialogOpen(false)
       setEditId(null)
       setForm({ platform: '', title: '', url: '', icon: '', order: 0, isActive: true })
-      toast.success(editId ? 'Social link updated!' : 'Social link created!')
+      toast.success(editId ? L('Social link updated!', 'Na-update ang social link!') : L('Social link created!', 'Nalikha ang social link!'))
     },
-    onError: () => toast.error('Failed to save'),
+    onError: () => toast.error(L('Failed to save', 'Hindi na-save')),
   })
 
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
@@ -80,11 +82,11 @@ export function CmsSocialPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cms-social'] })
-      toast.success('Social link deleted!')
+      toast.success(L('Social link deleted!', 'Na-delete ang social link!'))
       setDeleteTarget(null)
     },
     onError: () => {
-      toast.error('Failed to delete social link')
+      toast.error(L('Failed to delete social link', 'Hindi na-delete ang social link'))
     },
   })
 
@@ -103,19 +105,25 @@ export function CmsSocialPage() {
   const platforms = ['facebook', 'instagram', 'linkedin', 'twitter', 'youtube', 'tiktok', 'whatsapp', 'website']
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="view-transition space-y-6 pb-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Social Media</h1>
-          <p className="text-muted-foreground text-sm">Manage social media links and profiles</p>
+          <h1 className="text-2xl font-bold text-foreground">{L('Social Media Links', 'Mga Link sa Social Media')}</h1>
+          <p className="text-muted-foreground text-sm">{L('Manage your social media presence', 'Pamahalaan ang iyong social media')}</p>
         </div>
-        <Button onClick={openNew} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> Add Link</Button>
+        <Button onClick={openNew} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> {L('Add Link', 'Magdagdag ng Link')}</Button>
       </div>
 
       {isLoading ? (
         <div className="space-y-3">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)}</div>
       ) : (
         <div className="space-y-4">
+          {!isLoading && links.length === 0 && (
+            <Card className="p-8 text-center">
+              <Share2 className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
+              <p className="text-muted-foreground">{L('No social media links added yet.', 'Wala pang social media link na naidagdag.')}</p>
+            </Card>
+          )}
           {links.map((link: any) => {
             const Icon = platformIcons[link.platform] || Globe
             return (
@@ -140,12 +148,12 @@ export function CmsSocialPage() {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                          <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+                          <AlertDialogTitle>{L('Are you sure?', 'Sigurado ka ba?')}</AlertDialogTitle>
+                          <AlertDialogDescription>{L('This action cannot be undone.', 'Hindi na maibabalik ang aksyong ito.')}</AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => { deleteMutation.mutate(link.id); setDeleteTarget(null) }} className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+                          <AlertDialogCancel>{L('Cancel', 'Kanselahin')}</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => { deleteMutation.mutate(link.id); setDeleteTarget(null) }} className="bg-red-600 hover:bg-red-700">{L('Delete', 'I-delete')}</AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
@@ -160,11 +168,11 @@ export function CmsSocialPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>{editId ? 'Edit Social Link' : 'Add Social Link'}</DialogTitle>
+            <DialogTitle>{editId ? L('Edit Social Link', 'I-edit ang Social Link') : L('Add Social Link', 'Magdagdag ng Social Link')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Platform</Label>
+              <Label>{L('Platform', 'Plataporma')}</Label>
               <div className="flex flex-wrap gap-2">
                 {platforms.map((p) => (
                   <Button key={p} variant={form.platform === p ? 'default' : 'outline'} size="sm" className="rounded-lg capitalize" onClick={() => setForm({ ...form, platform: p })}>
@@ -174,21 +182,21 @@ export function CmsSocialPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Title (optional)</Label>
+              <Label>{L('Title (optional)', 'Pamagat (opsyonal)')}</Label>
               <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Official Facebook Page" />
             </div>
             <div className="space-y-2">
-              <Label>URL</Label>
+              <Label>{L('URL', 'URL')}</Label>
               <Input value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} placeholder="https://..." required />
             </div>
             <div className="space-y-2">
-              <Label>Display Order</Label>
+              <Label>{L('Display Order', 'Ayos ng Pagpapakita')}</Label>
               <Input type="number" value={form.order} onChange={(e) => setForm({ ...form, order: parseInt(e.target.value) || 0 })} />
             </div>
             <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>{L('Cancel', 'Kanselahin')}</Button>
               <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? 'Saving...' : 'Save'}
+                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save', 'I-save')}
               </Button>
             </div>
           </div>

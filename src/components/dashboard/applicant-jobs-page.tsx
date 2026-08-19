@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAppStore } from '@/store/app-store'
+import { toast } from 'sonner'
 
 const COUNTRIES = [
   { value: 'all', label: 'All Countries' },
@@ -27,6 +28,30 @@ export function ApplicantJobsPage() {
   const { navigate, language } = useAppStore()
   const [country, setCountry] = useState('all')
   const [search, setSearch] = useState('')
+  const [savedJobs, setSavedJobs] = useState<Set<string>>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('fira-saved-jobs')
+        return saved ? new Set(JSON.parse(saved)) : new Set()
+      } catch { return new Set() }
+    }
+    return new Set()
+  })
+
+  const toggleSaveJob = (jobId: string) => {
+    setSavedJobs(prev => {
+      const next = new Set(prev)
+      if (next.has(jobId)) {
+        next.delete(jobId)
+        toast.success(language === 'fil' ? 'Na-remove sa nai-save' : 'Removed from saved jobs')
+      } else {
+        next.add(jobId)
+        toast.success(language === 'fil' ? 'Na-save na!' : 'Job saved!')
+      }
+      localStorage.setItem('fira-saved-jobs', JSON.stringify([...next]))
+      return next
+    })
+  }
 
   const queryParams = new URLSearchParams()
   queryParams.set('public', 'true')
@@ -86,7 +111,7 @@ export function ApplicantJobsPage() {
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-3">
                     <Badge className={`text-xs ${categoryColors[job.category] || 'bg-muted text-foreground'}`}>{job.category?.replace(/_/g, ' ')}</Badge>
-                    <Heart className="h-4 w-4 text-muted-foreground hover:text-red-500 cursor-pointer" />
+                    <Heart className={`h-4 w-4 ${savedJobs.has(job.id) ? 'text-red-500 fill-red-500' : 'text-muted-foreground hover:text-red-500'} cursor-pointer transition-colors`} onClick={(e) => { e.stopPropagation(); toggleSaveJob(job.id) }} />
                   </div>
                   <h3 className="font-semibold mb-2 line-clamp-2">{job.title}</h3>
                   <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-3">

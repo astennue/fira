@@ -89,17 +89,17 @@ export function EmployerEndorsedPage() {
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                           {profile.applicantType && <div className="p-2 rounded bg-muted"><span className="text-muted-foreground">{language === 'fil' ? 'Uri' : 'Type'}</span><br /><span className="font-medium">{profile.applicantType?.replace('_', ' ')}</span></div>}
                           {profile.highestEducation && <div className="p-2 rounded bg-muted"><span className="text-muted-foreground">{language === 'fil' ? 'Edukasyon' : 'Education'}</span><br /><span className="font-medium capitalize">{profile.highestEducation}</span></div>}
-                          {profile.passportStatus && <div className="p-2 rounded bg-muted"><span className="text-muted-foreground">Passport</span><br /><span className="font-medium capitalize">{profile.passportStatus}</span></div>}
-                          {profile.medicalStatus && profile.medicalStatus !== 'none' && <div className="p-2 rounded bg-muted"><span className="text-muted-foreground">Medical</span><br /><span className="font-medium capitalize">{profile.medicalStatus}</span></div>}
+                          {profile.passportStatus && <div className="p-2 rounded bg-muted"><span className="text-muted-foreground">{language === 'fil' ? 'Pasaporte' : 'Passport'}</span><br /><span className="font-medium capitalize">{profile.passportStatus}</span></div>}
+                          {profile.medicalStatus && profile.medicalStatus !== 'none' && <div className="p-2 rounded bg-muted"><span className="text-muted-foreground">{language === 'fil' ? 'Medikal' : 'Medical'}</span><br /><span className="font-medium capitalize">{profile.medicalStatus}</span></div>}
                         </div>
                       )}
                       {isPending && (
                         <div className="flex gap-2 pt-2 border-t">
-                          <Button size="sm" className="flex-1" onClick={() => updateMutation.mutate({ endorsementId: e.id, action: 'employer_accept' })} disabled={updateMutation.isPending}>
-                            {updateMutation.isPending ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <CheckCircle className="h-4 w-4 mr-1" />}{language === 'fil' ? 'Accept' : 'Accept'}
+                          <Button size="sm" className="flex-1" onClick={() => updateMutation.mutate({ endorsementId: e.id, action: 'employer_accept' })} disabled={updateMutation.isPending && updateMutation.variables?.endorsementId === e.id}>
+                            {updateMutation.isPending && updateMutation.variables?.endorsementId === e.id ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <CheckCircle className="h-4 w-4 mr-1" />}{language === 'fil' ? 'Accept' : 'Accept'}
                           </Button>
-                          <Button size="sm" variant="outline" className="flex-1" onClick={() => updateMutation.mutate({ endorsementId: e.id, action: 'employer_decline' })} disabled={updateMutation.isPending}>
-                            {updateMutation.isPending ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <XCircle className="h-4 w-4 mr-1" />}{language === 'fil' ? 'Decline' : 'Decline'}
+                          <Button size="sm" variant="outline" className="flex-1" onClick={() => updateMutation.mutate({ endorsementId: e.id, action: 'employer_decline' })} disabled={updateMutation.isPending && updateMutation.variables?.endorsementId === e.id}>
+                            {updateMutation.isPending && updateMutation.variables?.endorsementId === e.id ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <XCircle className="h-4 w-4 mr-1" />}{language === 'fil' ? 'I-decline' : 'Decline'}
                           </Button>
                         </div>
                       )}

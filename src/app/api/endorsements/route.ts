@@ -115,6 +115,24 @@ export async function PATCH(request: NextRequest) {
     }
 
     const updated = await db.endorsement.update({ where: { id: endorsementId }, data: updateData })
+
+    // Sync endorsement action to application status
+    if (endorsement.applicationId) {
+      const statusMap: Record<string, string> = {
+        fira_approve: 'pending_employer_review',
+        fira_reject: 'rejected_by_fira',
+        employer_accept: 'employer_accepted',
+        employer_decline: 'employer_declined',
+      }
+      const newAppStatus = statusMap[action]
+      if (newAppStatus) {
+        await db.application.update({
+          where: { id: endorsement.applicationId },
+          data: { status: newAppStatus },
+        })
+      }
+    }
+
     return NextResponse.json({ endorsement: updated })
   } catch (error) {
     console.error('Endorsements PATCH error:', error)

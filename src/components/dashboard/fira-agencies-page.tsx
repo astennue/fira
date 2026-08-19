@@ -54,7 +54,7 @@ export function FiraAgenciesPage() {
   })
 
   return (
-    <div className="view-transition space-y-6">
+    <div className="view-transition space-y-6 pb-8">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Mga Ahensya' : 'Agencies'}</h1>
         <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Pamahalaan at i-approve ang mga ahensya' : 'Manage and approve agencies'}</p>
@@ -84,7 +84,7 @@ export function FiraAgenciesPage() {
           {agencies.map((agency: any, i: number) => (
             <motion.div key={agency.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }}>
               <Card>
-                <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <CardContent className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm shrink-0">
                       {agency.name?.charAt(0)}

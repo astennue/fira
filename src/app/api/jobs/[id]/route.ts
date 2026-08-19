@@ -6,11 +6,32 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = requireAuth(request)
-  if (auth instanceof NextResponse) return auth
-
   try {
+    const { searchParams } = new URL(request.url)
+    const isPublic = searchParams.get('public') === 'true'
     const { id } = await params
+
+    // Public access: no auth required, only return public + open jobs
+    if (isPublic) {
+      const job = await db.jobOrder.findFirst({
+        where: { id, visibility: 'public', status: 'open' },
+        include: {
+          employer: { include: { user: { select: { id: true, name: true, email: true } } } },
+          agency: { select: { id: true, name: true, country: true, agencyType: true } },
+        },
+      })
+
+      if (!job) {
+        return NextResponse.json({ error: 'Job not found' }, { status: 404 })
+      }
+
+      return NextResponse.json({ job })
+    }
+
+    // Authenticated access
+    const auth = requireAuth(request)
+    if (auth instanceof NextResponse) return auth
+
     const job = await db.jobOrder.findUnique({
       where: { id },
       include: {

@@ -11,16 +11,35 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
+import { apiFetch } from '@/lib/fetch'
 
 export function ContactPage() {
   const { language } = useAppStore()
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [subject, setSubject] = useState('')
+  const [message, setMessage] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSubmitted(true)
-    toast.success(language === 'fil' ? 'Naipadala na ang iyong mensahe!' : 'Your message has been sent!')
-    setTimeout(() => setSubmitted(false), 3000)
+    try {
+      setSubmitting(true)
+      const res = await apiFetch('/api/cms/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, subject, message }),
+      })
+      if (!res.ok) throw new Error('Failed')
+      setSubmitted(true)
+      toast.success('Message sent successfully!')
+      setTimeout(() => { setSubmitted(false); setName(''); setEmail(''); setSubject(''); setMessage('') }, 3000)
+    } catch {
+      toast.error('Failed to send message. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -30,7 +49,7 @@ export function ContactPage() {
         <div className="absolute inset-0 bg-grid-pattern" />
         <div className="relative container mx-auto px-4 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <Badge className="bg-white/15 text-white/90 border-white/25 mb-4">Contact Us</Badge>
+            <Badge className="bg-white/15 text-white/90 border-white/25 mb-4">{language === 'fil' ? 'Makipag-ugnayan' : 'Contact Us'}</Badge>
             <h1 className="text-3xl md:text-5xl font-bold mb-4">
               {language === 'fil' ? 'Makipag-ugnay sa Amin' : 'Get in Touch'}
             </h1>
@@ -95,9 +114,11 @@ export function ContactPage() {
                   </div>
                 </div>
                 <CardContent className="p-6">
-                  <h3 className="font-semibold mb-3">Find Us</h3>
+                  <h3 className="font-semibold mb-3">{language === 'fil' ? 'Hanapin Kami' : 'Find Us'}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    FIRA is conveniently located on Boulevard Zerktouni in the heart of Casablanca, Morocco. Visit our office during business hours for face-to-face consultations.
+                    {language === 'fil'
+                      ? 'Ang FIRA ay maginhawang matatagpuan sa Boulevard Zerktouni sa gitna ng Casablanca, Morocco. Bisitahin ang aming opisina sa loob ng oras ng trabaho para sa face-to-face na konsultasyon.'
+                      : 'FIRA is conveniently located on Boulevard Zerktouni in the heart of Casablanca, Morocco. Visit our office during business hours for face-to-face consultations.'}
                   </p>
                 </CardContent>
               </Card>
@@ -117,24 +138,24 @@ export function ContactPage() {
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>{language === 'fil' ? 'Pangalan' : 'Name'}</Label>
-                      <Input placeholder="Your name" className="h-11" required />
+                      <Input placeholder={language === 'fil' ? 'Iyong pangalan' : 'Your name'} className="h-11" required value={name} onChange={(e) => setName(e.target.value)} />
                     </div>
                     <div className="space-y-2">
                       <Label>Email</Label>
-                      <Input type="email" placeholder="your@email.com" className="h-11" required />
+                      <Input type="email" placeholder={language === 'fil' ? 'iyong@email.com' : 'your@email.com'} className="h-11" required value={email} onChange={(e) => setEmail(e.target.value)} />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label>{language === 'fil' ? 'Paksa' : 'Subject'}</Label>
-                    <Input placeholder={language === 'fil' ? 'Paksa ng iyong mensahe...' : 'Subject of your message...'} className="h-11" required />
+                    <Input placeholder={language === 'fil' ? 'Paksa ng iyong mensahe...' : 'Subject of your message...'} className="h-11" required value={subject} onChange={(e) => setSubject(e.target.value)} />
                   </div>
                   <div className="space-y-2">
                     <Label>{language === 'fil' ? 'Mensahe' : 'Message'}</Label>
-                    <Textarea placeholder={language === 'fil' ? 'I-type ang iyong mensahe dito...' : 'Type your message here...'} className="min-h-[150px]" required />
+                    <Textarea placeholder={language === 'fil' ? 'I-type ang iyong mensahe dito...' : 'Type your message here...'} className="min-h-[150px]" required value={message} onChange={(e) => setMessage(e.target.value)} />
                   </div>
-                  <Button type="submit" className="w-full h-11 rounded-xl" disabled={submitted}>
+                  <Button type="submit" className="w-full h-11 rounded-xl" disabled={submitted || submitting}>
                     {submitted ? (
-                      <><CheckCircle className="mr-2 h-4 w-4" /> Sent!</>
+                      <><CheckCircle className="mr-2 h-4 w-4" /> {language === 'fil' ? 'Naipadala!' : 'Sent!'}</>
                     ) : (
                       <><Send className="mr-2 h-4 w-4" /> {language === 'fil' ? 'Ipadala' : 'Send Message'}</>
                     )}

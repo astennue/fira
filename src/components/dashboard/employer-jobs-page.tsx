@@ -45,7 +45,7 @@ export function EmployerJobsPage() {
                     <MapPin className="h-3.5 w-3.5" />{job.city ? `${job.city}, ` : ''}{job.country}
                   </div>
                   <div className="flex items-center justify-between pt-2 border-t">
-                    <span className="text-xs text-muted-foreground">{job._count?.applications || 0} applicants</span>
+                    <span className="text-xs text-muted-foreground">{job._count?.applications || 0} {language === 'fil' ? 'mga aplikante' : 'applicants'}</span>
                     <Badge variant="secondary" className="text-xs capitalize">{job.status}</Badge>
                   </div>
                 </CardContent>

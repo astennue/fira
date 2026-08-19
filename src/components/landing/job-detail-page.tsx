@@ -26,7 +26,8 @@ export function JobDetailPage() {
   const { data: jobsData, isLoading } = useQuery({
     queryKey: ['job-detail', jobId],
     queryFn: async () => {
-      const res = await apiFetch(`/api/jobs/${jobId}`)
+      const url = user ? `/api/jobs/${jobId}` : `/api/jobs/${jobId}?public=true`
+      const res = await apiFetch(url)
       if (!res.ok) return null
       return res.json()
     },

@@ -245,10 +245,25 @@ export function LandingPage() {
     navigate('job-listing', { search: heroSearch })
   }
 
-  const handleNewsletter = (e: React.FormEvent) => {
+  const handleNewsletter = async (e: React.FormEvent) => {
     e.preventDefault()
-    setNewsletterSubmitted(true)
-    setTimeout(() => setNewsletterSubmitted(false), 3000)
+    if (!newsletterEmail) return
+    try {
+      const res = await apiFetch('/api/cms/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: newsletterEmail }),
+      })
+      if (res.ok || res.status === 409) {
+        setNewsletterSubmitted(true)
+        setNewsletterEmail('')
+        setTimeout(() => setNewsletterSubmitted(false), 3000)
+      }
+    } catch {
+      // Silently fail - newsletter is non-critical
+      setNewsletterSubmitted(true)
+      setTimeout(() => setNewsletterSubmitted(false), 3000)
+    }
   }
 
   // ── Bilingual Labels ──────────────────────────────────────
@@ -260,7 +275,7 @@ export function LandingPage() {
     { icon: Users, label: L('10K+ Na-deploy', '10K+ Deployed'), size: 'small' as const, accent: 'from-amber-500/20 to-amber-600/10' },
     { icon: Shield, label: L('Ligtas & Legal', 'Safe & Legal'), size: 'small' as const, accent: 'from-emerald-500/20 to-emerald-600/10' },
     { icon: BadgeCheck, label: L('DOLE License', 'DOLE Licensed'), size: 'small' as const, accent: 'from-sky-500/20 to-sky-600/10' },
-    { icon: HeartHandshake, label: L('Full Support', 'Full Support'), size: 'large' as const, accent: 'from-rose-500/20 to-rose-600/10' },
+    { icon: HeartHandshake, label: L('Buong Suporta', 'Full Support'), size: 'large' as const, accent: 'from-rose-500/20 to-rose-600/10' },
   ]
 
   // ── How It Works Steps ────────────────────────────────────
@@ -299,12 +314,12 @@ export function LandingPage() {
 
   // ── Services ───────────────────────────────────────────────
   const services = [
-    { icon: Briefcase, title: L('Rekrutamento', 'Recruitment'), desc: L('Comprehensive overseas recruitment services connecting Filipino workers with international employers.', 'Comprehensive overseas recruitment services connecting Filipino workers with international employers.') },
-    { icon: FileText, title: L('Pagsasalaysay ng Dokumento', 'Document Processing'), desc: L('End-to-end document preparation, verification, and processing for all deployment requirements.', 'End-to-end document preparation, verification, and processing for all deployment requirements.') },
-    { icon: ClipboardCheck, title: L('Pagsusuri ng Kakayahan', 'Skills Assessment'), desc: L('Thorough evaluation of candidate skills, experience, and qualifications to ensure job fit.', 'Thorough evaluation of candidate skills, experience, and qualifications to ensure job fit.') },
-    { icon: Stethoscope, title: L('Pagsusuri Medikal', 'Medical Clearance'), desc: L('Coordination with accredited medical facilities for complete health screening.', 'Coordination with accredited medical facilities for complete health screening.') },
-    { icon: GraduationCap, title: L('Oryentasyon bago Pumalad', 'Pre-Departure Orientation'), desc: L('Comprehensive PDOS covering culture, rights, employer expectations, and safety.', 'Comprehensive PDOS covering culture, rights, employer expectations, and safety.') },
-    { icon: Headphones, title: L('Suporta pagkatapos Pumalad', 'Post-Deployment Support'), desc: L('Continuous monitoring and support for deployed workers throughout their employment.', 'Continuous monitoring and support for deployed workers throughout their employment.') },
+    { icon: Briefcase, title: L('Rekrutamento', 'Recruitment'), desc: L('Kumprehensibong serbisyo sa rekrutamento na nagkonekta ng mga Pilipinong manggagawa sa mga internasyonal na empleyador.', 'Comprehensive overseas recruitment services connecting Filipino workers with international employers.') },
+    { icon: FileText, title: L('Pagsasalaysay ng Dokumento', 'Document Processing'), desc: L('Kumpleto ng paghahanda, pag-verify, at pagproseso ng dokumento para sa lahat ng kinakailangan.', 'End-to-end document preparation, verification, and processing for all deployment requirements.') },
+    { icon: ClipboardCheck, title: L('Pagsusuri ng Kakayahan', 'Skills Assessment'), desc: L('Masusing pagsusuri ng kasanayan, karanasan, at kwalipikasyon ng kandidato.', 'Thorough evaluation of candidate skills, experience, and qualifications to ensure job fit.') },
+    { icon: Stethoscope, title: L('Pagsusuri Medikal', 'Medical Clearance'), desc: L('Koordinasyon sa akreditadong medikal na pasilidad para sa kumpletong pagsusuri ng kalusugan.', 'Coordination with accredited medical facilities for complete health screening.') },
+    { icon: GraduationCap, title: L('Oryentasyon bago Pumalad', 'Pre-Departure Orientation'), desc: L('Kumpletong PDOS na sumasaklaw sa kultura, karapatan, inaasahan ng empleyador, at kaligtasan.', 'Comprehensive PDOS covering culture, rights, employer expectations, and safety.') },
+    { icon: Headphones, title: L('Suporta pagkatapos Pumalad', 'Post-Deployment Support'), desc: L('Patuloy na pagsubaybay at suporta para sa mga deployed workers sa buong kanilang trabaho.', 'Continuous monitoring and support for deployed workers throughout their employment.') },
   ]
 
   /* ============================================================
@@ -567,7 +582,7 @@ export function LandingPage() {
                             : L('Kompetitibo', 'Competitive')}
                         </span>
                         {job.slots > 1 && (
-                          <Badge variant="secondary" className="text-xs">{job.slots} {L('slots', 'slots')}</Badge>
+                          <Badge variant="secondary" className="text-xs">{job.slots} {L('posisyon', 'slots')}</Badge>
                         )}
                       </div>
                     </CardContent>
@@ -702,10 +717,10 @@ export function LandingPage() {
                 {/* Right: Benefits */}
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { icon: Shield, label: L('Verified Workers', 'Verified Workers') },
-                    { icon: Zap, label: L('Fast Processing', 'Fast Processing') },
-                    { icon: Target, label: L('Right Match', 'Right Match') },
-                    { icon: HeartHandshake, label: L('Full Support', 'Full Support') },
+                    { icon: Shield, label: L('Na-verify na Manggagawa', 'Verified Workers') },
+                    { icon: Zap, label: L('Mabilis na Proseso', 'Fast Processing') },
+                    { icon: Target, label: L('Tama ang Pagtutugma', 'Right Match') },
+                    { icon: HeartHandshake, label: L('Buong Suporta', 'Full Support') },
                   ].map((item, i) => (
                     <motion.div
                       key={i}
@@ -741,7 +756,7 @@ export function LandingPage() {
             <motion.div variants={fadeUp} custom={0}>
               <Badge variant="outline" className="border-blue-200 text-blue-600 dark:border-blue-800 dark:text-blue-400 mb-4">
                 <Star className="mr-1.5 h-3 w-3" />
-                Testimonials
+                {L('Mga Testimonial', 'Testimonials')}
               </Badge>
             </motion.div>
             <motion.h2 variants={fadeUp} custom={1} className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
@@ -776,7 +791,7 @@ export function LandingPage() {
           >
             <motion.div variants={fadeUp} custom={0}>
               <Badge variant="outline" className="border-blue-200 text-blue-600 dark:border-blue-800 dark:text-blue-400 mb-4">
-                FAQ
+                {L('FAQ', 'FAQ')}
               </Badge>
             </motion.div>
             <motion.h2 variants={fadeUp} custom={1} className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
@@ -906,7 +921,7 @@ export function LandingPage() {
                   { label: L('Serbisyo', 'Services'), view: 'services' },
                   { label: L('Trabaho', 'Jobs'), view: 'job-listing' },
                   { label: L('Para sa Empleyador', 'For Employers'), view: 'employer-partnership' },
-                  { label: 'FAQ', view: 'faq' },
+                  { label: L('FAQ', 'FAQ'), view: 'faq' },
                   { label: L('Makipag-ugnay', 'Contact'), view: 'contact' },
                 ].map((link) => (
                   <li key={link.view}>

@@ -32,7 +32,7 @@ export function AgencyJobsPage() {
   }
 
   return (
-    <div className="view-transition space-y-6">
+    <div className="view-transition space-y-6 pb-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Mga Trabaho' : 'Jobs'}</h1>

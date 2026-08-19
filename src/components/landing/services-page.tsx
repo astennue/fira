@@ -112,7 +112,7 @@ export function ServicesPage() {
         <div className="absolute inset-0 bg-grid-pattern" />
         <div className="relative container mx-auto px-4 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <Badge className="bg-white/15 text-white/90 border-white/25 mb-4">Our Services</Badge>
+            <Badge className="bg-white/15 text-white/90 border-white/25 mb-4">{language === 'fil' ? 'Ang Aming Mga Serbisyo' : 'Our Services'}</Badge>
             <h1 className="text-3xl md:text-5xl font-bold mb-4">
               {language === 'fil' ? 'Mga Serbisyo Namin' : 'Our Services'}
             </h1>

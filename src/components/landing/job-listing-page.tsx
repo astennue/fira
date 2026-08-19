@@ -176,7 +176,7 @@ export function JobListingPage() {
                         {job.category?.replace(/_/g, ' ') || 'General'}
                       </Badge>
                       {job.slots > 1 && (
-                        <span className="text-xs text-muted-foreground">{job.slots} slots</span>
+                        <span className="text-xs text-muted-foreground">{job.slots} {language === 'fil' ? 'posisyon' : 'slots'}</span>
                       )}
                     </div>
                     <h3 className="font-semibold mb-2 line-clamp-2">{job.title}</h3>
@@ -191,7 +191,7 @@ export function JobListingPage() {
                       <span className="text-sm font-semibold text-primary">
                         {job.salaryMin || job.salaryMax
                           ? `$${job.salaryMin ?? '?'} - $${job.salaryMax ?? '?'}`
-                          : language === 'fil' ? 'Competitive' : 'Competitive'}
+                          : language === 'fil' ? 'Kompetitibo' : 'Competitive'}
                       </span>
                       <ArrowRight className="h-4 w-4 text-muted-foreground" />
                     </div>

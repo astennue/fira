@@ -34,8 +34,9 @@ export async function POST(request: NextRequest) {
     let useVLM = false
 
     // If no text extracted during upload, try the document filePath (could be image)
+    let resumeDoc: any = null
     if (!resumeText) {
-      const resumeDoc = await db.applicantDocument.findFirst({
+      resumeDoc = await db.applicantDocument.findFirst({
         where: { applicantId: profile.id, documentType: 'resume' },
       })
 
@@ -56,8 +57,8 @@ export async function POST(request: NextRequest) {
           const buffer = Buffer.from(base64Data, 'base64')
 
           if (resumeDoc.mimeType === 'application/pdf') {
-            const pdfParse = (await import('pdf-parse')).default
-            const pdfData = await pdfParse(buffer)
+            const pdfParseModule: any = await import('pdf-parse')
+            const pdfData = await (pdfParseModule.default || pdfParseModule)(buffer)
             resumeText = pdfData.text || ''
           } else if (
             resumeDoc.mimeType === 'application/msword' ||

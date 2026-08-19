@@ -8,12 +8,13 @@ import { AccessibilityToolbar } from '@/components/shared/accessibility-toolbar'
 import { AuthModal } from '@/components/auth/auth-modal'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard, Users, FileText, HelpCircle, MessageSquareQuote,
   Share2, Network, ScrollText, LayoutList, Settings, Search,
   Briefcase, Send, Columns, UserCog, Sparkles, User, Building, Building2,
-  Home as HomeIcon, MessageCircle, UserCheck, ArrowLeft,
+  Home as HomeIcon, MessageCircle, UserCheck, ArrowLeft, ChevronRight,
 } from 'lucide-react'
 
 // Lazy load all view components to reduce initial bundle
@@ -57,10 +58,11 @@ const CmsOrgChartPage = lazy(() => import('@/components/cms/cms-org-chart-page')
 const CmsSettingsPage = lazy(() => import('@/components/cms/cms-settings-page').then(m => ({ default: m.CmsSettingsPage })))
 const UserSettingsPage = lazy(() => import('@/components/shared/user-settings-page').then(m => ({ default: m.UserSettingsPage })))
 const SuperAdminUsersPage = lazy(() => import('@/components/shared/super-admin-users-page').then(m => ({ default: m.SuperAdminUsersPage })))
+const FiraReportsPage = lazy(() => import('@/components/dashboard/fira-reports-page').then(m => ({ default: m.FiraReportsPage })))
 const MessagingPage = lazy(() => import('@/components/shared/messaging-page').then(m => ({ default: m.MessagingPage })))
 const ApplicantProfileEditPage = lazy(() => import('@/components/dashboard/applicant-profile-edit-page').then(m => ({ default: m.ApplicantProfileEditPage })))
 
-const publicViews: ViewName[] = ['landing', 'job-listing', 'job-detail', 'about', 'services', 'faq', 'contact', 'terms-public', 'employer-partnership']
+const publicViews: ViewName[] = ['landing', 'about', 'services', 'faq', 'contact', 'terms-public', 'employer-partnership']
 
 function LoadingSpinner() {
   return (
@@ -81,7 +83,7 @@ const iconMap: Record<string, any> = {
 }
 
 function DashboardSidebarWrapper() {
-  const { user, currentView, navigate, language, sidebarOpen, setSidebarOpen } = useAppStore()
+  const { user, currentView, navigate, language, sidebarOpen, setSidebarOpen, cmsOpen, toggleCmsMenu } = useAppStore()
   const navItems = user ? getNavItems(user.role) : []
 
   if (!user) return null
@@ -100,7 +102,7 @@ function DashboardSidebarWrapper() {
         <ScrollArea className="h-full">
           <div className="flex flex-col gap-1 p-3">
             {/* User info */}
-            <div className="mb-3 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 p-3 dark:from-blue-950/50 dark:to-blue-900/50">
+            <div className="mb-3 bg-gradient-to-r from-blue-50 to-blue-100 p-3 dark:from-blue-950/50 dark:to-blue-900/50">
               <p className="text-sm font-semibold text-blue-900 dark:text-blue-100 truncate">{user.name}</p>
               <p className="text-xs text-blue-600 dark:text-blue-300 capitalize">
                 {user.role.replace(/_/g, ' ')}
@@ -111,12 +113,55 @@ function DashboardSidebarWrapper() {
             {navItems.map((item) => {
               const Icon = iconMap[item.icon] || LayoutDashboard
               const isActive = currentView === item.view
+              const hasChildren = !!item.children
+              const isParentActive = hasChildren && item.children?.some(c => c.view === currentView)
+              if (hasChildren) {
+                const ChevronDown = ChevronRight
+                return (
+                  <div key={item.label}>
+                    <button
+                      onClick={toggleCmsMenu}
+                      className={cn(
+                        'flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-all duration-200 w-full text-left',
+                        isParentActive ? 'text-foreground font-semibold' : 'hover:bg-accent text-muted-foreground'
+                      )}
+                    >
+                      <Icon className="h-4 w-4 shrink-0" />
+                      <span className="flex-1">{language === 'fil' ? item.labelFil : item.label}</span>
+                      <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', cmsOpen ? 'rotate-180' : '')} />
+                    </button>
+                    {cmsOpen && item.children && (
+                      <div className="ml-5 pl-3 border-l space-y-1">
+                        {item.children.map((child) => {
+                          const ChildIcon = iconMap[child.icon] || LayoutDashboard
+                          const childActive = currentView === child.view
+                          return (
+                            <button
+                              key={child.view}
+                              onClick={() => child.view && navigate(child.view)}
+                              className={cn(
+                                'flex items-center gap-3 px-3 py-2 text-xs font-medium transition-all duration-200 w-full text-left',
+                                childActive
+                                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/25'
+                                  : 'hover:bg-accent text-muted-foreground'
+                              )}
+                            >
+                              <ChildIcon className="h-3.5 w-3.5 shrink-0" />
+                              <span>{language === 'fil' ? child.labelFil : child.label}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )
+              }
               return (
                 <button
                   key={item.view}
-                  onClick={() => navigate(item.view)}
+                  onClick={() => item.view && navigate(item.view)}
                   className={cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 w-full text-left',
+                    'flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-all duration-200 w-full text-left',
                     isActive
                       ? 'bg-blue-600 text-white shadow-md shadow-blue-600/25 dark:bg-blue-600 dark:text-white'
                       : 'hover:bg-accent text-foreground',
@@ -132,7 +177,7 @@ function DashboardSidebarWrapper() {
             <div className="mt-2 pt-2 border-t">
               <button
                 onClick={() => navigate('user-settings')}
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 w-full text-left hover:bg-accent text-muted-foreground"
+                className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-all duration-200 w-full text-left hover:bg-accent text-muted-foreground"
               >
                 <Settings className="h-4 w-4 shrink-0" />
                 <span>{language === 'fil' ? 'Mga Setting' : 'Account Settings'}</span>
@@ -189,12 +234,21 @@ function ViewRenderer({ view }: { view: ViewName }) {
       case 'cms-settings': return <CmsSettingsPage />
       case 'user-settings': return <UserSettingsPage />
       case 'super-admin-users': return <SuperAdminUsersPage />
+      case 'fira-reports': return <FiraReportsPage />
       case 'messages': return <MessagingPage />
       case 'agency-members':
         return (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <h2 className="text-xl font-semibold">Agency Members - Coming Soon</h2>
-            <Button variant="outline" onClick={() => navigate('agency-dashboard')}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button>
+          <div className="view-transition space-y-6 pb-8">
+            <div>
+              <h2 className="text-2xl font-bold">Agency Members</h2>
+              <p className="text-muted-foreground text-sm mt-1">Manage your agency team members</p>
+            </div>
+            <Card className="p-8 text-center">
+              <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Coming Soon</h3>
+              <p className="text-muted-foreground mb-4">Agency member management is being developed. Contact FIRA admin to manage your team.</p>
+              <Button variant="outline" onClick={() => navigate('agency-dashboard')}><ArrowLeft className="mr-2 h-4 w-4" />Back to Dashboard</Button>
+            </Card>
           </div>
         )
       case 'applicant-profile-edit':
@@ -203,16 +257,32 @@ function ViewRenderer({ view }: { view: ViewName }) {
       case 'fira-job-create': return <FiraJobCreatePage />
       case 'agency-job-create':
         return (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <h2 className="text-xl font-semibold">Create Job - Coming Soon</h2>
-            <Button variant="outline" onClick={() => navigate('agency-jobs')}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button>
+          <div className="view-transition space-y-6 pb-8">
+            <div>
+              <h2 className="text-2xl font-bold">Create Job Posting</h2>
+              <p className="text-muted-foreground text-sm mt-1">Post a new job opening for your agency</p>
+            </div>
+            <Card className="p-8 text-center">
+              <Briefcase className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Coming Soon</h3>
+              <p className="text-muted-foreground mb-4">Agency job creation is being developed. Please use the FIRA admin portal to create jobs.</p>
+              <Button variant="outline" onClick={() => navigate('agency-jobs')}><ArrowLeft className="mr-2 h-4 w-4" />Back to Jobs</Button>
+            </Card>
           </div>
         )
       case 'employer-candidate-detail':
         return (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <h2 className="text-xl font-semibold">Candidate Detail - Coming Soon</h2>
-            <Button variant="outline" onClick={() => navigate('employer-endorsed')}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button>
+          <div className="view-transition space-y-6 pb-8">
+            <div>
+              <h2 className="text-2xl font-bold">Candidate Details</h2>
+              <p className="text-muted-foreground text-sm mt-1">View candidate profile and documents</p>
+            </div>
+            <Card className="p-8 text-center">
+              <User className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Coming Soon</h3>
+              <p className="text-muted-foreground mb-4">Detailed candidate view is being developed.</p>
+              <Button variant="outline" onClick={() => navigate('employer-endorsed')}><ArrowLeft className="mr-2 h-4 w-4" />Back to Endorsed Candidates</Button>
+            </Card>
           </div>
         )
       default: return <LandingPage />

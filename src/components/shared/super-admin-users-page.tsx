@@ -21,6 +21,7 @@ import { apiFetch } from '@/lib/fetch'
 
 export function SuperAdminUsersPage() {
   const { language } = useAppStore()
+  const L = (en: string, fil: string) => language === 'fil' ? fil : en
   const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
@@ -42,7 +43,7 @@ export function SuperAdminUsersPage() {
   const updateMutation = useMutation({
     mutationFn: async ({ userId, action }: { userId: string; action: string }) => {
       const res = await apiFetch('/api/users', {
-        method: 'PUT',
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, action }),
       })
@@ -74,8 +75,8 @@ export function SuperAdminUsersPage() {
   return (
     <div className="view-transition space-y-6 pb-8">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Manage Users</h1>
-        <p className="text-muted-foreground text-sm">View and manage all platform users</p>
+        <h1 className="text-2xl font-bold text-foreground">{L('Manage Users', 'Pamahalaan ang mga User')}</h1>
+        <p className="text-muted-foreground text-sm">{L('View and manage all platform users', 'Tingnan at pamahalaan ang lahat ng user ng platform')}</p>
       </div>
 
       {/* Filters */}
@@ -85,7 +86,7 @@ export function SuperAdminUsersPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search by name or email..."
+                placeholder={L('Search by name or email...', 'Maghanap ayon sa pangalan o email...')}
                 className="pl-9"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -93,10 +94,10 @@ export function SuperAdminUsersPage() {
             </div>
             <Select value={roleFilter} onValueChange={setRoleFilter}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="All Roles" />
+                <SelectValue placeholder={L('All Roles', 'Lahat ng Role')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Roles</SelectItem>
+                <SelectItem value="all">{L('All Roles', 'Lahat ng Role')}</SelectItem>
                 <SelectItem value="super_admin">Super Admin</SelectItem>
                 <SelectItem value="applicant">Applicant</SelectItem>
                 <SelectItem value="local_agency">Local Agency</SelectItem>
@@ -114,7 +115,7 @@ export function SuperAdminUsersPage() {
       ) : filteredUsers.length === 0 ? (
         <Card className="p-12 text-center">
           <Users className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
-          <p className="text-muted-foreground">No users found</p>
+          <p className="text-muted-foreground">{L('No users found', 'Walang nahanap na user')}</p>
         </Card>
       ) : (
         <div className="space-y-3">
@@ -133,8 +134,8 @@ export function SuperAdminUsersPage() {
                       <Badge className={`text-xs ${roleColor[user.role] || 'bg-muted'}`}>
                         {roleDisplayNames[user.role as keyof typeof roleDisplayNames]?.en || user.role}
                       </Badge>
-                      {!user.isApproved && <Badge variant="destructive" className="text-xs">Pending</Badge>}
-                      {!user.isActive && <Badge variant="secondary" className="text-xs">Inactive</Badge>}
+                      {!user.isApproved && <Badge variant="destructive" className="text-xs">{L('Pending', 'Pending')}</Badge>}
+                      {!user.isActive && <Badge variant="secondary" className="text-xs">{L('Inactive', 'Di-aktibo')}</Badge>}
                     </div>
                     <p className="text-xs text-muted-foreground">{user.email}</p>
                   </div>
@@ -176,7 +177,7 @@ export function SuperAdminUsersPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>User Details</DialogTitle>
+            <DialogTitle>{L('User Details', 'Detalye ng User')}</DialogTitle>
           </DialogHeader>
           {selectedUser && (
             <div className="space-y-4">
@@ -191,19 +192,19 @@ export function SuperAdminUsersPage() {
                 <Badge className="mt-2">{roleDisplayNames[selectedUser.role as keyof typeof roleDisplayNames]?.en || selectedUser.role}</Badge>
               </div>
               <div className="space-y-2 text-sm bg-muted rounded-lg p-4">
-                <div className="flex justify-between"><span className="text-muted-foreground">Status</span><span>{selectedUser.isActive ? 'Active' : 'Inactive'}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Approved</span><span>{selectedUser.isApproved ? 'Yes' : 'No'}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Phone</span><span>{selectedUser.phone || 'N/A'}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Joined</span><span>{new Date(selectedUser.createdAt).toLocaleDateString()}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">{L('Status', 'Status')}</span><span>{selectedUser.isActive ? L('Active', 'Aktibo') : L('Inactive', 'Di-aktibo')}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">{L('Approved', 'Na-approve')}</span><span>{selectedUser.isApproved ? L('Yes', 'Oo') : L('No', 'Hindi')}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">{L('Phone', 'Telepono')}</span><span>{selectedUser.phone || 'N/A'}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">{L('Joined', 'Sumali')}</span><span>{new Date(selectedUser.createdAt).toLocaleDateString()}</span></div>
               </div>
               <div className="flex gap-2">
                 {!selectedUser.isApproved && (
-                  <Button className="flex-1" onClick={() => updateMutation.mutate({ userId: selectedUser.id, action: 'approve' })}>Approve</Button>
+                  <Button className="flex-1" onClick={() => updateMutation.mutate({ userId: selectedUser.id, action: 'approve' })}>{L('Approve', 'I-approve')}</Button>
                 )}
                 {selectedUser.isActive ? (
-                  <Button variant="outline" className="flex-1 text-orange-600" onClick={() => updateMutation.mutate({ userId: selectedUser.id, action: 'deactivate' })}>Deactivate</Button>
+                  <Button variant="outline" className="flex-1 text-orange-600" onClick={() => updateMutation.mutate({ userId: selectedUser.id, action: 'deactivate' })}>{L('Deactivate', 'I-deactivate')}</Button>
                 ) : (
-                  <Button variant="outline" className="flex-1 text-green-600" onClick={() => updateMutation.mutate({ userId: selectedUser.id, action: 'activate' })}>Activate</Button>
+                  <Button variant="outline" className="flex-1 text-green-600" onClick={() => updateMutation.mutate({ userId: selectedUser.id, action: 'activate' })}>{L('Activate', 'I-activate')}</Button>
                 )}
               </div>
             </div>

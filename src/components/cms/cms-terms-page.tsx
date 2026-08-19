@@ -19,7 +19,8 @@ const defaultTerms = { title: 'Terms of Service', content: '', version: '1.0' }
 const defaultPrivacy = { title: 'Data Privacy Consent', content: '', version: '1.0' }
 
 export function CmsTermsPage() {
-  const { fontSize } = useAppStore()
+  const { fontSize, language } = useAppStore()
+  const L = (en: string, fil: string) => language === 'fil' ? fil : en
   const queryClient = useQueryClient()
 
   const [terms, setTerms] = useState<{ title: string; content: string; version: string } | null>(null)
@@ -58,10 +59,10 @@ export function CmsTermsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cms-terms'] })
-      toast.success('Terms of Service updated!')
+      toast.success(L('Terms of Service updated!', 'Na-update ang Mga Tuntunin ng Serbisyo!'))
     },
     onError: () => {
-      toast.error('Failed to update Terms of Service')
+      toast.error(L('Failed to update Terms of Service', 'Hindi na-update ang Mga Tuntunin ng Serbisyo'))
     },
   })
 
@@ -77,18 +78,18 @@ export function CmsTermsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cms-terms'] })
-      toast.success('Data Privacy Consent updated!')
+      toast.success(L('Data Privacy Consent updated!', 'Na-update ang Patakaran sa Privacy!'))
     },
     onError: () => {
-      toast.error('Failed to update Data Privacy Consent')
+      toast.error(L('Failed to update Data Privacy Consent', 'Hindi na-update ang Patakaran sa Privacy'))
     },
   })
 
   return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground">Terms & Privacy</h1>
-        <p className="text-muted-foreground text-sm">Edit Terms of Service and Data Privacy Consent</p>
+    <div className="view-transition space-y-6 pb-8">
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">{L('Terms & Privacy', 'Mga Tuntunin at Privacy')}</h1>
+        <p className="text-muted-foreground text-sm">{L('Edit Terms of Service and Data Privacy Consent', 'I-edit ang Mga Tuntunin ng Serbisyo at Patakaran sa Privacy')}</p>
       </div>
 
       {isLoading ? (
@@ -100,10 +101,10 @@ export function CmsTermsPage() {
         <Tabs defaultValue="terms" className="space-y-4">
           <TabsList>
             <TabsTrigger value="terms" className="gap-2">
-              <ScrollText className="h-4 w-4" /> Terms of Service
+              <ScrollText className="h-4 w-4" /> {L('Terms of Service', 'Mga Tuntunin ng Serbisyo')}
             </TabsTrigger>
             <TabsTrigger value="privacy" className="gap-2">
-              <FileCheck className="h-4 w-4" /> Data Privacy Consent
+              <FileCheck className="h-4 w-4" /> {L('Data Privacy Consent', 'Patakaran sa Privacy')}
             </TabsTrigger>
           </TabsList>
 
@@ -112,33 +113,33 @@ export function CmsTermsPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-lg">Terms of Service</CardTitle>
-                    <p className="text-sm text-muted-foreground">Version {effectiveTerms.version}</p>
+                    <CardTitle className="text-lg">{L('Terms of Service', 'Mga Tuntunin ng Serbisyo')}</CardTitle>
+                    <p className="text-sm text-muted-foreground">{L('Version', 'Bersyon')} {effectiveTerms.version}</p>
                   </div>
                   <Badge>terms_of_service</Badge>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Title</Label>
+                  <Label>{L('Title', 'Pamagat')}</Label>
                   <Input value={effectiveTerms.title} onChange={(e) => setTerms({ ...effectiveTerms, title: e.target.value })} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Version</Label>
+                  <Label>{L('Version', 'Bersyon')}</Label>
                   <Input value={effectiveTerms.version} onChange={(e) => setTerms({ ...effectiveTerms, version: e.target.value })} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Content (HTML supported)</Label>
+                  <Label>{L('Content (HTML supported)', 'Nilalaman (sumusuportang HTML)')}</Label>
                   <Textarea
                     value={effectiveTerms.content}
                     onChange={(e) => setTerms({ ...effectiveTerms, content: e.target.value })}
                     className="min-h-[400px] font-mono text-sm"
-                    placeholder="Write the Terms of Service content here..."
+                    placeholder={L('Write the Terms of Service content here...', 'Isulat ang nilalaman ng Mga Tuntunin ng Serbisyo dito...')}
                   />
                 </div>
                 <div className="flex justify-end">
                   <Button onClick={() => saveTermsMutation.mutate()} disabled={saveTermsMutation.isPending} className="rounded-xl">
-                    {saveTermsMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveTermsMutation.isPending ? 'Saving...' : 'Save Changes'}
+                    {saveTermsMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveTermsMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save Changes', 'I-save ang mga Pagbabago')}
                   </Button>
                 </div>
               </CardContent>
@@ -150,33 +151,33 @@ export function CmsTermsPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-lg">Data Privacy Consent</CardTitle>
-                    <p className="text-sm text-muted-foreground">Version {effectivePrivacy.version}</p>
+                    <CardTitle className="text-lg">{L('Data Privacy Consent', 'Patakaran sa Privacy')}</CardTitle>
+                    <p className="text-sm text-muted-foreground">{L('Version', 'Bersyon')} {effectivePrivacy.version}</p>
                   </div>
                   <Badge>data_privacy_consent</Badge>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Title</Label>
+                  <Label>{L('Title', 'Pamagat')}</Label>
                   <Input value={effectivePrivacy.title} onChange={(e) => setPrivacy({ ...effectivePrivacy, title: e.target.value })} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Version</Label>
+                  <Label>{L('Version', 'Bersyon')}</Label>
                   <Input value={effectivePrivacy.version} onChange={(e) => setPrivacy({ ...effectivePrivacy, version: e.target.value })} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Content (HTML supported)</Label>
+                  <Label>{L('Content (HTML supported)', 'Nilalaman (sumusuportang HTML)')}</Label>
                   <Textarea
                     value={effectivePrivacy.content}
                     onChange={(e) => setPrivacy({ ...effectivePrivacy, content: e.target.value })}
                     className="min-h-[400px] font-mono text-sm"
-                    placeholder="Write the Data Privacy Consent content here..."
+                    placeholder={L('Write the Data Privacy Consent content here...', 'Isulat ang nilalaman ng Patakaran sa Privacy dito...')}
                   />
                 </div>
                 <div className="flex justify-end">
                   <Button onClick={() => savePrivacyMutation.mutate()} disabled={savePrivacyMutation.isPending} className="rounded-xl">
-                    {savePrivacyMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {savePrivacyMutation.isPending ? 'Saving...' : 'Save Changes'}
+                    {savePrivacyMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {savePrivacyMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save Changes', 'I-save ang mga Pagbabago')}
                   </Button>
                 </div>
               </CardContent>

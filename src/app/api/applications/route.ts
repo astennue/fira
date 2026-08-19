@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { requireAuth, requireFiraOrAgency, type AuthResult } from '@/lib/auth'
+import { APPLICATION_STATUSES, getNextStatuses, canSetStatus } from '@/lib/status'
 
 export async function GET(request: NextRequest) {
   const auth = requireAuth(request)
@@ -183,6 +184,28 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json()
     const { applicationId, status } = body
     if (!applicationId || !status) return NextResponse.json({ error: 'applicationId and status are required' }, { status: 400 })
+
+    // Load current application
+    const current = await db.application.findUnique({ where: { id: applicationId } })
+    if (!current) return NextResponse.json({ error: 'Application not found' }, { status: 404 })
+
+    // Validate status exists in the status system
+    const validStatusKeys = APPLICATION_STATUSES.map(s => s.value)
+    if (!validStatusKeys.includes(status)) {
+      return NextResponse.json({ error: `Invalid status: "${status}". Must be one of: ${validStatusKeys.join(', ')}` }, { status: 400 })
+    }
+
+    // Validate role can set this status
+    if (!canSetStatus(status, auth.userRole)) {
+      return NextResponse.json({ error: `Role "${auth.userRole}" is not allowed to set status "${status}"` }, { status: 400 })
+    }
+
+    // Validate transition is allowed
+    const allowed = getNextStatuses(current.status, auth.userRole)
+    const allowedValues = allowed.map(s => s.value)
+    if (!allowedValues.includes(status)) {
+      return NextResponse.json({ error: `Cannot transition from "${current.status}" to "${status}". Allowed next statuses: ${allowedValues.length > 0 ? allowedValues.join(', ') : 'none'}` }, { status: 400 })
+    }
 
     const updated = await db.application.update({
       where: { id: applicationId },

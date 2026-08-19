@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAppStore } from '@/store/app-store'
+import { getInitials } from '@/components/shared/get-initials'
 
 export function FiraApplicantsPage() {
   const { language } = useAppStore()
@@ -70,7 +71,7 @@ export function FiraApplicantsPage() {
                   <CardContent className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm shrink-0">
-                        {u.name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+                        {getInitials(u.name || '')}
                       </div>
                       <div className="min-w-0">
                         <p className="font-medium text-sm truncate">{u.name}</p>
