@@ -58,15 +58,15 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { applicationId, endorsedById, employerId, coverNote, agencyNote } = body
-    if (!applicationId || !endorsedById || !employerId)
-      return NextResponse.json({ error: 'applicationId, endorsedById, and employerId are required' }, { status: 400 })
+    const { applicationId, employerId, coverNote, agencyNote } = body
+    if (!applicationId || !employerId)
+      return NextResponse.json({ error: 'applicationId and employerId are required' }, { status: 400 })
 
     const application = await db.application.findUnique({ where: { id: applicationId } })
     if (!application) return NextResponse.json({ error: 'Application not found' }, { status: 404 })
 
     const endorsement = await db.endorsement.create({
-      data: { applicationId, endorsedById, employerId, status: 'pending_fira_review', coverNote: coverNote || null, agencyNote: agencyNote || null },
+      data: { applicationId, endorsedById: auth.userId, employerId, status: 'pending_fira_review', coverNote: coverNote || null, agencyNote: agencyNote || null },
       include: { endorser: { select: { id: true, name: true, email: true } }, employer: true, application: { include: { applicant: { select: { id: true, name: true } }, jobOrder: { select: { id: true, title: true } } } } },
     })
 
@@ -98,6 +98,14 @@ export async function PATCH(request: NextRequest) {
     const endorsement = await db.endorsement.findUnique({ where: { id: endorsementId } })
     if (!endorsement) return NextResponse.json({ error: 'Endorsement not found' }, { status: 404 })
 
+    // Validate endorsement is in the correct status for the action
+    if ((action === 'fira_approve' || action === 'fira_reject') && endorsement.status !== 'pending_fira_review') {
+      return NextResponse.json({ error: 'Endorsement is not pending FIRA review' }, { status: 400 })
+    }
+    if ((action === 'employer_accept' || action === 'employer_decline') && endorsement.status !== 'pending_employer_review') {
+      return NextResponse.json({ error: 'Endorsement is not pending employer review' }, { status: 400 })
+    }
+
     // Employer can only update their own endorsements
     if (action === 'employer_accept' || action === 'employer_decline') {
       const employerProfile = await db.employerProfile.findUnique({ where: { userId: auth.userId } })
@@ -120,7 +128,7 @@ export async function PATCH(request: NextRequest) {
     if (endorsement.applicationId) {
       const statusMap: Record<string, string> = {
         fira_approve: 'pending_employer_review',
-        fira_reject: 'rejected_by_fira',
+        fira_reject: 'fira_rejected',
         employer_accept: 'employer_accepted',
         employer_decline: 'employer_declined',
       }

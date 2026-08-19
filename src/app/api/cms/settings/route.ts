@@ -20,7 +20,7 @@ export async function PUT(request: NextRequest) {
   try {
     const body = await request.json()
 
-    const results = []
+    const results: any[] = []
     for (const [key, value] of Object.entries(body)) {
       if (!key || value === undefined) continue
 

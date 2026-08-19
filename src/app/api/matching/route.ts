@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       include: { applicantProfile: { include: { skills: true, experience: true, education: true } } },
     })
 
-    const results = []
+    const results: any[] = []
     for (const applicant of applicants) {
       const profile = applicant.applicantProfile
       if (!profile) continue

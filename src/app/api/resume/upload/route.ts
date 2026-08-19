@@ -118,6 +118,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       documentId: document.id,
+      fileName: file.name,
+      fileSize: file.size,
       hasText,
       textLength: extractedText.length,
     })

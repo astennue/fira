@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const validRoles = ['super_admin', 'applicant', 'local_agency', 'international_agency', 'employer', 'staff', 'admin'];
+    const validRoles = ['super_admin', 'applicant', 'local_agency', 'international_agency', 'employer', 'staff'];
     if (!validRoles.includes(role)) {
       return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
     }

@@ -58,6 +58,11 @@ export async function DELETE(request: NextRequest) {
     if (!stage) return NextResponse.json({ error: 'Stage not found' }, { status: 404 })
     if (stage.isDefault) return NextResponse.json({ error: 'Cannot delete default stages' }, { status: 403 })
 
+    // Clear references before deleting
+    await db.application.updateMany({
+      where: { currentStageId: stageId },
+      data: { currentStageId: null },
+    })
     await db.aTSStage.delete({ where: { id: stageId } })
     return NextResponse.json({ success: true })
   } catch (error) {

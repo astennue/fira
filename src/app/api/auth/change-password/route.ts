@@ -11,7 +11,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { userId, currentPassword, newPassword } = body;
 
-    if (!userId || !currentPassword || !newPassword) {
+    if (userId !== auth.userId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!currentPassword || !newPassword) {
       return NextResponse.json(
         { error: 'User ID, current password, and new password are required' },
         { status: 400 }

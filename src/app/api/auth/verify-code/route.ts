@@ -14,6 +14,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User ID and code are required' }, { status: 400 });
     }
 
+    if (userId !== auth.userId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const verification = await db.verificationCode.findFirst({
       where: {
         userId,
