@@ -172,3 +172,20 @@ Work Log:
 - **Task 2 (Reports Page)**: Created `/src/components/dashboard/fira-reports-page.tsx` — reports page with 3 tabs (Application Status, Deployment, Agency Performance). Each tab fetches from existing APIs (`/api/applications`, `/api/applications?status=deployed`, `/api/endorsements`), aggregates data, displays in shadcn Table, and includes CSV export. Updated `/src/store/app-store.ts` — added `'fira-reports'` to ViewName union, added `'Reports'` label, added nav item for super_admin/staff roles after Dashboard. Updated `/src/app/page.tsx` — added lazy import for FiraReportsPage and case in ViewRenderer.
 - **Task 3 (Messaging Page Fix)**: Replaced `/src/components/shared/messaging-page.tsx` — removed all socket.io imports and broken WebSocket connection code. Replaced with a clean Coming Soon card with bilingual messaging explaining the feature is under development and users can communicate via application status updates and endorsement notes.
 - Lint passes (no new errors; all 4 errors/1 warning are pre-existing).
+
+---
+Task ID: resume-upload-fix
+Agent: main
+Task: Fix "Applicant profile not found for this user" error when uploading resume
+
+Work Log:
+- Analyzed error screenshot via VLM: "Applicant profile not found for this user"
+- Traced the flow: applicant-profile-edit-page Step 1 uploads resume → /api/resume/upload → looks up ApplicantProfile by userId → fails because profile hasn't been created yet (chicken-and-egg problem)
+- Root cause: Profile is only created on form save (PUT /api/applicant-profile with upsert), but resume upload is on Step 1 before any save
+- Fix: Changed /api/resume/upload to auto-create a blank ApplicantProfile (with empty firstName/lastName) if none exists for the authenticated user
+- Also checked /api/resume/parse and /api/resume/enhance - both use userId-based lookup and work after the upload fix
+- Verified with tsc --noEmit: no new type errors introduced (all remaining are pre-existing framer-motion Variants type issues)
+
+Stage Summary:
+- Fixed /src/app/api/resume/upload/route.ts: replaced "return 400" with auto-create profile using db.applicantProfile.create({ data: { userId, firstName: '', lastName: '' } })
+- This resolves the chicken-and-egg problem where applicants couldn't upload resumes before saving their profile form

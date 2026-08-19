@@ -43,12 +43,16 @@ export async function POST(request: NextRequest) {
     // Resolve applicantId
     let applicantId = applicantIdParam
     if (!applicantId) {
-      // Find profile by userId
-      const profile = await db.applicantProfile.findUnique({
+      // Find or auto-create profile by userId
+      let profile = await db.applicantProfile.findUnique({
         where: { userId: auth.userId },
       })
       if (!profile) {
-        return NextResponse.json({ error: 'Applicant profile not found for this user.' }, { status: 400 })
+        // Auto-create a blank profile so the applicant can upload a resume
+        // before completing the profile form
+        profile = await db.applicantProfile.create({
+          data: { userId: auth.userId, firstName: '', lastName: '' },
+        })
       }
       applicantId = profile.id
     } else {
