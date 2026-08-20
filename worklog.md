@@ -262,3 +262,24 @@ Stage Summary:
 - All 35 non-User tables confirmed empty (0 rows each) — seed data was already absent, TRUNCATE CASCADE ran as a safety guarantee
 - User table preserved intact: 7 rows (admin@fira.com.ph, staff@fira.com.ph, applicant@fira.com.ph, agency@fira.com.ph, employer@fira.com.ph, + 2 real applicant registrations)
 - Cleanup script removed from project
+
+---
+Task ID: 3
+Agent: main-coordinator
+Task: Comprehensive audit and fix all system issues
+
+Work Log:
+- Launched 4 parallel sub-agents to audit and fix all issues
+- Agent 3a: Fixed auth/registration (removed agencyName, added email normalization, password min 8, auto-create ApplicantProfile on register, fixed change-password check ordering)
+- Agent 3b: Fixed security (self-promotion vulnerability, jobs POST trust body.userId, reject no-op in 3 routes)
+- Agent 3c: Fixed CMS (added isActive filters to 4 endpoints, hid test accounts in production)
+- Agent 3d: Supabase seed data cleanup - all non-User tables already empty, 7 users confirmed intact
+- Restored accidentally deleted resume/upload/route.ts
+- Pushed all 3 commits to origin/main
+
+Stage Summary:
+- 11 issues fixed across 12 files
+- 0 new lint errors
+- Resume upload route restored
+- All changes pushed to GitHub (commits 612bf87, cedede8)
+- Supabase DB: 7 users intact, all other tables empty (no seed data)
