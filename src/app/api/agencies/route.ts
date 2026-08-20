@@ -53,7 +53,11 @@ export async function PATCH(request: NextRequest) {
       }
       return NextResponse.json({ success: true, message: 'Agency and members approved' })
     } else if (action === 'reject') {
-      return NextResponse.json({ success: true, message: 'Agency rejected' })
+      await db.agency.update({ where: { id: agencyId }, data: { isApproved: false } })
+      for (const member of agency.members) {
+        await db.user.update({ where: { id: member.userId }, data: { isActive: false, isApproved: false } })
+      }
+      return NextResponse.json({ success: true, message: 'Agency and members rejected' })
     }
 
     return NextResponse.json({ error: 'Invalid action. Use approve or reject.' }, { status: 400 })

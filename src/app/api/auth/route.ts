@@ -31,7 +31,9 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
       }
 
-      const user = await db.user.findUnique({ where: { email } });
+      const normalizedEmail = email.toLowerCase().trim();
+
+      const user = await db.user.findUnique({ where: { email: normalizedEmail } });
 
       if (!user) {
         return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
@@ -74,7 +76,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'register') {
-      const { email, password, name, role, phone, agencyName } = body as UserPayload;
+      const { email, password, name, role, phone } = body as UserPayload;
 
       if (!email || !password || !name || !role) {
         return NextResponse.json(
@@ -83,12 +85,21 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      if (password.length < 8) {
+        return NextResponse.json(
+          { error: 'Password must be at least 8 characters' },
+          { status: 400 }
+        );
+      }
+
+      const normalizedEmail = email.toLowerCase().trim();
+
       // Only applicants can self-register. Agencies and employers are created by FIRA.
       if (role !== 'applicant') {
         return NextResponse.json({ error: 'Registration is only available for applicants. Contact FIRA for agency/employer accounts.' }, { status: 403 });
       }
 
-      const existing = await db.user.findUnique({ where: { email } });
+      const existing = await db.user.findUnique({ where: { email: normalizedEmail } });
       if (existing) {
         return NextResponse.json({ error: 'Email already registered' }, { status: 400 });
       }
@@ -98,13 +109,22 @@ export async function POST(request: NextRequest) {
 
       const user = await db.user.create({
         data: {
-          email,
+          email: normalizedEmail,
           password: hashedPassword,
           name,
           role,
           phone: phone || null,
           isApproved: true,
           isActive: true,
+        },
+      });
+
+      // Auto-create blank applicant profile
+      await db.applicantProfile.create({
+        data: {
+          userId: user.id,
+          firstName: name.split(' ')[0] || '',
+          lastName: name.split(' ').slice(1).join(' ') || '',
         },
       });
 

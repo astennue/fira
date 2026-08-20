@@ -64,13 +64,16 @@ export async function PUT(
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    const isFira = ['super_admin', 'staff', 'international_agency'].includes(authCheck.userRole);
     const updateData: Record<string, unknown> = {};
     if (name !== undefined) updateData.name = name;
     if (phone !== undefined) updateData.phone = phone;
     if (avatar !== undefined) updateData.avatar = avatar;
-    if (role !== undefined) updateData.role = role;
-    if (isActive !== undefined) updateData.isActive = isActive;
-    if (isApproved !== undefined) updateData.isApproved = isApproved;
+    if (isFira) {
+      if (role !== undefined) updateData.role = role;
+      if (isActive !== undefined) updateData.isActive = isActive;
+      if (isApproved !== undefined) updateData.isApproved = isApproved;
+    }
 
     const user = await db.user.update({
       where: { id },

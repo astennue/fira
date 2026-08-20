@@ -189,3 +189,76 @@ Work Log:
 Stage Summary:
 - Fixed /src/app/api/resume/upload/route.ts: replaced "return 400" with auto-create profile using db.applicantProfile.create({ data: { userId, firstName: '', lastName: '' } })
 - This resolves the chicken-and-egg problem where applicants couldn't upload resumes before saving their profile form
+
+---
+Task ID: 3a
+Agent: auth-registration-fixes
+Task: Fix auth and registration issues (Fixes 1, 5, 6, 7, 8)
+
+Work Log:
+- **Fix 1**: Removed `agencyName` from register action destructuring in `/src/app/api/auth/route.ts` (was never used, caused TypeScript mismatch with UserPayload type)
+- **Fix 5**: Reordered validation in `/src/app/api/auth/change-password/route.ts` — `!userId || !currentPassword || !newPassword` check (400) now runs BEFORE `userId !== auth.userId` ownership check (403), preventing potential crash on undefined userId
+- **Fix 6**: Added `db.applicantProfile.create()` after `db.user.create()` in register action — auto-creates blank ApplicantProfile with firstName/lastName split from the registered name, eliminating the need for applicants to save profile before uploading resumes
+- **Fix 7**: Added `normalizedEmail = email.toLowerCase().trim()` in both login and register actions; used normalized email in all `findUnique` and `create` calls to prevent duplicate registrations from case/whitespace differences
+- **Fix 8**: Added `password.length < 8` check in register action, returning 400 with descriptive error message before any DB operations
+- Ran `bun run lint` — no new errors introduced (all 4 errors/1 warning are pre-existing)
+
+Stage Summary:
+- `/src/app/api/auth/route.ts`: 4 fixes applied (remove agencyName, email normalization for login+register, password strength check, auto-create ApplicantProfile)
+- `/src/app/api/auth/change-password/route.ts`: 1 fix applied (reordered validation checks)
+- All changes are backward-compatible and lint-clean
+
+---
+Task ID: 3b
+Agent: security-api-fixes
+Task: Fix security and API issues (Fixes 2, 3, 4)
+
+Work Log:
+- **Fix 2 (Self-promotion vulnerability)**: In `/src/app/api/users/[id]/route.ts` PUT handler, added `isFira` check so only `super_admin`, `staff`, `international_agency` roles can update `role`, `isActive`, `isApproved` fields. Regular users can only update `name`, `phone`, `avatar`.
+- **Fix 3 (Jobs POST auth bypass)**: In `/src/app/api/jobs/route.ts`, removed `userId`/`userRole` from body destructuring and the fake auth check. Role permission check now uses `auth.userRole` from the verified token. `createdBy` field now uses `auth.userId` instead of untrusted `body.userId`.
+- **Fix 4a (Users reject no-op)**: In `/src/app/api/users/route.ts`, reject action now actually deactivates the user (`isActive: false`) via `db.user.update` instead of just returning a success message.
+- **Fix 4b (Agencies reject no-op)**: In `/src/app/api/agencies/route.ts`, reject action now sets `isApproved: false` on the agency and deactivates+unapproves all agency members.
+- **Fix 4c (Employers reject no-op)**: In `/src/app/api/employers/route.ts`, reject action now deactivates and unapproves the employer user (`isActive: false, isApproved: false`).
+- Ran `bun run lint` — no new errors introduced (all 4 errors/1 warning are pre-existing).
+
+Stage Summary:
+- 5 files modified, 3 security/API fixes applied
+- Self-promotion vulnerability closed, Jobs POST no longer trusts client-supplied userId, all 3 reject endpoints now perform actual DB updates
+- All pre-existing lint errors unchanged (4 errors, 1 warning)
+
+---
+Task ID: 3c
+Agent: cms-ui-fixes
+Task: Fix CMS isActive filters and remove test accounts from UI (Fixes 9, 10)
+
+Work Log:
+- Audited 4 CMS GET endpoints: social, form-fields, org-chart, pages — all had NO auth on GET (publicly accessible), returning all records including inactive/draft
+- Added `public=true` query param pattern (matching existing faqs/testimonials pattern) to all 4 endpoints
+- **social/route.ts**: Added `NextRequest` param, `public` query param check, conditional `isActive: true` in where clause
+- **form-fields/route.ts**: Same pattern — `isActive: true` when `public=true`
+- **org-chart/route.ts**: Same pattern — `isActive: true` when `public=true`
+- **pages/route.ts**: Same pattern but uses `status: 'published'` (this model uses status field, not isActive)
+- Wrapped test accounts div in `auth-modal.tsx` with `{process.env.NODE_ENV === 'development' && (...)}`  condition
+- Ran lint — no new errors (all 4 errors/1 warning are pre-existing)
+
+Stage Summary:
+- 5 files modified: 4 CMS API routes + 1 auth modal component
+- Public CMS endpoints now filter inactive/draft records when `?public=true` is passed
+- Test account credentials no longer visible in production build
+
+---
+Task ID: 3d
+Agent: seed-data-cleanup
+Task: Remove all seed data from Supabase except User table
+
+Work Log:
+- Read `/prisma/seed.ts` to identify all seeded tables (34 tables: Agency, AgencyMember, EmployerProfile, ApplicantProfile, JobOrder, ATSStage, Application, CmsFaq, CmsTestimonial, CmsSocialMedia, CmsOrgChart, CmsTermsPrivacy, CmsPage, CmsFormField, CmsSettings, Notification, etc.)
+- Discovered all 35 non-User tables already had 0 rows (seed data had been previously cleaned or never applied to this database)
+- Wrote and ran `cleanup-seed.js` using `pg` module — dynamically queried all 36 public tables from `information_schema`, logged row counts before/after, executed `TRUNCATE ... CASCADE` on all 35 non-User tables in a single query
+- Verified User table preserved with 7 rows (5 seed users + 2 real registrations)
+- Deleted the cleanup script after successful run
+
+Stage Summary:
+- All 35 non-User tables confirmed empty (0 rows each) — seed data was already absent, TRUNCATE CASCADE ran as a safety guarantee
+- User table preserved intact: 7 rows (admin@fira.com.ph, staff@fira.com.ph, applicant@fira.com.ph, agency@fira.com.ph, employer@fira.com.ph, + 2 real applicant registrations)
+- Cleanup script removed from project

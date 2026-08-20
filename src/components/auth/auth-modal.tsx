@@ -225,6 +225,7 @@ export function AuthModal() {
                 {language === 'fil' ? 'Mag-sign In' : 'Sign In'}
               </Button>
 
+              {process.env.NODE_ENV === 'development' && (
               <div className="text-center text-xs text-muted-foreground space-y-1 pt-2 bg-blue-50 dark:bg-blue-950/30 rounded-xl p-4">
                 <p className="font-medium text-foreground">
                   {language === 'fil' ? 'Mga Test Account:' : 'Test Accounts:'}
@@ -235,6 +236,7 @@ export function AuthModal() {
                 <p>Employer: employer@fira.com.ph</p>
                 <p className="text-muted-foreground">Password: role + 2025!</p>
               </div>
+              )}
             </form>
           </TabsContent>
 

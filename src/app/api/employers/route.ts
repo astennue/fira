@@ -39,7 +39,8 @@ export async function PATCH(request: NextRequest) {
       await db.user.update({ where: { id: userId }, data: { isApproved: true } })
       return NextResponse.json({ success: true })
     } else if (action === 'reject') {
-      return NextResponse.json({ success: true, message: 'User rejected' })
+      await db.user.update({ where: { id: userId }, data: { isActive: false, isApproved: false } })
+      return NextResponse.json({ success: true, message: 'Employer rejected and deactivated' })
     }
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 })

@@ -2,9 +2,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { requireCmsAdmin } from '@/lib/auth'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url)
+    const isPublic = searchParams.get('public') === 'true'
+
+    const where: Record<string, unknown> = {}
+    if (isPublic) {
+      where.isActive = true
+    }
+
     const fields = await db.cmsFormField.findMany({
+      where,
       orderBy: { order: 'asc' },
     })
 

@@ -52,7 +52,8 @@ export async function PATCH(request: NextRequest) {
       }
       return NextResponse.json({ success: true, message: 'User approved' })
     } else if (action === 'reject') {
-      return NextResponse.json({ success: true, message: 'User rejected' })
+      await db.user.update({ where: { id: userId }, data: { isActive: false } })
+      return NextResponse.json({ success: true, message: 'User rejected and deactivated' })
     }
 
     return NextResponse.json({ error: 'Invalid action. Use approve or reject.' }, { status: 400 })
