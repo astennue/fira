@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIRA Branding Kit v1.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f8fafc; --fg: #0f172a; --card: #ffffff; --card-fg: #0f172a;
+  --muted: #f1f5f9; --muted-fg: #64748b; --border: #cbd5e1; --input: #cbd5e1;
+  --primary: #1e40af; --primary-fg: #ffffff; --primary-hover: #1e3a8a;
+  --secondary: #eff6ff; --secondary-fg: #1e3a8a;
+  --accent-gold: #b45309; --accent-gold-bg: #fffbeb; --accent-gold-fg: #92400e;
+  --accent-slate: #64748b; --accent-slate-bg: #f1f5f9; --accent-slate-fg: #334155;
+  --destructive: #dc2626; --destructive-fg: #ffffff; --destructive-bg: #fef2f2;
+  --success: #16a34a; --success-bg: #f0fdf4; --success-fg: #15803d;
+  --warning: #d97706; --warning-bg: #fffbeb; --warning-fg: #92400e;
+  --info: #2563eb; --info-bg: #eff6ff; --info-fg: #1e40af;
+  --ring: #2563eb; --radius: 10px;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05); --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+.dark {
+  --bg: #0b1120; --fg: #e2e8f0; --card: #141c2e; --card-fg: #e2e8f0;
+  --muted: #1a2540; --muted-fg: #8899b4; --border: #1e2d4a; --input: #1e2d4a;
+  --primary: #60a5fa; --primary-fg: #0b1120; --primary-hover: #93c5fd;
+  --secondary: #1a2540; --secondary-fg: #93c5fd;
+  --accent-gold: #fbbf24; --accent-gold-bg: #422006; --accent-gold-fg: #fde68a;
+  --accent-slate: #94a3b8; --accent-slate-bg: #1e293b; --accent-slate-fg: #cbd5e1;
+  --destructive: #f87171; --destructive-fg: #0b1120; --destructive-bg: #450a0a;
+  --success: #4ade80; --success-bg: #052e16; --success-fg: #86efac;
+  --warning: #fbbf24; --warning-bg: #422006; --warning-fg: #fde68a;
+  --info: #60a5fa; --info-bg: #172554; --info-fg: #93c5fd;
+  --ring: #3b82f6;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3); --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--fg); line-height:1.6; transition: background 0.3s, color 0.3s; }
+
+/* Layout */
+.container { max-width:1100px; margin:0 auto; padding:24px 32px 80px; }
+nav.toc { position:fixed; left:0; top:0; bottom:0; width:240px; background:var(--card); border-right:1px solid var(--border); padding:20px 16px; overflow-y:auto; z-index:50; }
+nav.toc h2 { font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted-fg); margin-bottom:12px; }
+nav.toc a { display:block; padding:6px 12px; font-size:0.8125rem; color:var(--muted-fg); text-decoration:none; border-radius:6px; transition:all 0.15s; }
+nav.toc a:hover { background:var(--secondary); color:var(--secondary-fg); }
+nav.toc a.active { background:var(--primary); color:var(--primary-fg); font-weight:600; }
+main { margin-left:240px; }
+
+/* Cover */
+.cover { min-height:70vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; background:linear-gradient(135deg,#172554 0%,#1e3a8a 25%,#1e40af 50%,#2563eb 75%,#3b82f6 100%); color:#fff; border-radius:16px; padding:64px 32px; margin-bottom:48px; position:relative; overflow:hidden; }
+.dark .cover { background:linear-gradient(135deg,#070d1a 0%,#0f1d3a 25%,#162854 50%,#1e3a7a 75%,#2563eb 100%); }
+.cover::before { content:''; position:absolute; inset:0; background-image:radial-gradient(rgba(255,255,255,0.08) 1px,transparent 1px); background-size:24px 24px; }
+.cover h1 { font-size:3.5rem; font-weight:800; letter-spacing:-0.02em; position:relative; }
+.cover .subtitle { font-size:1.25rem; font-weight:300; opacity:0.85; margin-top:12px; position:relative; }
+.cover .meta { font-size:0.875rem; opacity:0.6; margin-top:24px; position:relative; }
+
+/* Sections */
+section { margin-bottom:56px; }
+.section-title { font-size:1.5rem; font-weight:700; padding-bottom:12px; border-bottom:2px solid var(--border); margin-bottom:28px; display:flex; align-items:center; gap:10px; }
+.section-title .num { font-size:0.75rem; font-weight:700; background:var(--primary); color:var(--primary-fg); width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
+.subsection { margin-bottom:32px; }
+.subsection h3 { font-size:1.125rem; font-weight:600; margin-bottom:16px; color:var(--fg); }
+.subsection h4 { font-size:0.9375rem; font-weight:600; margin-bottom:12px; margin-top:20px; color:var(--muted-fg); text-transform:uppercase; letter-spacing:0.03em; }
+
+/* Color Swatches */
+.swatch-grid { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+.swatch { width:80px; height:48px; border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:0.625rem; font-weight:600; position:relative; border:1px solid rgba(128,128,128,0.15); }
+.swatch.light-text { color:#fff; }
+.swatch.dark-text { color:#0f172a; }
+.swatch-label { position:absolute; bottom:-18px; font-size:0.625rem; color:var(--muted-fg); white-space:nowrap; }
+.token-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:12px; }
+.token-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px; box-shadow:var(--shadow-sm); }
+.token-card .label { font-size:0.75rem; font-weight:600; color:var(--muted-fg); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:6px; }
+.token-card .value { font-size:0.8125rem; font-family:'Courier New',monospace; }
+.token-card .color-preview { height:32px; border-radius:6px; margin-bottom:8px; border:1px solid rgba(128,128,128,0.1); }
+
+/* Status Badges */
+.badge-grid { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
+.badge { display:inline-flex; align-items:center; padding:4px 12px; border-radius:9999px; font-size:0.75rem; font-weight:600; white-space:nowrap; }
+.badge-desc { font-size:0.75rem; color:var(--muted-fg); margin-top:4px; }
+
+/* Typography */
+.type-sample { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin-bottom:8px; box-shadow:var(--shadow-sm); }
+.type-sample .props { font-size:0.6875rem; color:var(--muted-fg); font-family:'Courier New',monospace; margin-top:4px; }
+
+/* Interactive States */
+.state-row { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-bottom:16px; padding:16px; background:var(--card); border:1px solid var(--border); border-radius:10px; }
+.state-label { font-size:0.75rem; font-weight:600; color:var(--muted-fg); text-transform:uppercase; letter-spacing:0.03em; min-width:100px; }
+
+/* Buttons */
+.btn { display:inline-flex; align-items:center; justify-content:center; height:36px; padding:0 16px; font-size:0.875rem; font-weight:500; border-radius:8px; border:none; cursor:pointer; transition:all 0.15s; font-family:inherit; gap:6px; }
+.btn-primary { background:var(--primary); color:var(--primary-fg); }
+.btn-primary:hover { background:var(--primary-hover); }
+.btn-primary:active { opacity:0.9; transform:scale(0.98); }
+.btn-primary:disabled { background:var(--muted); color:var(--muted-fg); cursor:not-allowed; }
+.btn-secondary { background:var(--secondary); color:var(--secondary-fg); border:1px solid var(--border); }
+.btn-secondary:hover { background:var(--muted); }
+.btn-destructive { background:var(--destructive); color:var(--destructive-fg); }
+.btn-destructive:hover { opacity:0.9; }
+.btn-outline { background:transparent; color:var(--fg); border:1px solid var(--border); }
+.btn-outline:hover { background:var(--secondary); }
+.btn-ghost { background:transparent; color:var(--fg); }
+.btn-ghost:hover { background:var(--secondary); }
+.spinner { width:16px; height:16px; border:2px solid transparent; border-top-color:currentColor; border-radius:50%; animation:spin 0.6s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* Inputs */
+.input-demo { display:flex; flex-direction:column; gap:16px; }
+.input-row { display:flex; flex-wrap:wrap; align-items:flex-start; gap:16px; }
+.input-group { display:flex; flex-direction:column; gap:4px; }
+.input-group label { font-size:0.75rem; font-weight:600; color:var(--muted-fg); }
+.fira-input { height:36px; padding:0 12px; font-size:0.875rem; border:1px solid var(--input); border-radius:8px; background:var(--card); color:var(--fg); font-family:inherit; outline:none; transition:box-shadow 0.15s; width:200px; }
+.fira-input:focus { box-shadow:0 0 0 2px var(--ring); border-color:var(--ring); }
+.fira-input.error { border-color:var(--destructive); box-shadow:0 0 0 2px rgba(220,38,38,0.2); }
+.fira-input:disabled { background:var(--muted); color:var(--muted-fg); cursor:not-allowed; }
+.error-msg { font-size:0.75rem; color:var(--destructive); }
+.fira-textarea { padding:8px 12px; font-size:0.875rem; border:1px solid var(--input); border-radius:8px; background:var(--card); color:var(--fg); font-family:inherit; outline:none; resize:vertical; min-height:72px; width:200px; transition:box-shadow 0.15s; }
+.fira-textarea:focus { box-shadow:0 0 0 2px var(--ring); border-color:var(--ring); }
+
+/* Checkboxes & Radios */
+.check-row { display:flex; align-items:center; gap:8px; font-size:0.875rem; cursor:pointer; }
+.check-box { width:18px; height:18px; border-radius:4px; border:2px solid var(--input); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.check-box.checked { background:var(--primary); border-color:var(--primary); color:#fff; font-size:12px; }
+.check-box.disabled { opacity:0.5; cursor:not-allowed; }
+.radio { width:18px; height:18px; border-radius:50%; border:2px solid var(--input); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.radio.checked { border-color:var(--primary); }
+.radio.checked::after { content:''; width:8px; height:8px; border-radius:50%; background:var(--primary); }
+.toggle { width:40px; height:22px; border-radius:11px; background:var(--muted); position:relative; cursor:pointer; transition:background 0.2s; flex-shrink:0; }
+.toggle.on { background:var(--primary); }
+.toggle::after { content:''; width:18px; height:18px; border-radius:50%; background:#fff; position:absolute; top:2px; left:2px; transition:left 0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.2); }
+.toggle.on::after { left:20px; }
+.toggle.disabled { opacity:0.5; cursor:not-allowed; }
+
+/* Cards */
+.card-demo { padding:20px; border:1px solid var(--border); border-radius:10px; background:var(--card); box-shadow:var(--shadow); transition:all 0.2s; }
+.card-demo.hover:hover { box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.card-demo.selected { border-color:var(--primary); box-shadow:0 0 0 2px var(--ring); }
+.card-demo.disabled-card { opacity:0.5; }
+.glass-card { padding:20px; border-radius:12px; background:rgba(255,255,255,0.15); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.25); box-shadow:0 8px 32px rgba(0,0,0,0.1); color:var(--fg); }
+.dark .glass-card { background:rgba(20,28,46,0.5); border-color:rgba(59,130,246,0.2); box-shadow:0 8px 32px rgba(0,0,0,0.4); }
+
+/* Radius */
+.radius-demo { display:flex; flex-wrap:wrap; gap:12px; align-items:end; }
+.radius-box { width:64px; height:64px; background:var(--primary); opacity:0.85; display:flex; align-items:center; justify-content:center; color:#fff; font-size:0.6875rem; font-weight:600; }
+
+/* Shadow */
+.shadow-demo { display:flex; flex-wrap:wrap; gap:16px; align-items:start; }
+.shadow-box { width:120px; height:80px; background:var(--card); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:500; color:var(--muted-fg); }
+
+/* Spacing */
+.spacing-demo { display:flex; flex-direction:column; gap:4px; }
+.spacing-row { display:flex; align-items:center; gap:8px; }
+.spacing-bar { height:24px; background:var(--primary); opacity:0.75; border-radius:4px; }
+.spacing-label { font-size:0.6875rem; color:var(--muted-fg); width:64px; text-align:right; font-family:'Courier New',monospace; }
+
+/* Toggle Button */
+.mode-toggle { position:fixed; top:16px; right:16px; z-index:100; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:8px 16px; font-size:0.8125rem; font-weight:500; cursor:pointer; color:var(--fg); box-shadow:var(--shadow-md); font-family:inherit; transition:all 0.2s; }
+.mode-toggle:hover { background:var(--secondary); }
+
+/* Print */
+@media print { nav.toc { display:none; } main { margin-left:0; } .mode-toggle { display:none; } body { background:#fff; } section { page-break-inside:avoid; } .cover { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
+@media (max-width:900px) { nav.toc { display:none; } main { margin-left:0; } }
+</style>
+</head>
+<body>
+<button class="mode-toggle" onclick="document.documentElement.classList.toggle('dark')">Toggle Dark Mode</button>
+
+<nav class="toc">
+  <h2>FIRA Design System</h2>
+  <a href="#cover" class="active">Cover</a>
+  <a href="#palette">Color Palette</a>
+  <a href="#scheme">Color Scheme</a>
+  <a href="#indicators">Color Indicators</a>
+  <a href="#typography">Typography</a>
+  <a href="#text-states">Text States</a>
+  <a href="#buttons">Button States</a>
+  <a href="#inputs">Input States</a>
+  <a href="#cards">Card States</a>
+  <a href="#badges">Badges &amp; Tags</a>
+  <a href="#radius">Border Radius</a>
+  <a href="#shadows">Shadows</a>
+  <a href="#spacing">Spacing Scale</a>
+</nav>
+
+<main>
+<div class="container">
+
+<!-- 0. COVER -->
+<section id="cover">
+  <div class="cover">
+    <h1>FIRA</h1>
+    <p class="subtitle">Branding Kit &mdash; Design System Reference</p>
+    <p class="meta">Version 1.0 &nbsp;&bull;&nbsp; August 2025 &nbsp;&bull;&nbsp; OFW Recruitment Platform</p>
+  </div>
+</section>
+
+<!-- 1. COLOR PALETTE -->
+<section id="palette">
+  <h2 class="section-title"><span class="num">1</span>Color Palette</h2>
+  <div class="subsection">
+    <h3>Primary Blue</h3>
+    <div class="swatch-grid">
+      <div class="swatch dark-text" style="background:#eff6ff"><span>50</span><span class="swatch-label">#eff6ff</span></div>
+      <div class="swatch dark-text" style="background:#dbeafe"><span>100</span><span class="swatch-label">#dbeafe</span></div>
+      <div class="swatch dark-text" style="background:#bfdbfe"><span>200</span><span class="swatch-label">#bfdbfe</span></div>
+      <div class="swatch dark-text" style="background:#93c5fd"><span>300</span><span class="swatch-label">#93c5fd</span></div>
+      <div class="swatch dark-text" style="background:#60a5fa"><span>400</span><span class="swatch-label">#60a5fa</span></div>
+      <div class="swatch light-text" style="background:#3b82f6"><span>500</span><span class="swatch-label">#3b82f6</span></div>
+      <div class="swatch light-text" style="background:#2563eb"><span>600</span><span class="swatch-label">#2563eb</span></div>
+      <div class="swatch light-text" style="background:#1d4ed8"><span>700</span><span class="swatch-label">#1d4ed8</span></div>
+      <div class="swatch light-text" style="background:#1e40af"><span>800</span><span class="swatch-label">#1e40af</span></div>
+      <div class="swatch light-text" style="background:#1e3a8a"><span>900</span><span class="swatch-label">#1e3a8a</span></div>
+      <div class="swatch light-text" style="background:#172554"><span>950</span><span class="swatch-label">#172554</span></div>
+    </div>
+  </div>
+  <div class="subsection">
+    <h3>Accent 1: Warm Gold / Amber (Subtle)</h3>
+    <div class="swatch-grid">
+      <div class="swatch dark-text" style="background:#fffbeb"><span>50</span><span class="swatch-label">#fffbeb</span></div>
+      <div class="swatch dark-text" style="background:#fef3c7"><span>100</span><span class="swatch-label">#fef3c7</span></div>
+      <div class="swatch dark-text" style="background:#fde68a"><span>200</span><span class="swatch-label">#fde68a</span></div>
+      <div class="swatch dark-text" style="background:#fcd34d"><span>300</span><span class="swatch-label">#fcd34d</span></div>
+      <div class="swatch dark-text" style="background:#fbbf24"><span>400</span><span class="swatch-label">#fbbf24</span></div>
+      <div class="swatch dark-text" style="background:#f59e0b"><span>500</span><span class="swatch-label">#f59e0b</span></div>
+      <div class="swatch light-text" style="background:#d97706"><span>600</span><span class="swatch-label">#d97706</span></div>
+      <div class="swatch light-text" style="background:#b45309"><span>700</span><span class="swatch-label">#b45309</span></div>
+      <div class="swatch light-text" style="background:#92400e"><span>800</span><span class="swatch-label">#92400e</span></div>
+      <div class="swatch light-text" style="background:#78350f"><span>900</span><span class="swatch-label">#78350f</span></div>
+      <div class="swatch light-text" style="background:#451a03"><span>950</span><span class="swatch-label">#451a03</span></div>
+    </div>
+  </div>
+  <div class="subsection">
+    <h3>Accent 2: Slate / Cool Gray (Subtle)</h3>
+    <div class="swatch-grid">
+      <div class="swatch dark-text" style="background:#f8fafc"><span>50</span><span class="swatch-label">#f8fafc</span></div>
+      <div class="swatch dark-text" style="background:#f1f5f9"><span>100</span><span class="swatch-label">#f1f5f9</span></div>
+      <div class="swatch dark-text" style="background:#e2e8f0"><span>200</span><span class="swatch-label">#e2e8f0</span></div>
+      <div class="swatch dark-text" style="background:#cbd5e1"><span>300</span><span class="swatch-label">#cbd5e1</span></div>
+      <div class="swatch dark-text" style="background:#94a3b8"><span>400</span><span class="swatch-label">#94a3b8</span></div>
+      <div class="swatch light-text" style="background:#64748b"><span>500</span><span class="swatch-label">#64748b</span></div>
+      <div class="swatch light-text" style="background:#475569"><span>600</span><span class="swatch-label">#475569</span></div>
+      <div class="swatch light-text" style="background:#334155"><span>700</span><span class="swatch-label">#334155</span></div>
+      <div class="swatch light-text" style="background:#1e293b"><span>800</span><span class="swatch-label">#1e293b</span></div>
+      <div class="swatch light-text" style="background:#0f172a"><span>900</span><span class="swatch-label">#0f172a</span></div>
+      <div class="swatch light-text" style="background:#020617"><span>950</span><span class="swatch-label">#020617</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. COLOR SCHEME -->
+<section id="scheme">
+  <h2 class="section-title"><span class="num">2</span>Color Scheme (Semantic Tokens)</h2>
+  <h4>Light Mode</h4>
+  <div class="token-grid">
+    <div class="token-card"><div class="color-preview" style="background:#f8fafc"></div><div class="label">--background</div><div class="value">#f8fafc</div></div>
+    <div class="token-card"><div class="color-preview" style="background:#0f172a"></div><div class="label">--foreground</div><div class="value">#0f172a</div></div>
+    <div class="token-card"><div class="color-preview" style="background:#ffffff;border-color:#e2e8f0"></div><div class="label">--card</div><div class="value">#ffffff</div></div>
+    <div class="token-card"><div class="color-preview" style="background:#1e40af"></div><div class="label">--primary</div><div class="value">#1e40af</div></div>
+    <div class="token-card"><div class="color-preview" style="background:#eff6ff"></div><div class="label">--secondary</div><div class="value">#eff6ff</div></div>
+    <div class="token-card"><div class="color-preview" style="background:#f1f5f9"></div><div class="label">--muted</div><div class="value">#f1f5f9</div></div>
+    <div class="token-card"><div class="color-preview" style="background:#dbeafe"></div><div class="label">--accent</div><div class="value">#dbeafe</div></div>
+    <div class="token-card"><div class="color-preview" style="background:#dc2626"></div><div class="label">--destructive</div><div class="value">#dc2626</div></div>
+    <div class="token-card"><div class="color-preview" style="background:#cbd5e1"></div><div class="label">--border</div><div class="value">#cbd5e1</div></div>
+    <div class="token-card"><div class="color-preview" style="background:#2563eb"></div><div class="label">--ring</div><div class="value">#2563eb</div></div>
+  </div>
+</section>
+
+<!-- 3. COLOR INDICATORS -->
+<section id="indicators">
+  <h2 class="section-title"><span class="num">3</span>Color Indicators (Status Colors)</h2>
+  <div class="subsection">
+    <h3>Success / Positive</h3>
+    <div class="badge-grid">
+      <div><div class="badge" style="background:#16a34a;color:#fff">Approved</div><div class="badge-desc">General approval, account active</div></div>
+      <div><div class="badge" style="background:#16a34a;color:#fff">Active</div><div class="badge-desc">User, agency, job is active</div></div>
+      <div><div class="badge" style="background:#16a34a;color:#fff">Complete</div><div class="badge-desc">Profile, process completed</div></div>
+      <div><div class="badge" style="background:#16a34a;color:#fff">Open</div><div class="badge-desc">Job is accepting applications</div></div>
+      <div><div class="badge" style="background:#059669;color:#fff">Interview Passed</div><div class="badge-desc">Candidate passed interview</div></div>
+      <div><div class="badge" style="background:#047857;color:#fff">Deployed</div><div class="badge-desc">Worker deployed to employer</div></div>
+      <div><div class="badge" style="background:#65a30d;color:#fff">Employer Accepted</div><div class="badge-desc">Employer accepted endorsement</div></div>
+      <div><div class="badge" style="background:#0d9488;color:#fff">Documents Submitted</div><div class="badge-desc">All docs submitted by applicant</div></div>
+    </div>
+  </div>
+  <div class="subsection">
+    <h3>Danger / Negative</h3>
+    <div class="badge-grid">
+      <div><div class="badge" style="background:#dc2626;color:#fff">Rejected</div><div class="badge-desc">Application or user rejected</div></div>
+      <div><div class="badge" style="background:#6b7280;color:#fff">Cancelled</div><div class="badge-desc">Application or job cancelled</div></div>
+      <div><div class="badge" style="background:#6b7280;color:#fff">Inactive</div><div class="badge-desc">User, agency, or job deactivated</div></div>
+      <div><div class="badge" style="background:#6b7280;color:#fff">Closed</div><div class="badge-desc">Job is no longer accepting applications</div></div>
+      <div><div class="badge" style="background:#6b7280;color:#fff">Completed</div><div class="badge-desc">Process finished (terminal state)</div></div>
+    </div>
+  </div>
+  <div class="subsection">
+    <h3>Warning / Pending</h3>
+    <div class="badge-grid">
+      <div><div class="badge" style="background:#d97706;color:#fff">Pending</div><div class="badge-desc">Awaiting action (generic)</div></div>
+      <div><div class="badge" style="background:#d97706;color:#fff">Screening</div><div class="badge-desc">Application under initial review</div></div>
+      <div><div class="badge" style="background:#d97706;color:#fff">Incomplete</div><div class="badge-desc">Profile or form not yet complete</div></div>
+      <div><div class="badge" style="background:#ea580c;color:#fff">Pending Documents</div><div class="badge-desc">Waiting for applicant documents</div></div>
+    </div>
+  </div>
+  <div class="subsection">
+    <h3>Info / Neutral</h3>
+    <div class="badge-grid">
+      <div><div class="badge" style="background:#2563eb;color:#fff">Applied</div><div class="badge-desc">Application submitted by applicant</div></div>
+      <div><div class="badge" style="background:#6366f1;color:#fff">Pending FIRA Review</div><div class="badge-desc">Awaiting FIRA staff review</div></div>
+      <div><div class="badge" style="background:#7c3aed;color:#fff">Interview Scheduled</div><div class="badge-desc">Interview date set</div></div>
+      <div><div class="badge" style="background:#0891b2;color:#fff">Pending Employer Review</div><div class="badge-desc">Endorsed to employer, awaiting response</div></div>
+      <div><div class="badge" style="background:#64748b;color:#fff">Draft</div><div class="badge-desc">Unpublished CMS content</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. TYPOGRAPHY -->
+<section id="typography">
+  <h2 class="section-title"><span class="num">4</span>Typography</h2>
+  <p style="margin-bottom:16px;color:var(--muted-fg);font-size:0.875rem">Font: Inter (Google Fonts) &mdash; fallback for Geist Sans. Mono: JetBrains Mono / system monospace.</p>
+  <div class="type-sample"><span style="font-size:2.25rem;font-weight:800;letter-spacing:-0.02em">H1 &mdash; Page Title &nbsp;<span style="font-size:0.5em;font-weight:400;opacity:0.5">36px / 800</span></span><div class="props">font-size: 2.25rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2</div></div>
+  <div class="type-sample"><span style="font-size:1.875rem;font-weight:700">H2 &mdash; Section Header &nbsp;<span style="font-size:0.5em;font-weight:400;opacity:0.5">30px / 700</span></span><div class="props">font-size: 1.875rem; font-weight: 700; line-height: 1.25</div></div>
+  <div class="type-sample"><span style="font-size:1.5rem;font-weight:600">H3 &mdash; Card Title &nbsp;<span style="font-size:0.5em;font-weight:400;opacity:0.5">24px / 600</span></span><div class="props">font-size: 1.5rem; font-weight: 600; line-height: 1.3</div></div>
+  <div class="type-sample"><span style="font-size:1.25rem;font-weight:600">H4 &mdash; Sub-Section &nbsp;<span style="font-size:0.5em;font-weight:400;opacity:0.5">20px / 600</span></span><div class="props">font-size: 1.25rem; font-weight: 600; line-height: 1.4</div></div>
+  <div class="type-sample"><span style="font-size:1.125rem;font-weight:500">H5 &mdash; Label &nbsp;<span style="font-size:0.5em;font-weight:400;opacity:0.5">18px / 500</span></span><div class="props">font-size: 1.125rem; font-weight: 500; line-height: 1.4</div></div>
+  <div class="type-sample"><span style="font-size:1rem;font-weight:500">H6 &mdash; Small Heading &nbsp;<span style="font-size:0.5em;font-weight:400;opacity:0.5">16px / 500</span></span><div class="props">font-size: 1rem; font-weight: 500; line-height: 1.5</div></div>
+  <div class="type-sample"><span style="font-size:1rem;font-weight:400">Body Large &mdash; The quick brown fox jumps over the lazy dog. &nbsp;<span style="font-size:0.6em;font-weight:400;opacity:0.5">16px / 400</span></span><div class="props">font-size: 1rem; font-weight: 400; line-height: 1.6</div></div>
+  <div class="type-sample"><span style="font-size:0.875rem;font-weight:400">Body &mdash; The quick brown fox jumps over the lazy dog. &nbsp;<span style="font-size:0.6em;font-weight:400;opacity:0.5">14px / 400</span></span><div class="props">font-size: 0.875rem; font-weight: 400; line-height: 1.6</div></div>
+  <div class="type-sample"><span style="font-size:0.75rem;font-weight:400">Caption / Small &mdash; Supporting text for details and metadata. &nbsp;<span style="font-size:0.7em;font-weight:400;opacity:0.5">12px / 400</span></span><div class="props">font-size: 0.75rem; font-weight: 400; line-height: 1.5; color: --muted-fg</div></div>
+  <div class="type-sample"><span style="font-size:0.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em">OVERLINE / LABEL &nbsp;<span style="font-size:0.85em;font-weight:400;opacity:0.5">11px / 600</span></span><div class="props">font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em</div></div>
+  <div class="type-sample"><span style="font-size:0.875rem;font-family:'Courier New',monospace">const db = prisma &nbsp;<span style="font-size:0.6em;font-weight:400;opacity:0.5">14px / mono</span></span><div class="props">font-family: monospace; font-size: 0.875rem</div></div>
+</section>
+
+<!-- 5. TEXT STATES -->
+<section id="text-states">
+  <h2 class="section-title"><span class="num">5</span>Text States</h2>
+  <div class="state-row"><span class="state-label">Default</span><span>Normal body text in the default foreground color.</span></div>
+  <div class="state-row"><span class="state-label">Muted</span><span style="color:var(--muted-fg)">Secondary or de-emphasized text for metadata and captions.</span></div>
+  <div class="state-row"><span class="state-label">Link</span><a href="#" style="color:var(--info);text-decoration:none" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">This is a link (hover to see underline)</a></div>
+  <div class="state-row"><span class="state-label">Visited</span><a href="#" style="color:#7c3aed;text-decoration:none">This link has been visited</a></div>
+  <div class="state-row"><span class="state-label">Disabled</span><span style="color:var(--muted-fg);opacity:0.5;cursor:not-allowed">This text is disabled and cannot be interacted with.</span></div>
+  <div class="state-row"><span class="state-label">Error</span><span style="color:var(--destructive)">This text indicates an error or validation failure.</span></div>
+  <div class="state-row"><span class="state-label">Success</span><span style="color:var(--success)">This text indicates a successful operation.</span></div>
+</section>
+
+<!-- 6. BUTTONS -->
+<section id="buttons">
+  <h2 class="section-title"><span class="num">6</span>Button States</h2>
+  <div class="subsection"><h3>Primary</h3><div class="state-row">
+    <span class="state-label">Default</span><button class="btn btn-primary">Primary Button</button>
+    <span class="state-label">Hover</span><button class="btn btn-primary" style="background:var(--primary-hover)">Hovered</button>
+    <span class="state-label">Active</span><button class="btn btn-primary" style="opacity:0.9;transform:scale(0.98)">Pressed</button>
+    <span class="state-label">Disabled</span><button class="btn btn-primary" disabled>Disabled</button>
+    <span class="state-label">Loading</span><button class="btn btn-primary" disabled><span class="spinner"></span>Loading</button>
+  </div></div>
+  <div class="subsection"><h3>Secondary</h3><div class="state-row">
+    <span class="state-label">Default</span><button class="btn btn-secondary">Secondary</button>
+    <span class="state-label">Hover</span><button class="btn btn-secondary" style="background:var(--muted)">Hovered</button>
+    <span class="state-label">Disabled</span><button class="btn btn-secondary" disabled>Disabled</button>
+  </div></div>
+  <div class="subsection"><h3>Destructive</h3><div class="state-row">
+    <span class="state-label">Default</span><button class="btn btn-destructive">Delete</button>
+    <span class="state-label">Hover</span><button class="btn btn-destructive" style="opacity:0.9">Hovered</button>
+    <span class="state-label">Disabled</span><button class="btn btn-destructive" disabled>Disabled</button>
+  </div></div>
+  <div class="subsection"><h3>Outline &amp; Ghost</h3><div class="state-row">
+    <span class="state-label">Outline</span><button class="btn btn-outline">Outline</button>
+    <span class="state-label">Outline Hover</span><button class="btn btn-outline" style="background:var(--secondary)">Hovered</button>
+    <span class="state-label">Ghost</span><button class="btn btn-ghost">Ghost</button>
+    <span class="state-label">Ghost Hover</span><button class="btn btn-ghost" style="background:var(--secondary)">Hovered</button>
+  </div></div>
+</section>
+
+<!-- 7. INPUTS -->
+<section id="inputs">
+  <h2 class="section-title"><span class="num">7</span>Input / Form States</h2>
+  <div class="subsection"><h3>Text Input</h3><div class="input-row">
+    <div class="input-group"><label>Default</label><input class="fira-input" placeholder="Enter text..." /></div>
+    <div class="input-group"><label>With Value</label><input class="fira-input" value="Juan Dela Cruz" /></div>
+    <div class="input-group"><label>Focus</label><input class="fira-input" style="box-shadow:0 0 0 2px var(--ring);border-color:var(--ring)" value="Focused state" /></div>
+    <div class="input-group"><label>Error</label><input class="fira-input error" value="Invalid email" /><span class="error-msg">Please enter a valid email address</span></div>
+    <div class="input-group"><label>Disabled</label><input class="fira-input" disabled value="Cannot edit" /></div>
+  </div></div>
+  <div class="subsection"><h3>Checkbox</h3><div class="state-row">
+    <label class="check-row"><div class="check-box"></div>Unchecked</label>
+    <label class="check-row"><div class="check-box checked">✓</div>Checked</label>
+    <label class="check-row"><div class="check-box disabled"></div><span style="opacity:0.5">Disabled</span></label>
+  </div></div>
+  <div class="subsection"><h3>Radio</h3><div class="state-row">
+    <label class="check-row"><div class="radio"></div>Option A</label>
+    <label class="check-row"><div class="radio checked"></div>Option B (selected)</label>
+    <label class="check-row"><div class="radio disabled"></div><span style="opacity:0.5">Disabled</span></label>
+  </div></div>
+  <div class="subsection"><h3>Toggle Switch</h3><div class="state-row">
+    <label class="check-row"><div class="toggle"></div>Off</label>
+    <label class="check-row"><div class="toggle on"></div>On</label>
+    <label class="check-row"><div class="toggle disabled"></div><span style="opacity:0.5">Disabled</span></label>
+  </div></div>
+</section>
+
+<!-- 8. CARDS -->
+<section id="cards">
+  <h2 class="section-title"><span class="num">8</span>Card States</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px">
+    <div class="card-demo"><strong style="font-size:0.875rem">Default Card</strong><p style="font-size:0.75rem;color:var(--muted-fg);margin-top:6px">Standard card with subtle shadow and border. Used for most content containers.</p></div>
+    <div class="card-demo hover" style="cursor:pointer"><strong style="font-size:0.875rem">Hover Card</strong><p style="font-size:0.75rem;color:var(--muted-fg);margin-top:6px">Elevated on hover with larger shadow. Used for clickable cards.</p></div>
+    <div class="card-demo selected"><strong style="font-size:0.875rem">Selected Card</strong><p style="font-size:0.75rem;color:var(--muted-fg);margin-top:6px">Blue border with ring. Used for active/selected state.</p></div>
+    <div class="card-demo disabled-card"><strong style="font-size:0.875rem">Disabled Card</strong><p style="font-size:0.75rem;color:var(--muted-fg);margin-top:6px">Reduced opacity. Not interactive.</p></div>
+    <div class="glass-card"><strong style="font-size:0.875rem">Glassmorphism</strong><p style="font-size:0.75rem;opacity:0.8;margin-top:6px">Frosted glass effect with blur and transparency.</p></div>
+  </div>
+</section>
+
+<!-- 9. BADGES -->
+<section id="badges">
+  <h2 class="section-title"><span class="num">9</span>Badges &amp; Tags</h2>
+  <div class="state-row">
+    <span class="badge" style="background:var(--primary);color:var(--primary-fg)">Primary</span>
+    <span class="badge" style="background:var(--secondary);color:var(--secondary-fg)">Secondary</span>
+    <span class="badge" style="background:var(--destructive);color:var(--destructive-fg)">Destructive</span>
+    <span class="badge" style="background:var(--success);color:#fff">Success</span>
+    <span class="badge" style="background:var(--warning);color:#fff">Warning</span>
+    <span class="badge" style="background:var(--info);color:#fff">Info</span>
+    <span class="badge" style="background:transparent;color:var(--fg);border:1px solid var(--border)">Outline</span>
+    <span class="badge" style="background:var(--muted);color:var(--muted-fg)">Muted</span>
+  </div>
+</section>
+
+<!-- 10. BORDER RADIUS -->
+<section id="radius">
+  <h2 class="section-title"><span class="num">10</span>Border Radius Guide</h2>
+  <p style="margin-bottom:16px;color:var(--muted-fg);font-size:0.875rem">Base radius: <code>--radius: 10px</code> (rounded-lg). Use mixed radii as defined below.</p>
+  <div class="radius-demo">
+    <div style="text-align:center"><div class="radius-box" style="border-radius:4px">4px</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">rounded-sm<br/>Badges, tags</div></div>
+    <div style="text-align:center"><div class="radius-box" style="border-radius:8px">8px</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">rounded-md<br/>Buttons, inputs</div></div>
+    <div style="text-align:center"><div class="radius-box" style="border-radius:10px">10px</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">rounded-lg<br/>Cards, dialogs</div></div>
+    <div style="text-align:center"><div class="radius-box" style="border-radius:12px">12px</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">rounded-xl<br/>Featured, hero</div></div>
+    <div style="text-align:center"><div class="radius-box" style="border-radius:16px">16px</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">rounded-2xl<br/>Modals, panels</div></div>
+    <div style="text-align:center"><div class="radius-box" style="border-radius:9999px;width:48px;height:48px">A</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">rounded-full<br/>Avatars, pills</div></div>
+  </div>
+</section>
+
+<!-- 11. SHADOWS -->
+<section id="shadows">
+  <h2 class="section-title"><span class="num">11</span>Shadow Guide</h2>
+  <p style="margin-bottom:16px;color:var(--muted-fg);font-size:0.875rem">Buttons: NO shadow (flat design). Cards: use shadows for elevation.</p>
+  <div class="shadow-demo">
+    <div style="text-align:center"><div class="shadow-box" style="box-shadow:var(--shadow-sm)">shadow-sm</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">Tooltips<br/>Dropdowns</div></div>
+    <div style="text-align:center"><div class="shadow-box" style="box-shadow:var(--shadow)">shadow</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">Cards<br/>Default</div></div>
+    <div style="text-align:center"><div class="shadow-box" style="box-shadow:var(--shadow-md)">shadow-md</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">Popovers<br/>Dropdowns</div></div>
+    <div style="text-align:center"><div class="shadow-box" style="box-shadow:var(--shadow-lg)">shadow-lg</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">Modals<br/>Dialogs</div></div>
+    <div style="text-align:center"><div class="shadow-box" style="box-shadow:var(--shadow-xl)">shadow-xl</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">Overlays<br/>Full-screen</div></div>
+  </div>
+</section>
+
+<!-- 12. SPACING -->
+<section id="spacing">
+  <h2 class="section-title"><span class="num">12</span>Spacing Scale</h2>
+  <div class="spacing-demo">
+    <div class="spacing-row"><span class="spacing-label">4px</span><div class="spacing-bar" style="width:4px"></div><span style="font-size:0.75rem;color:var(--muted-fg)">p-1, gap-1, space-x-1</span></div>
+    <div class="spacing-row"><span class="spacing-label">8px</span><div class="spacing-bar" style="width:16px"></div><span style="font-size:0.75rem;color:var(--muted-fg)">p-2, gap-2</span></div>
+    <div class="spacing-row"><span class="spacing-label">12px</span><div class="spacing-bar" style="width:32px"></div><span style="font-size:0.75rem;color:var(--muted-fg)">p-3, gap-3</span></div>
+    <div class="spacing-row"><span class="spacing-label">16px</span><div class="spacing-bar" style="width:48px"></div><span style="font-size:0.75rem;color:var(--muted-fg)">p-4, gap-4</span></div>
+    <div class="spacing-row"><span class="spacing-label">20px</span><div class="spacing-bar" style="width:56px"></div><span style="font-size:0.75rem;color:var(--muted-fg)">p-5, gap-5</span></div>
+    <div class="spacing-row"><span class="spacing-label">24px</span><div class="spacing-bar" style="width:72px"></div><span style="font-size:0.75rem;color:var(--muted-fg)">p-6, gap-6</span></div>
+    <div class="spacing-row"><span class="spacing-label">32px</span><div class="spacing-bar" style="width:96px"></div><span style="font-size:0.75rem;color:var(--muted-fg)">p-8, gap-8</span></div>
+    <div class="spacing-row"><span class="spacing-label">48px</span><div class="spacing-bar" style="width:128px"></div><span style="font-size:0.75rem;color:var(--muted-fg)">p-12, gap-12</span></div>
+    <div class="spacing-row"><span class="spacing-label">64px</span><div class="spacing-bar" style="width:160px"></div><span style="font-size:0.75rem;color:var(--muted-fg)">p-16, gap-16</span></div>
+  </div>
+</section>
+
+</div>
+</main>
+
+<script>
+// Active TOC link highlighting
+const sections = document.querySelectorAll('section[id]');
+const tocLinks = document.querySelectorAll('nav.toc a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      tocLinks.forEach(l => l.classList.remove('active'));
+      const link = document.querySelector(`nav.toc a[href="#${entry.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
