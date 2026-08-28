@@ -509,7 +509,7 @@ export function ApplicantProfileEditPage() {
             <div className="flex flex-col items-center gap-2"><Loader2 className="h-8 w-8 animate-spin text-primary" /><p className="text-sm text-muted-foreground">{isFil ? 'Uploading...' : 'Uploading...'}</p></div>
           ) : uploadedResume ? (
             <div className="flex flex-col items-center gap-2">
-              <FileText className="h-8 w-8 text-emerald-600" />
+              <FileText className="h-8 w-8 text-green-600" />
               <p className="text-sm font-medium">{uploadedResume.fileName}</p>
               <p className="text-xs text-muted-foreground">{(uploadedResume.fileSize / 1024).toFixed(1)} KB</p>
               <Button type="button" variant="link" size="sm" className="text-xs">{isFil ? 'Palitan' : 'Replace'}</Button>
@@ -526,7 +526,7 @@ export function ApplicantProfileEditPage() {
           <Button
             type="button" variant="outline" className="w-full mt-2" onClick={parseResume} disabled={parseLoading}
           >
-            {parseLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
+            {parseLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
             {isFil ? 'I-parse ang Resume' : 'Parse Resume'}
           </Button>
         )}
@@ -613,7 +613,7 @@ export function ApplicantProfileEditPage() {
                       }))
                     }}
                   >
-                    {active && <CheckCircle2 className="h-3 w-3 mr-1" />}
+                    {active && <CheckCircle2 className="h-3 w-3 " />}
                     {isFil ? labels.fil : labels.en}
                   </Badge>
                 )
@@ -661,7 +661,7 @@ export function ApplicantProfileEditPage() {
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-medium truncate">{entry.position}</p>
-                  {entry.isCurrent && <Badge variant="outline" className="text-xs text-emerald-600 shrink-0">{isFil ? 'Kasalukuyan' : 'Current'}</Badge>}
+                  {entry.isCurrent && <Badge variant="outline" className="text-xs text-green-600 shrink-0">{isFil ? 'Kasalukuyan' : 'Current'}</Badge>}
                 </div>
                 <p className="text-xs text-muted-foreground truncate">{entry.company}{entry.country ? ` • ${entry.country}` : ''}</p>
                 <p className="text-xs text-muted-foreground">{entry.startDate ? new Date(entry.startDate).toLocaleDateString() : ''} - {entry.endDate ? new Date(entry.endDate).toLocaleDateString() : (isFil ? 'Kasalukuyan' : 'Present')}</p>
@@ -1088,7 +1088,7 @@ export function ApplicantProfileEditPage() {
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold">
+          <h1 className="text-4xl font-bold leading-tight tracking-tight">
             {isFil ? 'I-edit ang Profile' : 'Edit Profile'}
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -1153,11 +1153,11 @@ export function ApplicantProfileEditPage() {
       {/* Navigation Buttons */}
       <div className="flex items-center justify-between max-w-4xl mx-auto pt-4 pb-8">
         <Button variant="outline" onClick={goBack} disabled={step === 0}>
-          <ChevronLeft className="h-4 w-4 mr-1" />{isFil ? 'Bumalik' : 'Back'}
+          <ChevronLeft className="h-4 w-4 " />{isFil ? 'Bumalik' : 'Back'}
         </Button>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => handleSave(false)} disabled={saveMutation.isPending}>
-            {saveMutation.isPending ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Save className="h-4 w-4 mr-1" />}
+            {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4 " />}
             {isFil ? 'I-save' : 'Save'}
           </Button>
           {step < 4 ? (
@@ -1166,7 +1166,7 @@ export function ApplicantProfileEditPage() {
             </Button>
           ) : (
             <Button onClick={() => handleSave(true)} disabled={saveMutation.isPending}>
-              {saveMutation.isPending ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : null}
+              {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
               {isFil ? 'I-save ang Profile' : 'Save Profile'}
             </Button>
           )}

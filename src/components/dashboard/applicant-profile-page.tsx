@@ -54,11 +54,11 @@ export function ApplicantProfilePage() {
   try { householdTasks = JSON.parse(profile.householdTasks || '[]') } catch (_e) { /* ignore */ }
 
   const statusIcons: Record<string, { icon: any; color: string; label: string }> = {
-    valid: { icon: CheckCircle, color: 'text-emerald-600', label: 'Valid' },
+    valid: { icon: CheckCircle, color: 'text-green-600', label: 'Valid' },
     expired: { icon: XCircle, color: 'text-red-500', label: 'Expired' },
     processing: { icon: Clock, color: 'text-amber-500', label: 'Processing' },
     none: { icon: XCircle, color: 'text-muted-foreground', label: 'None' },
-    passed: { icon: CheckCircle, color: 'text-emerald-600', label: 'Passed' },
+    passed: { icon: CheckCircle, color: 'text-green-600', label: 'Passed' },
     failed: { icon: XCircle, color: 'text-red-500', label: 'Failed' },
     scheduled: { icon: Clock, color: 'text-blue-500', label: 'Scheduled' },
   }
@@ -77,7 +77,7 @@ export function ApplicantProfilePage() {
     <div className="view-transition space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold">
+          <h1 className="text-4xl font-bold leading-tight tracking-tight">
             {language === 'fil' ? 'Ang Profile Ko' : 'My Profile'}
           </h1>
           <p className="text-muted-foreground mt-1">
@@ -87,7 +87,7 @@ export function ApplicantProfilePage() {
           </p>
         </div>
         <Button onClick={() => navigate('applicant-profile-edit')}>
-          <Edit className="mr-2 h-4 w-4" />
+          <Edit className="h-4 w-4" />
           {language === 'fil' ? 'I-edit' : 'Edit'}
         </Button>
       </div>
@@ -111,7 +111,7 @@ export function ApplicantProfilePage() {
                     </p>
                   </div>
                   {resumeDoc.isVerified ? (
-                    <Badge className="text-xs bg-emerald-100 text-emerald-800">Verified</Badge>
+                    <Badge className="text-xs bg-green-100 text-green-700">Verified</Badge>
                   ) : (
                     <Badge variant="outline" className="text-xs">Pending</Badge>
                   )}
@@ -229,7 +229,7 @@ export function ApplicantProfilePage() {
         {/* Education */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
           <Card>
-            <CardHeader><CardTitle><GraduationCap className="h-4 w-4 mr-2" />{language === 'fil' ? 'Edukasyon' : 'Education'}</CardTitle></CardHeader>
+            <CardHeader><CardTitle><GraduationCap className="h-4 w-4 " />{language === 'fil' ? 'Edukasyon' : 'Education'}</CardTitle></CardHeader>
             <CardContent>
               {education.length === 0 ? (
                 <p className="text-sm text-muted-foreground">{language === 'fil' ? 'Wala pang idagdag.' : 'No entries yet.'}</p>
@@ -251,7 +251,7 @@ export function ApplicantProfilePage() {
         {/* Experience */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16 }}>
           <Card>
-            <CardHeader><CardTitle><Briefcase className="h-4 w-4 mr-2" />{language === 'fil' ? 'Karanasan' : 'Experience'}</CardTitle></CardHeader>
+            <CardHeader><CardTitle><Briefcase className="h-4 w-4 " />{language === 'fil' ? 'Karanasan' : 'Experience'}</CardTitle></CardHeader>
             <CardContent>
               {experience.length === 0 ? (
                 <p className="text-sm text-muted-foreground">{language === 'fil' ? 'Wala pang idagdag.' : 'No entries yet.'}</p>
@@ -261,7 +261,7 @@ export function ApplicantProfilePage() {
                     <div key={e.id} className="p-3 rounded-lg border">
                       <div className="flex items-center justify-between">
                         <p className="font-medium text-sm">{e.position}</p>
-                        {e.isCurrent && <Badge variant="outline" className="text-xs text-emerald-600">{language === 'fil' ? 'Kasalukuyan' : 'Current'}</Badge>}
+                        {e.isCurrent && <Badge variant="outline" className="text-xs text-green-600">{language === 'fil' ? 'Kasalukuyan' : 'Current'}</Badge>}
                       </div>
                       <p className="text-xs text-muted-foreground">{e.company}{e.country ? ` • ${e.country}` : ''}</p>
                       <p className="text-xs text-muted-foreground">
@@ -279,7 +279,7 @@ export function ApplicantProfilePage() {
         {/* Skills */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.17 }}>
           <Card>
-            <CardHeader><CardTitle><Award className="h-4 w-4 mr-2" />{language === 'fil' ? 'Mga Kasanayan' : 'Skills'}</CardTitle></CardHeader>
+            <CardHeader><CardTitle><Award className="h-4 w-4 " />{language === 'fil' ? 'Mga Kasanayan' : 'Skills'}</CardTitle></CardHeader>
             <CardContent>
               {skills.length === 0 ? (
                 <p className="text-sm text-muted-foreground">{language === 'fil' ? 'Wala pang idagdag.' : 'No entries yet.'}</p>
@@ -300,7 +300,7 @@ export function ApplicantProfilePage() {
         {/* Languages */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}>
           <Card>
-            <CardHeader><CardTitle><Languages className="h-4 w-4 mr-2" />{language === 'fil' ? 'Mga Wika' : 'Languages'}</CardTitle></CardHeader>
+            <CardHeader><CardTitle><Languages className="h-4 w-4 " />{language === 'fil' ? 'Mga Wika' : 'Languages'}</CardTitle></CardHeader>
             <CardContent>
               {languages.length === 0 ? (
                 <p className="text-sm text-muted-foreground">{language === 'fil' ? 'Wala pang idagdag.' : 'No entries yet.'}</p>
@@ -321,7 +321,7 @@ export function ApplicantProfilePage() {
         {/* Certifications */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.19 }}>
           <Card>
-            <CardHeader><CardTitle><FileText className="h-4 w-4 mr-2" />{language === 'fil' ? 'Mga Sertipikasyon' : 'Certifications'}</CardTitle></CardHeader>
+            <CardHeader><CardTitle><FileText className="h-4 w-4 " />{language === 'fil' ? 'Mga Sertipikasyon' : 'Certifications'}</CardTitle></CardHeader>
             <CardContent>
               {certifications.length === 0 ? (
                 <p className="text-sm text-muted-foreground">{language === 'fil' ? 'Wala pang idagdag.' : 'No entries yet.'}</p>
@@ -342,7 +342,7 @@ export function ApplicantProfilePage() {
         {/* Documents */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <Card>
-            <CardHeader><CardTitle><FolderOpen className="h-4 w-4 mr-2" />{language === 'fil' ? 'Mga Dokumento' : 'Documents'}</CardTitle></CardHeader>
+            <CardHeader><CardTitle><FolderOpen className="h-4 w-4 " />{language === 'fil' ? 'Mga Dokumento' : 'Documents'}</CardTitle></CardHeader>
             <CardContent>
               {documents.length === 0 ? (
                 <p className="text-sm text-muted-foreground">{language === 'fil' ? 'Wala pang na-upload.' : 'No documents uploaded.'}</p>
@@ -355,7 +355,7 @@ export function ApplicantProfilePage() {
                         <span className="text-sm truncate">{d.fileName || d.documentType?.replace(/_/g, ' ')}</span>
                       </div>
                       {d.isVerified ? (
-                        <Badge className="text-xs bg-emerald-100 text-emerald-800 shrink-0">Verified</Badge>
+                        <Badge className="text-xs bg-green-100 text-green-700 shrink-0">Verified</Badge>
                       ) : (
                         <Badge variant="outline" className="text-xs shrink-0">Pending</Badge>
                       )}
@@ -370,7 +370,7 @@ export function ApplicantProfilePage() {
         {/* References */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.21 }}>
           <Card>
-            <CardHeader><CardTitle><UsersIcon className="h-4 w-4 mr-2" />{language === 'fil' ? 'Mga Reference' : 'References'}</CardTitle></CardHeader>
+            <CardHeader><CardTitle><UsersIcon className="h-4 w-4 " />{language === 'fil' ? 'Mga Reference' : 'References'}</CardTitle></CardHeader>
             <CardContent>
               {references.length === 0 ? (
                 <p className="text-sm text-muted-foreground">{language === 'fil' ? 'Wala pang idagdag.' : 'No entries yet.'}</p>
@@ -400,7 +400,7 @@ export function ApplicantProfilePage() {
       {/* Trainings */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.22 }}>
         <Card>
-          <CardHeader><CardTitle><BookOpen className="h-4 w-4 mr-2" />{language === 'fil' ? 'Mga Pagsasanay' : 'Trainings'}</CardTitle></CardHeader>
+          <CardHeader><CardTitle><BookOpen className="h-4 w-4 " />{language === 'fil' ? 'Mga Pagsasanay' : 'Trainings'}</CardTitle></CardHeader>
           <CardContent>
             {trainings.length === 0 ? (
               <p className="text-sm text-muted-foreground">{language === 'fil' ? 'Wala pang idagdag.' : 'No entries yet.'}</p>

@@ -94,18 +94,18 @@ export function CmsTestimonialsPage() {
     <div className="view-transition space-y-6 pb-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{L('Testimonials', 'Mga Testimonial')}</h1>
+          <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground">{L('Testimonials', 'Mga Testimonial')}</h1>
           <p className="text-muted-foreground text-sm">{L('Manage client testimonials', 'Pamahalaan ang mga testimonial ng kliyente')}</p>
         </div>
-        <Button onClick={openNew} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> {L('Add Testimonial', 'Magdagdag ng Testimonial')}</Button>
+        <Button onClick={openNew} className="rounded-md"><Plus className="h-4 w-4" /> {L('Add Testimonial', 'Magdagdag ng Testimonial')}</Button>
       </div>
 
       {isLoading ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-48 rounded-xl" />)}</div>
       ) : testimonials.length === 0 ? (
-        <Card className="p-8 text-center">
-          <Star className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
-          <p className="text-muted-foreground">{L('No testimonials yet. Click "Add Testimonial" to get started.', 'Wala pang testimonial. I-click ang "Magdagdag ng Testimonial" para magsimula.')}</p>
+        <Card className="py-12 px-4 text-center">
+          <Star className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
+          <p className="text-lg font-medium text-foreground">{L('No testimonials yet. Click "Add Testimonial" to get started.', 'Wala pang testimonial. I-click ang "Magdagdag ng Testimonial" para magsimula.')}</p>
         </Card>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -115,7 +115,7 @@ export function CmsTestimonialsPage() {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex gap-0.5">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className={`h-4 w-4 ${i < t.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground dark:text-muted-foreground/30'}`} />
+                      <Star key={i} className={`h-4 w-4 ${i < t.rating ? 'text-amber-400 fill-amber-400' : 'text-muted-foreground dark:text-muted-foreground/30'}`} />
                     ))}
                   </div>
                   <div className="flex gap-1">
@@ -171,7 +171,7 @@ export function CmsTestimonialsPage() {
                 <div className="flex gap-1 h-10 items-center">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <button key={i} onClick={() => setForm({ ...form, rating: i + 1 })}>
-                      <Star className={`h-7 w-7 cursor-pointer ${i < form.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground dark:text-muted-foreground/30'}`} />
+                      <Star className={`h-7 w-7 cursor-pointer ${i < form.rating ? 'text-amber-400 fill-amber-400' : 'text-muted-foreground dark:text-muted-foreground/30'}`} />
                     </button>
                   ))}
                 </div>
@@ -198,7 +198,7 @@ export function CmsTestimonialsPage() {
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setDialogOpen(false)}>{L('Cancel', 'Kanselahin')}</Button>
               <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save', 'I-save')}
+                {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save', 'I-save')}
               </Button>
             </div>
           </div>

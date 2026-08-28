@@ -35,7 +35,7 @@ export function FiraJobsPage() {
     <div className="view-transition space-y-6 pb-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Lahat ng Trabaho' : 'All Jobs'}</h1>
+          <h1 className="text-4xl font-bold leading-tight tracking-tight">{language === 'fil' ? 'Lahat ng Trabaho' : 'All Jobs'}</h1>
           <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Pamahalaan ang lahat ng job order' : 'Manage all job orders'}</p>
         </div>
       </div>

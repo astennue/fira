@@ -1,0 +1,318 @@
+<!-- Frame: FIRA Color Foundation — Dark Mode -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="2000" viewBox="0 0 1440 2000">
+  <defs>
+    <style>
+      text { font-family: 'Inter, sans-serif'; }
+      .mono { font-family: 'JetBrains Mono, monospace'; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1440" height="2000" fill="#0b1120"/>
+
+  <!-- Title Bar -->
+  <rect width="1440" height="60" fill="#141c2e"/>
+  <line x1="0" y1="60" x2="1440" y2="60" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="720" y="38" text-anchor="middle" font-size="24" font-weight="700" fill="#e2e8f0" font-family="Inter, sans-serif">FIRA Color Foundation — Dark Mode</text>
+
+  <!-- ============ SECTION A: PRIMARY BLUE PALETTE ============ -->
+  <text x="55" y="100" font-size="12" font-weight="600" fill="#8899b4" letter-spacing="0.05em" font-family="Inter, sans-serif">PRIMARY — BLUE</text>
+
+  <!-- blue-50 -->
+  <rect x="55" y="122" width="110" height="90" rx="12" ry="12" fill="#eff6ff" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="110" y="230" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">blue-50</text>
+  <text x="110" y="247" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#eff6ff</text>
+
+  <!-- blue-100 -->
+  <rect x="177" y="122" width="110" height="90" rx="12" ry="12" fill="#dbeafe"/>
+  <text x="232" y="230" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">blue-100</text>
+  <text x="232" y="247" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#dbeafe</text>
+
+  <!-- blue-200 -->
+  <rect x="299" y="122" width="110" height="90" rx="12" ry="12" fill="#bfdbfe"/>
+  <text x="354" y="230" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">blue-200</text>
+  <text x="354" y="247" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#bfdbfe</text>
+
+  <!-- blue-300 -->
+  <rect x="421" y="122" width="110" height="90" rx="12" ry="12" fill="#93c5fd"/>
+  <text x="476" y="230" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">blue-300</text>
+  <text x="476" y="247" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#93c5fd</text>
+
+  <!-- blue-400 -->
+  <rect x="543" y="122" width="110" height="90" rx="12" ry="12" fill="#60a5fa"/>
+  <text x="598" y="230" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">blue-400</text>
+  <text x="598" y="247" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#60a5fa</text>
+
+  <!-- blue-500 -->
+  <rect x="665" y="122" width="110" height="90" rx="12" ry="12" fill="#3b82f6"/>
+  <text x="720" y="230" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">blue-500</text>
+  <text x="720" y="247" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#3b82f6</text>
+
+  <!-- blue-600 ★ -->
+  <rect x="787" y="122" width="110" height="90" rx="12" ry="12" fill="#2563eb"/>
+  <text x="842" y="230" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">blue-600</text>
+  <text x="842" y="247" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#2563eb</text>
+  <text x="842" y="263" text-anchor="middle" font-size="10" font-weight="600" fill="#93c5fd" font-family="Inter, sans-serif">★</text>
+
+  <!-- blue-700 -->
+  <rect x="909" y="122" width="110" height="90" rx="12" ry="12" fill="#1d4ed8"/>
+  <text x="964" y="230" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">blue-700</text>
+  <text x="964" y="247" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#1d4ed8</text>
+
+  <!-- blue-800 ★ LIGHT PRIMARY -->
+  <rect x="1031" y="122" width="110" height="90" rx="12" ry="12" fill="#1e40af"/>
+  <text x="1086" y="230" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">blue-800</text>
+  <text x="1086" y="247" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#1e40af</text>
+  <text x="1086" y="263" text-anchor="middle" font-size="10" font-weight="600" fill="#93c5fd" font-family="Inter, sans-serif">★ LIGHT PRIMARY</text>
+
+  <!-- blue-900 -->
+  <rect x="1153" y="122" width="110" height="90" rx="12" ry="12" fill="#1e3a8a"/>
+  <text x="1208" y="230" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">blue-900</text>
+  <text x="1208" y="247" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#1e3a8a</text>
+
+  <!-- blue-950 -->
+  <rect x="1275" y="122" width="110" height="90" rx="12" ry="12" fill="#172554" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="1330" y="230" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">blue-950</text>
+  <text x="1330" y="247" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#172554</text>
+
+  <!-- ============ SECTION B: ACCENT GOLD/AMBER ============ -->
+  <text x="116" y="305" font-size="12" font-weight="600" fill="#8899b4" letter-spacing="0.05em" font-family="Inter, sans-serif">ACCENT 1 — WARM GOLD / AMBER (subtle)</text>
+
+  <!-- amber-50 -->
+  <rect x="116" y="327" width="110" height="90" rx="12" ry="12" fill="#fffbeb" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="171" y="435" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">amber-50</text>
+  <text x="171" y="452" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#fffbeb</text>
+
+  <!-- amber-100 -->
+  <rect x="238" y="327" width="110" height="90" rx="12" ry="12" fill="#fef3c7"/>
+  <text x="293" y="435" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">amber-100</text>
+  <text x="293" y="452" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#fef3c7</text>
+
+  <!-- amber-200 -->
+  <rect x="360" y="327" width="110" height="90" rx="12" ry="12" fill="#fde68a"/>
+  <text x="415" y="435" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">amber-200</text>
+  <text x="415" y="452" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#fde68a</text>
+
+  <!-- amber-300 -->
+  <rect x="482" y="327" width="110" height="90" rx="12" ry="12" fill="#fcd34d"/>
+  <text x="537" y="435" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">amber-300</text>
+  <text x="537" y="452" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#fcd34d</text>
+
+  <!-- amber-400 -->
+  <rect x="604" y="327" width="110" height="90" rx="12" ry="12" fill="#fbbf24"/>
+  <text x="659" y="435" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">amber-400</text>
+  <text x="659" y="452" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#fbbf24</text>
+
+  <!-- amber-500 -->
+  <rect x="726" y="327" width="110" height="90" rx="12" ry="12" fill="#f59e0b"/>
+  <text x="781" y="435" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">amber-500</text>
+  <text x="781" y="452" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#f59e0b</text>
+
+  <!-- amber-600 -->
+  <rect x="848" y="327" width="110" height="90" rx="12" ry="12" fill="#d97706"/>
+  <text x="903" y="435" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">amber-600</text>
+  <text x="903" y="452" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#d97706</text>
+
+  <!-- amber-700 ★ GOLD ANCHOR -->
+  <rect x="970" y="327" width="110" height="90" rx="12" ry="12" fill="#b45309"/>
+  <text x="1025" y="435" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">amber-700</text>
+  <text x="1025" y="452" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#b45309</text>
+  <text x="1025" y="468" text-anchor="middle" font-size="10" font-weight="600" fill="#93c5fd" font-family="Inter, sans-serif">★ GOLD ANCHOR</text>
+
+  <!-- amber-800 -->
+  <rect x="1092" y="327" width="110" height="90" rx="12" ry="12" fill="#92400e"/>
+  <text x="1147" y="435" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">amber-800</text>
+  <text x="1147" y="452" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#92400e</text>
+
+  <!-- amber-900 -->
+  <rect x="1214" y="327" width="110" height="90" rx="12" ry="12" fill="#78350f" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="1269" y="435" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">amber-900</text>
+  <text x="1269" y="452" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#78350f</text>
+
+  <!-- ============ SECTION C: SLATE / COOL GRAY ============ -->
+  <text x="55" y="510" font-size="12" font-weight="600" fill="#8899b4" letter-spacing="0.05em" font-family="Inter, sans-serif">ACCENT 2 — SLATE / COOL GRAY</text>
+
+  <!-- slate-50 ★ BG -->
+  <rect x="55" y="532" width="110" height="90" rx="12" ry="12" fill="#f8fafc" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="110" y="640" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">slate-50</text>
+  <text x="110" y="657" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#f8fafc</text>
+  <text x="110" y="673" text-anchor="middle" font-size="10" font-weight="600" fill="#93c5fd" font-family="Inter, sans-serif">★ BG</text>
+
+  <!-- slate-100 -->
+  <rect x="177" y="532" width="110" height="90" rx="12" ry="12" fill="#f1f5f9" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="232" y="640" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">slate-100</text>
+  <text x="232" y="657" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#f1f5f9</text>
+
+  <!-- slate-200 -->
+  <rect x="299" y="532" width="110" height="90" rx="12" ry="12" fill="#e2e8f0" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="354" y="640" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">slate-200</text>
+  <text x="354" y="657" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#e2e8f0</text>
+
+  <!-- slate-300 ★ BORDER -->
+  <rect x="421" y="532" width="110" height="90" rx="12" ry="12" fill="#cbd5e1"/>
+  <text x="476" y="640" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">slate-300</text>
+  <text x="476" y="657" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#cbd5e1</text>
+  <text x="476" y="673" text-anchor="middle" font-size="10" font-weight="600" fill="#93c5fd" font-family="Inter, sans-serif">★ BORDER</text>
+
+  <!-- slate-400 -->
+  <rect x="543" y="532" width="110" height="90" rx="12" ry="12" fill="#94a3b8"/>
+  <text x="598" y="640" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">slate-400</text>
+  <text x="598" y="657" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#94a3b8</text>
+
+  <!-- slate-500 ★ MUTED -->
+  <rect x="665" y="532" width="110" height="90" rx="12" ry="12" fill="#64748b"/>
+  <text x="720" y="640" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">slate-500</text>
+  <text x="720" y="657" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#64748b</text>
+  <text x="720" y="673" text-anchor="middle" font-size="10" font-weight="600" fill="#93c5fd" font-family="Inter, sans-serif">★ MUTED</text>
+
+  <!-- slate-600 -->
+  <rect x="787" y="532" width="110" height="90" rx="12" ry="12" fill="#475569" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="842" y="640" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">slate-600</text>
+  <text x="842" y="657" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#475569</text>
+
+  <!-- slate-700 -->
+  <rect x="909" y="532" width="110" height="90" rx="12" ry="12" fill="#334155" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="964" y="640" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">slate-700</text>
+  <text x="964" y="657" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#334155</text>
+
+  <!-- slate-800 -->
+  <rect x="1031" y="532" width="110" height="90" rx="12" ry="12" fill="#1e293b" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="1086" y="640" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">slate-800</text>
+  <text x="1086" y="657" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#1e293b</text>
+
+  <!-- slate-900 ★ TEXT -->
+  <rect x="1153" y="532" width="110" height="90" rx="12" ry="12" fill="#0f172a" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="1208" y="640" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">slate-900</text>
+  <text x="1208" y="657" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#0f172a</text>
+  <text x="1208" y="673" text-anchor="middle" font-size="10" font-weight="600" fill="#93c5fd" font-family="Inter, sans-serif">★ TEXT</text>
+
+  <!-- slate-950 -->
+  <rect x="1275" y="532" width="110" height="90" rx="12" ry="12" fill="#020617" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="1330" y="640" text-anchor="middle" font-size="12" font-weight="500" fill="#e2e8f0" font-family="Inter, sans-serif">slate-950</text>
+  <text x="1330" y="657" text-anchor="middle" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#020617</text>
+
+  <!-- ============ SECTION D: SEMANTIC / STATUS COLORS (DARK) ============ -->
+  <text x="420" y="715" font-size="12" font-weight="600" fill="#8899b4" letter-spacing="0.05em" font-family="Inter, sans-serif">SEMANTIC / STATUS COLORS</text>
+
+  <!-- Success/Approved (dark) -->
+  <rect x="420" y="737" width="600" height="60" rx="10" ry="10" fill="#0d3320"/>
+  <text x="450" y="773" font-size="14" font-weight="600" fill="#86efac" font-family="Inter, sans-serif">Success / Approved</text>
+  <text x="990" y="773" text-anchor="end" font-size="11" fill="#86efac" font-family="JetBrains Mono, monospace">bg-green-950/50 text-green-300</text>
+
+  <!-- Error/Rejected (dark) -->
+  <rect x="420" y="807" width="600" height="60" rx="10" ry="10" fill="#3b1111"/>
+  <text x="450" y="843" font-size="14" font-weight="600" fill="#fca5a5" font-family="Inter, sans-serif">Error / Rejected</text>
+  <text x="990" y="843" text-anchor="end" font-size="11" fill="#fca5a5" font-family="JetBrains Mono, monospace">bg-red-950/50 text-red-300</text>
+
+  <!-- Pending/Warning (dark) -->
+  <rect x="420" y="877" width="600" height="60" rx="10" ry="10" fill="#3b1a06"/>
+  <text x="450" y="913" font-size="14" font-weight="600" fill="#fde68a" font-family="Inter, sans-serif">Pending / Warning</text>
+  <text x="990" y="913" text-anchor="end" font-size="11" fill="#fde68a" font-family="JetBrains Mono, monospace">bg-amber-950/50 text-amber-300</text>
+
+  <!-- Info/Processing (dark) -->
+  <rect x="420" y="947" width="600" height="60" rx="10" ry="10" fill="#122542"/>
+  <text x="450" y="983" font-size="14" font-weight="600" fill="#93c5fd" font-family="Inter, sans-serif">Info / Processing</text>
+  <text x="990" y="983" text-anchor="end" font-size="11" fill="#93c5fd" font-family="JetBrains Mono, monospace">bg-blue-950/50 text-blue-300</text>
+
+  <!-- Inactive/Closed (dark) -->
+  <rect x="420" y="1017" width="600" height="60" rx="10" ry="10" fill="#0b1121" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="450" y="1053" font-size="14" font-weight="600" fill="#94a3b8" font-family="Inter, sans-serif">Inactive / Closed</text>
+  <text x="990" y="1053" text-anchor="end" font-size="11" fill="#94a3b8" font-family="JetBrains Mono, monospace">bg-gray-950/50 text-gray-400</text>
+
+  <!-- ============ SECTION E: CSS VARIABLE TOKENS (DARK) ============ -->
+  <text x="80" y="1115" font-size="12" font-weight="600" fill="#8899b4" letter-spacing="0.05em" font-family="Inter, sans-serif">COLOR SCHEME TOKENS — DARK MODE</text>
+
+  <!-- Table header -->
+  <text x="80" y="1148" font-size="11" font-weight="600" fill="#8899b4" font-family="Inter, sans-serif">VARIABLE</text>
+  <text x="460" y="1148" font-size="11" font-weight="600" fill="#8899b4" font-family="Inter, sans-serif">COLOR</text>
+  <text x="510" y="1148" font-size="11" font-weight="600" fill="#8899b4" font-family="Inter, sans-serif">HEX</text>
+  <text x="700" y="1148" font-size="11" font-weight="600" fill="#8899b4" font-family="Inter, sans-serif">PURPOSE</text>
+  <line x1="80" y1="1158" x2="1360" y2="1158" stroke="#1e2d4a" stroke-width="1"/>
+
+  <!-- Row 1: --background -->
+  <rect x="80" y="1165" width="1280" height="36" rx="4" ry="4" fill="transparent"/>
+  <text x="80" y="1189" font-size="12" fill="#93c5fd" font-family="JetBrains Mono, monospace">--background</text>
+  <circle cx="470" cy="1183" r="8" fill="#0b1120" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="510" y="1189" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#0b1120</text>
+  <text x="700" y="1189" font-size="13" fill="#e2e8f0" font-family="Inter, sans-serif">Page bg</text>
+
+  <!-- Row 2: --foreground -->
+  <rect x="80" y="1201" width="1280" height="36" rx="4" ry="4" fill="#141c2e" opacity="0.5"/>
+  <text x="80" y="1225" font-size="12" fill="#93c5fd" font-family="JetBrains Mono, monospace">--foreground</text>
+  <circle cx="470" cy="1219" r="8" fill="#e2e8f0"/>
+  <text x="510" y="1225" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#e2e8f0</text>
+  <text x="700" y="1225" font-size="13" fill="#e2e8f0" font-family="Inter, sans-serif">Primary text</text>
+
+  <!-- Row 3: --card -->
+  <text x="80" y="1261" font-size="12" fill="#93c5fd" font-family="JetBrains Mono, monospace">--card</text>
+  <circle cx="470" cy="1255" r="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="510" y="1261" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#141c2e</text>
+  <text x="700" y="1261" font-size="13" fill="#e2e8f0" font-family="Inter, sans-serif">Card bg</text>
+
+  <!-- Row 4: --primary ★ -->
+  <rect x="80" y="1273" width="1280" height="36" rx="4" ry="4" fill="#141c2e" opacity="0.5"/>
+  <text x="80" y="1297" font-size="12" fill="#93c5fd" font-family="JetBrains Mono, monospace">--primary</text>
+  <circle cx="470" cy="1291" r="8" fill="#60a5fa"/>
+  <text x="510" y="1297" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#60a5fa</text>
+  <text x="700" y="1297" font-size="13" fill="#e2e8f0" font-family="Inter, sans-serif">Buttons / CTA</text>
+  <text x="840" y="1297" font-size="10" font-weight="600" fill="#93c5fd" font-family="Inter, sans-serif">★</text>
+
+  <!-- Row 5: --primary-foreground -->
+  <text x="80" y="1333" font-size="12" fill="#93c5fd" font-family="JetBrains Mono, monospace">--primary-foreground</text>
+  <circle cx="470" cy="1327" r="8" fill="#0b1120" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="510" y="1333" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#0b1120</text>
+  <text x="700" y="1333" font-size="13" fill="#e2e8f0" font-family="Inter, sans-serif">Text on primary</text>
+
+  <!-- Row 6: --secondary -->
+  <rect x="80" y="1345" width="1280" height="36" rx="4" ry="4" fill="#141c2e" opacity="0.5"/>
+  <text x="80" y="1369" font-size="12" fill="#93c5fd" font-family="JetBrains Mono, monospace">--secondary</text>
+  <circle cx="470" cy="1363" r="8" fill="#1a2540" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="510" y="1369" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#1a2540</text>
+  <text x="700" y="1369" font-size="13" fill="#e2e8f0" font-family="Inter, sans-serif">Secondary bg</text>
+
+  <!-- Row 7: --muted -->
+  <text x="80" y="1405" font-size="12" fill="#93c5fd" font-family="JetBrains Mono, monospace">--muted</text>
+  <circle cx="470" cy="1399" r="8" fill="#1a2540" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="510" y="1405" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#1a2540</text>
+  <text x="700" y="1405" font-size="13" fill="#e2e8f0" font-family="Inter, sans-serif">Muted bg</text>
+
+  <!-- Row 8: --muted-foreground -->
+  <rect x="80" y="1417" width="1280" height="36" rx="4" ry="4" fill="#141c2e" opacity="0.5"/>
+  <text x="80" y="1441" font-size="12" fill="#93c5fd" font-family="JetBrains Mono, monospace">--muted-foreground</text>
+  <circle cx="470" cy="1435" r="8" fill="#8899b4"/>
+  <text x="510" y="1441" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#8899b4</text>
+  <text x="700" y="1441" font-size="13" fill="#e2e8f0" font-family="Inter, sans-serif">Muted text</text>
+
+  <!-- Row 9: --accent -->
+  <text x="80" y="1477" font-size="12" fill="#93c5fd" font-family="JetBrains Mono, monospace">--accent</text>
+  <circle cx="470" cy="1471" r="8" fill="#1e293b" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="510" y="1477" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#1e293b</text>
+  <text x="700" y="1477" font-size="13" fill="#e2e8f0" font-family="Inter, sans-serif">Hover bg</text>
+
+  <!-- Row 10: --destructive -->
+  <rect x="80" y="1489" width="1280" height="36" rx="4" ry="4" fill="#141c2e" opacity="0.5"/>
+  <text x="80" y="1513" font-size="12" fill="#93c5fd" font-family="JetBrains Mono, monospace">--destructive</text>
+  <circle cx="470" cy="1507" r="8" fill="#f87171"/>
+  <text x="510" y="1513" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#f87171</text>
+  <text x="700" y="1513" font-size="13" fill="#e2e8f0" font-family="Inter, sans-serif">Error / danger</text>
+
+  <!-- Row 11: --border -->
+  <text x="80" y="1549" font-size="12" fill="#93c5fd" font-family="JetBrains Mono, monospace">--border</text>
+  <circle cx="470" cy="1543" r="8" fill="#1e2d4a" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="510" y="1549" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#1e2d4a</text>
+  <text x="700" y="1549" font-size="13" fill="#e2e8f0" font-family="Inter, sans-serif">Borders</text>
+
+  <!-- Row 12: --input -->
+  <rect x="80" y="1561" width="1280" height="36" rx="4" ry="4" fill="#141c2e" opacity="0.5"/>
+  <text x="80" y="1585" font-size="12" fill="#93c5fd" font-family="JetBrains Mono, monospace">--input</text>
+  <circle cx="470" cy="1579" r="8" fill="#1e2d4a" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="510" y="1585" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#1e2d4a</text>
+  <text x="700" y="1585" font-size="13" fill="#e2e8f0" font-family="Inter, sans-serif">Input borders</text>
+
+  <!-- Row 13: --ring -->
+  <text x="80" y="1621" font-size="12" fill="#93c5fd" font-family="JetBrains Mono, monospace">--ring</text>
+  <circle cx="470" cy="1615" r="8" fill="#3b82f6"/>
+  <text x="510" y="1621" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">#3b82f6</text>
+  <text x="700" y="1621" font-size="13" fill="#e2e8f0" font-family="Inter, sans-serif">Focus ring</text>
+
+</svg>

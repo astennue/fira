@@ -23,7 +23,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 function MatchScoreBadge({ score }: { score: number }) {
   const colorClasses =
     score >= 85
-      ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
+      ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
       : score >= 65
         ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
         : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'
@@ -185,7 +185,7 @@ export function ApplicantDashboard() {
       value: avgMatch,
       suffix: '%',
       icon: Target,
-      gradient: 'from-emerald-500 to-emerald-600',
+      gradient: 'from-green-500 to-green-600',
     },
   ]
 
@@ -200,7 +200,7 @@ export function ApplicantDashboard() {
       {/*  1. WELCOME BANNER                                     */}
       {/* ═══════════════════════════════════════════════════════ */}
       <motion.div variants={itemVariants}>
-        <Card className="rounded-2xl bg-card/70 backdrop-blur-xl border border-border/50 shadow-lg shadow-black/[0.04] dark:shadow-black/20 relative overflow-hidden">
+        <Card className="rounded-2xl bg-card border border-border shadow-sm relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-[#1e40af] via-[#2563eb] to-[#06b6d4]" />
           <BannerPattern />
           <div className="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-white/[0.06] blur-2xl" />
@@ -211,12 +211,12 @@ export function ApplicantDashboard() {
               {/* Left: Greeting */}
               <div className="text-white">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white/15 border border-white/20 backdrop-blur-sm">
-                    <Zap className="h-3 w-3 mr-1" />
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white/15 border border-white/20">
+                    <Zap className="h-3 w-3 " />
                     {isFil ? 'Dashboard' : 'Dashboard'}
                   </span>
                 </div>
-                <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+                <h1 className="text-4xl font-bold leading-tight tracking-tight">
                   {isFil
                     ? `Maligayang pagbabalik, ${firstName}!`
                     : `Welcome back, ${firstName}!`}
@@ -230,7 +230,7 @@ export function ApplicantDashboard() {
 
               {/* Right: Profile completion + CTA */}
               <div className="flex flex-col items-start md:items-end gap-3 shrink-0">
-                <div className="bg-white/15 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/20 min-w-[220px]">
+                <div className="bg-white/15 rounded-xl px-4 py-3 border border-white/20 min-w-[220px]">
                   <div className="flex items-center justify-between mb-1.5">
                     <p className="text-xs text-blue-100 font-medium">
                       {isFil ? 'Pagkumpleto ng Profile' : 'Profile Completion'}
@@ -284,7 +284,7 @@ export function ApplicantDashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 + i * 0.08, type: 'spring', stiffness: 100, damping: 15 }}
           >
-            <Card className="rounded-2xl bg-card/70 backdrop-blur-xl border border-border/50 shadow-lg shadow-black/[0.04] dark:shadow-black/20 group hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 cursor-default h-full">
+            <Card className="rounded-2xl bg-card border border-border shadow-sm group hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 cursor-default h-full">
               <div className="p-4 md:p-5">
                 <div className="flex items-start justify-between">
                   <div>
@@ -318,7 +318,7 @@ export function ApplicantDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         {/* ─── Notifications ───────────────────────────────── */}
         <motion.div variants={itemVariants}>
-          <Card className="border border-border/50 bg-card/70 backdrop-blur-xl shadow-lg shadow-black/[0.04] dark:shadow-black/20 h-full">
+          <Card className="border border-border bg-card shadow-sm h-full">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <CardTitle className="flex items-center gap-2 text-base md:text-lg">
                 <div className="relative p-1.5 rounded-lg bg-amber-100 dark:bg-amber-900/50">
@@ -337,13 +337,11 @@ export function ApplicantDashboard() {
             </CardHeader>
             <CardContent className="pt-0">
               {notifications.length === 0 ? (
-                <div className="flex items-center justify-center py-8 text-center">
-                  <div>
-                    <Bell className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">
-                      {isFil ? 'Wala pang notipikasyon' : 'No notifications yet'}
-                    </p>
-                  </div>
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <Bell className="h-12 w-12 text-muted-foreground/50 mb-3" />
+                  <p className="text-lg font-medium text-foreground">
+                    {isFil ? 'Wala pang notipikasyon' : 'No notifications yet'}
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
@@ -389,11 +387,11 @@ export function ApplicantDashboard() {
 
         {/* ─── Next Steps & Quick Actions ──────────────────── */}
         <motion.div variants={itemVariants}>
-          <Card className="border border-border/50 bg-card/70 backdrop-blur-xl shadow-lg shadow-black/[0.04] dark:shadow-black/20 h-full flex flex-col">
+          <Card className="border border-border bg-card shadow-sm h-full flex flex-col">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <CardTitle className="flex items-center gap-2 text-base md:text-lg">
-                <div className="p-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/50">
-                  <ClipboardList className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <div className="p-1.5 rounded-lg bg-green-100 dark:bg-green-900/50">
+                  <ClipboardList className="h-4 w-4 text-green-600 dark:text-green-400" />
                 </div>
                 {isFil ? 'Mga Susunod na Hakbang' : 'Next Steps'}
               </CardTitle>
@@ -406,19 +404,19 @@ export function ApplicantDashboard() {
                   transition={{ delay: 0.35 }}
                   className={`flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 ${
                     profileComplete
-                      ? 'border-emerald-200/60 dark:border-emerald-800/60 bg-emerald-50/40 dark:bg-emerald-950/20'
+                      ? 'border-green-100/60 dark:border-green-700/60 bg-green-50/40 dark:bg-green-950/20'
                       : 'bg-blue-50/60 dark:bg-blue-950/20 border-blue-200/60 dark:border-blue-800/60'
                   }`}
                 >
                   <div
                     className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
                       profileComplete
-                        ? 'bg-emerald-100 dark:bg-emerald-900/50'
+                        ? 'bg-green-100 dark:bg-green-900/50'
                         : 'bg-blue-100 dark:bg-blue-900/50'
                     }`}
                   >
                     {profileComplete ? (
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                      <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
                     ) : (
                       <AlertCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                     )}
@@ -521,7 +519,7 @@ export function ApplicantDashboard() {
           </TabsList>
 
           <TabsContent value="applications">
-            <Card className="border border-border/50 bg-card/70 backdrop-blur-xl shadow-lg shadow-black/[0.04] dark:shadow-black/20">
+            <Card className="border border-border bg-card shadow-sm">
               <CardHeader className="flex flex-row items-center justify-between pb-3">
                 <CardTitle className="flex items-center gap-2 text-base md:text-lg">
                   <div className="p-1.5 rounded-lg bg-blue-100 dark:bg-blue-900/50">
@@ -543,11 +541,9 @@ export function ApplicantDashboard() {
                   </div>
                 ) : applications.length === 0 ? (
                   <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-12">
-                    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
-                      <Briefcase className="h-8 w-8 text-muted-foreground" />
-                    </div>
-                    <p className="text-sm font-semibold text-foreground">{isFil ? 'Wala pang aplikasyon' : 'No applications yet'}</p>
-                    <p className="text-xs text-muted-foreground mt-1 mb-4">{isFil ? 'Magsimula na mag-apply sa mga trabaho!' : 'Start applying to jobs and track your progress!'}</p>
+                    <Briefcase className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
+                    <p className="text-lg font-medium text-foreground">{isFil ? 'Wala pang aplikasyon' : 'No applications yet'}</p>
+                    <p className="text-sm text-muted-foreground mt-1 mb-4">{isFil ? 'Magsimula na mag-apply sa mga trabaho!' : 'Start applying to jobs and track your progress!'}</p>
                     <Button size="sm" onClick={() => navigate('applicant-jobs')}>
                       <Briefcase className="h-4 w-4 mr-1.5" />
                       {isFil ? 'Maghanap ng Trabaho' : 'Find Jobs'}
@@ -597,10 +593,10 @@ export function ApplicantDashboard() {
           </TabsContent>
 
           <TabsContent value="jobs">
-            <Card className="rounded-2xl bg-card/70 backdrop-blur-xl border border-border/50 shadow-lg shadow-black/[0.04] dark:shadow-black/20">
+            <Card className="rounded-2xl bg-card border border-border shadow-sm">
               <CardHeader className="flex flex-row items-center justify-between pb-3">
                 <CardTitle className="flex items-center gap-2 text-base md:text-lg">
-                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-emerald-400 to-cyan-500">
+                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-green-400 to-cyan-500">
                     <Sparkles className="h-4 w-4 text-white" />
                   </div>
                   {isFil ? 'Inirerekomendang Trabaho' : 'Recommended Jobs'}
@@ -619,8 +615,8 @@ export function ApplicantDashboard() {
                   </div>
                 ) : recommendedJobs.length === 0 ? (
                   <div className="text-center py-12">
-                    <Briefcase className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
-                    <p className="text-sm text-muted-foreground">{isFil ? 'Wala pang mga trabahong available' : 'No jobs available right now'}</p>
+                    <Briefcase className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
+                    <p className="text-lg font-medium text-foreground">{isFil ? 'Wala pang mga trabahong available' : 'No jobs available right now'}</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

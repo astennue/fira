@@ -25,7 +25,7 @@ export function AgencyJobsPage() {
   const jobs = Array.isArray(jobsData?.jobs) ? jobsData.jobs : []
 
   const statusColors: Record<string, string> = {
-    open: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400',
+    open: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
     closed: 'bg-muted text-foreground',
     filled: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
     cancelled: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
@@ -35,18 +35,18 @@ export function AgencyJobsPage() {
     <div className="view-transition space-y-6 pb-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Mga Trabaho' : 'Jobs'}</h1>
+          <h1 className="text-4xl font-bold leading-tight tracking-tight">{language === 'fil' ? 'Mga Trabaho' : 'Jobs'}</h1>
           <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Pamahalaan ang mga job order' : 'Manage job orders'}</p>
         </div>
         <Button onClick={() => navigate('ats-pipeline')}>
-          <Plus className="mr-2 h-4 w-4" />{language === 'fil' ? 'View Pipeline' : 'View Pipeline'}
+          <Plus className="h-4 w-4" />{language === 'fil' ? 'View Pipeline' : 'View Pipeline'}
         </Button>
       </div>
 
       {isLoading ? (
         <div className="grid sm:grid-cols-2 gap-4">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-36 rounded-xl" />)}</div>
       ) : jobs.length === 0 ? (
-        <Card className="p-8 text-center"><Briefcase className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">{language === 'fil' ? 'Wala pang trabaho.' : 'No jobs yet.'}</p></Card>
+        <Card className="py-12 px-4 text-center"><Briefcase className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" /><p className="text-lg font-medium text-foreground">{language === 'fil' ? 'Wala pang trabaho.' : 'No jobs yet.'}</p></Card>
       ) : (
         <div className="grid sm:grid-cols-2 gap-4 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar">
           {jobs.map((job: any, i: number) => (

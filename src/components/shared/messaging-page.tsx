@@ -11,7 +11,7 @@ export function MessagingPage() {
   return (
     <div className="view-transition space-y-6 pb-8">
       <div>
-        <h2 className="text-2xl font-bold flex items-center gap-2">
+        <h2 className="text-3xl font-semibold leading-tight flex items-center gap-2">
           <MessageCircle className="h-6 w-6 text-primary" />
           {language === 'fil' ? 'Mensahe' : 'Messages'}
         </h2>
@@ -35,7 +35,7 @@ export function MessagingPage() {
           variant="outline"
           onClick={() => user ? navigate('landing') : navigate('landing')}
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="h-4 w-4" />
           {language === 'fil' ? 'Bumalik sa Dashboard' : 'Back to Dashboard'}
         </Button>
       </Card>

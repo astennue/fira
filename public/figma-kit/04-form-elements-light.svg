@@ -1,0 +1,221 @@
+<!-- Frame: FIRA Form Elements — Light Mode -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1800" viewBox="0 0 1440 1800">
+  <defs>
+    <style>
+      text { font-family: 'Inter', sans-serif; }
+      .mono { font-family: 'JetBrains Mono', monospace; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1440" height="1800" fill="#f8fafc"/>
+
+  <!-- Title Bar -->
+  <rect width="1440" height="56" fill="#ffffff"/>
+  <rect y="54" width="1440" height="2" fill="#cbd5e1"/>
+  <text x="80" y="36" font-size="20" font-weight="700" fill="#1e40af">FIRA Form Elements — Light Mode</text>
+
+  <!-- ==================== SECTION A: TEXT INPUTS ==================== -->
+  <text x="80" y="96" font-size="13" font-weight="700" fill="#0f172a" letter-spacing="0.5">TEXT INPUTS — 36px height, rounded-md (8px)</text>
+
+  <!-- A1: Default Input -->
+  <text x="80" y="126" font-size="13" font-weight="500" fill="#0f172a">Full Name</text>
+  <rect x="80" y="136" width="400" height="36" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="92" y="159" font-size="14" fill="#94a3b8">Enter your name...</text>
+  <text x="500" y="159" class="mono" font-size="11" fill="#64748b">Default — border-input</text>
+
+  <!-- A2: Filled Input -->
+  <text x="80" y="200" font-size="13" font-weight="500" fill="#0f172a">Full Name</text>
+  <rect x="80" y="210" width="400" height="36" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="92" y="233" font-size="14" fill="#0f172a">Juan Dela Cruz</text>
+  <text x="500" y="233" class="mono" font-size="11" fill="#64748b">Filled — value present</text>
+
+  <!-- A3: Focused Input -->
+  <text x="80" y="274" font-size="13" font-weight="500" fill="#0f172a">Email Address</text>
+  <!-- Focus ring (3px wider, 15% opacity blue) -->
+  <rect x="77" y="278" width="406" height="42" rx="10" fill="#2563eb" opacity="0.15"/>
+  <rect x="80" y="281" width="400" height="36" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+  <text x="92" y="304" font-size="14" fill="#0f172a">user@example.com</text>
+  <text x="500" y="304" class="mono" font-size="11" fill="#64748b">Focus — border-ring + ring-3px ring-ring/50</text>
+
+  <!-- A4: Error Input -->
+  <text x="80" y="350" font-size="13" font-weight="500" fill="#0f172a">Username</text>
+  <!-- Error ring -->
+  <rect x="77" y="354" width="406" height="42" rx="10" fill="#ef4444" opacity="0.1"/>
+  <rect x="80" y="357" width="400" height="36" rx="8" fill="#ffffff" stroke="#ef4444" stroke-width="2"/>
+  <text x="92" y="380" font-size="14" fill="#0f172a">invalid-</text>
+  <text x="92" y="410" font-size="12" fill="#ef4444">⚠ Please enter a valid value</text>
+  <text x="500" y="380" class="mono" font-size="11" fill="#64748b">Error — border-destructive +</text>
+  <text x="500" y="394" class="mono" font-size="11" fill="#64748b">ring-destructive/20 + error message</text>
+
+  <!-- A5: Disabled Input -->
+  <text x="80" y="440" font-size="13" font-weight="500" fill="#0f172a">API Key</text>
+  <g opacity="0.5">
+    <rect x="80" y="450" width="400" height="36" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="92" y="473" font-size="14" fill="#94a3b8">Cannot edit</text>
+  </g>
+  <text x="500" y="473" class="mono" font-size="11" fill="#64748b">Disabled — opacity-50 cursor-not-allowed</text>
+
+  <!-- ==================== SECTION B: TEXTAREA ==================== -->
+  <text x="80" y="540" font-size="13" font-weight="700" fill="#0f172a" letter-spacing="0.5">TEXTAREA</text>
+
+  <text x="80" y="570" font-size="13" font-weight="500" fill="#0f172a">Message</text>
+  <rect x="80" y="580" width="500" height="100" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="92" y="604" font-size="14" fill="#94a3b8">Type your message here...</text>
+  <text x="92" y="696" font-size="12" fill="#64748b">Max 500 characters</text>
+  <text x="600" y="636" class="mono" font-size="11" fill="#64748b">min-h-16 field-sizing-content</text>
+
+  <!-- ==================== SECTION C: CHECKBOXES ==================== -->
+  <text x="80" y="748" font-size="13" font-weight="700" fill="#0f172a" letter-spacing="0.5">CHECKBOXES</text>
+
+  <!-- Checked Checkbox -->
+  <rect x="80" y="770" width="18" height="18" rx="4" fill="#1e40af"/>
+  <text x="89" y="784" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">✓</text>
+  <text x="108" y="784" font-size="14" fill="#0f172a">Accept terms</text>
+  <text x="80" y="804" class="mono" font-size="11" fill="#64748b">Checked — bg-primary, accent-primary</text>
+
+  <!-- Unchecked Checkbox -->
+  <rect x="280" y="770" width="18" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="308" y="784" font-size="14" fill="#0f172a">Remember me</text>
+  <text x="280" y="804" class="mono" font-size="11" fill="#64748b">Unchecked — border-input</text>
+
+  <!-- Disabled Checkbox -->
+  <g opacity="0.5">
+    <rect x="480" y="770" width="18" height="18" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="508" y="784" font-size="14" fill="#0f172a">Subscribe</text>
+  </g>
+  <text x="480" y="804" class="mono" font-size="11" fill="#64748b">Disabled — opacity-50</text>
+
+  <!-- ==================== SECTION D: RADIO BUTTONS ==================== -->
+  <text x="80" y="850" font-size="13" font-weight="700" fill="#0f172a" letter-spacing="0.5">RADIO BUTTONS</text>
+
+  <!-- Selected Radio -->
+  <circle cx="89" cy="876" r="9" fill="#ffffff" stroke="#1e40af" stroke-width="2"/>
+  <circle cx="89" cy="876" r="5" fill="#1e40af"/>
+  <text x="108" y="881" font-size="14" fill="#0f172a">Option A</text>
+  <text x="80" y="904" class="mono" font-size="11" fill="#64748b">Selected — accent-primary</text>
+
+  <!-- Unselected Radio -->
+  <circle cx="289" cy="876" r="9" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="308" y="881" font-size="14" fill="#0f172a">Option B</text>
+  <text x="280" y="904" class="mono" font-size="11" fill="#64748b">Unchecked</text>
+
+  <!-- Disabled Radio -->
+  <g opacity="0.5">
+    <circle cx="489" cy="876" r="9" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="508" y="881" font-size="14" fill="#0f172a">Option C</text>
+  </g>
+  <text x="480" y="904" class="mono" font-size="11" fill="#64748b">Disabled</text>
+
+  <!-- ==================== SECTION E: SWITCH / TOGGLE ==================== -->
+  <text x="80" y="950" font-size="13" font-weight="700" fill="#0f172a" letter-spacing="0.5">SWITCH / TOGGLE</text>
+
+  <!-- Switch On -->
+  <rect x="80" y="972" width="44" height="24" rx="9999" fill="#1e40af"/>
+  <circle cx="104" cy="984" r="10" fill="#ffffff"/>
+  <text x="136" y="989" font-size="14" fill="#0f172a">Notifications enabled</text>
+  <text x="80" y="1014" class="mono" font-size="11" fill="#64748b">On — bg-primary</text>
+
+  <!-- Switch Off -->
+  <rect x="300" y="972" width="44" height="24" rx="9999" fill="#cbd5e1"/>
+  <circle cx="312" cy="984" r="10" fill="#ffffff"/>
+  <text x="356" y="989" font-size="14" fill="#0f172a">Dark mode</text>
+  <text x="300" y="1014" class="mono" font-size="11" fill="#64748b">Off — bg-input</text>
+
+  <!-- ==================== SECTION F: FILE UPLOAD ==================== -->
+  <text x="80" y="1060" font-size="13" font-weight="700" fill="#0f172a" letter-spacing="0.5">FILE UPLOAD ZONE</text>
+
+  <!-- Upload zone -->
+  <rect x="80" y="1080" width="240" height="160" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8 4"/>
+
+  <!-- File icon -->
+  <rect x="172" y="1110" width="32" height="40" rx="4" fill="#eff6ff" stroke="#cbd5e1" stroke-width="1"/>
+  <path d="M192 1110 L204 1122 L204 1110 Z" fill="#dbeafe" stroke="#cbd5e1" stroke-width="0.5"/>
+  <path d="M192 1110 L192 1122 L204 1122" fill="none" stroke="#cbd5e1" stroke-width="0.5"/>
+  <line x1="180" y1="1130" x2="196" y2="1130" stroke="#94a3b8" stroke-width="1"/>
+  <line x1="180" y1="1136" x2="196" y2="1136" stroke="#94a3b8" stroke-width="1"/>
+  <line x1="180" y1="1142" x2="192" y2="1142" stroke="#94a3b8" stroke-width="1"/>
+
+  <text x="200" y="1172" font-size="14" font-weight="500" fill="#0f172a" text-anchor="middle">Drop your file here</text>
+  <text x="200" y="1192" font-size="12" fill="#64748b" text-anchor="middle">PDF, DOCX, JPG, PNG — Max 10MB</text>
+
+  <text x="80" y="1264" class="mono" font-size="11" fill="#64748b">border-2 border-dashed border-input,</text>
+  <text x="80" y="1278" class="mono" font-size="11" fill="#64748b">hover: border-primary bg-primary/5</text>
+
+  <!-- ==================== SECTION G: FORM IN CONTEXT ==================== -->
+  <text x="80" y="1320" font-size="13" font-weight="700" fill="#0f172a" letter-spacing="0.5">FORM — COMPOSITE EXAMPLE</text>
+
+  <!-- Form Card -->
+  <rect x="80" y="1340" width="600" height="420" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+
+  <!-- Form title -->
+  <text x="112" y="1374" font-size="18" font-weight="700" fill="#0f172a">Create Account</text>
+  <text x="112" y="1396" font-size="13" fill="#64748b">Fill in the details below to get started.</text>
+
+  <!-- Divider -->
+  <line x1="112" y1="1412" x2="648" y2="1412" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- Form Row: First Name / Last Name -->
+  <text x="112" y="1438" font-size="12" font-weight="500" fill="#0f172a">First Name</text>
+  <rect x="112" y="1446" width="248" height="36" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="124" y="1469" font-size="13" fill="#94a3b8">Juan</text>
+
+  <text x="384" y="1438" font-size="12" font-weight="500" fill="#0f172a">Last Name</text>
+  <rect x="384" y="1446" width="264" height="36" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="396" y="1469" font-size="13" fill="#0f172a">Dela Cruz</text>
+
+  <!-- Email -->
+  <text x="112" y="1510" font-size="12" font-weight="500" fill="#0f172a">Email</text>
+  <rect x="112" y="1518" width="536" height="36" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="124" y="1541" font-size="13" fill="#0f172a">juan@example.com</text>
+
+  <!-- Password -->
+  <text x="112" y="1582" font-size="12" font-weight="500" fill="#0f172a">Password</text>
+  <rect x="112" y="1590" width="536" height="36" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="124" y="1613" font-size="13" fill="#94a3b8">••••••••</text>
+
+  <!-- Checkbox + Switch in row -->
+  <rect x="112" y="1648" width="18" height="18" rx="4" fill="#1e40af"/>
+  <text x="121" y="1662" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">✓</text>
+  <text x="140" y="1662" font-size="13" fill="#0f172a">I agree to the terms and conditions</text>
+
+  <rect x="480" y="1650" width="44" height="24" rx="9999" fill="#1e40af"/>
+  <circle cx="504" cy="1662" r="10" fill="#ffffff"/>
+  <text x="536" y="1667" font-size="13" fill="#0f172a">Newsletter</text>
+
+  <!-- Submit button -->
+  <rect x="112" y="1696" width="160" height="40" rx="8" fill="#1e40af"/>
+  <text x="192" y="1721" font-size="14" font-weight="500" fill="#ffffff" text-anchor="middle">Create Account</text>
+
+  <!-- Cancel link -->
+  <text x="288" y="1721" font-size="14" fill="#1e40af">Cancel</text>
+
+  <!-- Form labels on the right side -->
+  <g transform="translate(720, 1340)">
+    <rect width="400" height="420" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="24" y="32" font-size="12" font-weight="700" fill="#0f172a" letter-spacing="0.5">COMPOSITE FORM SPECS</text>
+    <line x1="24" y1="44" x2="376" y2="44" stroke="#e2e8f0" stroke-width="1"/>
+
+    <text x="24" y="72" class="mono" font-size="11" fill="#64748b">Layout: grid grid-cols-2 gap-4</text>
+    <text x="24" y="92" class="mono" font-size="11" fill="#64748b">Card: bg-card rounded-xl border</text>
+    <text x="24" y="112" class="mono" font-size="11" fill="#64748b">Title: text-lg font-bold</text>
+    <text x="24" y="132" class="mono" font-size="11" fill="#64748b">Description: text-sm text-muted</text>
+    <text x="24" y="152" class="mono" font-size="11" fill="#64748b">Label: text-xs font-medium</text>
+    <text x="24" y="172" class="mono" font-size="11" fill="#64748b">Input: h-9 rounded-md border-input</text>
+    <text x="24" y="192" class="mono" font-size="11" fill="#64748b">Password: type=password, bullets</text>
+
+    <text x="24" y="224" font-size="12" font-weight="600" fill="#0f172a">Components used:</text>
+    <text x="24" y="244" class="mono" font-size="11" fill="#64748b">• Input (text, email, password)</text>
+    <text x="24" y="264" class="mono" font-size="11" fill="#64748b">• Checkbox (terms)</text>
+    <text x="24" y="284" class="mono" font-size="11" fill="#64748b">• Switch (newsletter toggle)</text>
+    <text x="24" y="304" class="mono" font-size="11" fill="#64748b">• Button (primary submit)</text>
+    <text x="24" y="324" class="mono" font-size="11" fill="#64748b">• Link (cancel action)</text>
+
+    <text x="24" y="360" font-size="12" font-weight="600" fill="#0f172a">Spacing tokens:</text>
+    <text x="24" y="380" class="mono" font-size="11" fill="#64748b">• gap-y-4 (16px vertical)</text>
+    <text x="24" y="400" class="mono" font-size="11" fill="#64748b">• gap-x-4 (16px horizontal)</text>
+  </g>
+
+  <!-- Footer note -->
+  <text x="80" y="1780" class="mono" font-size="11" fill="#94a3b8">All form elements use focus-visible:ring-2 ring-ring ring-offset-2. Labels use text-sm font-medium. Error messages: text-xs text-destructive. Helper text: text-xs text-muted-foreground.</text>
+</svg>

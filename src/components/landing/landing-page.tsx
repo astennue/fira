@@ -273,7 +273,7 @@ export function LandingPage() {
   const heroBentoCards = [
     { icon: Globe2, label: L('30+ Bansa', '30+ Countries'), size: 'large' as const, accent: 'from-blue-500/20 to-blue-600/10' },
     { icon: Users, label: L('10K+ Na-deploy', '10K+ Deployed'), size: 'small' as const, accent: 'from-amber-500/20 to-amber-600/10' },
-    { icon: Shield, label: L('Ligtas & Legal', 'Safe & Legal'), size: 'small' as const, accent: 'from-emerald-500/20 to-emerald-600/10' },
+    { icon: Shield, label: L('Ligtas & Legal', 'Safe & Legal'), size: 'small' as const, accent: 'from-green-500/20 to-green-600/10' },
     { icon: BadgeCheck, label: L('DOLE License', 'DOLE Licensed'), size: 'small' as const, accent: 'from-sky-500/20 to-sky-600/10' },
     { icon: HeartHandshake, label: L('Buong Suporta', 'Full Support'), size: 'large' as const, accent: 'from-rose-500/20 to-rose-600/10' },
   ]
@@ -307,7 +307,7 @@ export function LandingPage() {
         'Ma-match ka sa empleyador, kumpletuhin ang proseso, at maging deployed sa ibang bansa.',
         'Get matched with employers, complete the process, and get deployed abroad.'
       ),
-      accent: 'bg-emerald-500',
+      accent: 'bg-green-500',
       visual: '03',
     },
   ]
@@ -345,7 +345,7 @@ export function LandingPage() {
               {/* Trust Badge */}
               <motion.div variants={fadeUp} custom={0}>
                 <Badge className="bg-white/15 text-white/90 border-white/25 text-sm px-4 py-1.5 backdrop-blur-sm">
-                  <Shield className="mr-2 h-3.5 w-3.5" />
+                  <Shield className="h-3.5 w-3.5" />
                   {L('Pinagkakatiwalaan ng 500+ ahensya sa buong mundo', 'Trusted by 500+ agencies worldwide')}
                 </Badge>
               </motion.div>
@@ -380,7 +380,7 @@ export function LandingPage() {
                     value={heroSearch}
                     onChange={(e) => setHeroSearch(e.target.value)}
                   />
-                  <Button type="submit" className="rounded-xl h-10 px-5 shrink-0 bg-amber-500 hover:bg-amber-600 text-white font-semibold shadow-lg shadow-amber-500/30">
+                  <Button type="submit" className="rounded-md h-10 px-5 shrink-0 bg-amber-500 hover:bg-amber-600 text-white font-semibold shadow-lg shadow-amber-500/30">
                     {L('Hanapin', 'Search')}
                   </Button>
                 </div>
@@ -388,11 +388,11 @@ export function LandingPage() {
 
               {/* CTAs */}
               <motion.div variants={fadeUp} custom={4} className="flex flex-wrap items-center gap-3">
-                <Button size="lg" className="rounded-xl bg-white text-blue-900 hover:bg-blue-50 font-semibold shadow-xl shadow-white/10" onClick={() => navigate('job-listing')}>
-                  <Briefcase className="mr-2 h-5 w-5" />
+                <Button size="lg" className="rounded-md bg-white text-blue-900 hover:bg-blue-50 font-semibold shadow-xl shadow-white/10" onClick={() => navigate('job-listing')}>
+                  <Briefcase className="h-5 w-5" />
                   {L('Maghanap ng Trabaho', 'Browse Jobs')}
                 </Button>
-                <Button size="lg" variant="outline" className="rounded-xl border-white/30 text-white hover:bg-white/10 bg-transparent" onClick={() => {
+                <Button size="lg" variant="outline" className="rounded-md border-white/30 text-white hover:bg-white/10 bg-transparent" onClick={() => {
                   if (user) navigate('applicant-dashboard')
                   else setAuthModalOpen(true, 'register')
                 }}>
@@ -473,7 +473,7 @@ export function LandingPage() {
           {/* Steps */}
           <div className="grid md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto relative">
             {/* Connecting Line (desktop) */}
-            <div className="hidden md:block absolute top-16 left-[18%] right-[18%] h-[2px] bg-gradient-to-r from-blue-300 via-amber-300 to-emerald-300 dark:from-blue-700 dark:via-amber-700 dark:to-emerald-700" />
+            <div className="hidden md:block absolute top-16 left-[18%] right-[18%] h-[2px] bg-gradient-to-r from-blue-300 via-amber-300 to-green-300 dark:from-blue-700 dark:via-amber-700 dark:to-green-700" />
 
             {steps.map((step, i) => (
               <motion.div
@@ -545,9 +545,10 @@ export function LandingPage() {
               ))}
             </div>
           ) : publicJobs.length === 0 ? (
-            <div className="glass-card-light rounded-2xl p-12 text-center max-w-md mx-auto">
-              <Briefcase className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
-              <p className="text-muted-foreground">{L('Wala pang trabaho ngayon.', 'No jobs available yet. Check back soon!')}</p>
+            <div className="glass-card-light rounded-2xl py-12 px-4 text-center max-w-md mx-auto">
+              <Briefcase className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
+              <p className="text-lg font-medium text-foreground">{L('Wala pang trabaho ngayon.', 'No jobs available yet.')}</p>
+              <p className="text-sm text-muted-foreground mt-1">{L('Bumalik ka na lang mamaya.', 'Check back soon!')}</p>
             </div>
           ) : (
             <motion.div
@@ -697,16 +698,16 @@ export function LandingPage() {
                   <div className="flex flex-wrap gap-3">
                     <Button
                       size="lg"
-                      className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold shadow-xl shadow-amber-500/30"
+                      className="rounded-md bg-amber-500 hover:bg-amber-600 text-white font-semibold shadow-xl shadow-amber-500/30"
                       onClick={() => navigate('employer-partnership')}
                     >
-                      <Handshake className="mr-2 h-5 w-5" />
+                      <Handshake className="h-5 w-5" />
                       {L('Maging Partner', 'Partner with FIRA')}
                     </Button>
                     <Button
                       size="lg"
                       variant="outline"
-                      className="rounded-xl border-white/30 text-white hover:bg-white/10 bg-transparent"
+                      className="rounded-md border-white/30 text-white hover:bg-white/10 bg-transparent"
                       onClick={() => navigate('contact')}
                     >
                       {L('Makipag-ugnay', 'Contact Us')}
@@ -827,7 +828,7 @@ export function LandingPage() {
                 ))}
               </Accordion>
               <div className="text-center mt-8">
-                <Button variant="outline" className="rounded-xl border-border" onClick={() => navigate('faq')}>
+                <Button variant="outline" className="rounded-md border-border" onClick={() => navigate('faq')}>
                   {L('Tingnan Lahat ng FAQ', 'View All FAQs')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -871,7 +872,7 @@ export function LandingPage() {
                 onChange={(e) => setNewsletterEmail(e.target.value)}
                 required
               />
-              <Button type="submit" className="h-12 rounded-xl px-6 shrink-0 bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-500/25">
+              <Button type="submit" className="h-10 rounded-md px-6 shrink-0 bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-500/25">
                 {newsletterSubmitted ? (
                   <CheckCircle className="h-5 w-5" />
                 ) : (
@@ -880,7 +881,7 @@ export function LandingPage() {
               </Button>
             </form>
             {newsletterSubmitted && (
-              <p className="text-sm text-emerald-600 dark:text-emerald-400 mt-3">{L('Salamat sa pag-subscribe!', 'Thank you for subscribing!')}</p>
+              <p className="text-sm text-green-600 dark:text-green-400 mt-3">{L('Salamat sa pag-subscribe!', 'Thank you for subscribing!')}</p>
             )}
           </motion.div>
         </div>

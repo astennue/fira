@@ -1,0 +1,1026 @@
+# FIRA — Complete Figma High-Fidelity Design Prompt
+
+> **Fil International Recruitment Agency**
+> This document contains EVERY page, button, form field, modal, and interactive element across ALL 5 user portals. Use this prompt in Figma (or give to your Figma designer) to create pixel-perfect high-fidelity mockups that match the live system.
+
+---
+
+## 📐 DESIGN SYSTEM FOUNDATION
+
+### Color Palette
+| Token | Hex | Usage |
+|-------|-----|-------|
+| **Primary Emerald** | `#059669` (emerald-600) | All primary CTA buttons, active states, links |
+| **Primary Emerald Hover** | `#047857` (emerald-700) | Button hover states |
+| **Primary Emerald Light** | `#d1fae5` (emerald-100) | Active nav backgrounds, icon containers, badges |
+| **Primary Emerald Dark** | `#064e3b` (emerald-900) | Gradient endpoints |
+| **Teal Accent** | `#2dd4bf` (teal-400) | Hero gradient endpoint |
+| **Background** | `#FFFFFF` | Main content area |
+| **Surface** | `#F9FAFB` (gray-50) | Page background behind cards, alternate sections |
+| **Card** | `#FFFFFF` | All card backgrounds |
+| **Border** | `#E5E7EB` (gray-200) | Card borders, dividers |
+| **Text Primary** | `#18181B` (zinc-900) | Headings, body text |
+| **Text Secondary** | `#71717A` (zinc-500) | Muted text, descriptions, labels |
+| **Text Muted** | `#A1A1AA` (zinc-400) | Placeholder text, timestamps |
+| **Danger** | `#EF4444` (red-500) | Error states, reject buttons, delete |
+| **Warning** | `#F59E0B` (amber-500) | Pending states, warnings |
+| **Info** | `#3B82F6` (blue-500) | Info badges, links |
+
+### Role Badge Colors
+| Role | Background | Text |
+|------|-----------|------|
+| Applicant | `#DBEAFE` (blue-100) | `#1E40AF` (blue-800) |
+| Agency Admin | `#F3E8FF` (purple-100) | `#6B21A8` (purple-800) |
+| Agency Member | `#FAF5FF` (purple-50) | `#7C3AED` (purple-700) |
+| FIRA Admin | `#D1FAE5` (emerald-100) | `#065F46` (emerald-800) |
+| Employer | `#FEF3C7` (amber-100) | `#92400E` (amber-800) |
+
+### Status Badge Colors
+| Status | Background | Text |
+|--------|-----------|------|
+| Pending | `#FEF9C3` (yellow-100) | `#854D0E` (yellow-800) |
+| Accepted/Approved | `#DCFCE7` (green-100) | `#166534` (green-800) |
+| Rejected/Declined | `#FEE2E2` (red-100) | `#991B1B` (red-800) |
+| Hired | `#D1FAE5` (emerald-100) | `#065F46` (emerald-800) |
+| Withdrawn | `#F3F4F6` (gray-100) | `#374151` (gray-800) |
+
+### Job Visibility Badge Colors
+| Visibility | Background | Text |
+|------------|-----------|------|
+| Public | `#D1FAE5` (emerald-100) | `#047857` (emerald-700) |
+| Agency Only | `#FEF3C7` (amber-100) | `#B45309` (amber-700) |
+| Private | `#FEE2E2` (red-100) | `#B91C1C` (red-700) |
+
+### Typography
+| Element | Size | Weight | Line Height | Tracking |
+|---------|------|--------|-------------|----------|
+| Hero H1 (mobile) | 36px / 2.25rem | 800 (extrabold) | 1.1 | tight (-0.025em) |
+| Hero H1 (tablet) | 48px / 3rem | 800 | 1.1 | tight |
+| Hero H1 (desktop) | 60px / 3.75rem | 800 | 1.1 | tight |
+| Section H2 (mobile) | 24px / 1.5rem | 700 (bold) | 1.2 | tight |
+| Section H2 (desktop) | 36px / 2.25rem | 700 | 1.2 | tight |
+| Page Title | 24px / 1.5rem | 700 (bold) | 1.3 | normal |
+| Card Title | 14px / 0.875rem | 600 (semibold) | 1.4 | normal |
+| Body Text | 14px / 0.875rem | 400 (regular) | 1.6 | normal |
+| Small/Muted | 12px / 0.75rem | 400 | 1.5 | normal |
+| Badge Text | 10-12px | 500 (medium) | 1.4 | normal |
+| Button Text | 14px / 0.875rem | 600 (semibold) | 1 | normal |
+| Nav Link Text | 16px / 1rem | 500 (medium) | 1.4 | normal |
+
+**Font Family:** Geist Sans (fallback: system-ui, -apple-system, sans-serif)
+
+### Spacing & Radius
+| Element | Border Radius |
+|---------|--------------|
+| Buttons (CTA) | 12px (rounded-xl) |
+| Buttons (pill/outline) | 9999px (rounded-full) |
+| Buttons (standard) | 10px (0.625rem) |
+| Cards | 16px (rounded-2xl) |
+| Cards (inner) | 12px (rounded-xl) |
+| Dialog/Modal | 16px (rounded-2xl) |
+| Input Fields | 10px (0.625rem) |
+| Badges | 9999px (rounded-full) |
+| Avatar | 9999px (circle) |
+| Select Dropdown | 10px (0.625rem) |
+
+### Shadow System
+| Level | Value | Usage |
+|-------|-------|-------|
+| Card Default | `0 1px 3px rgba(0,0,0,0.05)` | All cards at rest |
+| Card Hover | `0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px rgba(16,185,129,0.06)` | Hovered cards |
+| Modal | `0 25px 50px -12px rgba(0,0,0,0.15)` | Dialog overlays |
+| Nav | `0 1px 3px rgba(0,0,0,0.08)` | Top navigation bar |
+
+### Responsive Breakpoints
+| Name | Width | Layout Change |
+|------|-------|---------------|
+| Mobile | 375px - 639px | Single column, hamburger nav, stacked cards |
+| Tablet (sm) | 640px - 767px | 2-col grids, nav links visible |
+| Tablet (md) | 768px - 1023px | 3-col grids, full layout |
+| Desktop (lg) | 1024px - 1279px | Full sidebar + content |
+| Wide (xl) | 1280px+ | Max-width containers, spacious layout |
+
+---
+
+## 🏗️ GLOBAL LAYOUT STRUCTURE
+
+### Unauthenticated Layout
+```
+┌──────────────────────────────────────────────────┐
+│  [Logo: FIRA]          [Sign In] [Start Journey]  │  ← Top Nav (white bg, border-b)
+├──────────────────────────────────────────────────┤
+│                                                    │
+│              LANDING PAGE CONTENT                  │
+│           (full-width, no sidebar)                 │
+│                                                    │
+├──────────────────────────────────────────────────┤
+│  Footer (white bg, border-t)                       │
+└──────────────────────────────────────────────────┘
+```
+
+### Authenticated Layout
+```
+┌──────────────────────────────────────────────────┐
+│  [Logo: FIRA]  [Nav Links...]  [🔔] [👤▼]  [EN/TL] │  ← Top Nav
+├──────────┬───────────────────────────────────────┤
+│          │                                        │
+│  SIDEBAR │         CONTENT AREA                   │
+│  (hidden │         (gray-50 bg)                   │
+│  on      │                                        │
+│  mobile, │    ┌──────────────────────────┐         │
+│  shows   │    │  Page Title               │         │
+│  as      │    │  ─────────────────────── │         │
+│  Sheet)  │    │  Content Cards/Tables     │         │
+│          │    │                           │         │
+│ [Dashboard│   │                           │         │
+│ [Jobs    │    │                           │         │
+│ [Apps    │    └──────────────────────────┘         │
+│ [Profile │                                        │
+│          │                                        │
+├──────────┴───────────────────────────────────────┤
+│  (Footer — if present)                            │
+└──────────────────────────────────────────────────┘
+```
+
+### Top Navigation Bar Specifications
+- **Height:** 64px (h-16)
+- **Background:** White (#FFFFFF)
+- **Border:** Bottom border 1px solid #E5E7EB
+- **Logo:** "FIRA" text, emerald-700, text-xl, font-bold, left side
+- **Nav Links:** Center, ghost-style buttons, active = `bg-emerald-100 text-emerald-800`
+- **Right Side (stacked):** Notification bell (ghost button, Bell icon) → User avatar (32px circle) + name + role badge → Language toggle (Globe icon, "EN"/"TL" text, ghost button)
+- **Mobile:** Nav links hidden, hamburger menu (☰ icon) opens left Sheet (w-72) with same nav links vertically
+- **User Dropdown:** Click avatar → DropdownMenu (w-48): shows email (muted), separator, "My Profile" link, separator, "Sign Out" (red text + LogOut icon)
+
+---
+
+# 📄 PAGE-BY-PAGE DESIGN SPECIFICATIONS
+
+---
+
+## PORTAL 1: PUBLIC / UNAUTHENTICATED
+
+---
+
+### PAGE 1: Landing Page
+**Route:** `/` (default when not logged in)
+**Layout:** Full-width, no sidebar, white background
+
+#### Section 1A: Hero Section
+- **Background:** Gradient `emerald-600 → emerald-500 → teal-400` (diagonal, top-left to bottom-right)
+- **Decorative Elements:** 2 large blurred circles — one white/10% opacity (top-right), one emerald-700/30% opacity (bottom-left)
+- **Container:** max-w-5xl, centered, py-20 (mobile) / py-32 (desktop)
+- **Content:**
+  - **H1:** "Your Gateway to **Global Opportunities**" — white text, "Global Opportunities" in lighter weight or gradient (white → emerald-100)
+  - **Subtitle:** "FIRA connects Filipino workers with trusted international employers. Find your dream job abroad with a licensed recruitment agency." — white/90% opacity, text-base (mobile) to text-xl (desktop)
+  - **Button Row (2 buttons, gap-4):**
+    - [Start Your Journey] — White bg, emerald text, rounded-full, px-8, h-12, font-semibold, hover:shadow-lg
+    - [Sign In] — Outline, white/40% border, white text, rounded-full, px-8, h-12, font-semibold, hover:bg-white/10%
+- **Bottom:** SVG wave divider (white fill, creates curved transition to next section)
+- **Animation (Figma:** Staggered fade-up, 0.12s delay between elements)
+
+#### Section 1B: Featured Job Openings
+- **Background:** White
+- **Padding:** py-16 (mobile) to py-24 (desktop)
+- **Container:** max-w-7xl, centered
+- **Header (centered):**
+  - **H2:** "Featured Job Openings" — zinc-900, bold
+  - **Subtitle:** "Explore the latest opportunities from our trusted partner employers" — gray-500, text-base
+- **Job Cards Grid:** 3 columns (desktop), 2 (tablet), 1 (mobile), gap-6
+- **Each Job Card:**
+  - White bg, rounded-2xl, border gray-100, p-6
+  - Hover: border-emerald-200, shadow with emerald tint
+  - **Top Row:** Category Badge (outline, emerald border) on left + Visibility Badge (colored pill) on right
+  - **If Urgent:** Red badge "URGENT" top-right, rounded-bl-xl (cuts into corner)
+  - **Title:** text-lg font-semibold, zinc-900
+  - **Description:** text-sm, gray-500, 2-line clamp (line-clamp-2)
+  - **Details Row (4 items, 2x2 grid or inline with dividers):**
+    - 📍 Location icon + Country name
+    - 💰 DollarSign icon + "₱XX,XXX - ₱XXX,XXX" salary range
+    - 🏢 Building2 icon + Category label
+    - 👥 Users icon + "X vacancies"
+  - **Bottom:** [Apply Now] button — full-width, bg-emerald-600, white text, rounded-xl, h-11, font-semibold
+- **Section Footer:** [Browse All Jobs] button — outline, rounded-full, border-emerald-200, emerald-600 text, centered
+- **Empty State:** Globe icon (48px, gray-300) + "No public job openings available at the moment" text
+- **Loading State:** 3 Skeleton cards (pulse animation)
+
+#### Section 1C: How It Works
+- **Background:** Gradient gray-50 → white (top to bottom)
+- **Padding:** py-16 to py-24
+- **Header (centered):**
+  - **H2:** "How It Works" — zinc-900, bold
+- **Steps Grid:** 3 columns (desktop), 1 (mobile), gap-8
+- **Each Step Card:**
+  - White bg, rounded-2xl, p-6, relative
+  - Hover: shadow-lg with emerald-100 shadow color
+  - **Step Number Badge:** Top-right corner, emerald-50 circle (32px), emerald-700 text, font-bold
+  - **Icon Container:** 48px square, rounded-xl, emerald-50 bg, emerald-600 icon
+  - Hover icon: bg inverts to emerald-600, icon turns white
+  - **Title:** text-lg font-semibold, below icon
+  - **Description:** text-sm, gray-500, below title
+  - **Step 1:** UserPlus icon — "Create Your Profile" — "Sign up and build your professional profile with your skills, experience, and preferences."
+  - **Step 2:** Brain icon — "Get Matched" — "Our AI-powered system matches you with the best job opportunities based on your qualifications."
+  - **Step 3:** Rocket icon — "Get Hired" — "Complete the application process and start your journey to working abroad."
+
+#### Section 1D: Stats / About
+- **Background:** White
+- **Padding:** py-16 to py-24
+- **Header (centered):**
+  - **H2:** "Trusted by Thousands of OFWs" — zinc-900, bold
+  - **Subtitle:** "FIRA is a DMW-licensed recruitment agency with a proven track record of deploying skilled Filipino workers worldwide." — gray-500
+- **Stats Grid:** 4 columns (desktop), 2 (mobile), gap-8, centered
+- **Each Stat:**
+  - **Number:** text-3xl (mobile) to text-5xl (desktop), font-extrabold, emerald-600
+  - **Label:** text-xs (mobile) to text-sm (desktop), gray-500, mt-1
+  - Stat 1: "10,000+" — "OFWs Deployed"
+  - Stat 2: "500+" — "Partner Employers"
+  - Stat 3: "50+" — "Countries Served"
+  - Stat 4: "98%" — "Satisfaction Rate"
+
+#### Section 1E: Footer
+- **Background:** White, border-t gray-100
+- **Padding:** py-8, px-6
+- **Layout:** Flex row (desktop), column (mobile), justify-between, max-w-7xl
+- **Left Column:**
+  - "FIRA" — text-xl, font-bold, emerald-700
+  - "Fil International Recruitment Agency" — text-sm, gray-500, mt-1
+  - "© 2025 FIRA. All rights reserved." — text-xs, gray-400, mt-3
+- **Right Column:**
+  - Badge/pill: outline border-emerald-200, bg-emerald-50/60%, ShieldCheck icon (emerald-600), text "Licensed by DMW" — emerald-700, text-sm
+
+---
+
+### PAGE 2: Auth Modal (Login)
+**Trigger:** Click "Sign In" button on landing/nav
+**Type:** Centered Dialog overlay (dark backdrop, 50% opacity)
+
+- **Dialog Width:** max-w-md (448px), mx-4 (mobile margin)
+- **Dialog:** White bg, rounded-2xl, p-6/p-8
+- **Header:**
+  - **Title:** "Welcome Back" / "Maligayang Pagbabalik" — emerald-700, text-xl, font-bold
+  - **Subtitle:** "Sign in to your FIRA account" / "Mag-sign in sa iyong FIRA account" — gray-500, text-sm
+- **Form Fields:**
+  - **Email:** Label "Email" (text-sm, font-medium), Input (full-width, rounded-lg, border), placeholder "you@email.com"
+  - **Password:** Label "Password" (text-sm, font-medium), Input (full-width, rounded-lg, border, type=password), placeholder "••••••••"
+  - **[Sign In] Button:** Full-width, bg-emerald-600, white text, rounded-lg, h-11, font-semibold, hover:bg-emerald-700
+  - **Loading State:** Button shows Loader2 spinner icon + "Signing in..." text, disabled
+- **Divider:** "or" text centered with horizontal lines on both sides (gray-300)
+- **Demo Accounts Section:**
+  - **Label:** "Quick Login (Demo)" — text-xs, gray-400, uppercase tracking-wider, centered
+  - **4 Buttons in 2x2 Grid:**
+    - [FIRA Admin] — outline, h-9, text-xs, rounded-lg
+    - [Agency] — outline, h-9, text-xs, rounded-lg
+    - [Employer] — outline, h-9, text-xs, rounded-lg
+    - [Applicant] — outline, h-9, text-xs, rounded-lg
+  - Each pre-fills credentials and submits
+- **Footer:** "Don't have an account?" + [Sign Up] link (emerald-600, clickable — switches to Register tab)
+
+### PAGE 3: Auth Modal (Register)
+**Trigger:** Click "Start Your Journey" or "Sign Up" link
+**Type:** Same Dialog, switches via Tabs
+
+- **Tabs:** [Login] [Sign Up] — tab bar at top, active tab has emerald-600 bottom border
+- **Form Fields:**
+  - **Full Name:** Input, placeholder "Juan Dela Cruz"
+  - **Email:** Input (type=email), placeholder "you@email.com"
+  - **Password:** Input (type=password), placeholder "Min. 6 characters", shows helper text "Must be at least 6 characters" (gray-400, text-xs)
+  - **I am a:** Select dropdown with 3 options:
+    - "Applicant / Aplikante" — Looking for jobs abroad
+    - "Agency / Ahensya" — Recruitment agency
+    - "Employer / Empleyado" — Looking to hire workers
+  - **[Sign Up] Button:** Full-width, bg-emerald-600, white text, rounded-lg, h-11, font-semibold
+- **Footer:** "Already have an account?" + [Sign In] link (switches to Login tab)
+
+---
+
+## PORTAL 2: APPLICANT
+**Sidebar Nav Items (4):**
+| Icon | Label (EN) | Label (TL) |
+|------|-----------|-----------|
+| LayoutDashboard | Dashboard | Dashboard |
+| Briefcase | Browse Jobs | Mag-browse ng Jobs |
+| FileText | Applications | Mga Aplikasyon |
+| Users | My Profile | Aking Profile |
+
+---
+
+### PAGE 4: Applicant Dashboard
+**View:** `applicant-dashboard`
+**Layout:** Content area with gray-50 background
+
+- **Page Title:** "Dashboard" / "Dashboard" — text-2xl, font-bold
+- **Stats Row:** 2 cards in a row (desktop), stacked (mobile), gap-4
+  - **Card 1: Active Applications**
+    - Blue-100 icon container (48px), Briefcase icon (blue-700)
+    - Number: large bold (text-2xl)
+    - Label: "Active Applications" / "Mga Aktibong Aplikasyon" — gray-500, text-sm
+  - **Card 2: Profile Completion**
+    - Emerald-100 icon container (48px), CheckCircle icon (emerald-700)
+    - Number: percentage (e.g., "75%")
+    - Label: "Profile Completion" / "Kumpleto ng Profile" — gray-500, text-sm
+- **CTA Buttons Row (2 buttons, gap-4, mt-8):**
+  - [Browse Available Jobs] — bg-emerald-600, white text, rounded-xl, h-14, font-semibold, flex-1
+  - [Complete Your Profile] — outline, emerald-600 text, border-emerald-200, rounded-xl, h-14, font-semibold, flex-1
+- **Recent Applications Section (below CTAs, mt-8):**
+  - **Title:** "Recent Applications" / "Mga Kamakailang Aplikasyon" — text-lg, font-semibold
+  - **List:** Each application shows:
+    - Job title (font-medium)
+    - Company/Agency name (text-sm, gray-500)
+    - Current ATS stage as colored badge
+    - Applied date (text-xs, gray-400)
+  - **Empty State:** FileText icon + "No applications yet" + "Start browsing jobs to find your next opportunity"
+
+### PAGE 5: Applicant — Browse Jobs
+**View:** `applicant-jobs`
+
+- **Page Title:** "Browse Jobs" / "Mag-browse ng Jobs" — text-2xl, font-bold
+- **Search & Filter Bar:**
+  - **Search Input:** Full-width or flex-1, left Search icon, placeholder "Search jobs..." / "Maghanap ng trabaho...", rounded-lg
+  - **Category Select:** Dropdown, "All Categories" / "Lahat ng Kategorya" default, w-48, rounded-lg
+  - Both in a flex row, gap-3
+- **Job Cards Grid:** 3 columns (desktop), 2 (tablet), 1 (mobile), gap-4
+- **Each Job Card (same as landing page cards but in grid):**
+  - White bg, rounded-2xl, border, p-5
+  - Hover: border-emerald-200 + shadow
+  - Category badge (outline, emerald) + Visibility badge (colored)
+  - Title (text-base, font-semibold)
+  - Description (2-line clamp, text-sm, gray-500)
+  - Details: Country (MapPin icon), Salary range (DollarSign icon), Category (Briefcase icon), Vacancies (Users icon)
+  - **[Apply Now] Button:** Full-width, bg-emerald-600, white text, rounded-xl, h-11
+  - **After Applied:** Button changes to "Applied" / "Nag-apply na" — disabled, gray bg, checkmark icon
+- **Empty State:** Briefcase icon + "No jobs found" / "Walang nahanap na trabaho"
+
+### PAGE 6: Applicant — Applications
+**View:** `applicant-applications`
+
+- **Page Title:** "My Applications" / "Mga Aplikasyon Ko" — text-2xl, font-bold
+- **Applications List:** Cards or table rows, each showing:
+  - Job title (font-semibold)
+  - Agency/Employer name
+  - **Current ATS Stage** — colored badge matching stage color
+  - Applied date
+  - Status (pending/accepted/rejected badge)
+- **If Empty:** FileText icon + "You haven't applied to any jobs yet" + [Browse Jobs] CTA button
+
+### PAGE 7: Applicant — Profile
+**View:** `applicant-profile`
+
+- **Page Title:** "My Profile" / "Aking Profile" — text-2xl, font-bold
+- **Edit Toggle:** Top-right [Edit Profile] button (outline, emerald-600) — switches to edit mode where [Save] button appears (bg-emerald-600)
+- **Profile Sections (each in a Card, rounded-2xl, white bg, p-6, mb-6):**
+
+  **Section A: Personal Information**
+  | Field | Type | Grid Span |
+  |-------|------|-----------|
+  | First Name | Text Input | 1 col |
+  | Last Name | Text Input | 1 col |
+  | Middle Name | Text Input | 1 col |
+  | Nickname | Text Input | 1 col |
+  | Date of Birth | Date Picker | 1 col |
+  | Gender | Select (Male/Female) | 1 col |
+  | Civil Status | Select (Single/Married/Widowed/Separated) | 1 col |
+  | Religion | Text Input | 1 col |
+  | Height (cm) | Number Input | 1 col |
+  | Weight (kg) | Number Input | 1 col |
+  | Blood Type | Text Input | 1 col |
+
+  **Section B: Contact Information**
+  | Field | Type | Grid Span |
+  |-------|------|-----------|
+  | Mobile Number | Text Input | 1 col |
+  | Email Address | Text Input | 1 col |
+  | Present Address | Text Input | 2 col (full) |
+  | Permanent Address | Text Input | 2 col (full) |
+
+  **Section C: Emergency Contact**
+  | Field | Type |
+  |-------|------|
+  | Contact Name | Text Input |
+  | Relationship | Text Input |
+  | Phone Number | Text Input |
+
+  **Section D: Identification**
+  | Field | Type |
+  |-------|------|
+  | Passport Number | Text Input |
+  | SSS Number | Text Input |
+  | Pag-IBIG Number | Text Input |
+  | PhilHealth Number | Text Input |
+  | TIN Number | Text Input |
+
+  **Section E: Preferences**
+  | Field | Type | Options |
+  |-------|------|---------|
+  | Preferred Country | Select | 23 countries (see list below) |
+  | Preferred Job Category | Select | 20 categories (see list below) |
+  | Salary Expectation | Number Input | With currency prefix |
+  | Availability Date | Date Picker | — |
+
+  **23 Countries:** Saudi Arabia, UAE, Qatar, Kuwait, Bahrain, Oman, Singapore, Hong Kong, Taiwan, Japan, South Korea, Malaysia, Italy, Spain, United Kingdom, Canada, United States, Australia, New Zealand, Brunei, Israel, Cyprus, Malta
+
+  **20 Job Categories:** Domestic Helper, Caregiver, Nurse, Teacher, Engineer, IT Professional, Accountant, Construction Worker, Welder, Electrician, Driver, Chef/Cook, Hotel Staff, Factory Worker, Sales Representative, Office Staff, Agricultural Worker, Beauty Parlor, Plumber, Other
+
+- **Read-only Cards (below edit form):**
+  - **Skills Card:** Shows selected skills as badges (emerald-100 bg, emerald-700 text, rounded-full)
+  - **Work Experience Card:** List of work experiences
+  - **Languages Card:** Language badges
+  - **Note:** These are placeholders in the current system
+
+---
+
+## PORTAL 3: AGENCY (Admin & Member)
+**Sidebar Nav Items (5):**
+| Icon | Label (EN) | Label (TL) |
+|------|-----------|-----------|
+| LayoutDashboard | Dashboard | Dashboard |
+| Users | Applicants | Mga Aplikante |
+| GitBranch | Pipeline | Pipeline |
+| FileText | Endorsements | Mga Endorsement |
+| Users | Members | Mga Miyembro |
+
+---
+
+### PAGE 8: Agency Dashboard
+**View:** `agency-dashboard`
+
+- **Page Title:** "Agency Dashboard" / "Dashboard ng Ahensya" — text-2xl, font-bold
+- **Stats Row:** 4 cards in a row (desktop), 2x2 (mobile), gap-4
+  - **Card 1: Applicants** — Blue-100 icon bg, Users icon (blue-700), count number, "Applicants" label
+  - **Card 2: Active Jobs** — Emerald-100 icon bg, Briefcase icon (emerald-700), count, "Active Jobs" label
+  - **Card 3: Pending Endorsements** — Amber-100 icon bg, Clock icon (amber-700), count, "Pending Endorsements" label
+  - **Card 4: Pipeline** — Purple-100 icon bg, GitBranch icon (purple-700), count, "In Pipeline" label
+- **Action Bar (mt-8, flex row, gap-3):**
+  - [New Job Order] button — bg-emerald-600, white text, rounded-xl, min-h-44px, font-semibold, Plus icon
+- **Job Orders Section (mt-6):**
+  - **Title:** "Job Orders" / "Mga Job Order" — text-lg, font-semibold
+  - **Job List:** Each job is a card (white, rounded-xl, border, p-4, flex between), showing:
+    - **Left:** Job title (font-semibold) + Country badge + Category badge
+    - **Center:** Vacancies count + Applicants count
+    - **Right:** Visibility Select dropdown (small, h-7, min-w-90px, colored background matching visibility) + ChevronRight arrow (clickable, navigates to Pipeline)
+  - **Click job card → navigates to Pipeline view with that job selected**
+
+#### Create Job Order Dialog (Modal)
+- **Trigger:** [New Job Order] button
+- **Dialog:** max-w-lg, max-h-90vh, overflow-y-auto, white bg, rounded-2xl, p-6
+- **Title:** "Create New Job Order" / "Gumawa ng Bagong Job Order" — emerald-700, font-bold
+- **Description:** "Fill in the details for the new job posting." — gray-500, text-sm
+- **Form Fields:**
+  | Field | Type | Grid | Placeholder |
+  |-------|------|------|-------------|
+  | Job Title | Text Input | 1 col (full) | "e.g., Domestic Helper in Singapore" |
+  | Country | Select | 1 col | 23 countries |
+  | Category | Select | 1 col | 20 categories |
+  | Salary Min | Number Input | 1/3 col | "Min salary" |
+  | Salary Max | Number Input | 1/3 col | "Max salary" |
+  | Vacancies | Number Input | 1/3 col | "Number of positions" |
+  | Contract Duration | Text Input | 1 col (full) | "e.g., 2 years" |
+  | Description | Textarea | 1 col (full) | 3 rows, "Job description..." |
+  | Visibility | Select | 1 col (full) | 3 options with descriptions: |
+- **Visibility Options (with inline descriptions):**
+  - 🟢 Public — "Visible to everyone on the landing page"
+  - 🟡 Agency Only — "Visible only to your agency members"
+  - 🔴 Private — "Hidden from public and applicants"
+- **Dialog Footer:** [Cancel] (outline, right) + [Submit] (bg-emerald-600, right)
+
+### PAGE 9: Agency — Applicants
+**View:** `agency-applicants`
+
+- **Page Title:** "Applicants" / "Mga Aplikante" — text-2xl, font-bold
+- **[Pipeline] Button:** bg-emerald-600, white text — navigates to Pipeline view
+- **Applicants List/Table** (placeholder in current system)
+- Shows all applicants associated with the agency
+
+### PAGE 10: Agency — ATS Pipeline (KANBAN BOARD) ⭐ CENTERPIECE
+**View:** `agency-pipeline`
+**This is the most important view in the entire system.**
+
+#### State 1: Job Selector (no job selected)
+- **Page Title:** "Pipeline" / "Pipeline" — text-2xl, font-bold
+- **Subtitle:** "Select a job order to view the pipeline" / "Pumili ng job order para makita ang pipeline"
+- **Job List:** Grid of job cards (2-3 columns), each showing:
+  - Job title (font-semibold)
+  - Country + Category badges
+  - Applicants count
+  - Click → selects job, transitions to State 2
+
+#### State 2: Pipeline Board (job selected)
+- **Top Bar:**
+  - [← Back arrow] ghost button (left) — deselects job, returns to State 1
+  - Selected Job Title (center, font-semibold)
+- **Board:** Horizontal scrollable (ScrollArea), overflow-x-auto
+- **Column Specifications:**
+  - Each column: `min-w-[260px] w-[260px] flex-shrink-0`
+  - **Column Header:**
+    - Colored dot (10px × 10px, rounded-full, matching stage color)
+    - Stage name (uppercase, text-xs, font-semibold, tracking-wider)
+    - Count badge (if applications exist, small rounded-full pill with count)
+  - **Column Body:** `bg-muted/30` (gray-50/50%), rounded-lg, p-2, min-h-[100px]
+- **Application Card (inside column):**
+  - White bg, rounded-lg, border, p-3
+  - **Applicant Avatar:** Circle (40px), emerald-100 bg, Users icon centered
+  - **Name:** text-sm, font-semibold
+  - **Email:** text-xs, gray-400
+  - **Match Score Bar:** Progress bar below name
+    - Green (>80%), Yellow (60-80%), Red (<60%)
+    - Score percentage text to the right of bar
+- **19 ATS Stage Columns (left to right):**
+
+| # | Stage | Color | Hex |
+|---|-------|-------|-----|
+| 1 | Applied | Blue | `#3b82f6` |
+| 2 | Screening | Violet | `#8b5cf6` |
+| 3 | Interview | Purple | `#a855f7` |
+| 4 | Assessment | Pink | `#ec4899` |
+| 5 | Document Verification | Rose | `#f43f5e` |
+| 6 | Medical Exam | Red | `#ef4444` |
+| 7 | Endorsement | Orange | `#f97316` |
+| 8 | Employer Review | Yellow | `#eab308` |
+| 9 | Accepted | Green | `#22c55e` |
+| 10 | Contract Signing | Emerald | `#10b981` |
+| 11 | Visa Processing | Teal | `#14b8a6` |
+| 12 | Orientation | Cyan | `#06b6d4` |
+| 13 | Deployed | Sky Blue | `#0ea5e9` |
+| 14 | On-Probation | Indigo | `#6366f1` |
+| 15 | Regularized | Violet | `#8b5cf6` |
+| 16 | Contract Renewal | Fuchsia | `#d946ef` |
+| 17 | Repatriation | Slate | `#64748b` |
+| 18 | Contract Completed | Dark Green | `#16a34a` |
+| 19 | Terminated | Dark Red | `#dc2626` |
+
+- **Interaction:** Click application card → opens detail modal (not yet built, but design should accommodate)
+- **Drag & Drop:** Cards should appear draggable between columns (visual affordance: slight shadow on hover, grab cursor)
+
+### PAGE 11: Agency — Endorsements
+**View:** `agency-endorsements`
+
+- **Page Title:** "Endorsements" / "Mga Endorsement" — text-2xl, font-bold
+- **Endorsement Cards List:** Each card (white, rounded-xl, border, p-4), showing:
+  - **Applicant Name** (font-semibold) + role badge
+  - **Job Title** applied for
+  - **Employer** company name
+  - **3 Status Badges (in a row):**
+    1. **Agency Status:** (agency's own status — endorsed/pending)
+    2. **FIRA Status:** (platform admin status — approved/rejected/pending)
+    3. **Employer Status:** (employer response — accepted/declined/pending)
+  - Each status badge uses appropriate color (yellow=pending, green=approved/accepted, red=rejected/declined, blue=endorsed)
+- **Empty State:** FileText icon + "No endorsements yet"
+
+### PAGE 12: Agency — Members
+**View:** `agency-members`
+
+- **Page Title:** "Team Members" / "Mga Miyembro ng Koponan" — text-2xl, font-bold
+- **Members List** (placeholder in current system)
+- Shows agency team members with role, position, contact info
+- **Agency Admin only:** Can add/remove members
+
+---
+
+## PORTAL 4: EMPLOYER
+**Sidebar Nav Items (3):**
+| Icon | Label (EN) | Label (TL) |
+|------|-----------|-----------|
+| LayoutDashboard | Dashboard | Dashboard |
+| FileText | Endorsements | Mga Endorsement |
+| Users | My Profile | Aking Profile |
+
+---
+
+### PAGE 13: Employer Dashboard
+**View:** `employer-dashboard`
+
+- **Page Title:** "Employer Dashboard" / "Dashboard ng Empleyado" — text-2xl, font-bold
+- **Company Name & Badge** (below title): Company name + amber "Employer" badge
+- **Stats Row:** 3 cards, gap-4
+  - **Card 1: Pending** — Amber-100 icon bg, Clock icon, count, "Pending Review" label
+  - **Card 2: Accepted** — Emerald-100 icon bg, CheckCircle icon, count, "Accepted" label
+  - **Card 3: Total** — Blue-100 icon bg, Users icon, count, "Total Endorsements" label
+- **Endorsements Section (mt-8):**
+  - **Title:** "Endorsed Candidates" / "Mga Inendorso na Kandidato" — text-lg, font-semibold
+  - **Endorsement Cards:** Each card (white, rounded-xl, border, p-4), showing:
+    - Applicant name (font-semibold) + blue "Applicant" badge
+    - Job title they applied for
+    - Endorsement date
+    - **If pending:** 2 action buttons in a row:
+      - [Accept Candidate] — bg-emerald-600, white text, min-h-44px, font-semibold, CheckCircle icon
+      - [Decline] — outline, text-red-600, border-red-200, min-h-44px, XCircle icon
+    - **If profile-only:** Alert/info banner: "Profile only — full endorsement pending agency review"
+    - **If accepted:** Green "Accepted" badge, no action buttons
+  - **Empty State:** Users icon + "No endorsed candidates yet"
+
+### PAGE 14: Employer — Endorsements
+**View:** `employer-endorsements`
+
+- Same content as dashboard endorsements section, but as a dedicated full page
+- More detailed view with filtering/sorting options
+
+### PAGE 15: Employer — Profile
+**View:** `employer-profile`
+
+- **Page Title:** "Company Profile" / "Profile ng Kumpanya" — text-2xl, font-bold
+- **Profile Card (white, rounded-2xl, p-6):**
+  - **Avatar:** Large circle (64-80px), emerald-100 bg, Building2 icon
+  - **Name:** text-xl, font-semibold
+  - **Email:** text-sm, gray-500
+  - **Role Badge:** amber "Employer" badge
+- **Company Details Form (editable):**
+  - Company Name, Address, Industry, Contact Person, Email, Phone, Website
+- **[Edit Profile] / [Save] button** toggle
+
+---
+
+## PORTAL 5: FIRA ADMIN (Platform Admin)
+**Sidebar Nav Items (6):**
+| Icon | Label (EN) | Label (TL) |
+|------|-----------|-----------|
+| LayoutDashboard | Dashboard | Dashboard |
+| Building2 | Agencies | Mga Ahensya |
+| Globe | Employers | Mga Empleyado |
+| Briefcase | Job Orders | Mga Job Order |
+| Star | AI Matching | AI Pag-match |
+| FileText | Endorsements | Mga Endorsement |
+
+---
+
+### PAGE 16: FIRA Dashboard
+**View:** `fira-dashboard`
+
+- **Page Title:** "FIRA Dashboard" / "Dashboard ng FIRA" — text-2xl, font-bold
+- **Stats Row:** 4 cards, gap-4
+  - **Card 1: Pending Approvals** — Amber-100 icon bg, Shield icon (amber-700), count, "Pending Approvals"
+  - **Card 2: Agencies** — Blue-100 icon bg, Building2 icon (blue-700), count, "Total Agencies"
+  - **Card 3: Employers** — Purple-100 icon bg, Globe icon (purple-700), count, "Total Employers"
+  - **Card 4: Job Orders** — Emerald-100 icon bg, Briefcase icon (emerald-700), count, "Total Job Orders"
+- **2-Column Grid (mt-8, gap-6):**
+
+  **Left Column: Pending Agency Approvals**
+  - **Title:** "Pending Agency Approvals" — text-lg, font-semibold
+  - **List:** Each pending agency as a card/row showing:
+    - Agency name (font-semibold)
+    - License number
+    - Owner name
+    - [Approve] button — bg-emerald-600, text-white, sm size
+  - **[View All Agencies] link** — ghost button, sm, bottom of section
+
+  **Right Column: Pending Employer Approvals**
+  - **Title:** "Pending Employer Approvals" — text-lg, font-semibold
+  - **List:** Each pending employer as a card/row showing:
+    - Company name (font-semibold)
+    - Industry
+    - Contact person
+    - [Approve] button — bg-emerald-600, text-white, sm size
+  - **[View All Employers] link** — ghost button, sm, bottom of section
+
+### PAGE 17: FIRA — Agencies
+**View:** `fira-agencies`
+
+- **Page Title:** "Agencies" / "Mga Ahensya" — text-2xl, font-bold
+- **Search Bar:** Input with Search icon, placeholder "Search agencies..." / "Maghanap ng ahensya..."
+- **Agencies Grid/List:** Each agency card (white, rounded-xl, border, p-4), showing:
+  - Agency name (font-semibold, text-lg)
+  - License number (text-sm, gray-500)
+  - Address (text-sm, gray-500)
+  - Owner name + purple badge
+  - Member count + Applicant count + Job count
+  - **Status Badge:** Green "Approved" / Yellow "Pending"
+  - **Action Button:** [Approve] (emerald-600) OR [Reject] (outline, text-red-600) — toggles based on current status
+- **Loading:** Skeleton cards with pulse animation
+
+### PAGE 18: FIRA — Employers
+**View:** `fira-employers`
+
+- **Page Title:** "Employers" / "Mga Empleyado" — text-2xl, font-bold
+- **Search Bar:** Input with Search icon
+- **Employers Grid/List:** Each employer card (white, rounded-xl, border, p-4), showing:
+  - Company name (font-semibold, text-lg)
+  - Country (MapPin icon)
+  - Contact person + email (text-sm, gray-500)
+  - Endorsement count + Job count
+  - **Status Badge:** Green "Approved" / Yellow "Pending"
+  - **Action Button:** [Approve] (emerald-600) OR [Reject] (outline, text-red-600)
+
+### PAGE 19: FIRA — Job Orders
+**View:** `fira-job-orders`
+
+- **Page Title:** "Job Orders" / "Mga Job Order" — text-2xl, font-bold
+- **Full list of all job orders across all agencies**
+- Each job card shows: title, agency, employer, country, category, visibility badge, status, applicant count
+- Filterable by agency, country, status, visibility
+
+### PAGE 20: FIRA — AI Matching
+**View:** `fira-matching`
+
+- **Page Title:** "AI Matching" / "AI Pag-match" — text-2xl, font-bold
+- **Control Bar (flex row, gap-3):**
+  - **Job Order Select:** Dropdown (w-64), lists all open job orders, placeholder "Select a job order..."
+  - **[Find Matches] Button:** bg-emerald-600, white text, rounded-xl, min-h-44px, font-semibold, Sparkles icon
+- **Results Section (after clicking Find Matches):**
+  - **Title:** "Match Results for: [Job Title]" — text-lg, font-semibold
+  - **Results Grid:** 2-3 columns, gap-4
+  - **Each Match Card:**
+    - White bg, rounded-xl, border, p-4
+    - **TOP MATCH HIGHLIGHT:** If score > 80% and #1 rank: emerald-500 ring (3px solid), "Top Match" badge (emerald-100 bg, emerald-700 text)
+    - **Applicant Name** (font-semibold)
+    - **Match Score:** Large number (text-2xl) + % + Progress bar
+      - Score > 80%: emerald-500 progress bar, emerald-600 text
+      - Score 60-80%: amber-500 progress bar, amber-600 text
+      - Score < 60%: red-500 progress bar, red-600 text
+    - **Match Details (3 badges in a row):**
+      - 🌍 Country Match: "Matched" (green) / "Different" (gray)
+      - 📋 Category Match: "Matched" (green) / "Different" (gray)
+      - ⭐ Skill Count: "X skills matched" (emerald text)
+- **Empty State (before search):** Sparkles icon + "Select a job order and click Find Matches to see AI-powered candidate recommendations"
+
+### PAGE 21: FIRA — Endorsements
+**View:** `fira-endorsements`
+
+- **Page Title:** "Endorsements" / "Mga Endorsement" — text-2xl, font-bold
+- **Full list of all endorsements across the platform**
+- Each endorsement shows: applicant, job, agency, employer, 3 status columns (Agency/FIRA/Employer)
+- FIRA Admin can approve/reject at the FIRA level
+
+---
+
+## 📋 COMPLETE REFERENCE TABLES
+
+### All 20 Job Categories
+| Value | English | Tagalog |
+|-------|---------|---------|
+| domestic_helper | Domestic Helper | Katulong/Pambahay |
+| caregiver | Caregiver | Tagapangalaga |
+| nurse | Nurse | Nars |
+| teacher | Teacher | Guro |
+| engineer | Engineer | Inhenyero |
+| it_professional | IT Professional | IT Propesyonál |
+| accountant | Accountant | Akawtant |
+| construction_worker | Construction Worker | Manggagawa sa Konstruksyon |
+| welder | Welder | Welder |
+| electrician | Electrician | Elektrisyan |
+| driver | Driver | Drayber |
+| chef_cook | Chef/Cook | Kusinero |
+| hotel_staff | Hotel Staff | Kawani ng Hotel |
+| factory_worker | Factory Worker | Manggagawa sa Pabrika |
+| sales_representative | Sales Representative | Sales Representative |
+| office_staff | Office Staff | Kawani sa Opisina |
+| agricultural_worker | Agricultural Worker | Manggagawa sa Agrikultura |
+| beauty_parlor | Beauty Parlor | Parlor/Panggagawa ng Ganda |
+| plumber | Plumber | Plumbero |
+| other | Other | Iba pa |
+
+### All 23 Destination Countries
+Saudi Arabia, United Arab Emirates, Qatar, Kuwait, Bahrain, Oman, Singapore, Hong Kong, Taiwan, Japan, South Korea, Malaysia, Italy, Spain, United Kingdom, Canada, United States, Australia, New Zealand, Brunei, Israel, Cyprus, Malta
+
+### All 19 ATS Pipeline Stages with Colors
+| # | Stage | Hex Color | Color Name |
+|---|-------|-----------|------------|
+| 1 | Applied | `#3b82f6` | Blue |
+| 2 | Screening | `#8b5cf6` | Violet |
+| 3 | Interview | `#a855f7` | Purple |
+| 4 | Assessment | `#ec4899` | Pink |
+| 5 | Document Verification | `#f43f5e` | Rose |
+| 6 | Medical Exam | `#ef4444` | Red |
+| 7 | Endorsement | `#f97316` | Orange |
+| 8 | Employer Review | `#eab308` | Yellow |
+| 9 | Accepted | `#22c55e` | Green |
+| 10 | Contract Signing | `#10b981` | Emerald |
+| 11 | Visa Processing | `#14b8a6` | Teal |
+| 12 | Orientation | `#06b6d4` | Cyan |
+| 13 | Deployed | `#0ea5e9` | Sky Blue |
+| 14 | On-Probation | `#6366f1` | Indigo |
+| 15 | Regularized | `#8b5cf6` | Violet |
+| 16 | Contract Renewal | `#d946ef` | Fuchsia |
+| 17 | Repatriation | `#64748b` | Slate |
+| 18 | Contract Completed | `#16a34a` | Dark Green |
+| 19 | Terminated | `#dc2626` | Dark Red |
+
+### Skill Categories (for Applicant Profile)
+| Category | EN | TL | Skills |
+|----------|----|----|--------|
+| Childcare | Childcare | Pangangalaga ng Bata | Infant Care, Childcare (2-6y), Childcare (7-12y), Childcare (13+y), Special Needs Care, Tutoring, Babysitting |
+| Cooking | Cooking | Pagluluto | Filipino Cuisine, Chinese Cuisine, Western Cuisine, Middle Eastern Cuisine, Japanese/Korean Cuisine, Baking, Meal Planning, Food Preservation |
+| Housekeeping | Housekeeping | Pangangalaga sa Bahay | General Housekeeping, Laundry & Ironing, Carpet Cleaning, Garden Maintenance, Pet Care, Organizing & Decluttering |
+| Elderly Care | Elderly Care | Pangangalaga sa Matanda | Companionship, Personal Hygiene Assistance, Medication Management, Mobility Assistance, Dementia Care, Palliative Care |
+| Skilled | Skilled/Professional | Skilled/Propesyonál | Nursing, Engineering, IT/Technology, Teaching, Accounting, Construction, Welding, Electrical Work, Plumbing, Driving, Office Administration, Hospitality |
+| Other | Other Skills | Ibang Kakayahan | First Aid, Swimming, Sewing, Gardening, Hairdressing, Massage Therapy |
+
+### Application Form Steps (Multi-step form, future feature)
+| Step | Icon | EN | TL |
+|------|------|----|----|
+| 1 | User | Personal Info | Impormasyon sa Pansarili |
+| 2 | Users | Family Background | Background ng Pamilya |
+| 3 | GraduationCap | Education | Edukasyon |
+| 4 | Briefcase | Work Experience | Karanasan sa Trabaho |
+| 5 | Star | Skills | Kakayahan |
+| 6 | Globe | Languages | Mga Wika |
+| 7 | Award | Certifications | Sertipikasyon |
+| 8 | FileText | Documents | Mga Dokumento |
+| 9 | BookOpen | References | Mga Sanggunian |
+| 10 | Heart | Preferences | Kagustuhan |
+| 11 | CheckCircle | Review & Submit | Surin at Isumite |
+
+---
+
+## 📱 RESPONSIVE BEHAVIOR RULES
+
+### Mobile (375px - 639px)
+- Top nav: Logo + hamburger (☰) only. Nav links, bell, language toggle hidden inside Sheet
+- Sidebar: Hidden. Opens as left Sheet (w-72, slide from left) on hamburger click
+- Content: Full-width, single column
+- Stat cards: 2 per row (grid-cols-2)
+- Job cards: 1 per row (grid-cols-1)
+- Kanban pipeline: Horizontal scroll, columns are 260px fixed width, scroll left-right
+- Forms: All fields full-width (grid-cols-1)
+- Hero: H1 = 36px, subtitle = 16px
+- Buttons: Full-width on mobile
+
+### Tablet (640px - 1023px)
+- Top nav: Some nav links visible, hamburger for overflow
+- Stat cards: 2-3 per row
+- Job cards: 2 per row
+- Kanban: Still horizontally scrollable
+- Forms: 2-column grids where applicable
+
+### Desktop (1024px+)
+- Full layout: Top nav + visible nav links + content area
+- Stat cards: 4 per row
+- Job cards: 3 per row
+- Kanban: All 19 columns visible with horizontal scroll
+- Forms: Multi-column grids
+
+---
+
+## 🔔 NOTIFICATION SYSTEM (UI Placeholder)
+
+- **Bell Icon:** Top-right of nav bar, ghost button
+- **Badge:** Red dot (8px) on bell when unread notifications exist
+- **Dropdown/Panel:** Click bell → shows notification list (not yet built, but design should show:)
+  - Each notification: icon, title, message preview, time ago, read/unread state
+  - "Mark all as read" button
+  - "View all notifications" link
+
+---
+
+## 🌐 BILINGUAL (i18n) NOTES
+
+- Every text element has both English (EN) and Tagalog (TL) versions
+- Language toggle is in the top nav (Globe icon + "EN"/"TL" text)
+- Toggle is instant — no page reload
+- Design should accommodate text length differences (Tagalog is often longer)
+- Navigation labels, button text, form labels, placeholders, section titles, empty states, loading states — ALL have translations
+- Badge/status text may remain in English (e.g., stage names, role names)
+
+---
+
+## 🎨 FIGMA FRAME SPECIFICATIONS
+
+### Recommended Figma File Structure
+```
+📁 FIRA Design System
+  📄 🎨 Color Tokens
+  📄 ✏️ Typography
+  📄 📐 Spacing & Radius
+  📄 🌓 Shadows
+  📁 Components
+    📄 Button (Primary, Outline, Ghost, Danger)
+    📄 Input Field
+    📄 Select Dropdown
+    📄 Badge (Status, Role, Visibility)
+    📄 Card (Stat, Job, Application, Endorsement)
+    📄 Dialog/Modal
+    📄 Sheet (Mobile Sidebar)
+    📄 Dropdown Menu
+    📄 Progress Bar (Match Score)
+    📄 Skeleton Loader
+    📄 Avatar
+    📄 Nav Link
+    📄 Tabs
+  📁 Icons (Lucide set)
+📁 Pages
+  📁 01 - Public
+    📄 Landing Page (Desktop)
+    📄 Landing Page (Mobile)
+    📄 Login Modal
+    📄 Register Modal
+  📁 02 - Applicant Portal
+    📄 Dashboard
+    📄 Browse Jobs
+    📄 My Applications
+    📄 My Profile (View Mode)
+    📄 My Profile (Edit Mode)
+  📁 03 - Agency Portal
+    📄 Dashboard
+    📄 Applicants
+    📄 Pipeline - Job Selector
+    📄 Pipeline - Kanban Board (Desktop)
+    📄 Pipeline - Kanban Board (Mobile)
+    📄 Endorsements
+    📄 Members
+    📄 Create Job Order Modal
+  📁 04 - Employer Portal
+    📄 Dashboard
+    📄 Endorsements
+    📄 Company Profile
+  📁 05 - FIRA Admin Portal
+    📄 Dashboard
+    📄 Agencies
+    📄 Employers
+    📄 Job Orders
+    📄 AI Matching (Empty State)
+    📄 AI Matching (With Results)
+    📄 Endorsements
+```
+
+### Frame Sizes
+| Frame | Width | Height |
+|-------|-------|--------|
+| Mobile | 375px | Auto (scrollable) |
+| Tablet | 768px | Auto (scrollable) |
+| Desktop | 1440px | Auto (scrollable) |
+| Wide Desktop | 1920px | Auto (scrollable) |
+
+---
+
+## ✅ CHECKLIST — WHAT TO DESIGN
+
+### Global Components (Design Once, Reuse)
+- [ ] Top Navigation Bar (authenticated + unauthenticated states)
+- [ ] Mobile Navigation Sheet (left slide-out)
+- [ ] User Dropdown Menu
+- [ ] Language Toggle Button
+- [ ] Notification Bell + Badge
+- [ ] Sidebar Navigation (per role: 4/5/3/6 items)
+- [ ] Auth Modal — Login Tab
+- [ ] Auth Modal — Register Tab
+- [ ] Button variants (Primary emerald, Outline, Ghost, Danger red)
+- [ ] Input fields (text, email, password, number, date, textarea)
+- [ ] Select dropdowns
+- [ ] Badges (Role: 5 colors, Status: 5 colors, Visibility: 3 colors)
+- [ ] Stat Card (icon + number + label)
+- [ ] Job Card (with all variations: landing, browse, agency list)
+- [ ] Application Card
+- [ ] Endorsement Card
+- [ ] Agency Card (FIRA admin view)
+- [ ] Employer Card (FIRA admin view)
+- [ ] Match Score Card (with progress bar)
+- [ ] Progress Bar (green/yellow/red variants)
+- [ ] Skeleton Loader
+- [ ] Empty State (with icon + text + optional CTA)
+- [ ] Loading Spinner (Loader2)
+
+### Pages — Public (3 unique screens)
+- [ ] Landing Page — Hero Section
+- [ ] Landing Page — Featured Jobs Section
+- [ ] Landing Page — How It Works Section
+- [ ] Landing Page — Stats Section
+- [ ] Landing Page — Footer
+- [ ] Login Modal (full design)
+- [ ] Register Modal (full design)
+
+### Pages — Applicant Portal (5 views)
+- [ ] Applicant Dashboard (with stats + CTAs + recent applications)
+- [ ] Browse Jobs (search + filter + job card grid)
+- [ ] My Applications (list with stage badges)
+- [ ] My Profile — View Mode (all 5 sections, read-only)
+- [ ] My Profile — Edit Mode (all form fields editable)
+
+### Pages — Agency Portal (6 views + 1 modal)
+- [ ] Agency Dashboard (stats + job list with visibility dropdown)
+- [ ] Applicants List
+- [ ] Pipeline — Job Selector State
+- [ ] Pipeline — Kanban Board (ALL 19 stage columns with cards)
+- [ ] Endorsements (with 3-status badges)
+- [ ] Team Members
+- [ ] Create Job Order Modal
+
+### Pages — Employer Portal (3 views)
+- [ ] Employer Dashboard (stats + endorsed candidates with Accept/Decline)
+- [ ] Endorsements (full page)
+- [ ] Company Profile
+
+### Pages — FIRA Admin Portal (6 views)
+- [ ] FIRA Dashboard (stats + pending approvals 2-column)
+- [ ] Agencies (search + list with approve/reject)
+- [ ] Employers (search + list with approve/reject)
+- [ ] Job Orders (all jobs across agencies)
+- [ ] AI Matching — Empty State
+- [ ] AI Matching — With Results (score cards, top match highlight)
+- [ ] Endorsements (full platform view)
+
+### Responsive Variants (Mobile + Desktop for each)
+- [ ] All pages should have mobile (375px) and desktop (1440px) variants
+- [ ] Kanban board must show horizontal scroll on mobile
+- [ ] Navigation must show hamburger → Sheet on mobile
+
+---
+
+## 🎯 KEY DESIGN PRINCIPLES
+
+1. **Emerald green is the DNA** — Every primary action, active state, and brand element uses emerald
+2. **White content on light gray** — Content area is always white cards on gray-50 background
+3. **Mobile-first** — Design at 375px first, then scale up
+4. **Clean and minimal** — Generous whitespace, no clutter, Facebook/Messenger-inspired simplicity
+5. **Status colors tell the story** — Yellow=pending/waiting, Green=approved/success, Red=rejected/error, Blue=info/in-progress
+6. **The Kanban board is the hero** — Agency Pipeline should be the most visually impressive page
+7. **Bilingual by default** — Every text element exists in both EN and TL
+8. **Cards with subtle borders** — No heavy shadows at rest; shadows appear on hover
+9. **Rounded corners everywhere** — 10px minimum radius, 16px for cards, full-round for badges/avatars
+10. **Lucide icons only** — Consistent icon style throughout

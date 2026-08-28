@@ -26,7 +26,7 @@ export function EmployerJobsPage() {
   return (
     <div className="view-transition space-y-6 pb-8">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Mga Trabaho' : 'My Jobs'}</h1>
+        <h1 className="text-4xl font-bold leading-tight tracking-tight">{language === 'fil' ? 'Mga Trabaho' : 'My Jobs'}</h1>
         <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Mga job order na nauugnay sa iyo' : 'Job orders linked to you'}</p>
       </div>
 

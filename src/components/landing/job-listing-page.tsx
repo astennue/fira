@@ -87,7 +87,7 @@ export function JobListingPage() {
             <ArrowLeft className="h-4 w-4" />
             {language === 'fil' ? 'Bumalik' : 'Back'}
           </button>
-          <h1 className="text-2xl md:text-3xl font-bold">
+          <h1 className="text-4xl font-bold leading-tight tracking-tight">
             {language === 'fil' ? 'Maghanap ng Trabaho' : 'Find Jobs'}
           </h1>
           <p className="text-muted-foreground mt-1">

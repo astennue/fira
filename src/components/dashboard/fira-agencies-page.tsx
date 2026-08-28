@@ -56,7 +56,7 @@ export function FiraAgenciesPage() {
   return (
     <div className="view-transition space-y-6 pb-8">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Mga Ahensya' : 'Agencies'}</h1>
+        <h1 className="text-4xl font-bold leading-tight tracking-tight">{language === 'fil' ? 'Mga Ahensya' : 'Agencies'}</h1>
         <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Pamahalaan at i-approve ang mga ahensya' : 'Manage and approve agencies'}</p>
       </div>
 
@@ -100,14 +100,14 @@ export function FiraAgenciesPage() {
                   <div className="flex items-center gap-2 shrink-0">
                     {!agency.isApproved ? (
                       <>
-                        <Badge variant="secondary" className="text-xs text-amber-600"><Clock className="h-3 w-3 mr-1" />Pending</Badge>
+                        <Badge variant="secondary" className="text-xs text-amber-600"><Clock className="h-3 w-3 " />Pending</Badge>
                         <Button size="sm" onClick={() => approveMutation.mutate({ agencyId: agency.id, action: 'approve' })} disabled={approveMutation.isPending}>
-                          {approveMutation.isPending ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <CheckCircle className="h-3.5 w-3.5 mr-1" />}{language === 'fil' ? 'Aprubahan' : 'Approve'}
+                          {approveMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle className="h-3.5 w-3.5 " />}{language === 'fil' ? 'Aprubahan' : 'Approve'}
                         </Button>
                       </>
                     ) : (
-                      <Badge className="text-xs bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
-                        <Shield className="h-3 w-3 mr-1" />Approved
+                      <Badge className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                        <Shield className="h-3 w-3 " />Approved
                       </Badge>
                     )}
                   </div>

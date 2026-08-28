@@ -80,7 +80,7 @@ export function ApplicantJobsPage() {
   return (
     <div className="view-transition space-y-6 pb-8">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Maghanap ng Trabaho' : 'Find Jobs'}</h1>
+        <h1 className="text-4xl font-bold leading-tight tracking-tight">{language === 'fil' ? 'Maghanap ng Trabaho' : 'Find Jobs'}</h1>
         <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Mag-browse at mag-apply sa mga trabaho' : 'Browse and apply for job openings'}</p>
       </div>
 

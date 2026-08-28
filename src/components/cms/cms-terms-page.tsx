@@ -88,7 +88,7 @@ export function CmsTermsPage() {
   return (
     <div className="view-transition space-y-6 pb-8">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">{L('Terms & Privacy', 'Mga Tuntunin at Privacy')}</h1>
+        <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground">{L('Terms & Privacy', 'Mga Tuntunin at Privacy')}</h1>
         <p className="text-muted-foreground text-sm">{L('Edit Terms of Service and Data Privacy Consent', 'I-edit ang Mga Tuntunin ng Serbisyo at Patakaran sa Privacy')}</p>
       </div>
 
@@ -139,7 +139,7 @@ export function CmsTermsPage() {
                 </div>
                 <div className="flex justify-end">
                   <Button onClick={() => saveTermsMutation.mutate()} disabled={saveTermsMutation.isPending} className="rounded-xl">
-                    {saveTermsMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveTermsMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save Changes', 'I-save ang mga Pagbabago')}
+                    {saveTermsMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {saveTermsMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save Changes', 'I-save ang mga Pagbabago')}
                   </Button>
                 </div>
               </CardContent>
@@ -177,7 +177,7 @@ export function CmsTermsPage() {
                 </div>
                 <div className="flex justify-end">
                   <Button onClick={() => savePrivacyMutation.mutate()} disabled={savePrivacyMutation.isPending} className="rounded-xl">
-                    {savePrivacyMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {savePrivacyMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save Changes', 'I-save ang mga Pagbabago')}
+                    {savePrivacyMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {savePrivacyMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save Changes', 'I-save ang mga Pagbabago')}
                   </Button>
                 </div>
               </CardContent>

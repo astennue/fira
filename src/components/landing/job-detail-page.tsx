@@ -111,7 +111,7 @@ export function JobDetailPage() {
               <Badge>{job.category?.replace(/_/g, ' ')}</Badge>
               {job.status && <Badge variant="outline" className="capitalize">{job.status}</Badge>}
             </div>
-            <h1 className="text-2xl md:text-3xl font-bold">{job.title}</h1>
+            <h1 className="text-4xl font-bold leading-tight tracking-tight">{job.title}</h1>
             <div className="flex flex-wrap items-center gap-4 mt-2 text-muted-foreground">
               <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" />{job.city ? `${job.city}, ` : ''}{job.country}</span>
               {job.duration && <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" />{job.duration}</span>}
@@ -200,13 +200,13 @@ export function JobDetailPage() {
           {isApplicant && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="sticky bottom-4">
               {applied ? (
-                <Button size="lg" className="w-full h-14 text-base font-semibold shadow-lg bg-emerald-600 hover:bg-emerald-700" disabled>
-                  <CheckCheck className="mr-2 h-5 w-5" />
+                <Button size="lg" className="w-full h-14 text-base font-semibold shadow-lg bg-green-600 hover:bg-green-700" disabled>
+                  <CheckCheck className="h-5 w-5" />
                   {language === 'fil' ? 'Na-apply Ka Na!' : 'Already Applied!'}
                 </Button>
               ) : (
                 <Button size="lg" className="w-full h-14 text-base font-semibold shadow-lg" disabled={isApplying} onClick={handleApply}>
-                  <Send className="mr-2 h-5 w-5" />
+                  <Send className="h-5 w-5" />
                   {isApplying ? (language === 'fil' ? 'Nagsusumite...' : 'Submitting...') : (language === 'fil' ? 'Mag-apply sa Trabahong Ito' : 'Apply for This Job')}
                 </Button>
               )}

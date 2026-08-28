@@ -110,7 +110,7 @@ export function AccessibilityToolbar() {
     }
   }, [dyslexiaFont, highContrast, lineHeight, letterSpacing, largeCursors, reduceAnimations, readingRuler, fontSize])
 
-  /* ── Text-to-speech on selection ────────────────── */
+  /* ── Text-on selection ────────────────── */
   useEffect(() => {
     if (!textToSpeech) return
     const handleSelection = () => {
@@ -157,8 +157,8 @@ export function AccessibilityToolbar() {
 
       {/* ── Panel ── */}
       {accessibilityOpen && (
-        <div className="fixed bottom-16 right-3 sm:right-5 z-[150] w-[320px] max-h-[80vh] overflow-y-auto rounded-2xl border bg-card shadow-2xl">
-          <div className="sticky top-0 z-10 bg-card border-b px-4 py-3 rounded-t-2xl">
+        <div className="fixed bottom-16 right-3 sm:right-5 z-[150] w-[320px] max-h-[80vh] overflow-y-auto rounded-xl border bg-card shadow-lg">
+          <div className="sticky top-0 z-10 bg-card border-b px-4 py-3 rounded-t-xl">
             <div className="flex items-center gap-2">
               <Accessibility className="h-5 w-5 text-blue-600" />
               <h3 className="font-semibold text-base">Accessibility</h3>

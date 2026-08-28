@@ -25,24 +25,24 @@ export function AgencyEndorsementsPage() {
 
   const statusConfig: Record<string, { color: string; icon: any; label: string }> = {
     pending_fira_review: { color: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400', icon: Clock, label: 'Pending FIRA Review' },
-    fira_approved: { color: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400', icon: CheckCircle, label: 'FIRA Approved' },
+    fira_approved: { color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400', icon: CheckCircle, label: 'FIRA Approved' },
     fira_rejected: { color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400', icon: XCircle, label: 'FIRA Rejected' },
     pending_employer_review: { color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400', icon: Clock, label: 'Pending Employer' },
-    employer_accepted: { color: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400', icon: CheckCircle, label: 'Accepted by Employer' },
+    employer_accepted: { color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400', icon: CheckCircle, label: 'Accepted by Employer' },
     employer_declined: { color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400', icon: XCircle, label: 'Declined by Employer' },
   }
 
   return (
     <div className="view-transition space-y-6 pb-8">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Mga Endorso' : 'Endorsements'}</h1>
+        <h1 className="text-4xl font-bold leading-tight tracking-tight">{language === 'fil' ? 'Mga Endorso' : 'Endorsements'}</h1>
         <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Subaybayan ang mga endorsement' : 'Track endorsement progress'}</p>
       </div>
 
       {isLoading ? (
         <div className="space-y-3">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-xl" />)}</div>
       ) : endorsements.length === 0 ? (
-        <Card className="p-8 text-center"><Send className="h-12 w-12 text-muted-foreground mx-auto mb-3" /><p className="text-muted-foreground">{language === 'fil' ? 'Wala pang endorsement.' : 'No endorsements yet.'}</p></Card>
+        <Card className="py-12 px-4 text-center"><Send className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" /><p className="text-lg font-medium text-foreground">{language === 'fil' ? 'Wala pang endorsement.' : 'No endorsements yet.'}</p></Card>
       ) : (
         <div className="space-y-4 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar">
           {endorsements.map((e: any, i: number) => {
@@ -69,7 +69,7 @@ export function AgencyEndorsementsPage() {
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <Badge className={`text-xs ${cfg.color}`}>
-                          <StatusIcon className="h-3 w-3 mr-1" />{cfg.label}
+                          <StatusIcon className="h-3 w-3 " />{cfg.label}
                         </Badge>
                       </div>
                     </div>

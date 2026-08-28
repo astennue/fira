@@ -33,7 +33,7 @@ export function FiraEmployersPage() {
   return (
     <div className="view-transition space-y-6 pb-8">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Mga Empleyador' : 'Employers'}</h1>
+        <h1 className="text-4xl font-bold leading-tight tracking-tight">{language === 'fil' ? 'Mga Empleyador' : 'Employers'}</h1>
         <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Listahan ng mga foreign employer' : 'List of foreign employers'}</p>
       </div>
 
@@ -69,7 +69,7 @@ export function FiraEmployersPage() {
                     <Badge variant="outline" className="text-xs capitalize shrink-0">
                       {u.isApproved
                         ? (language === 'fil' ? 'Na-approve' : 'Approved')
-                        : <span className="text-amber-600"><Clock className="h-3 w-3 inline mr-1" />{language === 'fil' ? 'Pending' : 'Pending'}</span>
+                        : <span className="text-amber-600"><Clock className="h-3 w-3 inline " />{language === 'fil' ? 'Pending' : 'Pending'}</span>
                       }
                     </Badge>
                   </CardContent>

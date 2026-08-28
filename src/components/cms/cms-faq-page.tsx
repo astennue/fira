@@ -305,16 +305,16 @@ export function CmsFaqPage() {
 
   const categoryColorMap: Record<string, string> = {
     General: 'bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',
-    'For Applicants': 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
-    'For Employers': 'bg-violet-100 dark:bg-violet-950/50 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-800',
+    'For Applicants': 'bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-300 border-green-100 dark:border-green-700',
+    'For Employers': 'bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',
     Deployment: 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
-    Documents: 'bg-cyan-100 dark:bg-cyan-950/50 text-cyan-700 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800',
+    Documents: 'bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',
     'Fees & Payments': 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',
     Other: 'bg-muted text-muted-foreground border-border',
   }
 
   const getCategoryStyle = (category: string) => {
-    return categoryColorMap[category] || 'bg-sky-100 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800'
+    return categoryColorMap[category] || 'bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800'
   }
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -324,7 +324,7 @@ export function CmsFaqPage() {
       {/* ─── Header ─────────────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-700 to-sky-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold leading-tight tracking-tight bg-gradient-to-r from-blue-700 to-sky-600 bg-clip-text text-transparent">
             {t('FAQ Management')}
           </h1>
           <p className="text-muted-foreground text-sm">
@@ -333,9 +333,9 @@ export function CmsFaqPage() {
         </div>
         <Button
           onClick={openNew}
-          className="rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 shadow-md shadow-blue-500/20 transition-all"
+          className="bg-primary hover:bg-primary/90 rounded-md shadow-md shadow-blue-500/20 transition-all"
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="h-4 w-4" />
           {L('Add FAQ', 'Magdagdag ng FAQ')}
         </Button>
       </div>
@@ -351,13 +351,13 @@ export function CmsFaqPage() {
             <p className="text-xl font-bold text-blue-800 mt-1">{faqs.length}</p>
           </CardContent>
         </Card>
-        <Card className="bg-emerald-50 dark:bg-emerald-950/30 border-border dark:border-emerald-900/30">
+        <Card className="bg-green-50 dark:bg-green-950/30 border-border dark:border-green-900/30">
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <HelpCircle className="h-4 w-4 text-emerald-500" />
-              <span className="text-xs text-emerald-600 font-medium">{L('Active', 'Aktibo')}</span>
+              <HelpCircle className="h-4 w-4 text-green-500" />
+              <span className="text-xs text-green-600 font-medium">{L('Active', 'Aktibo')}</span>
             </div>
-            <p className="text-xl font-bold text-emerald-800 mt-1">
+            <p className="text-xl font-bold text-green-700 mt-1">
               {faqs.filter((f) => f.isActive).length}
             </p>
           </CardContent>
@@ -371,13 +371,13 @@ export function CmsFaqPage() {
             <p className="text-xl font-bold text-amber-800 mt-1">{categories.length}</p>
           </CardContent>
         </Card>
-        <Card className="bg-violet-50 dark:bg-violet-950/30 border-border dark:border-violet-900/30">
+        <Card className="bg-blue-50 dark:bg-blue-950/30 border-border dark:border-blue-900/30">
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <GripVertical className="h-4 w-4 text-violet-500" />
-              <span className="text-xs text-violet-600 font-medium">{L('Showing', 'Ipinapakita')}</span>
+              <GripVertical className="h-4 w-4 text-blue-500" />
+              <span className="text-xs text-blue-600 font-medium">{L('Showing', 'Ipinapakita')}</span>
             </div>
-            <p className="text-xl font-bold text-violet-800 mt-1">{filteredFaqs.length}</p>
+            <p className="text-xl font-bold text-blue-800 mt-1">{filteredFaqs.length}</p>
           </CardContent>
         </Card>
       </div>
@@ -402,7 +402,7 @@ export function CmsFaqPage() {
           )}
         </div>
         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-          <SelectTrigger className="w-full sm:w-[200px] rounded-xl border-border dark:border-blue-900/30">
+          <SelectTrigger className="w-full sm:w-[200px] rounded-md border-border dark:border-blue-900/30">
             <SelectValue placeholder={L('All Categories', 'Lahat ng Kategorya')} />
           </SelectTrigger>
           <SelectContent>
@@ -437,9 +437,9 @@ export function CmsFaqPage() {
               <Button
                 onClick={openNew}
                 variant="outline"
-                className="rounded-xl border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30"
+                className="rounded-md border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30"
               >
-                <Plus className="mr-2 h-4 w-4" />
+                <Plus className="h-4 w-4" />
                 {L('Add First FAQ', 'Magdagdag ng Unang FAQ')}
               </Button>
             )}
@@ -666,7 +666,7 @@ export function CmsFaqPage() {
                   value={form.category}
                   onValueChange={(val) => setForm({ ...form, category: val })}
                 >
-                  <SelectTrigger className="rounded-xl border-border dark:border-blue-900/30">
+                  <SelectTrigger className="rounded-md border-border dark:border-blue-900/30">
                     <SelectValue placeholder={L('Select category', 'Pumili ng kategorya')} />
                   </SelectTrigger>
                   <SelectContent>
@@ -730,9 +730,9 @@ export function CmsFaqPage() {
               <Button
                 onClick={handleSave}
                 disabled={saveMutation.isPending}
-                className="rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 shadow-md shadow-blue-500/20"
+                className="bg-primary hover:bg-primary/90 rounded-md shadow-md shadow-blue-500/20"
               >
-                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : editId ? L('Update FAQ', 'I-update ang FAQ') : L('Create FAQ', 'Lumikha ng FAQ')}
               </Button>
             </div>

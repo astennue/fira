@@ -77,14 +77,14 @@ const measuring = {
 // ─── Helpers ───────────────────────────────────────────────────────────────
 function getScoreStyle(score: number | null | undefined) {
   if (score == null) return ''
-  if (score >= 80) return 'text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/50 border-emerald-300 dark:border-emerald-700'
+  if (score >= 80) return 'text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-950/50 border-green-300 dark:border-green-700'
   if (score >= 50) return 'text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/50 border-amber-300 dark:border-amber-700'
   return 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-950/50 border-red-300 dark:border-red-700'
 }
 
 function getScoreDot(score: number | null | undefined) {
   if (score == null) return 'bg-gray-400'
-  if (score >= 80) return 'bg-emerald-500'
+  if (score >= 80) return 'bg-green-500'
   if (score >= 50) return 'bg-amber-500'
   return 'bg-red-500'
 }
@@ -286,7 +286,7 @@ function SortableApplicantCard({
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-7 text-[11px] gap-1 text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 rounded-lg flex-1"
+                className="h-7 text-[11px] gap-1 text-muted-foreground hover:text-green-600 dark:hover:text-green-400 hover:bg-green-50 dark:hover:bg-green-950/30 rounded-lg flex-1"
                 onClick={(e) => { e.stopPropagation(); onMoveToNext(app) }}
               >
                 <ChevronRight className="h-3 w-3" />
@@ -666,7 +666,7 @@ export function AtsPipelinePage() {
       {/* ── Header ───────────────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2.5">
+          <h1 className="text-4xl font-bold leading-tight tracking-tight flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-md">
               <Columns3 className="h-5 w-5 text-white" />
             </div>
@@ -680,7 +680,7 @@ export function AtsPipelinePage() {
         </div>
         <div className="flex items-center gap-2">
           {isFira && selectedJobId && (
-            <Button size="sm" className="rounded-xl gap-1.5 shadow-sm" onClick={() => setShowAddStage(true)}>
+            <Button size="sm" className="rounded-md gap-1.5 shadow-sm" onClick={() => setShowAddStage(true)}>
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">{isFil ? 'Dagdag Stage' : 'Add Stage'}</span>
             </Button>
@@ -695,7 +695,7 @@ export function AtsPipelinePage() {
           {isFil ? 'Pumili ng Job Order' : 'Select Job Order'}
         </Label>
         <Select value={selectedJobId} onValueChange={setSelectedJobId}>
-          <SelectTrigger className="w-full sm:w-96 h-11 rounded-xl">
+          <SelectTrigger className="w-full sm:w-96 h-11 rounded-md">
             <SelectValue placeholder={isFil ? 'Pumili ng job order...' : 'Select a job order...'} />
           </SelectTrigger>
           <SelectContent>
@@ -722,11 +722,9 @@ export function AtsPipelinePage() {
 
       {/* ── Empty State: No Job Selected ────────────────────────────────── */}
       {!selectedJobId ? (
-        <Card className="p-16 text-center border-dashed">
-          <div className="mx-auto mb-4 h-16 w-16 rounded-2xl bg-muted/50 flex items-center justify-center">
-            <Columns3 className="h-8 w-8 text-muted-foreground/50" />
-          </div>
-          <h3 className="text-lg font-semibold mb-2">{isFil ? 'Pumili ng Job Order' : 'Select a Job Order'}</h3>
+        <Card className="py-12 px-4 text-center border-dashed">
+          <Columns3 className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
+          <h3 className="text-lg font-medium text-foreground mb-2">{isFil ? 'Pumili ng Job Order' : 'Select a Job Order'}</h3>
           <p className="text-sm text-muted-foreground max-w-sm mx-auto">
             {isFil
               ? 'Pumili muna ng job order sa itaas para makita ang recruitment pipeline.'
@@ -736,11 +734,9 @@ export function AtsPipelinePage() {
       ) : isLoading ? (
         <PipelineSkeleton />
       ) : stages.length === 0 ? (
-        <Card className="p-16 text-center border-dashed">
-          <div className="mx-auto mb-4 h-14 w-14 rounded-2xl bg-muted/50 flex items-center justify-center">
-            <CircleDot className="h-7 w-7 text-muted-foreground/50" />
-          </div>
-          <h3 className="text-lg font-semibold mb-2">{isFil ? 'Walang Stages' : 'No Stages Yet'}</h3>
+        <Card className="py-12 px-4 text-center border-dashed">
+          <CircleDot className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
+          <h3 className="text-lg font-medium text-foreground mb-2">{isFil ? 'Walang Stages' : 'No Stages Yet'}</h3>
           <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
             {isFil
               ? 'Mag-dagdag ng stages para simulan ang pipeline at subaybayan ang mga aplikante.'
@@ -776,7 +772,7 @@ export function AtsPipelinePage() {
             {/* Avg Match Score */}
             <Card className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 shadow-md">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-green-500 to-green-600 shadow-md">
                   <Star className="h-4 w-4 text-white" />
                 </div>
                 <div>
@@ -927,7 +923,7 @@ export function AtsPipelinePage() {
                         </Badge>
                       )}
                       <Badge variant="outline" className="text-xs">
-                        <Clock className="h-3 w-3 mr-1" />
+                        <Clock className="h-3 w-3 " />
                         {formatDate(selectedApp.createdAt, isFil)}
                       </Badge>
                     </div>
@@ -942,7 +938,7 @@ export function AtsPipelinePage() {
                     <span className="text-sm font-medium">{isFil ? 'AI Match Score' : 'AI Match Score'}</span>
                     {selectedApp.aiAnalysis?.matchScore != null && (
                       <span className={`text-sm font-bold tabular-nums ${
-                        selectedApp.aiAnalysis.matchScore >= 80 ? 'text-emerald-600 dark:text-emerald-400'
+                        selectedApp.aiAnalysis.matchScore >= 80 ? 'text-green-600 dark:text-green-400'
                           : selectedApp.aiAnalysis.matchScore >= 50 ? 'text-amber-600 dark:text-amber-400'
                           : 'text-red-600 dark:text-red-400'
                       }`}>
@@ -965,13 +961,13 @@ export function AtsPipelinePage() {
                   <div className="space-y-2.5">
                     {parseJsonSkills(selectedApp.aiAnalysis?.matchedSkills).length > 0 && (
                       <div>
-                        <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 mb-1.5 flex items-center gap-1">
+                        <p className="text-xs font-medium text-green-600 dark:text-green-400 mb-1.5 flex items-center gap-1">
                           <CheckCircle2 className="h-3 w-3" />
                           {isFil ? 'Kinukumpirmang Kakayahan' : 'Matched Skills'}
                         </p>
                         <div className="flex flex-wrap gap-1">
                           {parseJsonSkills(selectedApp.aiAnalysis?.matchedSkills).map((s: string) => (
-                            <Badge key={s} variant="outline" className="text-[10px] border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30">
+                            <Badge key={s} variant="outline" className="text-[10px] border-green-300 dark:border-green-700 text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30">
                               {s}
                             </Badge>
                           ))}
@@ -1132,7 +1128,7 @@ export function AtsPipelinePage() {
 
                 {/* Quick Actions */}
                 <div className="space-y-2 pt-1">
-                  <Button className="w-full gap-2 rounded-xl" onClick={handleViewProfile}>
+                  <Button className="w-full gap-2 rounded-md" onClick={handleViewProfile}>
                     <Eye className="h-4 w-4" />
                     {isFil ? 'Tingnan ang Buong Profile' : 'View Full Profile'}
                   </Button>
@@ -1142,7 +1138,7 @@ export function AtsPipelinePage() {
                     return (
                       <Button
                         variant="outline"
-                        className="w-full gap-2 rounded-xl"
+                        className="w-full gap-2 rounded-md"
                         disabled={isLast || moveStageMutation.isPending}
                         onClick={handleSendToNext}
                       >
@@ -1244,7 +1240,7 @@ export function AtsPipelinePage() {
                 disabled={addStageMutation.isPending || !newStageName}
                 className="rounded-xl"
               >
-                {addStageMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {addStageMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
                 {isFil ? 'Dagdagin' : 'Add Stage'}
               </Button>
             </div>
@@ -1276,7 +1272,7 @@ export function AtsPipelinePage() {
               disabled={deleteStageMutation.isPending}
               className="rounded-xl"
             >
-              {deleteStageMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {deleteStageMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
               {isFil ? 'I-delete' : 'Delete'}
             </Button>
           </DialogFooter>

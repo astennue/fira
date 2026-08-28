@@ -62,7 +62,7 @@ export function ApplicantApplicationsPage() {
   return (
     <div className="view-transition space-y-6 pb-8">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold">{isFil ? 'Mga Aplikasyon Ko' : 'My Applications'}</h1>
+        <h1 className="text-4xl font-bold leading-tight tracking-tight">{isFil ? 'Mga Aplikasyon Ko' : 'My Applications'}</h1>
         <p className="text-muted-foreground mt-1">{isFil ? 'Subaybayan ang status ng iyong mga aplikasyon' : 'Track the status of your applications'}</p>
       </div>
 

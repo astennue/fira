@@ -179,11 +179,11 @@ export function FiraApplicantDetailPage() {
       {/* Back button + Header */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <Button variant="outline" size="sm" onClick={() => navigate('fira-applicants')}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="h-4 w-4 " />
           {isFil ? 'Bumalik' : 'Back'}
         </Button>
         <div className="flex-1">
-          <h1 className="text-2xl md:text-3xl font-bold">{fullName}</h1>
+          <h1 className="text-4xl font-bold leading-tight tracking-tight">{fullName}</h1>
           {profile && (
             <div className="flex flex-wrap items-center gap-2 mt-1 text-sm text-muted-foreground">
               {profile.email && <span className="flex items-center gap-1"><Mail className="h-3.5 w-3.5" />{profile.email}</span>}
@@ -193,13 +193,13 @@ export function FiraApplicantDetailPage() {
         </div>
         <div className="flex items-center gap-2">
           {profile?.isComplete ? (
-            <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-              <CheckCircle2 className="h-3 w-3 mr-1" />
+            <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border border-green-100 dark:border-green-700">
+              <CheckCircle2 className="h-3 w-3 " />
               {isFil ? 'Kompleto ang Profile' : 'Profile Complete'}
             </Badge>
           ) : (
             <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
-              <AlertTriangle className="h-3 w-3 mr-1" />
+              <AlertTriangle className="h-3 w-3 " />
               {isFil ? 'Hindi Kompleto' : 'Incomplete'}
             </Badge>
           )}
@@ -439,8 +439,8 @@ export function FiraApplicantDetailPage() {
                         </div>
                       </div>
                       {d.isVerified ? (
-                        <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 text-xs">
-                          <CheckCircle2 className="h-3 w-3 mr-1" />
+                        <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border border-green-100 dark:border-green-700 text-xs">
+                          <CheckCircle2 className="h-3 w-3 " />
                           {isFil ? 'Na-verify' : 'Verified'}
                         </Badge>
                       ) : (

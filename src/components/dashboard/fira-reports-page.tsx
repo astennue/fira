@@ -101,7 +101,7 @@ export function FiraReportsPage() {
   return (
     <div className="view-transition space-y-6 pb-8">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
+        <h1 className="text-4xl font-bold leading-tight tracking-tight flex items-center gap-2">
           <BarChart3 className="h-7 w-7 text-primary" />
           {L('Reports', 'Mga Ulat')}
         </h1>

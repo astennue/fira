@@ -48,7 +48,7 @@ export function EmployerEndorsedPage() {
   return (
     <div className="view-transition space-y-6 pb-8">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Mga Inindorso na Kandidato' : 'Endorsed Candidates'}</h1>
+        <h1 className="text-4xl font-bold leading-tight tracking-tight">{language === 'fil' ? 'Mga Inindorso na Kandidato' : 'Endorsed Candidates'}</h1>
         <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Review at magdesisyon sa mga kandidato' : 'Review and decide on candidates'}</p>
       </div>
 
@@ -96,10 +96,10 @@ export function EmployerEndorsedPage() {
                       {isPending && (
                         <div className="flex gap-2 pt-2 border-t">
                           <Button size="sm" className="flex-1" onClick={() => updateMutation.mutate({ endorsementId: e.id, action: 'employer_accept' })} disabled={updateMutation.isPending && updateMutation.variables?.endorsementId === e.id}>
-                            {updateMutation.isPending && updateMutation.variables?.endorsementId === e.id ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <CheckCircle className="h-4 w-4 mr-1" />}{language === 'fil' ? 'Accept' : 'Accept'}
+                            {updateMutation.isPending && updateMutation.variables?.endorsementId === e.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4 " />}{language === 'fil' ? 'Accept' : 'Accept'}
                           </Button>
                           <Button size="sm" variant="outline" className="flex-1" onClick={() => updateMutation.mutate({ endorsementId: e.id, action: 'employer_decline' })} disabled={updateMutation.isPending && updateMutation.variables?.endorsementId === e.id}>
-                            {updateMutation.isPending && updateMutation.variables?.endorsementId === e.id ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <XCircle className="h-4 w-4 mr-1" />}{language === 'fil' ? 'I-decline' : 'Decline'}
+                            {updateMutation.isPending && updateMutation.variables?.endorsementId === e.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <XCircle className="h-4 w-4 " />}{language === 'fil' ? 'I-decline' : 'Decline'}
                           </Button>
                         </div>
                       )}

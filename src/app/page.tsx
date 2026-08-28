@@ -15,6 +15,7 @@ import {
   Share2, Network, ScrollText, LayoutList, Settings, Search,
   Briefcase, Send, Columns, UserCog, Sparkles, User, Building, Building2,
   Home as HomeIcon, MessageCircle, UserCheck, ArrowLeft, ChevronRight,
+  Loader2,
 } from 'lucide-react'
 
 // Lazy load all view components to reduce initial bundle
@@ -68,7 +69,7 @@ function LoadingSpinner() {
   return (
     <div className="flex items-center justify-center min-h-[400px]">
       <div className="flex flex-col items-center gap-3">
-        <div className="h-10 w-10 rounded-full border-4 border-blue-200 dark:border-blue-800 border-t-blue-600 animate-spin" />
+        <Loader2 className="size-8 animate-spin text-primary" />
         <p className="text-sm text-muted-foreground">Loading...</p>
       </div>
     </div>
@@ -102,9 +103,9 @@ function DashboardSidebarWrapper() {
         <ScrollArea className="h-full">
           <div className="flex flex-col gap-1 p-3">
             {/* User info */}
-            <div className="mb-3 bg-gradient-to-r from-blue-50 to-blue-100 p-3 dark:from-blue-950/50 dark:to-blue-900/50">
-              <p className="text-sm font-semibold text-blue-900 dark:text-blue-100 truncate">{user.name}</p>
-              <p className="text-xs text-blue-600 dark:text-blue-300 capitalize">
+            <div className="mb-3 bg-muted p-3 rounded-lg">
+              <p className="text-sm font-semibold text-foreground truncate">{user.name}</p>
+              <p className="text-xs text-muted-foreground capitalize">
                 {user.role.replace(/_/g, ' ')}
               </p>
             </div>
@@ -247,7 +248,7 @@ function ViewRenderer({ view }: { view: ViewName }) {
               <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">Coming Soon</h3>
               <p className="text-muted-foreground mb-4">Agency member management is being developed. Contact FIRA admin to manage your team.</p>
-              <Button variant="outline" onClick={() => navigate('agency-dashboard')}><ArrowLeft className="mr-2 h-4 w-4" />Back to Dashboard</Button>
+              <Button variant="outline" onClick={() => navigate('agency-dashboard')}><ArrowLeft className="h-4 w-4" />Back to Dashboard</Button>
             </Card>
           </div>
         )
@@ -266,7 +267,7 @@ function ViewRenderer({ view }: { view: ViewName }) {
               <Briefcase className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">Coming Soon</h3>
               <p className="text-muted-foreground mb-4">Agency job creation is being developed. Please use the FIRA admin portal to create jobs.</p>
-              <Button variant="outline" onClick={() => navigate('agency-jobs')}><ArrowLeft className="mr-2 h-4 w-4" />Back to Jobs</Button>
+              <Button variant="outline" onClick={() => navigate('agency-jobs')}><ArrowLeft className="h-4 w-4" />Back to Jobs</Button>
             </Card>
           </div>
         )
@@ -281,7 +282,7 @@ function ViewRenderer({ view }: { view: ViewName }) {
               <User className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">Coming Soon</h3>
               <p className="text-muted-foreground mb-4">Detailed candidate view is being developed.</p>
-              <Button variant="outline" onClick={() => navigate('employer-endorsed')}><ArrowLeft className="mr-2 h-4 w-4" />Back to Endorsed Candidates</Button>
+              <Button variant="outline" onClick={() => navigate('employer-endorsed')}><ArrowLeft className="h-4 w-4" />Back to Endorsed Candidates</Button>
             </Card>
           </div>
         )

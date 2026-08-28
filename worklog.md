@@ -283,3 +283,208 @@ Stage Summary:
 - Resume upload route restored
 - All changes pushed to GitHub (commits 612bf87, cedede8)
 - Supabase DB: 7 users intact, all other tables empty (no seed data)
+
+---
+Task ID: branding-kit
+Agent: main
+Task: Create comprehensive FIRA Branding Kit HTML document
+
+Work Log:
+- Created /public/branding-kit.html with 12 sections
+- Color Palette: Primary Blue (11 shades), Warm Gold/Amber Accent (11 shades), Slate/Cool Gray Accent (11 shades)
+- Color Scheme: Light and dark mode semantic tokens (--background, --primary, --destructive, etc.)
+- Color Indicators: 18 status badges organized by category (Success, Danger, Warning, Info)
+- Typography: H1-H6, Body Large, Body, Caption, Overline, Mono — with rendered samples and CSS properties
+- Text States: Default, Muted, Link (default/hover/visited), Disabled, Error, Success
+- Button States: Primary (default/hover/active/disabled/loading), Secondary, Destructive, Outline, Ghost
+- Input States: Text input (default/filled/focus/error/disabled), Checkbox, Radio, Toggle
+- Card States: Default, Hover, Selected, Disabled, Glassmorphism
+- Badges & Tags: Primary, Secondary, Destructive, Success, Warning, Info, Outline, Muted
+- Border Radius Guide: sm(4px), md(8px), lg(10px), xl(12px), 2xl(16px), full
+- Shadow Guide: sm, default, md, lg, xl — with use case descriptions
+- Spacing Scale: 4px to 64px
+- Includes dark mode toggle, sticky TOC sidebar, print styles, responsive design
+
+Stage Summary:
+- Single self-contained HTML file at /public/branding-kit.html
+- Pushed to GitHub (commit bd37a38)
+- User design decisions: Blue primary + Gold & Slate accents, flat buttons, subtle card shadows, mixed border radii
+
+---
+Task ID: branding-kit-md
+Agent: main
+Task: Create comprehensive BRANDING-KIT.md document for codebase design audit
+
+Work Log:
+- Read current design system: globals.css (CSS variables, glassmorphism, animations, scrollbar, accessibility), status-badge.tsx (color mappings), button.tsx (variants/sizes), input.tsx (states), textarea.tsx, card.tsx (radius/shadow), badge.tsx (variants), glass-card.tsx (glass styling), landing-page.tsx (category colors, animation patterns)
+- Created /home/z/my-project/BRANDING-KIT.md — 31 sections + 2 appendices
+- Covers: Color Palette (Primary Blue, Accent Gold, Accent Slate, Semantic), Color Scheme (Light/Dark CSS variables), Color Ranges (5 semantic ranges), Status Indicators (standard + application pipeline + profile + account + job), Typography (H1-H6 + Body/Caption/Overline, font families, text color hierarchy, accessibility sizing), Links (inline, nav, external, in-card), Buttons (6 variants, 4 sizes, 6 states, icon rules), Input Fields (7 field types with all states), Cards (standard + glassmorphism), Badges & Tags (variants + status + category), Borders & Dividers, Border Radius Rules (codified when to use which), Shadows (philosophy + scale + per-element usage), Glassmorphism (4 specs + when/when-not to use), Tables, Toasts & Notifications, Dialogs/Modals, Loading States (6 contexts), Empty States, Error States, Success States, Selection States, Hover Effects, Focus States, Disabled States, Icons (sizes + colors), Animations & Transitions (base, reduce-motion, page transitions, entry animations, decorative), Scrollbar (global + dashboard), Accessibility (7 features + ARIA), Spacing System, Responsive Breakpoints
+- Key decision: Consolidated application pipeline status colors from 11+ colors to 5 semantic categories (green, red, amber, blue, gray)
+- Key decision: interview_scheduled, documents_submitted, pending_fira_review, pending_employer_review all consolidated to blue (info) since they are intermediate processing stages
+- Appendix A: Quick reference card for light/dark mode colors
+- Appendix B: Design decision log with 12 decisions and rationale
+
+Stage Summary:
+- /home/z/my-project/BRANDING-KIT.md created (comprehensive, 700+ lines)
+- Ready to be used as the single source of truth for auditing and adjusting the codebase design
+- No code changes made — this is a reference document only
+
+---
+Task ID: branding-kit-html-v2
+Agent: main
+Task: Create Figma-quality visual HTML branding kit presentation
+
+Work Log:
+- Replaced outdated branding-kit.html (used Inter font, old color values) with new v2.0
+- Created comprehensive single-file HTML with inline CSS + minimal JS
+- Features: sticky topbar with theme toggle, scrollable sidebar with active state tracking, cover page with gradient background, 27 visual sections
+- Visual sections: Color Palette (3 palettes with copy-to-clipboard swatches), Color Scheme (token table with inline swatches), Status Indicators (5 semantic categories with badge samples), Application Pipeline (visual flow diagram with colored dots), Typography (H1-H6 + Body/Caption/Overline/Mono with actual rendered specimens + metadata), Links (inline/nav/external demos), Buttons (6 variants, 4 sizes, disabled/loading states, with-icon demos), Input Fields (5 states: default/filled/focus/error/disabled, textarea), Cards (standard + glassmorphism on gradient bg), Badges & Tags (7 variants + 5 job category colors with dark mode support), Tables (with status badges + selected row), Toggles/Checks/Radios (checkboxes, radios, switch), Toasts (4 types with border-left accent), Tabs (interactive demo), Border Radius (visual boxes + reference table), Shadows (4 levels with visual boxes), Glassmorphism (when-to-use/not-to-use + specs table), Spacing System (visual bar chart), Scrollbar (global + dashboard previews), Focus States (ring demo), Disabled States (all element types), Loading States (spinner, button loading, skeleton), Empty States (2 examples), Error States (input + alert), File Upload Zone, Design Decisions (12-item table), Quick Reference Card (light/dark side-by-side)
+- Responsive: sidebar hides on mobile, single column layout
+- Print-friendly: sidebar/topbar hidden, all shadows removed
+- Dark mode fully supported for all elements
+
+Stage Summary:
+- /public/branding-kit.html replaced with v2.0 (Figma-quality visual design system presentation)
+- All 27 sections are interactive and visually rendered, not just text descriptions
+- Theme toggle (light/dark) works across all elements
+- Color swatches have click-to-copy functionality
+- Sidebar tracks active section on scroll
+---
+Task ID: 2
+Agent: ui-brand-audit-fixes
+Task: Fix FIRA brand audit violations in 8 core UI components
+
+Work Log:
+- **button.tsx**: Added `active:scale-[0.98]` to base cva class; removed `gap-1.5` from `sm` size variant (inherits base `gap-2`)
+- **table.tsx**: Table wrapper div got `rounded-lg border`; TableHead changed to `bg-muted text-muted-foreground px-4 py-3`; TableCell changed from `p-2` to `px-4 py-3`
+- **dialog.tsx**: Overlay got `backdrop-blur-sm`; Content changed from `bg-background rounded-lg` to `bg-card rounded-xl`; DialogTitle got `text-foreground`
+- **alert-dialog.tsx**: Same three fixes as dialog.tsx — overlay `backdrop-blur-sm`, content `bg-card rounded-xl`, title `text-foreground`
+- **skeleton.tsx**: Changed `bg-accent` to `bg-muted`
+- **switch.tsx**: Track resized from `w-8 h-[1.15rem]` to `w-11 h-6`; thumb from `size-4` to `size-5`; thumb translate-x changed from `calc(100%-2px)` to `20px`
+- **sonner.tsx**: Added `rounded-md shadow-lg` to Toaster className; added `toastOptions` with `richColors: true` and icon mapping (CheckCircle, XCircle, AlertTriangle, Info from lucide-react)
+- **toast.tsx**: Changed default variant from `bg-background` to `bg-card`; added `text-sm` to base cva class string
+- Lint passes (no new errors from changes; 4 pre-existing errors in prisma/ files, 1 pre-existing warning in auth-modal.tsx)
+
+Stage Summary:
+- All 8 core UI components updated to match FIRA brand audit specifications
+- Button press feedback, table styling, dialog/alert-dialog surface colors, skeleton fill, switch accessibility dimensions, and toast/sonner styling all aligned with brandkit
+---
+Task ID: 4-5
+Agent: color-button-fixes
+Task: FIRA brand audit - color replacements and button fixes
+
+Work Log:
+- **PART A: Global color replacements**
+  - Replaced all `emerald-*` → `green-*` across 30+ component files (emerald-200→green-100, emerald-800→green-700 per brandkit spec)
+  - Replaced all `yellow-*` → `amber-*` across 10+ component files (yellow-800→amber-700 per brandkit spec)
+  - Contextual orange→amber in status contexts: auth-modal.tsx, user-settings-page.tsx (password strength indicators)
+  - Contextual purple→blue in dashboard/status contexts: fira-dashboard.tsx, fira-employers.tsx, agency-dashboard.tsx, super-admin-users-page.tsx (stat cards, role badges)
+  - Contextual violet→blue, cyan→blue, sky→blue in badge/tab contexts: cms-faq-page.tsx (category badges, filter tabs, decorative card)
+  - Updated ROLE_COLORS in types.ts: agency_admin/agency_member purple→blue, fira emerald→green
+  - PRESERVED legitimate category tag colors: Caregiver (purple), Nurse (teal), factory (orange), engineer (sky)
+
+- **PART B: Button violations fixed**
+  - Removed `bg-gradient-*`, `from-*`, `to-*` classes from 3 Button components; replaced with `bg-primary hover:bg-primary/90` (auth-modal login/register, fira-jobs-page create button, fira-dashboard review button, cms-faq-page add/save buttons)
+  - Changed `rounded-xl` → `rounded-md` on 30 Button components across landing pages, CMS pages, dashboard pages, shared components
+  - Removed `mr-1` and `mr-2` from icon className on children of Button components across ~25 files (Button base class already has `gap-2`)
+  - Fixed non-standard button heights: `h-11` → `h-10` (auth-modal, contact-page, employer-partnership-page), `h-12` → `h-10` (landing-page), removed `min-h-[44px]` (fira-matching, agency-dashboard, employer-dashboard, applicant-jobs)
+  - PRESERVED all non-Button gradients (decorative divs, gradient text, stat card icons, card backgrounds)
+
+- **PART C: SelectTrigger fixes**
+  - Changed `rounded-xl` → `rounded-md` on 3 SelectTrigger components (ats-pipeline-page, cms-faq-page ×2)
+
+- Protected files NOT modified: status-badge.tsx, status.ts (already fixed)
+
+Files changed: 52 (.tsx files + types.ts + page.tsx)
+Lint: passes (same 5 pre-existing issues, no new errors)
+
+---
+Task ID: 6-7
+Agent: Main
+Task: Fix FIRA brand audit violations — Phase 6 (Typography) and Phase 7 (Nav Links)
+
+Work Log:
+
+- **PART A: Typography — H1 fixes (`text-2xl font-bold` → `text-4xl font-bold leading-tight tracking-tight`)**
+  - Fixed 10 files from the known violations list:
+    - `src/components/agency/agency-dashboard.tsx` — 1 H1 (main dashboard), 2 H2 (applicants/members sub-views)
+    - `src/components/agency/agency-endorsements.tsx` — 1 H1
+    - `src/components/agency/agency-pipeline.tsx` — 2 H1 (list view + drilled-in job view)
+    - `src/components/fira/fira-agencies.tsx` — 1 H1
+    - `src/components/fira/fira-employers.tsx` — 1 H1
+    - `src/components/fira/fira-matching.tsx` — 1 H1
+    - `src/components/fira/fira-dashboard.tsx` — 3 H1 (dashboard, job-orders, endorsements sub-views)
+    - `src/components/applicant/applicant-jobs.tsx` — 1 H1
+    - `src/components/applicant/applicant-profile.tsx` — 1 H1
+    - `src/components/employer/employer-dashboard.tsx` — 2 H1 (profile + main dashboard)
+  - Discovered and fixed 11 additional files with H1 violations:
+    - `src/components/applicant/applicant-dashboard.tsx` — 1 H1, 1 H2
+    - `src/components/shared/user-settings-page.tsx` — 1 H1
+    - `src/components/shared/super-admin-users-page.tsx` — 1 H1
+    - `src/components/shared/messaging-page.tsx` — 1 H2
+    - `src/components/cms/cms-form-builder-page.tsx` — 1 H1
+    - `src/components/cms/cms-social-page.tsx` — 1 H1
+    - `src/components/cms/cms-terms-page.tsx` — 1 H1
+    - `src/components/cms/cms-pages-page.tsx` — 1 H1
+    - `src/components/cms/cms-faq-page.tsx` — 1 H1 (preserved gradient)
+    - `src/components/cms/cms-org-chart-page.tsx` — 1 H1
+    - `src/components/cms/cms-settings-page.tsx` — 1 H1
+    - `src/components/cms/cms-testimonials-page.tsx` — 1 H1
+  - Discovered and fixed 22 files in `src/components/dashboard/` using `text-2xl md:text-3xl font-bold` pattern:
+    - job-listing-page, job-detail-page, fira-dashboard, applicant-jobs-page, ats-pipeline-page, applicant-dashboard, fira-applicants-page, fira-reports-page, agency-jobs-page, applicant-applications-page, employer-dashboard, resume-enhancement-page, applicant-profile-edit-page, fira-applicant-detail-page, fira-job-create-page, employer-jobs-page, fira-employers-page, fira-agencies-page, employer-endorsed-page, agency-endorsements-page, agency-applicants-page, applicant-profile-page, ai-matching-page, agency-dashboard, fira-jobs-page
+  - Corrected duplicate `tracking-tight` in `dashboard/employer-dashboard.tsx` (gradient H1)
+  - Preserved gradient classes, text-foreground, and flex layouts on special-case H1s
+  - Did NOT change: stat value displays (p tags with text-2xl), card titles, dialog titles, section subheadings (text-lg h2 in dashboard sections), user name displays in cards, terms-public-page section h2 headings
+
+- **PART A: Typography — H2 fixes**
+  - `text-2xl font-bold` → `text-3xl font-semibold leading-tight` on 3 H2 elements (agency-dashboard applicants/members, applicant-dashboard applications, messaging-page)
+
+- **PART B: Nav Links (Phase 7)**
+  - `src/components/shared/app-nav.tsx` line 194: Changed scrolled-state inactive nav link classes from `text-foreground hover:text-foreground hover:bg-accent` to `text-slate-600 dark:text-slate-300 hover:text-foreground dark:hover:text-slate-100 hover:bg-accent`
+  - `src/components/shared/app-nav.tsx` line 158: Changed mobile sheet nav icon from `h-4 w-4` to `h-5 w-5`
+  - `src/components/shared/app-nav.tsx` line 198: Changed desktop nav icon from `h-4 w-4` to `h-5 w-5`
+
+- Protected files NOT modified: status-badge.tsx, status.ts
+
+Files changed: ~45 .tsx files
+Lint: passes (same 4 pre-existing errors + 1 warning, no new issues from changes)
+
+---
+Task ID: 8-9
+Agent: Main
+Task: Fix FIRA brand audit violations — Phase 8 (Glassmorphism) and Phase 9 (Empty States)
+
+Work Log:
+
+- **PART A: Remove Glassmorphism from Dashboard Cards (Phase 8)**
+  - Searched all dashboard files for `backdrop-blur-*`, `bg-card/70`, `bg-white/60`, `GlassCard` usage
+  - `src/components/dashboard/applicant-dashboard.tsx`: Removed `backdrop-blur-xl` from 6 Card elements (welcome banner, stats, notifications, next steps, applications, recommended jobs). Changed `bg-card/70` → `bg-card`, `border-border/50` → `border-border`, added `shadow-sm`. Removed `backdrop-blur-sm` from 2 internal overlay elements.
+  - `src/components/dashboard/employer-dashboard.tsx`: Removed `backdrop-blur-xl` from 3 skeleton divs and 4 Card elements (stat cards, endorsed candidates, quick actions, accept rate). Changed `bg-white/60 dark:bg-white/[0.04]` → `bg-card`, `border-white/30` → `border-border`, added `shadow-sm`.
+  - `src/components/dashboard/fira-dashboard.tsx`: Removed `GlassCard` import from `@/components/shared/glass-card`. Replaced `<GlassCard hover>` with `<Card shadow-sm hover:shadow-md>` for stat cards.
+  - `src/components/dashboard/agency-dashboard.tsx`: Renamed local `GlassCard` component → `DashboardCard` with solid `bg-card shadow-sm` base (was `bg-card/80 backdrop-blur-sm`). Renamed `GlassStatCard` → `StatCard`. Updated skeleton divs from `bg-white/60 backdrop-blur-xl` → `bg-muted border-border`. Replaced all 5 `GlassCard` usages with `DashboardCard`.
+
+- **PART B: Fix Empty States (Phase 9)**
+  - Brandkit spec: Icon `h-12 w-12 text-muted-foreground/50`, Title `text-lg font-medium text-foreground`, Description `text-sm text-muted-foreground`, Container `py-12` centered
+  - Fixed 22 empty states across 15 files:
+    - `src/components/dashboard/fira-dashboard.tsx` (2): Activity + Registrations empty — removed icon wrapper divs, `h-8 w-8 text-muted-foreground` → `h-12 w-12 text-muted-foreground/50`, `text-sm text-muted-foreground` → `text-lg font-medium text-foreground`
+    - `src/components/dashboard/ats-pipeline-page.tsx` (2): No Job Selected + No Stages — `p-16` → `py-12 px-4`, removed wrapper divs, `h-16 w-16/h-14 h-14` → `h-12 w-12`, `h-8 w-8/h-7 w-7` → `h-12 w-12`, `text-lg font-semibold` → `text-lg font-medium text-foreground`
+    - `src/components/dashboard/applicant-dashboard.tsx` (3): Notifications + Applications + Recommended Jobs — `h-8 w-8 text-muted-foreground/40` → `h-12 w-12 text-muted-foreground/50`, `text-sm font-semibold` → `text-lg font-medium text-foreground`, `text-xs` → `text-sm`, `py-8` → `py-12`, removed wrapper divs
+    - `src/components/dashboard/employer-dashboard.tsx` (1): Endorsed candidates empty — removed wrapper div with gradient bg, `h-8 w-8` → `h-12 w-12 text-muted-foreground/50`, `text-sm font-medium` → `text-lg font-medium`, `text-xs` → `text-sm`
+    - `src/components/dashboard/agency-dashboard.tsx` (2): Endorsements + Jobs empty — removed wrapper divs with colored bg, `h-8 w-8 text-amber-400/text-orange-400` → `h-12 w-12 text-muted-foreground/50`, `text-sm text-muted-foreground font-medium` → `text-lg font-medium text-foreground`
+    - `src/components/dashboard/agency-endorsements-page.tsx` (1): `p-8 text-center` → `py-12 px-4`, `h-12 w-12 text-muted-foreground opacity-50` → `h-12 w-12 text-muted-foreground/50`, `text-muted-foreground` → `text-lg font-medium text-foreground`
+    - `src/components/dashboard/agency-jobs-page.tsx` (1): Same pattern as above
+    - `src/components/landing/landing-page.tsx` (1): `p-12` → `py-12 px-4`, `text-muted-foreground/40` → `text-muted-foreground/50`, split single text into title + description
+    - `src/components/cms/cms-pages-page.tsx` (1): `p-8` → `py-12 px-4`, `h-10 w-10 text-muted-foreground` → `h-12 w-12 text-muted-foreground/50`, `text-muted-foreground` → `text-lg font-medium text-foreground`
+    - `src/components/cms/cms-form-builder-page.tsx` (1): Same pattern
+    - `src/components/cms/cms-social-page.tsx` (1): Same pattern
+    - `src/components/cms/cms-testimonials-page.tsx` (1): Same pattern
+    - `src/components/applicant/applicant-jobs.tsx` (1): `p-8` → `py-12 px-4`, `h-10 w-10 opacity-50` → `h-12 w-12 text-muted-foreground/50`, `text-muted-foreground` → `text-lg font-medium`
+    - `src/components/applicant/applicant-dashboard.tsx` (1): `p-6` → `py-12 px-4`, `h-10 w-10 opacity-50` → `h-12 w-12 text-muted-foreground/50`, `text-sm` → `text-lg font-medium text-foreground`
+    - `src/components/agency/agency-endorsements.tsx` (1): Same pattern
+    - `src/components/agency/agency-dashboard.tsx` (3): Applicants + Members + Jobs empty — `p-8` → `py-12 px-4`, `h-12 w-12 opacity-50` → `h-12 w-12 text-muted-foreground/50`, split into title + description where context was clear
+    - `src/components/employer/employer-dashboard.tsx` (1): `p-8` → `py-12 px-4`, `h-12 w-12 opacity-50` → `h-12 w-12 text-muted-foreground/50`, `text-muted-foreground` → `text-lg font-medium text-foreground`
+
+- Protected files NOT modified: status-badge.tsx, status.ts
+
+Files changed: 15 .tsx files
+Lint: passes (same 4 pre-existing errors + 1 warning, no new issues from changes)

@@ -179,11 +179,11 @@ export function ServicesPage() {
               : 'Browse our available jobs or register to start your application.'}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" className="rounded-xl" onClick={() => navigate('job-listing')}>
-              <Briefcase className="mr-2 h-5 w-5" />
+            <Button size="lg" className="rounded-md" onClick={() => navigate('job-listing')}>
+              <Briefcase className="h-5 w-5" />
               {language === 'fil' ? 'Mag-browse ng Trabaho' : 'Browse Jobs'}
             </Button>
-            <Button size="lg" variant="outline" className="rounded-xl" onClick={() => navigate('contact')}>
+            <Button size="lg" variant="outline" className="rounded-md" onClick={() => navigate('contact')}>
               {language === 'fil' ? 'Makipag-ugnay sa Amin' : 'Contact Us'}
             </Button>
           </div>

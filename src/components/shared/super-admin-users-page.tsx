@@ -68,14 +68,14 @@ export function SuperAdminUsersPage() {
     super_admin: 'bg-red-100 dark:bg-red-950/50 text-red-800 dark:text-red-300',
     applicant: 'bg-blue-100 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300',
     local_agency: 'bg-green-100 dark:bg-green-950/50 text-green-800 dark:text-green-300',
-    international_agency: 'bg-purple-100 dark:bg-purple-950/50 text-purple-800 dark:text-purple-300',
+    international_agency: 'bg-blue-100 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300',
     employer: 'bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300',
   }
 
   return (
     <div className="view-transition space-y-6 pb-8">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">{L('Manage Users', 'Pamahalaan ang mga User')}</h1>
+        <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground">{L('Manage Users', 'Pamahalaan ang mga User')}</h1>
         <p className="text-muted-foreground text-sm">{L('View and manage all platform users', 'Tingnan at pamahalaan ang lahat ng user ng platform')}</p>
       </div>
 

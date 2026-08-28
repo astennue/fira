@@ -151,10 +151,10 @@ export function CmsOrgChartPage() {
     <div className="view-transition space-y-6 pb-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{L('Organization Chart', 'Tsart ng Organisasyon')}</h1>
+          <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground">{L('Organization Chart', 'Tsart ng Organisasyon')}</h1>
           <p className="text-muted-foreground text-sm">{L('Manage your company structure', 'Pamahalaan ang istruktura ng kumpanya')}</p>
         </div>
-        <Button onClick={() => openNew()} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> {L('Add Member', 'Magdagdag ng Miyembro')}</Button>
+        <Button onClick={() => openNew()} className="rounded-xl"><Plus className="h-4 w-4" /> {L('Add Member', 'Magdagdag ng Miyembro')}</Button>
       </div>
 
       {isLoading ? (
@@ -164,7 +164,7 @@ export function CmsOrgChartPage() {
           <Building2 className="h-16 w-16 mx-auto text-muted-foreground mb-3" />
           <h3 className="font-semibold text-lg mb-1">{L('No org chart yet', 'Wala pang org chart')}</h3>
           <p className="text-muted-foreground mb-4">{L('Add members to build your organizational chart', 'Magdagdag ng miyembro para buuin ang iyong tsart ng organisasyon')}</p>
-          <Button onClick={() => openNew()} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> {L('Add First Member', 'Magdagdag ng Unang Miyembro')}</Button>
+          <Button onClick={() => openNew()} className="rounded-xl"><Plus className="h-4 w-4" /> {L('Add First Member', 'Magdagdag ng Unang Miyembro')}</Button>
         </Card>
       ) : (
         <div className="overflow-x-auto pb-8">
@@ -220,7 +220,7 @@ export function CmsOrgChartPage() {
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setDialogOpen(false)}>{L('Cancel', 'Kanselahin')}</Button>
               <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save', 'I-save')}
+                {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save', 'I-save')}
               </Button>
             </div>
           </div>

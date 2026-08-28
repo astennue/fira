@@ -55,7 +55,7 @@ export function AiMatchingPage() {
   return (
     <div className="view-transition space-y-6 pb-8">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
+        <h1 className="text-4xl font-bold leading-tight tracking-tight flex items-center gap-2">
           <Sparkles className="h-7 w-7 text-primary" />
           AI {language === 'fil' ? 'Matching' : 'Matching'}
         </h1>
@@ -89,9 +89,9 @@ export function AiMatchingPage() {
             </div>
             <Button size="lg" onClick={runMatching} disabled={!selectedJobId || isMatching} className="shrink-0">
               {isMatching ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{language === 'fil' ? 'Nagmamanipula...' : 'Matching...'}</>
+                <><Loader2 className="h-4 w-4 animate-spin" />{language === 'fil' ? 'Nagmamanipula...' : 'Matching...'}</>
               ) : (
-                <><Sparkles className="mr-2 h-5 w-5" />{language === 'fil' ? 'I-run ang AI Matching' : 'Run AI Matching'}</>
+                <><Sparkles className="h-5 w-5" />{language === 'fil' ? 'I-run ang AI Matching' : 'Run AI Matching'}</>
               )}
             </Button>
           </div>
@@ -142,8 +142,8 @@ export function AiMatchingPage() {
                       )}
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <p className="text-xs font-medium text-emerald-600 mb-1">
-                            <CheckCircle className="h-3 w-3 inline mr-1" />
+                          <p className="text-xs font-medium text-green-600 mb-1">
+                            <CheckCircle className="h-3 w-3 inline " />
                             {language === 'fil' ? 'Kakayahang mayroon' : 'Matched Skills'} ({(candidate.matchedSkills || []).length})
                           </p>
                           <div className="flex flex-wrap gap-1">
@@ -154,7 +154,7 @@ export function AiMatchingPage() {
                         </div>
                         <div>
                           <p className="text-xs font-medium text-amber-600 mb-1">
-                            <XCircle className="h-3 w-3 inline mr-1" />
+                            <XCircle className="h-3 w-3 inline " />
                             {language === 'fil' ? 'Kakulangan' : 'Missing Skills'} ({(candidate.missingSkills || []).length})
                           </p>
                           <div className="flex flex-wrap gap-1">

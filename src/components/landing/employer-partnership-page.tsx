@@ -381,17 +381,17 @@ export function EmployerPartnershipPage() {
 
                     <Button
                       type="submit"
-                      className="w-full h-11 rounded-xl"
+                      className="w-full h-10 rounded-md"
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? (
                         <>
-                          <div className="mr-2 h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                          <div className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
                           {language === 'fil' ? 'Nagsusumite...' : 'Submitting...'}
                         </>
                       ) : (
                         <>
-                          <Send className="mr-2 h-4 w-4" />
+                          <Send className="h-4 w-4" />
                           {language === 'fil' ? 'Ipadala ang Inquiry' : 'Submit Inquiry'}
                         </>
                       )}

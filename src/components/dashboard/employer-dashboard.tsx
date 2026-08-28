@@ -43,14 +43,14 @@ function MatchScoreRing({ score, size = 52 }: { score: number; size?: number }) 
 
   const color =
     clamped >= 80
-      ? 'text-emerald-500 dark:text-emerald-400'
+      ? 'text-green-500 dark:text-green-400'
       : clamped >= 60
         ? 'text-amber-500 dark:text-amber-400'
         : 'text-rose-500 dark:text-rose-400'
 
   const trackColor =
     clamped >= 80
-      ? 'stroke-emerald-200 dark:stroke-emerald-900/60'
+      ? 'stroke-green-100 dark:stroke-green-900/60'
       : clamped >= 60
         ? 'stroke-amber-200 dark:stroke-amber-900/60'
         : 'stroke-rose-200 dark:stroke-rose-900/60'
@@ -114,8 +114,8 @@ function InitialsCircle({
       className={cn(
         'rounded-full flex items-center justify-center font-bold shrink-0 bg-gradient-to-br',
         isPending
-          ? 'from-emerald-400 to-teal-500 text-white shadow-lg shadow-emerald-500/25'
-          : 'from-teal-400 to-emerald-600 text-white shadow-lg shadow-teal-500/20',
+          ? 'from-green-400 to-teal-500 text-white shadow-lg shadow-green-500/25'
+          : 'from-teal-400 to-green-600 text-white shadow-lg shadow-teal-500/20',
         sizeMap[size]
       )}
     >
@@ -143,7 +143,7 @@ function DashboardSkeleton() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="h-28 rounded-2xl border border-white/20 dark:border-white/5 bg-white/50 dark:bg-white/5 backdrop-blur-xl"
+            className="h-28 rounded-2xl border border-border bg-muted"
           >
             <div className="p-4 space-y-3">
               <Skeleton className="h-3 w-24" />
@@ -154,10 +154,10 @@ function DashboardSkeleton() {
       </div>
       {/* Main content skeleton */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 h-[500px] rounded-2xl border border-white/20 dark:border-white/5 bg-white/50 dark:bg-white/5 backdrop-blur-xl" />
+        <div className="lg:col-span-2 h-[500px] rounded-2xl border border-border bg-muted" />
         <div className="space-y-4">
-          <div className="h-64 rounded-2xl border border-white/20 dark:border-white/5 bg-white/50 dark:bg-white/5 backdrop-blur-xl" />
-          <div className="h-56 rounded-2xl border border-white/20 dark:border-white/5 bg-white/50 dark:bg-white/5 backdrop-blur-xl" />
+          <div className="h-64 rounded-2xl border border-border bg-muted" />
+          <div className="h-56 rounded-2xl border border-border bg-muted" />
         </div>
       </div>
     </div>
@@ -190,7 +190,7 @@ function StatCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 + delay * 0.07, duration: 0.4 }}
     >
-      <Card className="rounded-2xl border border-white/30 dark:border-white/[0.06] bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:shadow-[0_12px_40px_rgba(16,185,129,0.10)] dark:hover:shadow-[0_12px_40px_rgba(16,185,129,0.15)] hover:-translate-y-0.5 transition-all duration-300">
+      <Card className="rounded-2xl border border-border bg-card shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
         <div className="p-4">
           <div className="flex items-start justify-between">
             <div>
@@ -293,7 +293,7 @@ export function EmployerDashboard() {
       label: isFil ? 'Naghihintay ng Review' : 'Pending Review',
       value: pending,
       icon: Eye,
-      gradient: 'from-amber-500 to-yellow-500',
+      gradient: 'from-amber-500 to-amber-500',
       shadowColor: 'shadow-amber-500/20',
       warning: pending > 0
         ? { text: isFil ? 'Kailangan ng aksyon' : 'Needs action' }
@@ -303,8 +303,8 @@ export function EmployerDashboard() {
       label: isFil ? 'Na-accept' : 'Accepted',
       value: accepted,
       icon: CheckCircle,
-      gradient: 'from-emerald-500 to-green-500',
-      shadowColor: 'shadow-emerald-500/20',
+      gradient: 'from-green-500 to-green-500',
+      shadowColor: 'shadow-green-500/20',
     },
     {
       label: isFil ? 'Ibinalewala' : 'Declined',
@@ -317,7 +317,7 @@ export function EmployerDashboard() {
       label: isFil ? 'Kabuuang Endorso' : 'Total Endorsements',
       value: endorsements.length,
       icon: BarChart3,
-      gradient: 'from-teal-500 to-emerald-600',
+      gradient: 'from-teal-500 to-green-600',
       shadowColor: 'shadow-teal-500/20',
     },
   ]
@@ -356,11 +356,11 @@ export function EmployerDashboard() {
 
   /* ---- Gradient color map for initials (deterministic based on name) ---- */
   const gradientMap = [
-    'from-emerald-400 to-teal-500',
+    'from-green-400 to-teal-500',
     'from-teal-400 to-cyan-500',
-    'from-emerald-500 to-green-600',
-    'from-green-400 to-emerald-600',
-    'from-teal-500 to-emerald-400',
+    'from-green-500 to-green-600',
+    'from-green-400 to-green-600',
+    'from-teal-500 to-green-400',
     'from-cyan-400 to-teal-600',
   ]
   function getGradient(name: string, idx: number) {
@@ -382,7 +382,7 @@ export function EmployerDashboard() {
         className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3"
       >
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-emerald-700 via-teal-600 to-emerald-600 dark:from-emerald-400 dark:via-teal-300 dark:to-emerald-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold leading-tight tracking-tight bg-gradient-to-r from-green-700 via-teal-600 to-green-600 dark:from-green-400 dark:via-teal-300 dark:to-green-400 bg-clip-text text-transparent">
             {isFil ? 'Dashboard ng Empleyador' : 'Employer Dashboard'}
           </h1>
           <p className="text-muted-foreground mt-1">
@@ -396,10 +396,10 @@ export function EmployerDashboard() {
         <Button
           variant="outline"
           size="sm"
-          className="gap-1.5 border-emerald-200 dark:border-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-colors"
+          className="gap-1.5 border-green-100 dark:border-green-700 hover:bg-green-50 dark:hover:bg-green-950/30 transition-colors"
           onClick={() => navigate('messages')}
         >
-          <MessageSquare className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+          <MessageSquare className="h-4 w-4 text-green-600 dark:text-green-400" />
           {isFil ? 'Mensahe' : 'Messages'}
           {unreadNotifs > 0 && (
             <Badge className="bg-rose-500 text-white text-[10px] h-4 min-w-4 px-1.5 rounded-full">
@@ -435,17 +435,17 @@ export function EmployerDashboard() {
         {/*  LEFT (2/3): Endorsed Candidates — THE MAIN FEATURE           */}
         {/* ------------------------------------------------------------ */}
         <motion.div variants={item} className="lg:col-span-2">
-          <Card className="rounded-2xl border border-white/30 dark:border-white/[0.06] bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)] h-full">
+          <Card className="rounded-2xl border border-border bg-card shadow-sm h-full">
             <div className="p-4 md:p-5 pb-0 md:pb-0 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20">
-                  <UserCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <div className="p-1.5 rounded-lg bg-gradient-to-br from-green-500/10 to-teal-500/10 dark:from-green-500/20 dark:to-teal-500/20">
+                  <UserCheck className="h-4 w-4 text-green-600 dark:text-green-400" />
                 </div>
                 <h2 className="text-base font-semibold">
                   {isFil ? 'Mga Inindorso na Kandidato' : 'Endorsed Candidates'}
                 </h2>
                 {pending > 0 && (
-                  <Badge className="bg-emerald-500 text-white text-[10px] h-5 min-w-5 px-1.5 rounded-full font-semibold">
+                  <Badge className="bg-green-500 text-white text-[10px] h-5 min-w-5 px-1.5 rounded-full font-semibold">
                     {pending} {isFil ? 'bago' : 'new'}
                   </Badge>
                 )}
@@ -453,7 +453,7 @@ export function EmployerDashboard() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+                className="text-xs text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-950/30"
                 onClick={() => navigate('employer-endorsed')}
               >
                 {isFil ? 'Lahat' : 'All'} <ArrowRight className="h-3.5 w-3.5 ml-1" />
@@ -463,13 +463,11 @@ export function EmployerDashboard() {
             <div className="p-4 pt-3 md:p-5 md:pt-3">
               {sortedEndorsements.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/40 flex items-center justify-center mb-3">
-                    <Shield className="h-8 w-8 text-emerald-500 dark:text-emerald-400" />
-                  </div>
-                  <p className="text-sm font-medium text-foreground">
+                  <Shield className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
+                  <p className="text-lg font-medium text-foreground">
                     {isFil ? 'Wala pang endorsement.' : 'No endorsements yet.'}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     {isFil
                       ? 'Maghintay ng mga kandidato mula sa FIRA.'
                       : 'Waiting for candidates from FIRA.'}
@@ -493,7 +491,7 @@ export function EmployerDashboard() {
                         className={cn(
                           'p-4 rounded-xl border transition-all duration-200 cursor-pointer group',
                           isPending
-                            ? 'bg-emerald-50/80 dark:bg-emerald-950/20 border-emerald-200/70 dark:border-emerald-800/60 hover:shadow-md hover:shadow-emerald-500/10'
+                            ? 'bg-green-50/80 dark:bg-green-950/20 border-green-100/70 dark:border-green-700/60 hover:shadow-md hover:shadow-green-500/10'
                             : 'bg-white/40 dark:bg-white/[0.02] border-white/40 dark:border-white/[0.06] hover:bg-white/60 dark:hover:bg-white/[0.04] hover:shadow-md'
                         )}
                         onClick={() => navigate('employer-endorsed')}
@@ -505,7 +503,7 @@ export function EmployerDashboard() {
                               'rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0 w-11 h-11 bg-gradient-to-br shadow-lg',
                               getGradient(name, idx),
                               isPending
-                                ? 'shadow-emerald-500/25 ring-2 ring-emerald-400/30 dark:ring-emerald-600/30'
+                                ? 'shadow-green-500/25 ring-2 ring-green-400/30 dark:ring-green-600/30'
                                 : 'shadow-teal-500/15'
                             )}
                           >
@@ -516,7 +514,7 @@ export function EmployerDashboard() {
                             {/* Name + Match Score */}
                             <div className="flex items-start justify-between gap-2">
                               <div className="min-w-0">
-                                <p className="font-semibold text-sm truncate group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
+                                <p className="font-semibold text-sm truncate group-hover:text-green-700 dark:group-hover:text-green-300 transition-colors">
                                   {name}
                                 </p>
                                 <p className="text-xs text-muted-foreground mt-0.5 truncate">
@@ -537,7 +535,7 @@ export function EmployerDashboard() {
                                     <Badge
                                       key={si}
                                       variant="secondary"
-                                      className="text-[10px] h-5 px-1.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-0"
+                                      className="text-[10px] h-5 px-1.5 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-0"
                                     >
                                       {skill.trim()}
                                     </Badge>
@@ -545,7 +543,7 @@ export function EmployerDashboard() {
                                 {String(applicant.skills).split(',').filter((s: string) => s.trim()).length > 4 && (
                                   <Badge
                                     variant="outline"
-                                    className="text-[10px] h-5 px-1.5 border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400"
+                                    className="text-[10px] h-5 px-1.5 border-green-100 dark:border-green-700 text-green-600 dark:text-green-400"
                                   >
                                     +{String(applicant.skills).split(',').filter((s: string) => s.trim()).length - 4}
                                   </Badge>
@@ -556,8 +554,8 @@ export function EmployerDashboard() {
                             {/* Experience, Country, Date */}
                             <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mt-2.5 text-xs text-muted-foreground">
                               {applicant?.experience && (
-                                <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
-                                  <Star className="h-3 w-3 fill-emerald-500 dark:fill-emerald-400 text-emerald-500 dark:text-emerald-400" />
+                                <span className="flex items-center gap-1 text-green-600 dark:text-green-400">
+                                  <Star className="h-3 w-3 fill-green-500 dark:fill-green-400 text-green-500 dark:text-green-400" />
                                   {applicant.experience}
                                 </span>
                               )}
@@ -590,11 +588,11 @@ export function EmployerDashboard() {
         {/* ------------------------------------------------------------ */}
         <motion.div variants={item} className="space-y-4">
           {/* Quick Actions */}
-          <Card className="rounded-2xl border border-white/30 dark:border-white/[0.06] bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+          <Card className="rounded-2xl border border-border bg-card shadow-sm">
             <div className="p-4 md:p-5 pb-0 md:pb-0">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20">
-                  <Zap className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <div className="p-1.5 rounded-lg bg-gradient-to-br from-green-500/10 to-teal-500/10 dark:from-green-500/20 dark:to-teal-500/20">
+                  <Zap className="h-4 w-4 text-green-600 dark:text-green-400" />
                 </div>
                 <h2 className="text-base font-semibold">
                   {isFil ? 'Mabilis na Aksyon' : 'Quick Actions'}
@@ -610,19 +608,19 @@ export function EmployerDashboard() {
                   className={cn(
                     'w-full justify-between h-10 group',
                     'border-white/40 dark:border-white/[0.06]',
-                    'hover:bg-emerald-50/80 dark:hover:bg-emerald-950/20',
-                    'hover:border-emerald-200 dark:hover:border-emerald-800',
+                    'hover:bg-green-50/80 dark:hover:bg-green-950/20',
+                    'hover:border-green-100 dark:hover:border-green-700',
                     'transition-all duration-200'
                   )}
                   onClick={() => navigate(action.view)}
                 >
                   <span className="flex items-center gap-2">
-                    <action.icon className="h-4 w-4 text-muted-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors" />
+                    <action.icon className="h-4 w-4 text-muted-foreground group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors" />
                     <span>{action.label}</span>
                   </span>
                   <div className="flex items-center gap-1.5">
                     {action.badge != null && (
-                      <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 text-[10px] h-5 min-w-5 px-1.5 border-0">
+                      <Badge className="bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300 text-[10px] h-5 min-w-5 px-1.5 border-0">
                         {action.badge}
                       </Badge>
                     )}
@@ -634,10 +632,10 @@ export function EmployerDashboard() {
           </Card>
 
           {/* Accept Rate */}
-          <Card className="rounded-2xl border border-white/30 dark:border-white/[0.06] bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+          <Card className="rounded-2xl border border-border bg-card shadow-sm">
             <div className="p-4 md:p-5 pb-0 md:pb-0">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-gradient-to-br from-teal-500/10 to-emerald-500/10 dark:from-teal-500/20 dark:to-emerald-500/20">
+                <div className="p-1.5 rounded-lg bg-gradient-to-br from-teal-500/10 to-green-500/10 dark:from-teal-500/20 dark:to-green-500/20">
                   <TrendingUp className="h-4 w-4 text-teal-600 dark:text-teal-400" />
                 </div>
                 <h2 className="text-base font-semibold">
@@ -654,7 +652,7 @@ export function EmployerDashboard() {
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.4, duration: 0.5 }}
                 >
-                  <p className="text-5xl font-extrabold bg-gradient-to-br from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-300 bg-clip-text text-transparent">
+                  <p className="text-5xl font-extrabold bg-gradient-to-br from-green-600 to-teal-500 dark:from-green-400 dark:to-teal-300 bg-clip-text text-transparent">
                     <AnimatedCounter value={acceptRate} />
                     <span className="text-3xl">%</span>
                   </p>
@@ -665,7 +663,7 @@ export function EmployerDashboard() {
               </div>
 
               {/* 3-column breakdown */}
-              <div className="grid grid-cols-3 gap-2 pt-4 border-t border-emerald-100 dark:border-emerald-900/40">
+              <div className="grid grid-cols-3 gap-2 pt-4 border-t border-green-100 dark:border-green-900/40">
                 <div className="text-center">
                   <p className="text-xl font-bold text-amber-600 dark:text-amber-400">
                     <AnimatedCounter value={pending} />
@@ -675,7 +673,7 @@ export function EmployerDashboard() {
                   </p>
                 </div>
                 <div className="text-center">
-                  <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+                  <p className="text-xl font-bold text-green-600 dark:text-green-400">
                     <AnimatedCounter value={accepted} />
                   </p>
                   <p className="text-[10px] text-muted-foreground font-medium mt-0.5">

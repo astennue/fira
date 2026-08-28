@@ -25,7 +25,7 @@ function getPasswordStrength(password: string) {
   ]
   const score = checks.filter(c => c.met).length
   const label = score <= 1 ? 'Weak' : score === 2 ? 'Fair' : score === 3 ? 'Good' : score === 4 ? 'Strong' : 'Very Strong'
-  const color = score <= 1 ? 'bg-red-500' : score === 2 ? 'bg-orange-500' : score === 3 ? 'bg-yellow-500' : score === 4 ? 'bg-green-500' : 'bg-emerald-500'
+  const color = score <= 1 ? 'bg-red-500' : score === 2 ? 'bg-amber-500' : score === 3 ? 'bg-amber-500' : score === 4 ? 'bg-green-500' : 'bg-green-500'
   return { score, label, color, checks }
 }
 
@@ -165,7 +165,7 @@ export function UserSettingsPage() {
   return (
     <div className="view-transition space-y-6 pb-8">
       <div>
-        <h1 className="text-2xl font-bold">{language === 'fil' ? 'Mga Setting' : 'Settings'}</h1>
+        <h1 className="text-4xl font-bold leading-tight tracking-tight">{language === 'fil' ? 'Mga Setting' : 'Settings'}</h1>
         <p className="text-muted-foreground text-sm">{language === 'fil' ? 'Pamahalaan ang iyong account' : 'Manage your account preferences'}</p>
       </div>
 
@@ -234,7 +234,7 @@ export function UserSettingsPage() {
             </div>
             <div className="flex justify-end">
               <Button onClick={() => profileMutation.mutate()} disabled={profileMutation.isPending} className="rounded-xl">
-                {profileMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                {profileMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 {language === 'fil' ? 'I-save' : 'Update Profile'}
               </Button>
             </div>
@@ -259,7 +259,7 @@ export function UserSettingsPage() {
                     : 'We will send a verification code to your email to confirm your identity.'}
                 </p>
                 <Button onClick={() => sendCodeMutation.mutate()} disabled={sendCodeMutation.isPending} className="rounded-xl">
-                  {sendCodeMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mail className="mr-2 h-4 w-4" />}
+                  {sendCodeMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mail className="h-4 w-4" />}
                   {language === 'fil' ? 'Magpadala ng Code' : 'Send Verification Code'}
                 </Button>
               </div>
@@ -271,13 +271,13 @@ export function UserSettingsPage() {
                   <Input value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} placeholder="123456" maxLength={6} className="h-12 text-center text-xl tracking-[0.5em] font-mono" />
                 </div>
                 <Button onClick={() => verifyCodeMutation.mutate()} disabled={verifyCodeMutation.isPending || verificationCode.length < 6} className="rounded-xl w-full">
-                  {verifyCodeMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Check className="mr-2 h-4 w-4" />}
+                  {verifyCodeMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
                   {language === 'fil' ? 'I-verify' : 'Verify Code'}
                 </Button>
               </div>
             ) : (
               <div className="space-y-4">
-                <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"><Check className="mr-1 h-3 w-3" /> {language === 'fil' ? 'Na-verify' : 'Verified'}</Badge>
+                <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"><Check className="h-3 w-3" /> {language === 'fil' ? 'Na-verify' : 'Verified'}</Badge>
 
                 <div className="space-y-2">
                   <Label>{language === 'fil' ? 'Kasalukuyang Password' : 'Current Password'}</Label>
@@ -301,7 +301,7 @@ export function UserSettingsPage() {
                     <div className="space-y-2 p-3 rounded-lg bg-muted/50">
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-muted-foreground">{language === 'fil' ? 'Lakas ng Password' : 'Password Strength'}</span>
-                        <span className={`font-semibold ${pwStrength.score <= 1 ? 'text-red-500' : pwStrength.score === 2 ? 'text-orange-500' : pwStrength.score === 3 ? 'text-yellow-600' : 'text-green-600'}`}>
+                        <span className={`font-semibold ${pwStrength.score <= 1 ? 'text-red-500' : pwStrength.score === 2 ? 'text-amber-500' : pwStrength.score === 3 ? 'text-amber-600' : 'text-green-600'}`}>
                           {pwStrength.label}
                         </span>
                       </div>
@@ -336,7 +336,7 @@ export function UserSettingsPage() {
                 </div>
 
                 <Button onClick={() => passwordMutation.mutate()} disabled={passwordMutation.isPending || !currentPassword || !newPassword || !passwordsMatch} className="rounded-xl w-full">
-                  {passwordMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                  {passwordMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                   {language === 'fil' ? 'Palitan ang Password' : 'Change Password'}
                 </Button>
               </div>

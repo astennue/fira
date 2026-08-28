@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIRA Branding Kit v1.0</title>
+<title>FIRA Design System — Branding Kit v2.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* === RESET & BASE === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
   --bg: #f8fafc; --fg: #0f172a; --card: #ffffff; --card-fg: #0f172a;
   --muted: #f1f5f9; --muted-fg: #64748b; --border: #cbd5e1; --input: #cbd5e1;
@@ -14,15 +17,12 @@
   --secondary: #eff6ff; --secondary-fg: #1e3a8a;
   --accent-gold: #b45309; --accent-gold-bg: #fffbeb; --accent-gold-fg: #92400e;
   --accent-slate: #64748b; --accent-slate-bg: #f1f5f9; --accent-slate-fg: #334155;
-  --destructive: #dc2626; --destructive-fg: #ffffff; --destructive-bg: #fef2f2;
-  --success: #16a34a; --success-bg: #f0fdf4; --success-fg: #15803d;
-  --warning: #d97706; --warning-bg: #fffbeb; --warning-fg: #92400e;
-  --info: #2563eb; --info-bg: #eff6ff; --info-fg: #1e40af;
+  --destructive: #ef4444; --destructive-bg: #fef2f2; --destructive-fg: #dc2626;
+  --success: #22c55e; --success-bg: #f0fdf4; --success-fg: #15803d;
+  --warning: #f59e0b; --warning-bg: #fffbeb; --warning-fg: #92400e;
+  --info: #3b82f6; --info-bg: #eff6ff; --info-fg: #1e40af;
   --ring: #2563eb; --radius: 10px;
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05); --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --sidebar-w: 260px;
 }
 .dark {
   --bg: #0b1120; --fg: #e2e8f0; --card: #141c2e; --card-fg: #e2e8f0;
@@ -30,466 +30,1332 @@
   --primary: #60a5fa; --primary-fg: #0b1120; --primary-hover: #93c5fd;
   --secondary: #1a2540; --secondary-fg: #93c5fd;
   --accent-gold: #fbbf24; --accent-gold-bg: #422006; --accent-gold-fg: #fde68a;
-  --accent-slate: #94a3b8; --accent-slate-bg: #1e293b; --accent-slate-fg: #cbd5e1;
-  --destructive: #f87171; --destructive-fg: #0b1120; --destructive-bg: #450a0a;
+  --accent-slate: #8899b4; --accent-slate-bg: #1a2540; --accent-slate-fg: #cbd5e1;
+  --destructive: #f87171; --destructive-bg: #450a0a; --destructive-fg: #fca5a5;
   --success: #4ade80; --success-bg: #052e16; --success-fg: #86efac;
   --warning: #fbbf24; --warning-bg: #422006; --warning-fg: #fde68a;
   --info: #60a5fa; --info-bg: #172554; --info-fg: #93c5fd;
   --ring: #3b82f6;
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3); --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.3);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.4);
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Inter',system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--fg); line-height:1.6; transition: background 0.3s, color 0.3s; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg); color: var(--fg); line-height: 1.6;
+  transition: background-color 0.3s, color 0.3s;
+}
+.mono { font-family: 'JetBrains Mono', 'Geist Mono', monospace; }
 
-/* Layout */
-.container { max-width:1100px; margin:0 auto; padding:24px 32px 80px; }
-nav.toc { position:fixed; left:0; top:0; bottom:0; width:240px; background:var(--card); border-right:1px solid var(--border); padding:20px 16px; overflow-y:auto; z-index:50; }
-nav.toc h2 { font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted-fg); margin-bottom:12px; }
-nav.toc a { display:block; padding:6px 12px; font-size:0.8125rem; color:var(--muted-fg); text-decoration:none; border-radius:6px; transition:all 0.15s; }
-nav.toc a:hover { background:var(--secondary); color:var(--secondary-fg); }
-nav.toc a.active { background:var(--primary); color:var(--primary-fg); font-weight:600; }
-main { margin-left:240px; }
+/* === LAYOUT === */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; height: 60px; z-index: 100;
+  background: rgba(248,250,252,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border); display: flex; align-items: center;
+  padding: 0 24px; gap: 16px;
+}
+.dark .topbar { background: rgba(11,17,32,0.88); }
+.topbar-brand { font-size: 20px; font-weight: 700; color: var(--primary); letter-spacing: -0.02em; }
+.topbar-version { font-size: 11px; font-weight: 500; color: var(--muted-fg); background: var(--muted); padding: 2px 8px; border-radius: 999px; }
+.topbar-spacer { flex: 1; }
+.theme-toggle {
+  width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--card); color: var(--fg); cursor: pointer; display: flex;
+  align-items: center; justify-content: center; font-size: 18px; transition: all 0.2s;
+}
+.theme-toggle:hover { background: var(--muted); }
+.sidebar {
+  position: fixed; top: 60px; left: 0; bottom: 0; width: var(--sidebar-w);
+  background: var(--card); border-right: 1px solid var(--border); overflow-y: auto;
+  padding: 16px 0; z-index: 90; transition: background-color 0.3s, border-color 0.3s;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.sidebar-section { padding: 8px 16px; margin-top: 8px; }
+.sidebar-section-title {
+  font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted-fg); margin-bottom: 4px;
+}
+.sidebar a {
+  display: block; padding: 6px 16px; font-size: 13px; color: var(--fg); opacity: 0.7;
+  text-decoration: none; border-radius: 6px; margin: 1px 8px; transition: all 0.15s;
+}
+.sidebar a:hover { opacity: 1; background: var(--muted); }
+.sidebar a.active { opacity: 1; background: var(--secondary); color: var(--primary); font-weight: 500; }
+.main { margin-left: var(--sidebar-w); padding: 80px 48px 80px; max-width: 960px; }
 
-/* Cover */
-.cover { min-height:70vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; background:linear-gradient(135deg,#172554 0%,#1e3a8a 25%,#1e40af 50%,#2563eb 75%,#3b82f6 100%); color:#fff; border-radius:16px; padding:64px 32px; margin-bottom:48px; position:relative; overflow:hidden; }
-.dark .cover { background:linear-gradient(135deg,#070d1a 0%,#0f1d3a 25%,#162854 50%,#1e3a7a 75%,#2563eb 100%); }
-.cover::before { content:''; position:absolute; inset:0; background-image:radial-gradient(rgba(255,255,255,0.08) 1px,transparent 1px); background-size:24px 24px; }
-.cover h1 { font-size:3.5rem; font-weight:800; letter-spacing:-0.02em; position:relative; }
-.cover .subtitle { font-size:1.25rem; font-weight:300; opacity:0.85; margin-top:12px; position:relative; }
-.cover .meta { font-size:0.875rem; opacity:0.6; margin-top:24px; position:relative; }
+/* === SECTIONS === */
+.section { margin-bottom: 72px; }
+.section-label {
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--primary); margin-bottom: 8px;
+}
+.section-title {
+  font-size: 28px; font-weight: 700; color: var(--fg); letter-spacing: -0.02em;
+  margin-bottom: 8px; line-height: 1.2;
+}
+.section-desc { font-size: 15px; color: var(--muted-fg); margin-bottom: 32px; max-width: 640px; line-height: 1.6; }
+.subsection { margin-bottom: 40px; }
+.subsection-title {
+  font-size: 16px; font-weight: 600; color: var(--fg); margin-bottom: 16px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
 
-/* Sections */
-section { margin-bottom:56px; }
-.section-title { font-size:1.5rem; font-weight:700; padding-bottom:12px; border-bottom:2px solid var(--border); margin-bottom:28px; display:flex; align-items:center; gap:10px; }
-.section-title .num { font-size:0.75rem; font-weight:700; background:var(--primary); color:var(--primary-fg); width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
-.subsection { margin-bottom:32px; }
-.subsection h3 { font-size:1.125rem; font-weight:600; margin-bottom:16px; color:var(--fg); }
-.subsection h4 { font-size:0.9375rem; font-weight:600; margin-bottom:12px; margin-top:20px; color:var(--muted-fg); text-transform:uppercase; letter-spacing:0.03em; }
+/* === COVER === */
+.cover {
+  margin-left: var(--sidebar-w); min-height: calc(100vh - 60px); display: flex;
+  align-items: center; justify-content: center; padding: 40px; position: relative; overflow: hidden;
+}
+.cover-inner {
+  text-align: center; position: relative; z-index: 1;
+}
+.cover-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #172554 0%, #1e3a8a 25%, #1e40af 50%, #2563eb 75%, #3b82f6 100%);
+}
+.cover-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.cover-logo {
+  font-size: 72px; font-weight: 900; color: #ffffff; letter-spacing: -0.03em;
+  margin-bottom: 8px; text-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+.cover-title {
+  font-size: 24px; font-weight: 400; color: rgba(255,255,255,0.85); margin-bottom: 32px;
+}
+.cover-meta {
+  display: inline-flex; gap: 24px; font-size: 13px; color: rgba(255,255,255,0.6);
+}
+.cover-badge {
+  padding: 6px 16px; border-radius: 999px; background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2);
+}
 
-/* Color Swatches */
-.swatch-grid { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
-.swatch { width:80px; height:48px; border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:0.625rem; font-weight:600; position:relative; border:1px solid rgba(128,128,128,0.15); }
-.swatch.light-text { color:#fff; }
-.swatch.dark-text { color:#0f172a; }
-.swatch-label { position:absolute; bottom:-18px; font-size:0.625rem; color:var(--muted-fg); white-space:nowrap; }
-.token-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:12px; }
-.token-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px; box-shadow:var(--shadow-sm); }
-.token-card .label { font-size:0.75rem; font-weight:600; color:var(--muted-fg); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:6px; }
-.token-card .value { font-size:0.8125rem; font-family:'Courier New',monospace; }
-.token-card .color-preview { height:32px; border-radius:6px; margin-bottom:8px; border:1px solid rgba(128,128,128,0.1); }
+/* === COLOR SWATCHES === */
+.swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.swatch {
+  border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
+  background: var(--card); transition: box-shadow 0.2s, transform 0.2s; cursor: default;
+}
+.swatch:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.12); transform: translateY(-2px); }
+.swatch-color { height: 80px; position: relative; }
+.swatch-info { padding: 10px 12px; }
+.swatch-name { font-size: 12px; font-weight: 600; color: var(--fg); }
+.swatch-hex { font-size: 11px; color: var(--muted-fg); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+.swatch-copy {
+  position: absolute; top: 6px; right: 6px; width: 28px; height: 28px; border-radius: 6px;
+  background: rgba(0,0,0,0.3); color: #fff; border: none; cursor: pointer; font-size: 12px;
+  display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.15s;
+}
+.swatch:hover .swatch-copy { opacity: 1; }
 
-/* Status Badges */
-.badge-grid { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
-.badge { display:inline-flex; align-items:center; padding:4px 12px; border-radius:9999px; font-size:0.75rem; font-weight:600; white-space:nowrap; }
-.badge-desc { font-size:0.75rem; color:var(--muted-fg); margin-top:4px; }
+/* === SEMANTIC TOKENS TABLE === */
+.token-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.token-table th {
+  text-align: left; padding: 10px 12px; font-weight: 600; color: var(--muted-fg);
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--border); background: var(--muted);
+}
+.token-table td {
+  padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle;
+}
+.token-table tr:last-child td { border-bottom: none; }
+.token-table tr:hover td { background: var(--muted); }
+.token-swatch-inline {
+  display: inline-block; width: 16px; height: 16px; border-radius: 4px;
+  border: 1px solid var(--border); vertical-align: middle; margin-right: 8px;
+}
+.token-code {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--primary);
+  background: var(--secondary); padding: 2px 8px; border-radius: 4px;
+}
 
-/* Typography */
-.type-sample { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin-bottom:8px; box-shadow:var(--shadow-sm); }
-.type-sample .props { font-size:0.6875rem; color:var(--muted-fg); font-family:'Courier New',monospace; margin-top:4px; }
+/* === TYPOGRAPHY === */
+.type-row {
+  display: flex; align-items: baseline; gap: 24px; padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.type-row:last-child { border-bottom: none; }
+.type-label {
+  width: 120px; flex-shrink: 0; font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--muted-fg);
+}
+.type-sample { flex: 1; }
+.type-meta {
+  flex-shrink: 0; font-size: 12px; color: var(--muted-fg); text-align: right;
+  font-family: 'JetBrains Mono', monospace; line-height: 1.6;
+}
 
-/* Interactive States */
-.state-row { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-bottom:16px; padding:16px; background:var(--card); border:1px solid var(--border); border-radius:10px; }
-.state-label { font-size:0.75rem; font-weight:600; color:var(--muted-fg); text-transform:uppercase; letter-spacing:0.03em; min-width:100px; }
+/* === BUTTONS === */
+.btn-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 0 16px; height: 36px; border-radius: 8px; font-size: 14px; font-weight: 500;
+  border: none; cursor: pointer; transition: all 0.15s ease; text-decoration: none;
+  font-family: inherit;
+}
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--primary); color: var(--primary-fg); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.btn-primary:hover { opacity: 0.9; }
+.btn-destructive { background: var(--destructive); color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.btn-destructive:hover { opacity: 0.9; }
+.btn-outline { background: var(--card); color: var(--fg); border: 1px solid var(--input); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.btn-outline:hover { background: var(--muted); }
+.btn-secondary { background: var(--secondary); color: var(--secondary-fg); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.btn-secondary:hover { opacity: 0.8; }
+.btn-ghost { background: transparent; color: var(--fg); }
+.btn-ghost:hover { background: var(--muted); }
+.btn-link { background: transparent; color: var(--primary); text-decoration: underline; text-underline-offset: 4px; }
+.btn-link:hover { color: var(--primary-hover); }
+.btn-sm { height: 32px; padding: 0 12px; font-size: 13px; }
+.btn-lg { height: 40px; padding: 0 24px; font-size: 14px; }
+.btn:disabled, .btn.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+.btn-loading { position: relative; color: transparent !important; }
+.btn-loading::after {
+  content: ''; position: absolute; width: 16px; height: 16px;
+  border: 2px solid transparent; border-top-color: currentColor; border-radius: 50%;
+  animation: spin 0.6s linear infinite; color: var(--primary-fg);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn-icon { width: 36px; padding: 0; }
 
-/* Buttons */
-.btn { display:inline-flex; align-items:center; justify-content:center; height:36px; padding:0 16px; font-size:0.875rem; font-weight:500; border-radius:8px; border:none; cursor:pointer; transition:all 0.15s; font-family:inherit; gap:6px; }
-.btn-primary { background:var(--primary); color:var(--primary-fg); }
-.btn-primary:hover { background:var(--primary-hover); }
-.btn-primary:active { opacity:0.9; transform:scale(0.98); }
-.btn-primary:disabled { background:var(--muted); color:var(--muted-fg); cursor:not-allowed; }
-.btn-secondary { background:var(--secondary); color:var(--secondary-fg); border:1px solid var(--border); }
-.btn-secondary:hover { background:var(--muted); }
-.btn-destructive { background:var(--destructive); color:var(--destructive-fg); }
-.btn-destructive:hover { opacity:0.9; }
-.btn-outline { background:transparent; color:var(--fg); border:1px solid var(--border); }
-.btn-outline:hover { background:var(--secondary); }
-.btn-ghost { background:transparent; color:var(--fg); }
-.btn-ghost:hover { background:var(--secondary); }
-.spinner { width:16px; height:16px; border:2px solid transparent; border-top-color:currentColor; border-radius:50%; animation:spin 0.6s linear infinite; }
-@keyframes spin { to { transform:rotate(360deg); } }
+/* === INPUTS === */
+.input-demo { max-width: 400px; margin-bottom: 16px; }
+.input-label { font-size: 14px; font-weight: 500; margin-bottom: 6px; display: block; }
+.input-field {
+  width: 100%; height: 36px; padding: 0 12px; border-radius: 8px;
+  border: 1px solid var(--input); background: var(--card); color: var(--fg);
+  font-size: 14px; font-family: inherit; transition: all 0.15s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.input-field:focus { outline: none; border-color: var(--ring); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+.dark .input-field:focus { box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+.input-field.error { border-color: var(--destructive); box-shadow: 0 0 0 3px rgba(239,68,68,0.15); }
+.dark .input-field.error { box-shadow: 0 0 0 3px rgba(248,113,113,0.2); }
+.input-field:disabled { opacity: 0.5; cursor: not-allowed; }
+.input-hint { font-size: 12px; color: var(--muted-fg); margin-top: 4px; }
+.input-error { font-size: 12px; color: var(--destructive); margin-top: 4px; }
+.textarea-field {
+  width: 100%; min-height: 80px; padding: 8px 12px; border-radius: 8px;
+  border: 1px solid var(--input); background: var(--card); color: var(--fg);
+  font-size: 14px; font-family: inherit; transition: all 0.15s; resize: vertical;
+}
+.textarea-field:focus { outline: none; border-color: var(--ring); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+.dark .textarea-field:focus { box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
 
-/* Inputs */
-.input-demo { display:flex; flex-direction:column; gap:16px; }
-.input-row { display:flex; flex-wrap:wrap; align-items:flex-start; gap:16px; }
-.input-group { display:flex; flex-direction:column; gap:4px; }
-.input-group label { font-size:0.75rem; font-weight:600; color:var(--muted-fg); }
-.fira-input { height:36px; padding:0 12px; font-size:0.875rem; border:1px solid var(--input); border-radius:8px; background:var(--card); color:var(--fg); font-family:inherit; outline:none; transition:box-shadow 0.15s; width:200px; }
-.fira-input:focus { box-shadow:0 0 0 2px var(--ring); border-color:var(--ring); }
-.fira-input.error { border-color:var(--destructive); box-shadow:0 0 0 2px rgba(220,38,38,0.2); }
-.fira-input:disabled { background:var(--muted); color:var(--muted-fg); cursor:not-allowed; }
-.error-msg { font-size:0.75rem; color:var(--destructive); }
-.fira-textarea { padding:8px 12px; font-size:0.875rem; border:1px solid var(--input); border-radius:8px; background:var(--card); color:var(--fg); font-family:inherit; outline:none; resize:vertical; min-height:72px; width:200px; transition:box-shadow 0.15s; }
-.fira-textarea:focus { box-shadow:0 0 0 2px var(--ring); border-color:var(--ring); }
+/* === CARDS === */
+.card-demo {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06); padding: 24px;
+  transition: all 0.2s; display: inline-block; vertical-align: top;
+}
+.card-demo:hover { box-shadow: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06); }
+.card-title { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+.card-desc { font-size: 14px; color: var(--muted-fg); }
+.glass-demo {
+  background: rgba(255,255,255,0.15); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.25); border-radius: 12px; padding: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1); color: #fff; display: inline-block;
+}
+.dark .glass-demo {
+  background: rgba(20,28,46,0.5); border-color: rgba(59,130,246,0.2);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+.glass-bg {
+  background: linear-gradient(135deg, #1e3a8a, #2563eb, #3b82f6); border-radius: 16px; padding: 40px;
+}
 
-/* Checkboxes & Radios */
-.check-row { display:flex; align-items:center; gap:8px; font-size:0.875rem; cursor:pointer; }
-.check-box { width:18px; height:18px; border-radius:4px; border:2px solid var(--input); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.check-box.checked { background:var(--primary); border-color:var(--primary); color:#fff; font-size:12px; }
-.check-box.disabled { opacity:0.5; cursor:not-allowed; }
-.radio { width:18px; height:18px; border-radius:50%; border:2px solid var(--input); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.radio.checked { border-color:var(--primary); }
-.radio.checked::after { content:''; width:8px; height:8px; border-radius:50%; background:var(--primary); }
-.toggle { width:40px; height:22px; border-radius:11px; background:var(--muted); position:relative; cursor:pointer; transition:background 0.2s; flex-shrink:0; }
-.toggle.on { background:var(--primary); }
-.toggle::after { content:''; width:18px; height:18px; border-radius:50%; background:#fff; position:absolute; top:2px; left:2px; transition:left 0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.2); }
-.toggle.on::after { left:20px; }
-.toggle.disabled { opacity:0.5; cursor:not-allowed; }
+/* === BADGES === */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px;
+  border-radius: 6px; font-size: 12px; font-weight: 500; white-space: nowrap;
+}
+.badge-sm { font-size: 11px; padding: 1px 6px; }
+.badge-success { background: #f0fdf4; color: #15803d; }
+.badge-danger { background: #fef2f2; color: #dc2626; }
+.badge-warning { background: #fffbeb; color: #92400e; }
+.badge-info { background: #eff6ff; color: #1e40af; }
+.badge-muted { background: #f1f5f9; color: #64748b; }
+.badge-primary { background: var(--primary); color: var(--primary-fg); }
+.badge-outline { background: transparent; color: var(--fg); border: 1px solid var(--border); }
+.dark .badge-success { background: rgba(20,83,45,0.5); color: #86efac; }
+.dark .badge-danger { background: rgba(127,29,29,0.5); color: #fca5a5; }
+.dark .badge-warning { background: rgba(120,53,15,0.5); color: #fde68a; }
+.dark .badge-info { background: rgba(23,37,84,0.5); color: #93c5fd; }
+.dark .badge-muted { background: rgba(15,23,42,0.5); color: #94a3b8; }
 
-/* Cards */
-.card-demo { padding:20px; border:1px solid var(--border); border-radius:10px; background:var(--card); box-shadow:var(--shadow); transition:all 0.2s; }
-.card-demo.hover:hover { box-shadow:var(--shadow-lg); transform:translateY(-2px); }
-.card-demo.selected { border-color:var(--primary); box-shadow:0 0 0 2px var(--ring); }
-.card-demo.disabled-card { opacity:0.5; }
-.glass-card { padding:20px; border-radius:12px; background:rgba(255,255,255,0.15); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.25); box-shadow:0 8px 32px rgba(0,0,0,0.1); color:var(--fg); }
-.dark .glass-card { background:rgba(20,28,46,0.5); border-color:rgba(59,130,246,0.2); box-shadow:0 8px 32px rgba(0,0,0,0.4); }
+/* === STATUS PIPELINE === */
+.pipeline { display: flex; flex-wrap: wrap; gap: 8px; }
+.pipeline-step {
+  display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 8px;
+  font-size: 13px; font-weight: 500; background: var(--card); border: 1px solid var(--border);
+}
+.pipeline-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.pipeline-arrow { color: var(--muted-fg); font-size: 18px; }
 
-/* Radius */
-.radius-demo { display:flex; flex-wrap:wrap; gap:12px; align-items:end; }
-.radius-box { width:64px; height:64px; background:var(--primary); opacity:0.85; display:flex; align-items:center; justify-content:center; color:#fff; font-size:0.6875rem; font-weight:600; }
+/* === RADIUS === */
+.radius-grid { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; }
+.radius-item { text-align: center; }
+.radius-box {
+  width: 80px; height: 80px; background: var(--primary); margin-bottom: 8px;
+  transition: all 0.2s;
+}
+.radius-label { font-size: 11px; color: var(--muted-fg); font-family: 'JetBrains Mono', monospace; }
 
-/* Shadow */
-.shadow-demo { display:flex; flex-wrap:wrap; gap:16px; align-items:start; }
-.shadow-box { width:120px; height:80px; background:var(--card); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:500; color:var(--muted-fg); }
+/* === SHADOWS === */
+.shadow-grid { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+.shadow-item { text-align: center; }
+.shadow-box {
+  width: 120px; height: 80px; background: var(--card); border-radius: 12px;
+  border: 1px solid var(--border); margin-bottom: 8px;
+}
+.shadow-label { font-size: 11px; color: var(--muted-fg); font-family: 'JetBrains Mono', monospace; }
 
-/* Spacing */
-.spacing-demo { display:flex; flex-direction:column; gap:4px; }
-.spacing-row { display:flex; align-items:center; gap:8px; }
-.spacing-bar { height:24px; background:var(--primary); opacity:0.75; border-radius:4px; }
-.spacing-label { font-size:0.6875rem; color:var(--muted-fg); width:64px; text-align:right; font-family:'Courier New',monospace; }
+/* === LINKS === */
+.link-demo { font-size: 15px; line-height: 2.2; }
+.link-inline { color: var(--primary); text-decoration: none; }
+.link-inline:hover { text-decoration: underline; color: var(--primary-hover); }
+.link-external::after { content: ' ↗'; font-size: 12px; }
 
-/* Toggle Button */
-.mode-toggle { position:fixed; top:16px; right:16px; z-index:100; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:8px 16px; font-size:0.8125rem; font-weight:500; cursor:pointer; color:var(--fg); box-shadow:var(--shadow-md); font-family:inherit; transition:all 0.2s; }
-.mode-toggle:hover { background:var(--secondary); }
+/* === TOAST === */
+.toast-demo {
+  display: flex; flex-direction: column; gap: 12px; max-width: 420px;
+}
+.toast {
+  display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-radius: 8px;
+  background: var(--card); border: 1px solid var(--border); box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+  border-left: 4px solid; font-size: 14px;
+}
+.toast-success { border-left-color: #22c55e; }
+.toast-error { border-left-color: #ef4444; }
+.toast-warning { border-left-color: #f59e0b; }
+.toast-info { border-left-color: #3b82f6; }
+.toast-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.toast-content { flex: 1; }
+.toast-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+.toast-msg { font-size: 13px; color: var(--muted-fg); }
 
-/* Print */
-@media print { nav.toc { display:none; } main { margin-left:0; } .mode-toggle { display:none; } body { background:#fff; } section { page-break-inside:avoid; } .cover { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
-@media (max-width:900px) { nav.toc { display:none; } main { margin-left:0; } }
+/* === EMPTY STATES === */
+.empty-state {
+  text-align: center; padding: 48px 24px; background: var(--card); border-radius: 12px;
+  border: 1px solid var(--border); max-width: 400px;
+}
+.empty-icon { font-size: 48px; color: var(--border); margin-bottom: 16px; }
+.empty-title { font-size: 18px; font-weight: 500; margin-bottom: 4px; }
+.empty-desc { font-size: 14px; color: var(--muted-fg); }
+
+/* === LOADING === */
+.skeleton {
+  background: var(--muted); border-radius: 6px; position: relative; overflow: hidden;
+}
+.skeleton::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  background-size: 200% 100%; animation: shimmer 2s infinite;
+}
+.dark .skeleton::after {
+  background: linear-gradient(90deg, transparent, rgba(59,130,246,0.15), transparent);
+  background-size: 200% 100%;
+}
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+.spinner {
+  width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--primary);
+  border-radius: 50%; animation: spin 0.8s linear infinite;
+}
+
+/* === TABLE === */
+.table-demo { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table-demo th {
+  text-align: left; padding: 10px 16px; background: var(--muted); color: var(--muted-fg);
+  font-weight: 500; font-size: 13px; border-bottom: 1px solid var(--border);
+}
+.table-demo th:first-child { border-radius: 8px 0 0 0; }
+.table-demo th:last-child { border-radius: 0 8px 0 0; }
+.table-demo td {
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+}
+.table-demo tr:hover td { background: var(--muted); }
+.table-demo tr:last-child td { border-bottom: none; }
+
+/* === CHECKBOX / SWITCH / RADIO === */
+.toggle-row { display: flex; flex-wrap: wrap; gap: 24px; align-items: center; }
+.toggle-label {
+  display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;
+}
+.checkbox-custom {
+  width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid var(--input);
+  background: var(--card); display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.checkbox-custom.checked {
+  background: var(--primary); border-color: var(--primary);
+}
+.checkbox-custom.checked::after { content: '✓'; color: #fff; font-size: 12px; font-weight: 700; }
+.radio-custom {
+  width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--input);
+  background: var(--card); display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.radio-custom.checked { border-color: var(--primary); }
+.radio-custom.checked::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); }
+.switch-custom {
+  width: 44px; height: 24px; border-radius: 999px; background: var(--input);
+  position: relative; transition: background 0.2s; cursor: pointer;
+}
+.switch-custom.on { background: var(--primary); }
+.switch-custom::after {
+  content: ''; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px;
+  border-radius: 50%; background: #fff; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.switch-custom.on::after { transform: translateX(20px); }
+
+/* === SELECTION === */
+.tab-row { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.tab-item {
+  padding: 10px 16px; font-size: 14px; color: var(--muted-fg); cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s;
+}
+.tab-item:hover { color: var(--fg); }
+.tab-item.active { color: var(--fg); border-bottom-color: var(--primary); font-weight: 500; }
+.selected-row { background: var(--muted); }
+
+/* === DIVIDER === */
+.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+/* === FOCUS DEMO === */
+.focus-ring {
+ padding: 8px 16px; border-radius: 8px; border: 2px solid var(--primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.2); font-size: 14px; background: var(--card);
+}
+.dark .focus-ring { box-shadow: 0 0 0 3px rgba(59,130,246,0.25); }
+
+/* === TOOLTIP === */
+.tooltip-demo { display: inline-block; position: relative; }
+.tooltip-box {
+  position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+  background: var(--fg); color: var(--bg); font-size: 12px; padding: 6px 12px;
+  border-radius: 6px; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.tooltip-box::after {
+  content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  border: 6px solid transparent; border-top-color: var(--fg);
+}
+
+/* === FILE UPLOAD === */
+.upload-zone {
+  border: 2px dashed var(--input); border-radius: 12px; padding: 40px;
+  text-align: center; transition: all 0.2s; max-width: 400px; cursor: pointer;
+}
+.upload-zone:hover { border-color: var(--primary); background: var(--secondary); }
+.upload-icon { font-size: 40px; color: var(--muted-fg); margin-bottom: 12px; }
+.upload-text { font-size: 14px; color: var(--fg); font-weight: 500; margin-bottom: 4px; }
+.upload-hint { font-size: 12px; color: var(--muted-fg); }
+
+/* === SCROLLBAR PREVIEW === */
+.scrollbar-preview {
+  width: 200px; height: 120px; overflow-y: auto; padding: 12px;
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px; font-size: 13px;
+}
+.scrollbar-preview::-webkit-scrollbar { width: 8px; }
+.scrollbar-preview::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-preview::-webkit-scrollbar-thumb { background: #93c5fd; border-radius: 4px; }
+.scrollbar-preview::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+.dark .scrollbar-preview::-webkit-scrollbar-thumb { background: #334155; }
+.dark .scrollbar-preview::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+/* === CATEGORY COLORS === */
+.cat-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+.cat-domestic { background: #fce7f3; color: #9d174d; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; }
+.cat-caregiver { background: #f3e8ff; color: #6b21a8; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; }
+.cat-nurse { background: #ccfbf1; color: #115e59; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; }
+.cat-factory { background: #ffedd5; color: #9a3412; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; }
+.cat-hospitality { background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; }
+.dark .cat-domestic { background: rgba(131,24,67,0.3); color: #f9a8d4; }
+.dark .cat-caregiver { background: rgba(88,28,135,0.3); color: #d8b4fe; }
+.dark .cat-nurse { background: rgba(17,94,89,0.3); color: #5eead4; }
+.dark .cat-factory { background: rgba(154,52,18,0.3); color: #fdba74; }
+.dark .cat-hospitality { background: rgba(146,64,14,0.3); color: #fde68a; }
+
+/* === DECISION TABLE === */
+.decision-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.decision-table th {
+  text-align: left; padding: 10px 12px; background: var(--muted); color: var(--muted-fg);
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--border); font-weight: 600;
+}
+.decision-table td {
+  padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top;
+}
+.decision-table tr:last-child td { border-bottom: none; }
+.decision-table tr:hover td { background: var(--muted); }
+.decision-num { font-family: 'JetBrains Mono', monospace; color: var(--primary); font-weight: 600; }
+
+/* === RESPONSIVE === */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 80px 20px 60px; }
+  .cover { margin-left: 0; }
+}
+
+/* === PRINT === */
+@media print {
+  .topbar, .sidebar { display: none !important; }
+  .main { margin-left: 0 !important; padding: 0 !important; }
+  .cover { margin-left: 0 !important; min-height: auto !important; }
+  .swatch:hover { box-shadow: none; transform: none; }
+  body { background: #fff; color: #000; }
+}
 </style>
 </head>
 <body>
-<button class="mode-toggle" onclick="document.documentElement.classList.toggle('dark')">Toggle Dark Mode</button>
 
-<nav class="toc">
-  <h2>FIRA Design System</h2>
-  <a href="#cover" class="active">Cover</a>
-  <a href="#palette">Color Palette</a>
+<!-- ===== TOPBAR ===== -->
+<div class="topbar">
+  <div class="topbar-brand">FIRA</div>
+  <div class="topbar-version">Design System v2.0</div>
+  <div class="topbar-spacer"></div>
+  <button class="theme-toggle" onclick="document.documentElement.classList.toggle('dark')" title="Toggle theme">🌓</button>
+</div>
+
+<!-- ===== SIDEBAR ===== -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-section"><div class="sidebar-section-title">Foundation</div>
+  <a href="#cover">Cover</a>
+  <a href="#colors">Color Palette</a>
   <a href="#scheme">Color Scheme</a>
-  <a href="#indicators">Color Indicators</a>
+  <a href="#status">Status Indicators</a>
+  <a href="#pipeline">Application Pipeline</a>
   <a href="#typography">Typography</a>
-  <a href="#text-states">Text States</a>
-  <a href="#buttons">Button States</a>
-  <a href="#inputs">Input States</a>
-  <a href="#cards">Card States</a>
-  <a href="#badges">Badges &amp; Tags</a>
+  <a href="#links">Links</a></div>
+  <div class="sidebar-section"><div class="sidebar-section-title">Components</div>
+  <a href="#buttons">Buttons</a>
+  <a href="#inputs">Input Fields</a>
+  <a href="#cards">Cards</a>
+  <a href="#badges">Badges & Tags</a>
+  <a href="#tables">Tables</a>
+  <a href="#toggles">Toggles & Checks</a>
+  <a href="#toasts">Toasts</a>
+  <a href="#tabs">Tabs</a></div>
+  <div class="sidebar-section"><div class="sidebar-section-title">Design Tokens</div>
   <a href="#radius">Border Radius</a>
   <a href="#shadows">Shadows</a>
-  <a href="#spacing">Spacing Scale</a>
-</nav>
-
-<main>
-<div class="container">
-
-<!-- 0. COVER -->
-<section id="cover">
-  <div class="cover">
-    <h1>FIRA</h1>
-    <p class="subtitle">Branding Kit &mdash; Design System Reference</p>
-    <p class="meta">Version 1.0 &nbsp;&bull;&nbsp; August 2025 &nbsp;&bull;&nbsp; OFW Recruitment Platform</p>
-  </div>
-</section>
-
-<!-- 1. COLOR PALETTE -->
-<section id="palette">
-  <h2 class="section-title"><span class="num">1</span>Color Palette</h2>
-  <div class="subsection">
-    <h3>Primary Blue</h3>
-    <div class="swatch-grid">
-      <div class="swatch dark-text" style="background:#eff6ff"><span>50</span><span class="swatch-label">#eff6ff</span></div>
-      <div class="swatch dark-text" style="background:#dbeafe"><span>100</span><span class="swatch-label">#dbeafe</span></div>
-      <div class="swatch dark-text" style="background:#bfdbfe"><span>200</span><span class="swatch-label">#bfdbfe</span></div>
-      <div class="swatch dark-text" style="background:#93c5fd"><span>300</span><span class="swatch-label">#93c5fd</span></div>
-      <div class="swatch dark-text" style="background:#60a5fa"><span>400</span><span class="swatch-label">#60a5fa</span></div>
-      <div class="swatch light-text" style="background:#3b82f6"><span>500</span><span class="swatch-label">#3b82f6</span></div>
-      <div class="swatch light-text" style="background:#2563eb"><span>600</span><span class="swatch-label">#2563eb</span></div>
-      <div class="swatch light-text" style="background:#1d4ed8"><span>700</span><span class="swatch-label">#1d4ed8</span></div>
-      <div class="swatch light-text" style="background:#1e40af"><span>800</span><span class="swatch-label">#1e40af</span></div>
-      <div class="swatch light-text" style="background:#1e3a8a"><span>900</span><span class="swatch-label">#1e3a8a</span></div>
-      <div class="swatch light-text" style="background:#172554"><span>950</span><span class="swatch-label">#172554</span></div>
-    </div>
-  </div>
-  <div class="subsection">
-    <h3>Accent 1: Warm Gold / Amber (Subtle)</h3>
-    <div class="swatch-grid">
-      <div class="swatch dark-text" style="background:#fffbeb"><span>50</span><span class="swatch-label">#fffbeb</span></div>
-      <div class="swatch dark-text" style="background:#fef3c7"><span>100</span><span class="swatch-label">#fef3c7</span></div>
-      <div class="swatch dark-text" style="background:#fde68a"><span>200</span><span class="swatch-label">#fde68a</span></div>
-      <div class="swatch dark-text" style="background:#fcd34d"><span>300</span><span class="swatch-label">#fcd34d</span></div>
-      <div class="swatch dark-text" style="background:#fbbf24"><span>400</span><span class="swatch-label">#fbbf24</span></div>
-      <div class="swatch dark-text" style="background:#f59e0b"><span>500</span><span class="swatch-label">#f59e0b</span></div>
-      <div class="swatch light-text" style="background:#d97706"><span>600</span><span class="swatch-label">#d97706</span></div>
-      <div class="swatch light-text" style="background:#b45309"><span>700</span><span class="swatch-label">#b45309</span></div>
-      <div class="swatch light-text" style="background:#92400e"><span>800</span><span class="swatch-label">#92400e</span></div>
-      <div class="swatch light-text" style="background:#78350f"><span>900</span><span class="swatch-label">#78350f</span></div>
-      <div class="swatch light-text" style="background:#451a03"><span>950</span><span class="swatch-label">#451a03</span></div>
-    </div>
-  </div>
-  <div class="subsection">
-    <h3>Accent 2: Slate / Cool Gray (Subtle)</h3>
-    <div class="swatch-grid">
-      <div class="swatch dark-text" style="background:#f8fafc"><span>50</span><span class="swatch-label">#f8fafc</span></div>
-      <div class="swatch dark-text" style="background:#f1f5f9"><span>100</span><span class="swatch-label">#f1f5f9</span></div>
-      <div class="swatch dark-text" style="background:#e2e8f0"><span>200</span><span class="swatch-label">#e2e8f0</span></div>
-      <div class="swatch dark-text" style="background:#cbd5e1"><span>300</span><span class="swatch-label">#cbd5e1</span></div>
-      <div class="swatch dark-text" style="background:#94a3b8"><span>400</span><span class="swatch-label">#94a3b8</span></div>
-      <div class="swatch light-text" style="background:#64748b"><span>500</span><span class="swatch-label">#64748b</span></div>
-      <div class="swatch light-text" style="background:#475569"><span>600</span><span class="swatch-label">#475569</span></div>
-      <div class="swatch light-text" style="background:#334155"><span>700</span><span class="swatch-label">#334155</span></div>
-      <div class="swatch light-text" style="background:#1e293b"><span>800</span><span class="swatch-label">#1e293b</span></div>
-      <div class="swatch light-text" style="background:#0f172a"><span>900</span><span class="swatch-label">#0f172a</span></div>
-      <div class="swatch light-text" style="background:#020617"><span>950</span><span class="swatch-label">#020617</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- 2. COLOR SCHEME -->
-<section id="scheme">
-  <h2 class="section-title"><span class="num">2</span>Color Scheme (Semantic Tokens)</h2>
-  <h4>Light Mode</h4>
-  <div class="token-grid">
-    <div class="token-card"><div class="color-preview" style="background:#f8fafc"></div><div class="label">--background</div><div class="value">#f8fafc</div></div>
-    <div class="token-card"><div class="color-preview" style="background:#0f172a"></div><div class="label">--foreground</div><div class="value">#0f172a</div></div>
-    <div class="token-card"><div class="color-preview" style="background:#ffffff;border-color:#e2e8f0"></div><div class="label">--card</div><div class="value">#ffffff</div></div>
-    <div class="token-card"><div class="color-preview" style="background:#1e40af"></div><div class="label">--primary</div><div class="value">#1e40af</div></div>
-    <div class="token-card"><div class="color-preview" style="background:#eff6ff"></div><div class="label">--secondary</div><div class="value">#eff6ff</div></div>
-    <div class="token-card"><div class="color-preview" style="background:#f1f5f9"></div><div class="label">--muted</div><div class="value">#f1f5f9</div></div>
-    <div class="token-card"><div class="color-preview" style="background:#dbeafe"></div><div class="label">--accent</div><div class="value">#dbeafe</div></div>
-    <div class="token-card"><div class="color-preview" style="background:#dc2626"></div><div class="label">--destructive</div><div class="value">#dc2626</div></div>
-    <div class="token-card"><div class="color-preview" style="background:#cbd5e1"></div><div class="label">--border</div><div class="value">#cbd5e1</div></div>
-    <div class="token-card"><div class="color-preview" style="background:#2563eb"></div><div class="label">--ring</div><div class="value">#2563eb</div></div>
-  </div>
-</section>
-
-<!-- 3. COLOR INDICATORS -->
-<section id="indicators">
-  <h2 class="section-title"><span class="num">3</span>Color Indicators (Status Colors)</h2>
-  <div class="subsection">
-    <h3>Success / Positive</h3>
-    <div class="badge-grid">
-      <div><div class="badge" style="background:#16a34a;color:#fff">Approved</div><div class="badge-desc">General approval, account active</div></div>
-      <div><div class="badge" style="background:#16a34a;color:#fff">Active</div><div class="badge-desc">User, agency, job is active</div></div>
-      <div><div class="badge" style="background:#16a34a;color:#fff">Complete</div><div class="badge-desc">Profile, process completed</div></div>
-      <div><div class="badge" style="background:#16a34a;color:#fff">Open</div><div class="badge-desc">Job is accepting applications</div></div>
-      <div><div class="badge" style="background:#059669;color:#fff">Interview Passed</div><div class="badge-desc">Candidate passed interview</div></div>
-      <div><div class="badge" style="background:#047857;color:#fff">Deployed</div><div class="badge-desc">Worker deployed to employer</div></div>
-      <div><div class="badge" style="background:#65a30d;color:#fff">Employer Accepted</div><div class="badge-desc">Employer accepted endorsement</div></div>
-      <div><div class="badge" style="background:#0d9488;color:#fff">Documents Submitted</div><div class="badge-desc">All docs submitted by applicant</div></div>
-    </div>
-  </div>
-  <div class="subsection">
-    <h3>Danger / Negative</h3>
-    <div class="badge-grid">
-      <div><div class="badge" style="background:#dc2626;color:#fff">Rejected</div><div class="badge-desc">Application or user rejected</div></div>
-      <div><div class="badge" style="background:#6b7280;color:#fff">Cancelled</div><div class="badge-desc">Application or job cancelled</div></div>
-      <div><div class="badge" style="background:#6b7280;color:#fff">Inactive</div><div class="badge-desc">User, agency, or job deactivated</div></div>
-      <div><div class="badge" style="background:#6b7280;color:#fff">Closed</div><div class="badge-desc">Job is no longer accepting applications</div></div>
-      <div><div class="badge" style="background:#6b7280;color:#fff">Completed</div><div class="badge-desc">Process finished (terminal state)</div></div>
-    </div>
-  </div>
-  <div class="subsection">
-    <h3>Warning / Pending</h3>
-    <div class="badge-grid">
-      <div><div class="badge" style="background:#d97706;color:#fff">Pending</div><div class="badge-desc">Awaiting action (generic)</div></div>
-      <div><div class="badge" style="background:#d97706;color:#fff">Screening</div><div class="badge-desc">Application under initial review</div></div>
-      <div><div class="badge" style="background:#d97706;color:#fff">Incomplete</div><div class="badge-desc">Profile or form not yet complete</div></div>
-      <div><div class="badge" style="background:#ea580c;color:#fff">Pending Documents</div><div class="badge-desc">Waiting for applicant documents</div></div>
-    </div>
-  </div>
-  <div class="subsection">
-    <h3>Info / Neutral</h3>
-    <div class="badge-grid">
-      <div><div class="badge" style="background:#2563eb;color:#fff">Applied</div><div class="badge-desc">Application submitted by applicant</div></div>
-      <div><div class="badge" style="background:#6366f1;color:#fff">Pending FIRA Review</div><div class="badge-desc">Awaiting FIRA staff review</div></div>
-      <div><div class="badge" style="background:#7c3aed;color:#fff">Interview Scheduled</div><div class="badge-desc">Interview date set</div></div>
-      <div><div class="badge" style="background:#0891b2;color:#fff">Pending Employer Review</div><div class="badge-desc">Endorsed to employer, awaiting response</div></div>
-      <div><div class="badge" style="background:#64748b;color:#fff">Draft</div><div class="badge-desc">Unpublished CMS content</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- 4. TYPOGRAPHY -->
-<section id="typography">
-  <h2 class="section-title"><span class="num">4</span>Typography</h2>
-  <p style="margin-bottom:16px;color:var(--muted-fg);font-size:0.875rem">Font: Inter (Google Fonts) &mdash; fallback for Geist Sans. Mono: JetBrains Mono / system monospace.</p>
-  <div class="type-sample"><span style="font-size:2.25rem;font-weight:800;letter-spacing:-0.02em">H1 &mdash; Page Title &nbsp;<span style="font-size:0.5em;font-weight:400;opacity:0.5">36px / 800</span></span><div class="props">font-size: 2.25rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2</div></div>
-  <div class="type-sample"><span style="font-size:1.875rem;font-weight:700">H2 &mdash; Section Header &nbsp;<span style="font-size:0.5em;font-weight:400;opacity:0.5">30px / 700</span></span><div class="props">font-size: 1.875rem; font-weight: 700; line-height: 1.25</div></div>
-  <div class="type-sample"><span style="font-size:1.5rem;font-weight:600">H3 &mdash; Card Title &nbsp;<span style="font-size:0.5em;font-weight:400;opacity:0.5">24px / 600</span></span><div class="props">font-size: 1.5rem; font-weight: 600; line-height: 1.3</div></div>
-  <div class="type-sample"><span style="font-size:1.25rem;font-weight:600">H4 &mdash; Sub-Section &nbsp;<span style="font-size:0.5em;font-weight:400;opacity:0.5">20px / 600</span></span><div class="props">font-size: 1.25rem; font-weight: 600; line-height: 1.4</div></div>
-  <div class="type-sample"><span style="font-size:1.125rem;font-weight:500">H5 &mdash; Label &nbsp;<span style="font-size:0.5em;font-weight:400;opacity:0.5">18px / 500</span></span><div class="props">font-size: 1.125rem; font-weight: 500; line-height: 1.4</div></div>
-  <div class="type-sample"><span style="font-size:1rem;font-weight:500">H6 &mdash; Small Heading &nbsp;<span style="font-size:0.5em;font-weight:400;opacity:0.5">16px / 500</span></span><div class="props">font-size: 1rem; font-weight: 500; line-height: 1.5</div></div>
-  <div class="type-sample"><span style="font-size:1rem;font-weight:400">Body Large &mdash; The quick brown fox jumps over the lazy dog. &nbsp;<span style="font-size:0.6em;font-weight:400;opacity:0.5">16px / 400</span></span><div class="props">font-size: 1rem; font-weight: 400; line-height: 1.6</div></div>
-  <div class="type-sample"><span style="font-size:0.875rem;font-weight:400">Body &mdash; The quick brown fox jumps over the lazy dog. &nbsp;<span style="font-size:0.6em;font-weight:400;opacity:0.5">14px / 400</span></span><div class="props">font-size: 0.875rem; font-weight: 400; line-height: 1.6</div></div>
-  <div class="type-sample"><span style="font-size:0.75rem;font-weight:400">Caption / Small &mdash; Supporting text for details and metadata. &nbsp;<span style="font-size:0.7em;font-weight:400;opacity:0.5">12px / 400</span></span><div class="props">font-size: 0.75rem; font-weight: 400; line-height: 1.5; color: --muted-fg</div></div>
-  <div class="type-sample"><span style="font-size:0.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em">OVERLINE / LABEL &nbsp;<span style="font-size:0.85em;font-weight:400;opacity:0.5">11px / 600</span></span><div class="props">font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em</div></div>
-  <div class="type-sample"><span style="font-size:0.875rem;font-family:'Courier New',monospace">const db = prisma &nbsp;<span style="font-size:0.6em;font-weight:400;opacity:0.5">14px / mono</span></span><div class="props">font-family: monospace; font-size: 0.875rem</div></div>
-</section>
-
-<!-- 5. TEXT STATES -->
-<section id="text-states">
-  <h2 class="section-title"><span class="num">5</span>Text States</h2>
-  <div class="state-row"><span class="state-label">Default</span><span>Normal body text in the default foreground color.</span></div>
-  <div class="state-row"><span class="state-label">Muted</span><span style="color:var(--muted-fg)">Secondary or de-emphasized text for metadata and captions.</span></div>
-  <div class="state-row"><span class="state-label">Link</span><a href="#" style="color:var(--info);text-decoration:none" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">This is a link (hover to see underline)</a></div>
-  <div class="state-row"><span class="state-label">Visited</span><a href="#" style="color:#7c3aed;text-decoration:none">This link has been visited</a></div>
-  <div class="state-row"><span class="state-label">Disabled</span><span style="color:var(--muted-fg);opacity:0.5;cursor:not-allowed">This text is disabled and cannot be interacted with.</span></div>
-  <div class="state-row"><span class="state-label">Error</span><span style="color:var(--destructive)">This text indicates an error or validation failure.</span></div>
-  <div class="state-row"><span class="state-label">Success</span><span style="color:var(--success)">This text indicates a successful operation.</span></div>
-</section>
-
-<!-- 6. BUTTONS -->
-<section id="buttons">
-  <h2 class="section-title"><span class="num">6</span>Button States</h2>
-  <div class="subsection"><h3>Primary</h3><div class="state-row">
-    <span class="state-label">Default</span><button class="btn btn-primary">Primary Button</button>
-    <span class="state-label">Hover</span><button class="btn btn-primary" style="background:var(--primary-hover)">Hovered</button>
-    <span class="state-label">Active</span><button class="btn btn-primary" style="opacity:0.9;transform:scale(0.98)">Pressed</button>
-    <span class="state-label">Disabled</span><button class="btn btn-primary" disabled>Disabled</button>
-    <span class="state-label">Loading</span><button class="btn btn-primary" disabled><span class="spinner"></span>Loading</button>
-  </div></div>
-  <div class="subsection"><h3>Secondary</h3><div class="state-row">
-    <span class="state-label">Default</span><button class="btn btn-secondary">Secondary</button>
-    <span class="state-label">Hover</span><button class="btn btn-secondary" style="background:var(--muted)">Hovered</button>
-    <span class="state-label">Disabled</span><button class="btn btn-secondary" disabled>Disabled</button>
-  </div></div>
-  <div class="subsection"><h3>Destructive</h3><div class="state-row">
-    <span class="state-label">Default</span><button class="btn btn-destructive">Delete</button>
-    <span class="state-label">Hover</span><button class="btn btn-destructive" style="opacity:0.9">Hovered</button>
-    <span class="state-label">Disabled</span><button class="btn btn-destructive" disabled>Disabled</button>
-  </div></div>
-  <div class="subsection"><h3>Outline &amp; Ghost</h3><div class="state-row">
-    <span class="state-label">Outline</span><button class="btn btn-outline">Outline</button>
-    <span class="state-label">Outline Hover</span><button class="btn btn-outline" style="background:var(--secondary)">Hovered</button>
-    <span class="state-label">Ghost</span><button class="btn btn-ghost">Ghost</button>
-    <span class="state-label">Ghost Hover</span><button class="btn btn-ghost" style="background:var(--secondary)">Hovered</button>
-  </div></div>
-</section>
-
-<!-- 7. INPUTS -->
-<section id="inputs">
-  <h2 class="section-title"><span class="num">7</span>Input / Form States</h2>
-  <div class="subsection"><h3>Text Input</h3><div class="input-row">
-    <div class="input-group"><label>Default</label><input class="fira-input" placeholder="Enter text..." /></div>
-    <div class="input-group"><label>With Value</label><input class="fira-input" value="Juan Dela Cruz" /></div>
-    <div class="input-group"><label>Focus</label><input class="fira-input" style="box-shadow:0 0 0 2px var(--ring);border-color:var(--ring)" value="Focused state" /></div>
-    <div class="input-group"><label>Error</label><input class="fira-input error" value="Invalid email" /><span class="error-msg">Please enter a valid email address</span></div>
-    <div class="input-group"><label>Disabled</label><input class="fira-input" disabled value="Cannot edit" /></div>
-  </div></div>
-  <div class="subsection"><h3>Checkbox</h3><div class="state-row">
-    <label class="check-row"><div class="check-box"></div>Unchecked</label>
-    <label class="check-row"><div class="check-box checked">✓</div>Checked</label>
-    <label class="check-row"><div class="check-box disabled"></div><span style="opacity:0.5">Disabled</span></label>
-  </div></div>
-  <div class="subsection"><h3>Radio</h3><div class="state-row">
-    <label class="check-row"><div class="radio"></div>Option A</label>
-    <label class="check-row"><div class="radio checked"></div>Option B (selected)</label>
-    <label class="check-row"><div class="radio disabled"></div><span style="opacity:0.5">Disabled</span></label>
-  </div></div>
-  <div class="subsection"><h3>Toggle Switch</h3><div class="state-row">
-    <label class="check-row"><div class="toggle"></div>Off</label>
-    <label class="check-row"><div class="toggle on"></div>On</label>
-    <label class="check-row"><div class="toggle disabled"></div><span style="opacity:0.5">Disabled</span></label>
-  </div></div>
-</section>
-
-<!-- 8. CARDS -->
-<section id="cards">
-  <h2 class="section-title"><span class="num">8</span>Card States</h2>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px">
-    <div class="card-demo"><strong style="font-size:0.875rem">Default Card</strong><p style="font-size:0.75rem;color:var(--muted-fg);margin-top:6px">Standard card with subtle shadow and border. Used for most content containers.</p></div>
-    <div class="card-demo hover" style="cursor:pointer"><strong style="font-size:0.875rem">Hover Card</strong><p style="font-size:0.75rem;color:var(--muted-fg);margin-top:6px">Elevated on hover with larger shadow. Used for clickable cards.</p></div>
-    <div class="card-demo selected"><strong style="font-size:0.875rem">Selected Card</strong><p style="font-size:0.75rem;color:var(--muted-fg);margin-top:6px">Blue border with ring. Used for active/selected state.</p></div>
-    <div class="card-demo disabled-card"><strong style="font-size:0.875rem">Disabled Card</strong><p style="font-size:0.75rem;color:var(--muted-fg);margin-top:6px">Reduced opacity. Not interactive.</p></div>
-    <div class="glass-card"><strong style="font-size:0.875rem">Glassmorphism</strong><p style="font-size:0.75rem;opacity:0.8;margin-top:6px">Frosted glass effect with blur and transparency.</p></div>
-  </div>
-</section>
-
-<!-- 9. BADGES -->
-<section id="badges">
-  <h2 class="section-title"><span class="num">9</span>Badges &amp; Tags</h2>
-  <div class="state-row">
-    <span class="badge" style="background:var(--primary);color:var(--primary-fg)">Primary</span>
-    <span class="badge" style="background:var(--secondary);color:var(--secondary-fg)">Secondary</span>
-    <span class="badge" style="background:var(--destructive);color:var(--destructive-fg)">Destructive</span>
-    <span class="badge" style="background:var(--success);color:#fff">Success</span>
-    <span class="badge" style="background:var(--warning);color:#fff">Warning</span>
-    <span class="badge" style="background:var(--info);color:#fff">Info</span>
-    <span class="badge" style="background:transparent;color:var(--fg);border:1px solid var(--border)">Outline</span>
-    <span class="badge" style="background:var(--muted);color:var(--muted-fg)">Muted</span>
-  </div>
-</section>
-
-<!-- 10. BORDER RADIUS -->
-<section id="radius">
-  <h2 class="section-title"><span class="num">10</span>Border Radius Guide</h2>
-  <p style="margin-bottom:16px;color:var(--muted-fg);font-size:0.875rem">Base radius: <code>--radius: 10px</code> (rounded-lg). Use mixed radii as defined below.</p>
-  <div class="radius-demo">
-    <div style="text-align:center"><div class="radius-box" style="border-radius:4px">4px</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">rounded-sm<br/>Badges, tags</div></div>
-    <div style="text-align:center"><div class="radius-box" style="border-radius:8px">8px</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">rounded-md<br/>Buttons, inputs</div></div>
-    <div style="text-align:center"><div class="radius-box" style="border-radius:10px">10px</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">rounded-lg<br/>Cards, dialogs</div></div>
-    <div style="text-align:center"><div class="radius-box" style="border-radius:12px">12px</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">rounded-xl<br/>Featured, hero</div></div>
-    <div style="text-align:center"><div class="radius-box" style="border-radius:16px">16px</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">rounded-2xl<br/>Modals, panels</div></div>
-    <div style="text-align:center"><div class="radius-box" style="border-radius:9999px;width:48px;height:48px">A</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">rounded-full<br/>Avatars, pills</div></div>
-  </div>
-</section>
-
-<!-- 11. SHADOWS -->
-<section id="shadows">
-  <h2 class="section-title"><span class="num">11</span>Shadow Guide</h2>
-  <p style="margin-bottom:16px;color:var(--muted-fg);font-size:0.875rem">Buttons: NO shadow (flat design). Cards: use shadows for elevation.</p>
-  <div class="shadow-demo">
-    <div style="text-align:center"><div class="shadow-box" style="box-shadow:var(--shadow-sm)">shadow-sm</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">Tooltips<br/>Dropdowns</div></div>
-    <div style="text-align:center"><div class="shadow-box" style="box-shadow:var(--shadow)">shadow</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">Cards<br/>Default</div></div>
-    <div style="text-align:center"><div class="shadow-box" style="box-shadow:var(--shadow-md)">shadow-md</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">Popovers<br/>Dropdowns</div></div>
-    <div style="text-align:center"><div class="shadow-box" style="box-shadow:var(--shadow-lg)">shadow-lg</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">Modals<br/>Dialogs</div></div>
-    <div style="text-align:center"><div class="shadow-box" style="box-shadow:var(--shadow-xl)">shadow-xl</div><div style="font-size:0.6875rem;color:var(--muted-fg);margin-top:6px">Overlays<br/>Full-screen</div></div>
-  </div>
-</section>
-
-<!-- 12. SPACING -->
-<section id="spacing">
-  <h2 class="section-title"><span class="num">12</span>Spacing Scale</h2>
-  <div class="spacing-demo">
-    <div class="spacing-row"><span class="spacing-label">4px</span><div class="spacing-bar" style="width:4px"></div><span style="font-size:0.75rem;color:var(--muted-fg)">p-1, gap-1, space-x-1</span></div>
-    <div class="spacing-row"><span class="spacing-label">8px</span><div class="spacing-bar" style="width:16px"></div><span style="font-size:0.75rem;color:var(--muted-fg)">p-2, gap-2</span></div>
-    <div class="spacing-row"><span class="spacing-label">12px</span><div class="spacing-bar" style="width:32px"></div><span style="font-size:0.75rem;color:var(--muted-fg)">p-3, gap-3</span></div>
-    <div class="spacing-row"><span class="spacing-label">16px</span><div class="spacing-bar" style="width:48px"></div><span style="font-size:0.75rem;color:var(--muted-fg)">p-4, gap-4</span></div>
-    <div class="spacing-row"><span class="spacing-label">20px</span><div class="spacing-bar" style="width:56px"></div><span style="font-size:0.75rem;color:var(--muted-fg)">p-5, gap-5</span></div>
-    <div class="spacing-row"><span class="spacing-label">24px</span><div class="spacing-bar" style="width:72px"></div><span style="font-size:0.75rem;color:var(--muted-fg)">p-6, gap-6</span></div>
-    <div class="spacing-row"><span class="spacing-label">32px</span><div class="spacing-bar" style="width:96px"></div><span style="font-size:0.75rem;color:var(--muted-fg)">p-8, gap-8</span></div>
-    <div class="spacing-row"><span class="spacing-label">48px</span><div class="spacing-bar" style="width:128px"></div><span style="font-size:0.75rem;color:var(--muted-fg)">p-12, gap-12</span></div>
-    <div class="spacing-row"><span class="spacing-label">64px</span><div class="spacing-bar" style="width:160px"></div><span style="font-size:0.75rem;color:var(--muted-fg)">p-16, gap-16</span></div>
-  </div>
-</section>
-
+  <a href="#glass">Glassmorphism</a>
+  <a href="#spacing">Spacing</a>
+  <a href="#scrollbar">Scrollbar</a></div>
+  <div class="sidebar-section"><div class="sidebar-section-title">States & Patterns</div>
+  <a href="#focus">Focus States</a>
+  <a href="#disabled">Disabled States</a>
+  <a href="#loading">Loading States</a>
+  <a href="#empty">Empty States</a>
+  <a href="#error">Error States</a>
+  <a href="#upload">File Upload</a></div>
+  <div class="sidebar-section"><div class="sidebar-section-title">Reference</div>
+  <a href="#decisions">Design Decisions</a>
+  <a href="#quick-ref">Quick Reference</a></div>
 </div>
-</main>
+
+<!-- ===== COVER ===== -->
+<div class="cover" id="cover">
+  <div class="cover-bg"></div>
+  <div class="cover-inner">
+    <div class="cover-logo">FIRA</div>
+    <div class="cover-title">Design System & Branding Kit</div>
+    <div class="cover-meta">
+      <span class="cover-badge">Version 2.0</span>
+      <span class="cover-badge">July 2025</span>
+      <span class="cover-badge">Inter + JetBrains Mono</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="main">
+
+<!-- === 1. COLOR PALETTE === -->
+<div class="section" id="colors">
+  <div class="section-label">01 — Foundation</div>
+  <div class="section-title">Color Palette</div>
+  <div class="section-desc">Three core palettes define the FIRA visual identity: trust-building Blue, subtly warm Gold accent, and neutral Slate for hierarchy.</div>
+
+  <div class="subsection">
+    <div class="subsection-title">Primary — Blue</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#eff6ff"><button class="swatch-copy" onclick="copyColor(this,'#eff6ff')">📋</button></div><div class="swatch-info"><div class="swatch-name">Blue 50</div><div class="swatch-hex">#eff6ff</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#dbeafe"><button class="swatch-copy" onclick="copyColor(this,'#dbeafe')">📋</button></div><div class="swatch-info"><div class="swatch-name">Blue 100</div><div class="swatch-hex">#dbeafe</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#bfdbfe"><button class="swatch-copy" onclick="copyColor(this,'#bfdbfe')">📋</button></div><div class="swatch-info"><div class="swatch-name">Blue 200</div><div class="swatch-hex">#bfdbfe</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#93c5fd"><button class="swatch-copy" onclick="copyColor(this,'#93c5fd')">📋</button></div><div class="swatch-info"><div class="swatch-name">Blue 300</div><div class="swatch-hex">#93c5fd</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#60a5fa"><button class="swatch-copy" onclick="copyColor(this,'#60a5fa')">📋</button></div><div class="swatch-info"><div class="swatch-name">Blue 400</div><div class="swatch-hex">#60a5fa</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#3b82f6"><button class="swatch-copy" onclick="copyColor(this,'#3b82f6')">📋</button></div><div class="swatch-info"><div class="swatch-name">Blue 500</div><div class="swatch-hex">#3b82f6</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#2563eb"><button class="swatch-copy" onclick="copyColor(this,'#2563eb')">📋</button></div><div class="swatch-info"><div class="swatch-name">Blue 600 ★ Ring</div><div class="swatch-hex">#2563eb</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#1d4ed8"><button class="swatch-copy" onclick="copyColor(this,'#1d4ed8')">📋</button></div><div class="swatch-info"><div class="swatch-name">Blue 700</div><div class="swatch-hex">#1d4ed8</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#1e40af"><button class="swatch-copy" onclick="copyColor(this,'#1e40af')">📋</button></div><div class="swatch-info"><div class="swatch-name">Blue 800 ★ Light Primary</div><div class="swatch-hex">#1e40af</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#1e3a8a"><button class="swatch-copy" onclick="copyColor(this,'#1e3a8a')">📋</button></div><div class="swatch-info"><div class="swatch-name">Blue 900</div><div class="swatch-hex">#1e3a8a</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#172554"><button class="swatch-copy" onclick="copyColor(this,'#172554')">📋</button></div><div class="swatch-info"><div class="swatch-name">Blue 950</div><div class="swatch-hex">#172554</div></div></div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <div class="subsection-title">Accent 1 — Warm Gold / Amber <span style="color:var(--muted-fg); font-weight:400; font-size:13px;">(subtle, not loud)</span></div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#fffbeb"><button class="swatch-copy" onclick="copyColor(this,'#fffbeb')">📋</button></div><div class="swatch-info"><div class="swatch-name">Amber 50</div><div class="swatch-hex">#fffbeb</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#fef3c7"><button class="swatch-copy" onclick="copyColor(this,'#fef3c7')">📋</button></div><div class="swatch-info"><div class="swatch-name">Amber 100</div><div class="swatch-hex">#fef3c7</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#fde68a"><button class="swatch-copy" onclick="copyColor(this,'#fde68a')">📋</button></div><div class="swatch-info"><div class="swatch-name">Amber 200</div><div class="swatch-hex">#fde68a</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#fcd34d"><button class="swatch-copy" onclick="copyColor(this,'#fcd34d')">📋</button></div><div class="swatch-info"><div class="swatch-name">Amber 300</div><div class="swatch-hex">#fcd34d</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#fbbf24"><button class="swatch-copy" onclick="copyColor(this,'#fbbf24')">📋</button></div><div class="swatch-info"><div class="swatch-name">Amber 400</div><div class="swatch-hex">#fbbf24</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#f59e0b"><button class="swatch-copy" onclick="copyColor(this,'#f59e0b')">📋</button></div><div class="swatch-info"><div class="swatch-name">Amber 500</div><div class="swatch-hex">#f59e0b</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#d97706"><button class="swatch-copy" onclick="copyColor(this,'#d97706')">📋</button></div><div class="swatch-info"><div class="swatch-name">Amber 600</div><div class="swatch-hex">#d97706</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#b45309"><button class="swatch-copy" onclick="copyColor(this,'#b45309')">📋</button></div><div class="swatch-info"><div class="swatch-name">Amber 700 ★ Gold Anchor</div><div class="swatch-hex">#b45309</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#92400e"><button class="swatch-copy" onclick="copyColor(this,'#92400e')">📋</button></div><div class="swatch-info"><div class="swatch-name">Amber 800</div><div class="swatch-hex">#92400e</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#78350f"><button class="swatch-copy" onclick="copyColor(this,'#78350f')">📋</button></div><div class="swatch-info"><div class="swatch-name">Amber 900</div><div class="swatch-hex">#78350f</div></div></div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <div class="subsection-title">Accent 2 — Slate / Cool Gray</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#f8fafc"><button class="swatch-copy" onclick="copyColor(this,'#f8fafc')">📋</button></div><div class="swatch-info"><div class="swatch-name">Slate 50 ★ BG</div><div class="swatch-hex">#f8fafc</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#f1f5f9"><button class="swatch-copy" onclick="copyColor(this,'#f1f5f9')">📋</button></div><div class="swatch-info"><div class="swatch-name">Slate 100</div><div class="swatch-hex">#f1f5f9</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#e2e8f0"><button class="swatch-copy" onclick="copyColor(this,'#e2e8f0')">📋</button></div><div class="swatch-info"><div class="swatch-name">Slate 200</div><div class="swatch-hex">#e2e8f0</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#cbd5e1"><button class="swatch-copy" onclick="copyColor(this,'#cbd5e1')">📋</button></div><div class="swatch-info"><div class="swatch-name">Slate 300 ★ Border</div><div class="swatch-hex">#cbd5e1</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#94a3b8"><button class="swatch-copy" onclick="copyColor(this,'#94a3b8')">📋</button></div><div class="swatch-info"><div class="swatch-name">Slate 400</div><div class="swatch-hex">#94a3b8</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#64748b"><button class="swatch-copy" onclick="copyColor(this,'#64748b')">📋</button></div><div class="swatch-info"><div class="swatch-name">Slate 500 ★ Muted</div><div class="swatch-hex">#64748b</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#475569"><button class="swatch-copy" onclick="copyColor(this,'#475569')">📋</button></div><div class="swatch-info"><div class="swatch-name">Slate 600</div><div class="swatch-hex">#475569</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#334155"><button class="swatch-copy" onclick="copyColor(this,'#334155')">📋</button></div><div class="swatch-info"><div class="swatch-name">Slate 700</div><div class="swatch-hex">#334155</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#1e293b"><button class="swatch-copy" onclick="copyColor(this,'#1e293b')">📋</button></div><div class="swatch-info"><div class="swatch-name">Slate 800</div><div class="swatch-hex">#1e293b</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#0f172a"><button class="swatch-copy" onclick="copyColor(this,'#0f172a')">📋</button></div><div class="swatch-info"><div class="swatch-name">Slate 900 ★ Text</div><div class="swatch-hex">#0f172a</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#020617"><button class="swatch-copy" onclick="copyColor(this,'#020617')">📋</button></div><div class="swatch-info"><div class="swatch-name">Slate 950</div><div class="swatch-hex">#020617</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- === 2. COLOR SCHEME === -->
+<div class="section" id="scheme">
+  <div class="section-label">02 — Foundation</div>
+  <div class="section-title">Color Scheme</div>
+  <div class="section-desc">Semantic CSS custom properties for light and dark modes. Toggle the theme (🌓) to see both.</div>
+
+  <table class="token-table">
+    <thead><tr><th>Token</th><th>Light</th><th>Dark</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code class="token-code">--background</code></td><td><span class="token-swatch-inline" style="background:#f8fafc"></span>#f8fafc</td><td><span class="token-swatch-inline" style="background:#0b1120"></span>#0b1120</td><td>Page background</td></tr>
+      <tr><td><code class="token-code">--foreground</code></td><td><span class="token-swatch-inline" style="background:#0f172a"></span>#0f172a</td><td><span class="token-swatch-inline" style="background:#e2e8f0"></span>#e2e8f0</td><td>Primary text</td></tr>
+      <tr><td><code class="token-code">--card</code></td><td><span class="token-swatch-inline" style="background:#ffffff;border-color:#e5e7eb"></span>#ffffff</td><td><span class="token-swatch-inline" style="background:#141c2e"></span>#141c2e</td><td>Card background</td></tr>
+      <tr><td><code class="token-code">--primary</code></td><td><span class="token-swatch-inline" style="background:#1e40af"></span>#1e40af</td><td><span class="token-swatch-inline" style="background:#60a5fa"></span>#60a5fa</td><td>Buttons, CTA</td></tr>
+      <tr><td><code class="token-code">--primary-foreground</code></td><td><span class="token-swatch-inline" style="background:#ffffff;border-color:#e5e7eb"></span>#ffffff</td><td><span class="token-swatch-inline" style="background:#0b1120"></span>#0b1120</td><td>Text on primary</td></tr>
+      <tr><td><code class="token-code">--secondary</code></td><td><span class="token-swatch-inline" style="background:#eff6ff"></span>#eff6ff</td><td><span class="token-swatch-inline" style="background:#1a2540"></span>#1a2540</td><td>Secondary bg</td></tr>
+      <tr><td><code class="token-code">--muted</code></td><td><span class="token-swatch-inline" style="background:#f1f5f9"></span>#f1f5f9</td><td><span class="token-swatch-inline" style="background:#1a2540"></span>#1a2540</td><td>Muted bg</td></tr>
+      <tr><td><code class="token-code">--muted-foreground</code></td><td><span class="token-swatch-inline" style="background:#64748b"></span>#64748b</td><td><span class="token-swatch-inline" style="background:#8899b4"></span>#8899b4</td><td>Muted text</td></tr>
+      <tr><td><code class="token-code">--destructive</code></td><td><span class="token-swatch-inline" style="background:#ef4444"></span>#ef4444</td><td><span class="token-swatch-inline" style="background:#f87171"></span>#f87171</td><td>Error / danger</td></tr>
+      <tr><td><code class="token-code">--border</code></td><td><span class="token-swatch-inline" style="background:#cbd5e1"></span>#cbd5e1</td><td><span class="token-swatch-inline" style="background:#1e2d4a"></span>#1e2d4a</td><td>All borders</td></tr>
+      <tr><td><code class="token-code">--input</code></td><td><span class="token-swatch-inline" style="background:#cbd5e1"></span>#cbd5e1</td><td><span class="token-swatch-inline" style="background:#1e2d4a"></span>#1e2d4a</td><td>Input borders</td></tr>
+      <tr><td><code class="token-code">--ring</code></td><td><span class="token-swatch-inline" style="background:#2563eb"></span>#2563eb</td><td><span class="token-swatch-inline" style="background:#3b82f6"></span>#3b82f6</td><td>Focus ring</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- === 3. STATUS INDICATORS === -->
+<div class="section" id="status">
+  <div class="section-label">03 — Foundation</div>
+  <div class="section-title">Status Indicators</div>
+  <div class="section-desc">Consolidated to 5 semantic categories. All statuses map to one of these colors for visual consistency.</div>
+
+  <div class="subsection">
+    <div class="subsection-title">Standard Status Colors</div>
+    <div style="display: flex; flex-wrap: wrap; gap: 16px;">
+      <div style="text-align: center;"><div class="badge badge-success" style="font-size:14px; padding:6px 16px;">✓ Success / Approved / Active</div><div style="font-size:11px; color:var(--muted-fg); margin-top:6px;">green-100/700</div></div>
+      <div style="text-align: center;"><div class="badge badge-danger" style="font-size:14px; padding:6px 16px;">✕ Error / Rejected</div><div style="font-size:11px; color:var(--muted-fg); margin-top:6px;">red-100/700</div></div>
+      <div style="text-align: center;"><div class="badge badge-warning" style="font-size:14px; padding:6px 16px;">◐ Pending / Warning</div><div style="font-size:11px; color:var(--muted-fg); margin-top:6px;">amber-100/700</div></div>
+      <div style="text-align: center;"><div class="badge badge-info" style="font-size:14px; padding:6px 16px;">ℹ Info / Processing</div><div style="font-size:11px; color:var(--muted-fg); margin-top:6px;">blue-100/700</div></div>
+      <div style="text-align: center;"><div class="badge badge-muted" style="font-size:14px; padding:6px 16px;">— Inactive / Closed</div><div style="font-size:11px; color:var(--muted-fg); margin-top:6px;">gray-100/500</div></div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <div class="subsection-title">Status Badge Specification</div>
+    <table class="token-table">
+      <thead><tr><th>Property</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Variant</td><td><code class="token-code">outline</code> with <code class="token-code">border-0</code> override</td></tr>
+        <tr><td>Font size</td><td><code class="token-code">text-xs</code> (12px)</td></tr>
+        <tr><td>Font weight</td><td><code class="token-code">font-medium</code> (500)</td></tr>
+        <tr><td>Border radius</td><td><code class="token-code">rounded-md</code> (8px)</td></tr>
+        <tr><td>Padding</td><td><code class="token-code">px-2 py-0.5</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- === 4. APPLICATION PIPELINE === -->
+<div class="section" id="pipeline">
+  <div class="section-label">04 — Foundation</div>
+  <div class="section-title">Application Pipeline Statuses</div>
+  <div class="section-desc">All pipeline stages consolidated to 3 semantic colors: <span class="badge badge-info" style="font-size:11px;">Blue = Processing</span> <span class="badge badge-warning" style="font-size:11px;">Amber = Action Needed</span> <span class="badge badge-success" style="font-size:11px;">Green = Milestone</span> <span class="badge badge-danger" style="font-size:11px;">Red = Failed</span> <span class="badge badge-muted" style="font-size:11px;">Gray = Ended</span></div>
+
+  <div class="pipeline" style="margin-bottom: 16px;">
+    <div class="pipeline-step"><div class="pipeline-dot" style="background:#3b82f6"></div>Applied</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step"><div class="pipeline-dot" style="background:#f59e0b"></div>Screening</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step"><div class="pipeline-dot" style="background:#3b82f6"></div>Interview Scheduled</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step"><div class="pipeline-dot" style="background:#22c55e"></div>Interview Passed</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step"><div class="pipeline-dot" style="background:#f59e0b"></div>Pending Documents</div>
+  </div>
+  <div class="pipeline">
+    <div class="pipeline-step"><div class="pipeline-dot" style="background:#3b82f6"></div>Docs Submitted</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step"><div class="pipeline-dot" style="background:#3b82f6"></div>FIRA Review</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step"><div class="pipeline-dot" style="background:#22c55e"></div>FIRA Approved</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step"><div class="pipeline-dot" style="background:#3b82f6"></div>Employer Review</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step"><div class="pipeline-dot" style="background:#22c55e"></div>Employer Accepted</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step"><div class="pipeline-dot" style="background:#22c55e"></div>Deployed</div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-step"><div class="pipeline-dot" style="background:#94a3b8"></div>Completed</div>
+  </div>
+  <div style="margin-top: 12px; display: flex; gap: 12px;">
+    <div class="pipeline-step" style="border-color: #ef4444;"><div class="pipeline-dot" style="background:#ef4444"></div>Rejected</div>
+    <div class="pipeline-step" style="border-color: #94a3b8;"><div class="pipeline-dot" style="background:#94a3b8"></div>Cancelled</div>
+  </div>
+
+  <div style="margin-top: 32px; font-size: 13px; color: var(--muted-fg);">
+    <strong style="color: var(--fg);">Color Logic:</strong> Blue = intermediate processing (no user action needed). Amber = user action required. Green = milestone achieved. Red = terminal failure. Gray = process ended neutrally.
+  </div>
+</div>
+
+<!-- === 5. TYPOGRAPHY === -->
+<div class="section" id="typography">
+  <div class="section-label">05 — Foundation</div>
+  <div class="section-title">Typography</div>
+  <div class="section-desc">Geist Sans for all UI text. Geist Mono for code, numbers in tables, and technical data.</div>
+
+  <div class="subsection">
+    <div class="subsection-title">Type Scale</div>
+    <div class="type-row">
+      <div class="type-label">H1</div>
+      <div class="type-sample" style="font-size:36px; font-weight:700; line-height:1.2; letter-spacing:-0.02em;">Heading One — Page Title</div>
+      <div class="type-meta">36px / 700<br>line: 1.2</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">H2</div>
+      <div class="type-sample" style="font-size:30px; font-weight:600; line-height:1.25; letter-spacing:-0.01em;">Heading Two — Section Title</div>
+      <div class="type-meta">30px / 600<br>line: 1.25</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">H3</div>
+      <div class="type-sample" style="font-size:20px; font-weight:600; line-height:1.3;">Heading Three — Subsection</div>
+      <div class="type-meta">20px / 600<br>line: 1.3</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">H4</div>
+      <div class="type-sample" style="font-size:18px; font-weight:600; line-height:1.35;">Heading Four — Card Title</div>
+      <div class="type-meta">18px / 600<br>line: 1.35</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">H5</div>
+      <div class="type-sample" style="font-size:16px; font-weight:500; line-height:1.4;">Heading Five — Label Group</div>
+      <div class="type-meta">16px / 500<br>line: 1.4</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">H6</div>
+      <div class="type-sample" style="font-size:14px; font-weight:500; line-height:1.4; letter-spacing:0.01em;">HEADING SIX — MINOR HEADER</div>
+      <div class="type-meta">14px / 500<br>tracking: 0.01em</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">Body</div>
+      <div class="type-sample" style="font-size:16px; font-weight:400; line-height:1.6;">The quick brown fox jumps over the lazy dog. Pangkat ng mga manggagawa.</div>
+      <div class="type-meta">16px / 400<br>line: 1.6</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">Body SM</div>
+      <div class="type-sample" style="font-size:14px; font-weight:400; line-height:1.5; color:var(--muted-fg);">Secondary content and descriptions. Smaller but still readable.</div>
+      <div class="type-meta">14px / 400<br>line: 1.5</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">Caption</div>
+      <div class="type-sample" style="font-size:12px; font-weight:400; line-height:1.4; letter-spacing:0.02em; color:var(--muted-fg);">Meta information, helper text, timestamps — CAPTION STYLE</div>
+      <div class="type-meta">12px / 400<br>tracking: 0.02em</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">Overline</div>
+      <div class="type-sample" style="font-size:12px; font-weight:500; line-height:1.4; letter-spacing:0.05em; text-transform:uppercase; color:var(--primary);">Section Label — Eyebrow Text</div>
+      <div class="type-meta">12px / 500<br>uppercase<br>tracking: 0.05em</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">Mono</div>
+      <div class="type-sample mono" style="font-size:14px; line-height:1.6;">const data = await fetch('/api/jobs');</div>
+      <div class="type-meta">14px / 400<br>Geist Mono</div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <div class="subsection-title">Text Color Hierarchy</div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div style="font-size:15px; color:var(--fg);">Primary text — <code class="token-code">text-foreground</code> — #0f172a / #e2e8f0</div>
+      <div style="font-size:15px; color:var(--muted-fg);">Secondary text — <code class="token-code">text-muted-foreground</code> — #64748b / #8899b4</div>
+      <div style="font-size:15px; color:#94a3b8;" class="dark-t">Tertiary text — slate-400 / slate-500</div>
+      <div style="font-size:15px; color:var(--input);">Disabled text — slate-300 / slate-600</div>
+    </div>
+  </div>
+</div>
+
+<!-- === 6. LINKS === -->
+<div class="section" id="links">
+  <div class="section-label">06 — Foundation</div>
+  <div class="section-title">Links</div>
+  <div class="section-desc">Blue text, no underline by default. Underline appears on hover only. External links get an arrow indicator.</div>
+
+  <div class="link-demo">
+    <div>Default: <a href="#" class="link-inline" onclick="return false">This is an inline link</a> — no underline at rest</div>
+    <div>Hover: <a href="#" class="link-inline" style="text-decoration:underline;" onclick="return false">Underline on hover</a></div>
+    <div>External: <a href="#" class="link-inline link-external" onclick="return false">Visit our partners</a> — arrow indicator</div>
+    <div>Muted: <span style="color:var(--muted-fg); text-decoration:none;">Non-interactive text for comparison</span></div>
+  </div>
+</div>
+
+<!-- === 7. BUTTONS === -->
+<div class="section" id="buttons">
+  <div class="section-label">07 — Components</div>
+  <div class="section-title">Buttons</div>
+  <div class="section-desc">Flat, simple, professional. No gradients. Subtle shadow-xs on filled variants only. Scale feedback on press (0.98).</div>
+
+  <div class="subsection">
+    <div class="subsection-title">Variants</div>
+    <div class="btn-row">
+      <button class="btn btn-primary">Primary</button>
+      <button class="btn btn-secondary">Secondary</button>
+      <button class="btn btn-destructive">Destructive</button>
+      <button class="btn btn-outline">Outline</button>
+      <button class="btn btn-ghost">Ghost</button>
+      <button class="btn btn-link">Link Button</button>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <div class="subsection-title">Sizes</div>
+    <div class="btn-row">
+      <button class="btn btn-primary btn-sm">Small</button>
+      <button class="btn btn-primary">Default</button>
+      <button class="btn btn-primary btn-lg">Large</button>
+      <button class="btn btn-primary btn-icon">✕</button>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <div class="subsection-title">States</div>
+    <div class="btn-row">
+      <button class="btn btn-primary">Default</button>
+      <button class="btn btn-primary disabled">Disabled</button>
+      <button class="btn btn-primary btn-loading">Loading</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-outline">Outline Default</button>
+      <button class="btn btn-outline disabled">Outline Disabled</button>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <div class="subsection-title">With Icons</div>
+    <div class="btn-row">
+      <button class="btn btn-primary">← Go Back</button>
+      <button class="btn btn-primary">Submit →</button>
+      <button class="btn btn-outline">⊕ Add New</button>
+      <button class="btn btn-ghost">⚙ Settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- === 8. INPUTS === -->
+<div class="section" id="inputs">
+  <div class="section-label">08 — Components</div>
+  <div class="section-title">Input Fields</div>
+  <div class="section-desc">36px height, rounded-md (8px), 1px border. Focus ring: 3px ring at 15% opacity. Error: red border + 3px red ring.</div>
+
+  <div class="subsection">
+    <div class="subsection-title">Text Input States</div>
+    <div class="input-demo">
+      <label class="input-label">Default</label>
+      <input class="input-field" placeholder="Enter your name...">
+    </div>
+    <div class="input-demo">
+      <label class="input-label">Filled</label>
+      <input class="input-field" value="Juan Dela Cruz">
+    </div>
+    <div class="input-demo">
+      <label class="input-label">Focused <span style="font-size:11px; color:var(--muted-fg); font-weight:400;">(click to see)</span></label>
+      <input class="input-field" placeholder="Click me...">
+    </div>
+    <div class="input-demo">
+      <label class="input-label">Error</label>
+      <input class="input-field error" value="invalid-">
+      <div class="input-error">⚠ Please enter a valid value</div>
+    </div>
+    <div class="input-demo">
+      <label class="input-label">Disabled</label>
+      <input class="input-field" value="Cannot edit" disabled>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <div class="subsection-title">Textarea</div>
+    <div class="input-demo">
+      <label class="input-label">Message</label>
+      <textarea class="textarea-field" placeholder="Type your message here..."></textarea>
+      <div class="input-hint">Max 500 characters</div>
+    </div>
+  </div>
+</div>
+
+<!-- === 9. CARDS === -->
+<div class="section" id="cards">
+  <div class="section-label">09 — Components</div>
+  <div class="section-title">Cards</div>
+  <div class="section-desc">rounded-xl (12px), shadow-sm at rest, shadow-md on hover. Glassmorphism only for nav and hero — not dashboard cards.</div>
+
+  <div class="subsection">
+    <div class="subsection-title">Standard Card</div>
+    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+      <div class="card-demo">
+        <div class="card-title">Card Title</div>
+        <div class="card-desc">This is a standard card with subtle shadow. It elevates on hover.</div>
+      </div>
+      <div class="card-demo" style="max-width: 240px;">
+        <div style="font-size:12px; color:var(--muted-fg); margin-bottom:4px;">REVENUE</div>
+        <div style="font-size:28px; font-weight:700;">₱1.2M</div>
+        <div style="font-size:13px; color:#22c55e; margin-top:4px;">↑ 12% from last month</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <div class="subsection-title">Glassmorphism Card <span style="font-size:12px; color:var(--muted-fg); font-weight:400;">(hero/nav only)</span></div>
+    <div class="glass-bg">
+      <div class="glass-demo">
+        <div style="font-size:18px; font-weight:600; margin-bottom:4px;">Glass Card</div>
+        <div style="font-size:14px; opacity:0.85;">Frosted glass effect for hero sections and navigation only.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- === 10. BADGES === -->
+<div class="section" id="badges">
+  <div class="section-label">10 — Components</div>
+  <div class="section-title">Badges & Tags</div>
+  <div class="section-desc">Status badges use filled backgrounds (outline variant with border-0 override). Category tags use distinct colors per job type.</div>
+
+  <div class="subsection">
+    <div class="subsection-title">Badge Variants</div>
+    <div class="btn-row">
+      <span class="badge badge-primary">Primary</span>
+      <span class="badge badge-success">Success</span>
+      <span class="badge badge-danger">Destructive</span>
+      <span class="badge badge-warning">Warning</span>
+      <span class="badge badge-info">Info</span>
+      <span class="badge badge-muted">Muted</span>
+      <span class="badge badge-outline">Outline</span>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <div class="subsection-title">Job Category Tags</div>
+    <div class="cat-grid">
+      <span class="cat-domestic">Domestic Helper</span>
+      <span class="cat-caregiver">Caregiver</span>
+      <span class="cat-nurse">Nurse</span>
+      <span class="cat-factory">Factory Worker</span>
+      <span class="cat-hospitality">Hospitality</span>
+    </div>
+  </div>
+</div>
+
+<!-- === 11. TABLES === -->
+<div class="section" id="tables">
+  <div class="section-label">11 — Components</div>
+  <div class="section-title">Tables</div>
+  <div class="section-desc">14px font, muted header, hover on rows, 1px border between rows.</div>
+  <table class="table-demo">
+    <thead><tr><th>Name</th><th>Status</th><th>Role</th><th>Date</th></tr></thead>
+    <tbody>
+      <tr><td>Juan Dela Cruz</td><td><span class="badge badge-success">Active</span></td><td>Applicant</td><td>Jul 12, 2025</td></tr>
+      <tr class="selected-row"><td>Maria Santos</td><td><span class="badge badge-warning">Pending</span></td><td>Agency</td><td>Jul 10, 2025</td></tr>
+      <tr><td>ABC Corporation</td><td><span class="badge badge-info">Review</span></td><td>Employer</td><td>Jul 8, 2025</td></tr>
+      <tr><td>Pedro Reyes</td><td><span class="badge badge-danger">Rejected</span></td><td>Applicant</td><td>Jul 5, 2025</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- === 12. TOGGLES === -->
+<div class="section" id="toggles">
+  <div class="section-label">12 — Components</div>
+  <div class="section-title">Toggles, Checkboxes & Radios</div>
+  <div class="subsection">
+    <div class="subsection-title">Checkboxes</div>
+    <div class="toggle-row">
+      <label class="toggle-label"><div class="checkbox-custom checked"></div>Checked</label>
+      <label class="toggle-label"><div class="checkbox-custom"></div>Unchecked</label>
+      <label class="toggle-label" style="opacity:0.5"><div class="checkbox-custom"></div>Disabled</label>
+    </div>
+  </div>
+  <div class="subsection">
+    <div class="subsection-title">Radio Buttons</div>
+    <div class="toggle-row">
+      <label class="toggle-label"><div class="radio-custom checked"></div>Option A</label>
+      <label class="toggle-label"><div class="radio-custom"></div>Option B</label>
+      <label class="toggle-label"><div class="radio-custom"></div>Option C</label>
+    </div>
+  </div>
+  <div class="subsection">
+    <div class="subsection-title">Switch / Toggle</div>
+    <div class="toggle-row">
+      <label class="toggle-label"><div class="switch-custom on" onclick="this.classList.toggle('on')"></div>On</label>
+      <label class="toggle-label"><div class="switch-custom" onclick="this.classList.toggle('on')"></div>Off</label>
+    </div>
+  </div>
+</div>
+
+<!-- === 13. TOASTS === -->
+<div class="section" id="toasts">
+  <div class="section-label">13 — Components</div>
+  <div class="section-title">Toasts & Notifications</div>
+  <div class="section-desc">Border-left colored accent. 4 types. Auto-dismiss 4-5s. Bottom-right position.</div>
+  <div class="toast-demo">
+    <div class="toast toast-success"><div class="toast-icon">✓</div><div class="toast-content"><div class="toast-title">Success</div><div class="toast-msg">Application submitted successfully.</div></div></div>
+    <div class="toast toast-error"><div class="toast-icon">✕</div><div class="toast-content"><div class="toast-title">Error</div><div class="toast-msg">Failed to save changes. Please try again.</div></div></div>
+    <div class="toast toast-warning"><div class="toast-icon">◐</div><div class="toast-content"><div class="toast-title">Warning</div><div class="toast-msg">Your session will expire in 5 minutes.</div></div></div>
+    <div class="toast toast-info"><div class="toast-icon">ℹ</div><div class="toast-content"><div class="toast-title">Info</div><div class="toast-msg">A new version is available.</div></div></div>
+  </div>
+</div>
+
+<!-- === 14. TABS === -->
+<div class="section" id="tabs">
+  <div class="section-label">14 — Components</div>
+  <div class="section-title">Tabs</div>
+  <div class="tab-row" id="demo-tabs">
+    <div class="tab-item active" onclick="setTab(this)">Overview</div>
+    <div class="tab-item" onclick="setTab(this)">Applications</div>
+    <div class="tab-item" onclick="setTab(this)">Settings</div>
+  </div>
+  <div style="font-size:14px; color:var(--muted-fg);">Active tab: <code class="token-code">border-bottom: 2px solid var(--primary)</code> + <code class="token-code">font-weight: 500</code>. Inactive: <code class="token-code">text-muted-foreground</code>, underline on hover.</div>
+</div>
+
+<!-- === 15. BORDER RADIUS === -->
+<div class="section" id="radius">
+  <div class="section-label">15 — Tokens</div>
+  <div class="section-title">Border Radius</div>
+  <div class="section-desc">Mixed radii, each element type has a defined rule. Base radius: 0.625rem (10px).</div>
+  <div class="radius-grid">
+    <div class="radius-item"><div class="radius-box" style="border-radius:4px;"></div><div class="radius-label">4px<br>sm</div></div>
+    <div class="radius-item"><div class="radius-box" style="border-radius:6px;"></div><div class="radius-label">6px<br>checkbox</div></div>
+    <div class="radius-item"><div class="radius-box" style="border-radius:8px;"></div><div class="radius-label">8px<br>btn / input / badge</div></div>
+    <div class="radius-item"><div class="radius-box" style="border-radius:10px;"></div><div class="radius-label">10px<br>base (--radius)</div></div>
+    <div class="radius-item"><div class="radius-box" style="border-radius:12px;"></div><div class="radius-label">12px<br>card / modal</div></div>
+    <div class="radius-item"><div class="radius-box" style="border-radius:9999px;"></div><div class="radius-label">full<br>avatar / switch</div></div>
+  </div>
+  <table class="token-table" style="margin-top:24px;">
+    <thead><tr><th>Element</th><th>Radius</th><th>Tailwind</th></tr></thead>
+    <tbody>
+      <tr><td>Buttons</td><td>8px</td><td><code class="token-code">rounded-md</code></td></tr>
+      <tr><td>Input / Textarea</td><td>8px</td><td><code class="token-code">rounded-md</code></td></tr>
+      <tr><td>Badge / Tag</td><td>8px</td><td><code class="token-code">rounded-md</code></td></tr>
+      <tr><td>Card / Modal</td><td>12px</td><td><code class="token-code">rounded-xl</code></td></tr>
+      <tr><td>Dropdown / Popover</td><td>8px</td><td><code class="token-code">rounded-md</code></td></tr>
+      <tr><td>Toast</td><td>8px</td><td><code class="token-code">rounded-md</code></td></tr>
+      <tr><td>Avatar</td><td>9999px</td><td><code class="token-code">rounded-full</code></td></tr>
+      <tr><td>Checkbox</td><td>4px</td><td><code class="token-code">rounded-sm</code></td></tr>
+      <tr><td>Switch</td><td>9999px</td><td><code class="token-code">rounded-full</code></td></tr>
+      <tr><td>Tooltip</td><td>6px</td><td><code class="token-code">rounded-sm</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- === 16. SHADOWS === -->
+<div class="section" id="shadows">
+  <div class="section-label">16 — Tokens</div>
+  <div class="section-title">Shadows</div>
+  <div class="section-desc">Cards get subtle shadow for depth. Buttons are flat (shadow-xs only on filled). No heavy shadows.</div>
+  <div class="shadow-grid">
+    <div class="shadow-item"><div class="shadow-box" style="box-shadow:0 1px 2px rgba(0,0,0,0.05);"></div><div class="shadow-label">xs<br><span style="font-size:10px; color:var(--muted-fg)">buttons, inputs</span></div></div>
+    <div class="shadow-item"><div class="shadow-box" style="box-shadow:0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);"></div><div class="shadow-label">sm<br><span style="font-size:10px; color:var(--muted-fg)">cards at rest</span></div></div>
+    <div class="shadow-item"><div class="shadow-box" style="box-shadow:0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);"></div><div class="shadow-label">md<br><span style="font-size:10px; color:var(--muted-fg)">cards on hover</span></div></div>
+    <div class="shadow-item"><div class="shadow-box" style="box-shadow:0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);"></div><div class="shadow-label">lg<br><span style="font-size:10px; color:var(--muted-fg)">modals, dropdowns</span></div></div>
+  </div>
+</div>
+
+<!-- === 17. GLASSMORPHISM === -->
+<div class="section" id="glass">
+  <div class="section-label">17 — Tokens</div>
+  <div class="section-title">Glassmorphism</div>
+  <div class="section-desc">Used ONLY on navigation bar and hero sections. Dashboard and form cards use standard card styling.</div>
+
+  <div class="subsection">
+    <div class="subsection-title">When to Use ✅</div>
+    <div style="display:flex; gap:12px; flex-wrap:wrap; font-size:14px;">
+      <span class="badge badge-primary">Navigation bar</span>
+      <span class="badge badge-primary">Hero section cards</span>
+      <span class="badge badge-primary">Stat cards on gradient bg</span>
+      <span class="badge badge-primary">Feature highlight cards</span>
+    </div>
+  </div>
+  <div class="subsection">
+    <div class="subsection-title">When NOT to Use ❌</div>
+    <div style="display:flex; gap:12px; flex-wrap:wrap; font-size:14px;">
+      <span class="badge badge-outline">Dashboard cards</span>
+      <span class="badge badge-outline">Form containers</span>
+      <span class="badge badge-outline">Table wrappers</span>
+      <span class="badge badge-outline">Sidebar</span>
+    </div>
+  </div>
+  <div class="subsection">
+    <div class="subsection-title">Glass Specs</div>
+    <table class="token-table">
+      <thead><tr><th>Variants</th><th>Background</th><th>Blur</th><th>Border</th></tr></thead>
+      <tbody>
+        <tr><td><code class="token-code">.glass</code></td><td>rgba(255,255,255,0.1) / rgba(20,28,46,0.4)</td><td>12px</td><td>1px solid rgba(255,255,255,0.2)</td></tr>
+        <tr><td><code class="token-code">.glass-card</code></td><td>rgba(255,255,255,0.15) / rgba(20,28,46,0.5)</td><td>16px</td><td>1px solid rgba(255,255,255,0.25)</td></tr>
+        <tr><td><code class="token-code">.glass-card-light</code></td><td>rgba(255,255,255,0.7) / rgba(20,28,46,0.7)</td><td>16px</td><td>1px solid rgba(255,255,255,0.4)</td></tr>
+        <tr><td><code class="token-code">.glass-nav</code></td><td>rgba(255,255,255,0.85) / rgba(11,17,32,0.88)</td><td>20px</td><td>border-bottom only</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- === 18. SPACING === -->
+<div class="section" id="spacing">
+  <div class="section-label">18 — Tokens</div>
+  <div class="section-title">Spacing System</div>
+  <div class="section-desc">4px base unit. Tailwind default scale.</div>
+  <div style="display:flex; flex-direction:column; gap:4px; font-family:'JetBrains Mono',monospace; font-size:13px;">
+    <div style="display:flex; align-items:center; gap:12px;"><span style="width:40px;">4px</span><div style="height:8px; width:4px; background:var(--primary); border-radius:2px;"></div><span style="color:var(--muted-fg);">1 — icon gaps</span></div>
+    <div style="display:flex; align-items:center; gap:12px;"><span style="width:40px;">8px</span><div style="height:8px; width:8px; background:var(--primary); border-radius:2px;"></div><span style="color:var(--muted-fg);">2 — tight padding</span></div>
+    <div style="display:flex; align-items:center; gap:12px;"><span style="width:40px;">12px</span><div style="height:8px; width:12px; background:var(--primary); border-radius:2px;"></div><span style="color:var(--muted-fg);">3 — section inner</span></div>
+    <div style="display:flex; align-items:center; gap:12px;"><span style="width:40px;">16px</span><div style="height:8px; width:16px; background:var(--primary); border-radius:2px;"></div><span style="color:var(--muted-fg);">4 — standard padding</span></div>
+    <div style="display:flex; align-items:center; gap:12px;"><span style="width:40px;">24px</span><div style="height:8px; width:24px; background:var(--primary); border-radius:2px;"></div><span style="color:var(--muted-fg);">6 — card padding, gaps</span></div>
+    <div style="display:flex; align-items:center; gap:12px;"><span style="width:40px;">32px</span><div style="height:8px; width:32px; background:var(--primary); border-radius:2px;"></div><span style="color:var(--muted-fg);">8 — section padding</span></div>
+    <div style="display:flex; align-items:center; gap:12px;"><span style="width:40px;">48px</span><div style="height:8px; width:48px; background:var(--primary); border-radius:2px;"></div><span style="color:var(--muted-fg);">12 — section vertical</span></div>
+    <div style="display:flex; align-items:center; gap:12px;"><span style="width:40px;">64px</span><div style="height:8px; width:64px; background:var(--primary); border-radius:2px;"></div><span style="color:var(--muted-fg);">16 — major breaks</span></div>
+  </div>
+</div>
+
+<!-- === 19. SCROLLBAR === -->
+<div class="section" id="scrollbar">
+  <div class="section-label">19 — Tokens</div>
+  <div class="section-title">Scrollbar</div>
+  <div style="display:flex; gap:24px; flex-wrap:wrap;">
+    <div>
+      <div style="font-size:13px; font-weight:500; margin-bottom:8px;">Global (8px)</div>
+      <div class="scrollbar-preview">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
+        <p>Sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem.</p>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:13px; font-weight:500; margin-bottom:8px;">Dashboard (6px)</div>
+      <div class="scrollbar-preview" style="max-width:200px;">
+        <div class="scrollbar-preview" style="border:none; padding:0; width:100%; height:100px;"><p style="margin-bottom:8px;">Item 1 — Scrollable container content</p><p style="margin-bottom:8px;">Item 2 — More content here</p><p style="margin-bottom:8px;">Item 3 — Even more</p><p style="margin-bottom:8px;">Item 4 — Keep going</p><p style="margin-bottom:8px;">Item 5 — Almost there</p><p>Item 6 — Done</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- === 20. FOCUS STATES === -->
+<div class="section" id="focus">
+  <div class="section-label">20 — States</div>
+  <div class="section-title">Focus States</div>
+  <div class="section-desc">3px ring at 15-20% opacity. Keyboard-only (focus-visible). Ring color matches --ring.</div>
+  <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center;">
+    <div class="focus-ring">Focused Element</div>
+    <div style="font-size:13px; color:var(--muted-fg); max-width:300px;"><code class="token-code">ring-[3px] ring-ring/50 focus-visible:border-ring</code><br>Ring: 3px, 15% opacity of #2563eb (light) / #3b82f6 (dark)</div>
+  </div>
+</div>
+
+<!-- === 21. DISABLED STATES === -->
+<div class="section" id="disabled">
+  <div class="section-label">21 — States</div>
+  <div class="section-title">Disabled States</div>
+  <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center;">
+    <button class="btn btn-primary disabled">Disabled Button</button>
+    <input class="input-field" value="Disabled input" disabled style="max-width:200px;">
+    <label class="toggle-label" style="opacity:0.5; cursor:not-allowed;"><div class="checkbox-custom"></div>Disabled</label>
+    <a href="#" class="link-inline" style="opacity:0.5; pointer-events:none; text-decoration:none;" onclick="return false;">Disabled link</a>
+  </div>
+  <div style="font-size:13px; color:var(--muted-fg); margin-top:12px;">All disabled: <code class="token-code">opacity: 50%</code> + <code class="token-code">cursor: not-allowed</code> + <code class="token-code">pointer-events: none</code></div>
+</div>
+
+<!-- === 22. LOADING STATES === -->
+<div class="section" id="loading">
+  <div class="section-label">22 — States</div>
+  <div class="section-title">Loading States</div>
+  <div style="display:flex; gap:24px; flex-wrap:wrap; align-items:flex-start;">
+    <div>
+      <div style="font-size:13px; font-weight:500; margin-bottom:12px;">Spinner</div>
+      <div class="spinner"></div>
+    </div>
+    <div>
+      <div style="font-size:13px; font-weight:500; margin-bottom:12px;">Button Loading</div>
+      <button class="btn btn-primary btn-loading" style="width:120px;">Submit</button>
+    </div>
+    <div>
+      <div style="font-size:13px; font-weight:500; margin-bottom:12px;">Skeleton</div>
+      <div style="width:200px;">
+        <div class="skeleton" style="height:16px; width:60%; margin-bottom:8px;"></div>
+        <div class="skeleton" style="height:16px; width:80%; margin-bottom:8px;"></div>
+        <div class="skeleton" style="height:16px; width:40%; margin-bottom:16px;"></div>
+        <div class="skeleton" style="height:12px; width:50%;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- === 23. EMPTY STATES === -->
+<div class="section" id="empty">
+  <div class="section-label">23 — States</div>
+  <div class="section-title">Empty States</div>
+  <div style="display:flex; gap:24px; flex-wrap:wrap;">
+    <div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <div class="empty-title">No jobs found</div>
+      <div class="empty-desc">Try adjusting your search or filters.</div>
+      <button class="btn btn-outline btn-sm" style="margin-top:16px;">Browse Jobs</button>
+    </div>
+    <div class="empty-state">
+      <div class="empty-icon">💬</div>
+      <div class="empty-title">No messages yet</div>
+      <div class="empty-desc">Your conversations will appear here.</div>
+    </div>
+  </div>
+</div>
+
+<!-- === 24. ERROR STATES === -->
+<div class="section" id="error">
+  <div class="section-label">24 — States</div>
+  <div class="section-title">Error States</div>
+  <div style="display:flex; gap:24px; flex-wrap:wrap; align-items:flex-start;">
+    <div class="input-demo">
+      <label class="input-label">Email</label>
+      <input class="input-field error" value="not-an-email">
+      <div class="input-error">⚠ Please enter a valid email address.</div>
+    </div>
+    <div style="background:var(--destructive-bg); border:1px solid var(--destructive); border-radius:12px; padding:16px 20px; max-width:320px;">
+      <div style="font-weight:600; color:var(--destructive); font-size:14px; margin-bottom:4px;">Something went wrong</div>
+      <div style="font-size:13px; color:var(--destructive-fg);">Unable to load data. Please check your connection and try again.</div>
+    </div>
+  </div>
+</div>
+
+<!-- === 25. FILE UPLOAD === -->
+<div class="section" id="upload">
+  <div class="section-label">25 — Patterns</div>
+  <div class="section-title">File Upload Zone</div>
+  <div class="upload-zone" id="upload-zone">
+    <div class="upload-icon">📄</div>
+    <div class="upload-text">Drop your file here or click to browse</div>
+    <div class="upload-hint">PDF, DOCX, JPG, PNG — Max 10MB</div>
+  </div>
+</div>
+
+<!-- === 26. DESIGN DECISIONS === -->
+<div class="section" id="decisions">
+  <div class="section-label">26 — Reference</div>
+  <div class="section-title">Design Decisions</div>
+  <div class="section-desc">A log of all key design decisions with rationale.</div>
+  <table class="decision-table">
+    <thead><tr><th>#</th><th>Decision</th><th>Rationale</th></tr></thead>
+    <tbody>
+      <tr><td class="decision-num">1</td><td>Primary color is Blue</td><td>Trust, professionalism for a recruitment agency. Not too cold, not too warm.</td></tr>
+      <tr><td class="decision-num">2</td><td>Accent 1 is subtle Warm Gold</td><td>Adds warmth without being loud. Used sparingly for premium/achievement.</td></tr>
+      <tr><td class="decision-num">3</td><td>Accent 2 is Slate/Cool Gray</td><td>Neutral backbone for hierarchy. Doesn't compete with primary.</td></tr>
+      <tr><td class="decision-num">4</td><td>Buttons are flat (no gradients)</td><td>Clean, professional look. Gradients can look dated.</td></tr>
+      <tr><td class="decision-num">5</td><td>Cards have subtle shadows</td><td>Provides depth and visual separation without heaviness.</td></tr>
+      <tr><td class="decision-num">6</td><td>Glassmorphism scoped</td><td>Used on nav and hero only, not every card. Prevents visual fatigue.</td></tr>
+      <tr><td class="decision-num">7</td><td>Links underline on hover only</td><td>Cleaner default appearance, underline confirms interactivity.</td></tr>
+      <tr><td class="decision-num">8</td><td>Dark mode is deep navy</td><td>#0b1120 — more immersive than pure black, easier on eyes.</td></tr>
+      <tr><td class="decision-num">9</td><td>Mixed border radius codified</td><td>Each element type has a defined radius for consistency.</td></tr>
+      <tr><td class="decision-num">10</td><td>Status colors consolidated</td><td>Reduced from 11+ to 5 semantic categories.</td></tr>
+      <tr><td class="decision-num">11</td><td>Pipeline uses blue for intermediate</td><td>All "waiting" stages use blue, not purple/teal/indigo/cyan.</td></tr>
+      <tr><td class="decision-num">12</td><td>Geist Sans + Geist Mono</td><td>Modern, clean, optimized for screens.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- === 27. QUICK REFERENCE === -->
+<div class="section" id="quick-ref">
+  <div class="section-label">27 — Reference</div>
+  <div class="section-title">Quick Reference Card</div>
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+    <div style="background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px;">
+      <div style="font-size:14px; font-weight:600; margin-bottom:12px; color:var(--primary);">☀ Light Mode</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; line-height:2;">
+        <div>Background: <span style="display:inline-block;width:12px;height:12px;background:#f8fafc;border-radius:3px;border:1px solid #e5e7eb;vertical-align:middle;"></span> #f8fafc</div>
+        <div>Card: <span style="display:inline-block;width:12px;height:12px;background:#ffffff;border-radius:3px;border:1px solid #e5e7eb;vertical-align:middle;"></span> #ffffff</div>
+        <div>Primary: <span style="display:inline-block;width:12px;height:12px;background:#1e40af;border-radius:3px;vertical-align:middle;"></span> #1e40af</div>
+        <div>Text: <span style="display:inline-block;width:12px;height:12px;background:#0f172a;border-radius:3px;vertical-align:middle;"></span> #0f172a</div>
+        <div>Muted: <span style="display:inline-block;width:12px;height:12px;background:#64748b;border-radius:3px;vertical-align:middle;"></span> #64748b</div>
+        <div>Border: <span style="display:inline-block;width:12px;height:12px;background:#cbd5e1;border-radius:3px;vertical-align:middle;"></span> #cbd5e1</div>
+        <div>Ring: <span style="display:inline-block;width:12px;height:12px;background:#2563eb;border-radius:3px;vertical-align:middle;"></span> #2563eb</div>
+        <div>Destructive: <span style="display:inline-block;width:12px;height:12px;background:#ef4444;border-radius:3px;vertical-align:middle;"></span> #ef4444</div>
+        <div>Gold: <span style="display:inline-block;width:12px;height:12px;background:#b45309;border-radius:3px;vertical-align:middle;"></span> #b45309</div>
+      </div>
+    </div>
+    <div style="background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px;">
+      <div style="font-size:14px; font-weight:600; margin-bottom:12px; color:var(--primary);">☾ Dark Mode</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; line-height:2;">
+        <div>Background: <span style="display:inline-block;width:12px;height:12px;background:#0b1120;border-radius:3px;border:1px solid #334155;vertical-align:middle;"></span> #0b1120</div>
+        <div>Card: <span style="display:inline-block;width:12px;height:12px;background:#141c2e;border-radius:3px;border:1px solid #334155;vertical-align:middle;"></span> #141c2e</div>
+        <div>Primary: <span style="display:inline-block;width:12px;height:12px;background:#60a5fa;border-radius:3px;vertical-align:middle;"></span> #60a5fa</div>
+        <div>Text: <span style="display:inline-block;width:12px;height:12px;background:#e2e8f0;border-radius:3px;vertical-align:middle;"></span> #e2e8f0</div>
+        <div>Muted: <span style="display:inline-block;width:12px;height:12px;background:#8899b4;border-radius:3px;vertical-align:middle;"></span> #8899b4</div>
+        <div>Border: <span style="display:inline-block;width:12px;height:12px;background:#1e2d4a;border-radius:3px;border:1px solid #334155;vertical-align:middle;"></span> #1e2d4a</div>
+        <div>Ring: <span style="display:inline-block;width:12px;height:12px;background:#3b82f6;border-radius:3px;vertical-align:middle;"></span> #3b82f6</div>
+        <div>Destructive: <span style="display:inline-block;width:12px;height:12px;background:#f87171;border-radius:3px;vertical-align:middle;"></span> #f87171</div>
+        <div>Gold: <span style="display:inline-block;width:12px;height:12px;background:#fbbf24;border-radius:3px;vertical-align:middle;"></span> #fbbf24</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center; padding:48px 0; color:var(--muted-fg); font-size:13px; border-top:1px solid var(--border);">
+  FIRA Design System v2.0 — July 2025<br>
+  <span style="font-size:11px;">Toggle theme with 🌓 button • Click any color swatch to copy hex • Print-friendly</span>
+</div>
+
+</div><!-- end .main -->
 
 <script>
-// Active TOC link highlighting
-const sections = document.querySelectorAll('section[id]');
-const tocLinks = document.querySelectorAll('nav.toc a');
+// Copy color to clipboard
+function copyColor(btn, hex) {
+  navigator.clipboard.writeText(hex).then(() => {
+    btn.textContent = '✓';
+    setTimeout(() => btn.textContent = '📋', 1000);
+  });
+}
+
+// Tab demo
+function setTab(el) {
+  document.querySelectorAll('#demo-tabs .tab-item').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Sidebar active state on scroll
+const sections = document.querySelectorAll('.section, .cover');
+const links = document.querySelectorAll('.sidebar a');
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      tocLinks.forEach(l => l.classList.remove('active'));
-      const link = document.querySelector(`nav.toc a[href="#${entry.target.id}"]`);
-      if (link) link.classList.add('active');
+      const id = entry.target.id;
+      links.forEach(l => {
+        l.classList.toggle('active', l.getAttribute('href') === '#' + id);
+      });
     }
   });
-}, { rootMargin: '-20% 0px -70% 0px' });
+}, { rootMargin: '-80px 0px -60% 0px' });
 sections.forEach(s => observer.observe(s));
 </script>
+
 </body>
 </html>

@@ -60,10 +60,10 @@ function getPasswordStrength(password: string): { score: number; label: string; 
   const score = checks.filter(c => c.met).length
 
   if (score <= 1) return { score, label: 'Weak', color: 'bg-red-500', checks }
-  if (score === 2) return { score, label: 'Fair', color: 'bg-orange-500', checks }
-  if (score === 3) return { score, label: 'Good', color: 'bg-yellow-500', checks }
+  if (score === 2) return { score, label: 'Fair', color: 'bg-amber-500', checks }
+  if (score === 3) return { score, label: 'Good', color: 'bg-amber-500', checks }
   if (score === 4) return { score, label: 'Strong', color: 'bg-green-500', checks }
-  return { score, label: 'Very Strong', color: 'bg-emerald-500', checks }
+  return { score, label: 'Very Strong', color: 'bg-green-500', checks }
 }
 
 export function AuthModal() {
@@ -220,8 +220,8 @@ export function AuthModal() {
                   <p className="text-xs text-red-500">{loginForm.formState.errors.password.message}</p>
                 )}
               </div>
-              <Button type="submit" className="w-full h-11 bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 rounded-xl" disabled={loginMutation.isPending}>
-                {loginMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Button type="submit" className="bg-primary hover:bg-primary/90 w-full h-10 rounded-md" disabled={loginMutation.isPending}>
+                {loginMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
                 {language === 'fil' ? 'Mag-sign In' : 'Sign In'}
               </Button>
 
@@ -321,7 +321,7 @@ export function AuthModal() {
                   <div className="space-y-2 mt-2">
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-muted-foreground">Password Strength</span>
-                      <span className={`font-medium ${passwordStrength.score <= 1 ? 'text-red-500' : passwordStrength.score === 2 ? 'text-orange-500' : passwordStrength.score === 3 ? 'text-yellow-600' : 'text-green-600'}`}>
+                      <span className={`font-medium ${passwordStrength.score <= 1 ? 'text-red-500' : passwordStrength.score === 2 ? 'text-amber-500' : passwordStrength.score === 3 ? 'text-amber-600' : 'text-green-600'}`}>
                         {passwordStrength.label}
                       </span>
                     </div>
@@ -403,8 +403,8 @@ export function AuthModal() {
                 )}
               </div>
 
-              <Button type="submit" className="w-full h-11 bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 rounded-xl" disabled={registerMutation.isPending}>
-                {registerMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Button type="submit" className="bg-primary hover:bg-primary/90 w-full h-10 rounded-md" disabled={registerMutation.isPending}>
+                {registerMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
                 {language === 'fil' ? 'Gumawa ng Account' : 'Create Account'}
               </Button>
             </form>

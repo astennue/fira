@@ -229,7 +229,7 @@ export function FiraJobCreatePage() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
+          <h1 className="text-4xl font-bold leading-tight tracking-tight flex items-center gap-2">
             <Plus className="h-6 w-6" />
             {isFil ? 'Gumawa ng Job Order' : 'Create Job Order'}
           </h1>
@@ -716,12 +716,12 @@ export function FiraJobCreatePage() {
           <Button type="submit" disabled={loading} className="min-w-[180px]">
             {loading ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
                 {isFil ? 'Sinisimpan...' : 'Creating...'}
               </>
             ) : (
               <>
-                <Plus className="mr-2 h-4 w-4" />
+                <Plus className="h-4 w-4" />
                 {isFil ? 'Gumawa ng Job Order' : 'Create Job Order'}
               </>
             )}

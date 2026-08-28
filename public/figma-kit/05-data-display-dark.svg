@@ -1,0 +1,170 @@
+<!-- Frame: FIRA Data Display — Dark Mode -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1600" viewBox="0 0 1440 1600">
+  <!-- Background -->
+  <rect width="1440" height="1600" fill="#0b1120"/>
+
+  <!-- ==================== TITLE BAR ==================== -->
+  <rect width="1440" height="60" fill="#141c2e"/>
+  <rect y="58" width="1440" height="2" fill="#1e2d4a"/>
+  <text x="50" y="38" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#60a5fa">FIRA Data Display — Dark Mode</text>
+
+  <!-- ==================== SECTION A: CARDS ==================== -->
+  <text x="50" y="100" font-family="JetBrains Mono, monospace" font-size="12" font-weight="500" fill="#8899b4">CARDS — rounded-xl (12px), shadow-sm rest, shadow-md hover</text>
+
+  <!-- Standard Card Shadow -->
+  <rect x="54" y="130" width="636" height="172" rx="12" fill="#000000" opacity="0.3"/>
+  <!-- Standard Card -->
+  <rect x="50" y="125" width="636" height="172" rx="12" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="74" y="167" font-family="Inter, sans-serif" font-size="18" font-weight="600" fill="#e2e8f0">Card Title</text>
+  <text x="74" y="194" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#8899b4">This is a standard card with subtle shadow. It elevates on hover.</text>
+  <!-- Standard Card Spec Label -->
+  <text x="74" y="320" font-family="JetBrains Mono, monospace" font-size="11" fill="#8899b4">bg-card border-border rounded-xl shadow-sm, hover:shadow-md</text>
+
+  <!-- Stat Card Shadow -->
+  <rect x="714" y="130" width="636" height="172" rx="12" fill="#000000" opacity="0.3"/>
+  <!-- Stat Card -->
+  <rect x="710" y="125" width="636" height="172" rx="12" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="734" y="162" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#8899b4" letter-spacing="0.5">REVENUE</text>
+  <text x="734" y="202" font-family="Inter, sans-serif" font-size="28" font-weight="700" fill="#e2e8f0">₱1.2M</text>
+  <text x="734" y="230" font-family="Inter, sans-serif" font-size="13" font-weight="500" fill="#4ade80">↑ 12% from last month</text>
+  <!-- Stat Card Spec Label -->
+  <text x="734" y="320" font-family="JetBrains Mono, monospace" font-size="11" fill="#8899b4">Stat card pattern</text>
+
+  <!-- ==================== SECTION B: BADGES ==================== -->
+  <text x="50" y="375" font-family="JetBrains Mono, monospace" font-size="12" font-weight="500" fill="#8899b4">BADGES &amp; STATUS TAGS</text>
+
+  <!-- B1: Badge Variants Row -->
+  <!-- Primary -->
+  <rect x="50" y="398" width="68" height="26" rx="6" fill="#60a5fa"/>
+  <text x="84" y="415" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#0b1120" text-anchor="middle">Primary</text>
+  <text x="84" y="443" font-family="JetBrains Mono, monospace" font-size="11" fill="#8899b4" text-anchor="middle">Primary</text>
+
+  <!-- Success -->
+  <rect x="130" y="398" width="72" height="26" rx="6" fill="#0d3320"/>
+  <text x="166" y="415" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#86efac" text-anchor="middle">Success</text>
+  <text x="166" y="443" font-family="JetBrains Mono, monospace" font-size="11" fill="#8899b4" text-anchor="middle">Success</text>
+
+  <!-- Destructive -->
+  <rect x="214" y="398" width="86" height="26" rx="6" fill="#3b1111"/>
+  <text x="257" y="415" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#fca5a5" text-anchor="middle">Destructive</text>
+  <text x="257" y="443" font-family="JetBrains Mono, monospace" font-size="11" fill="#8899b4" text-anchor="middle">Destructive</text>
+
+  <!-- Warning -->
+  <rect x="312" y="398" width="76" height="26" rx="6" fill="#3b1a06"/>
+  <text x="350" y="415" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#fde68a" text-anchor="middle">Warning</text>
+  <text x="350" y="443" font-family="JetBrains Mono, monospace" font-size="11" fill="#8899b4" text-anchor="middle">Warning</text>
+
+  <!-- Info -->
+  <rect x="400" y="398" width="48" height="26" rx="6" fill="#122542"/>
+  <text x="424" y="415" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#93c5fd" text-anchor="middle">Info</text>
+  <text x="424" y="443" font-family="JetBrains Mono, monospace" font-size="11" fill="#8899b4" text-anchor="middle">Info</text>
+
+  <!-- Muted -->
+  <rect x="460" y="398" width="62" height="26" rx="6" fill="#0b1121"/>
+  <text x="491" y="415" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#94a3b8" text-anchor="middle">Muted</text>
+  <text x="491" y="443" font-family="JetBrains Mono, monospace" font-size="11" fill="#8899b4" text-anchor="middle">Muted</text>
+
+  <!-- Outline -->
+  <rect x="534" y="398" width="72" height="26" rx="6" fill="none" stroke="#1e2d4a" stroke-width="1"/>
+  <text x="570" y="415" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#e2e8f0" text-anchor="middle">Outline</text>
+  <text x="570" y="443" font-family="JetBrains Mono, monospace" font-size="11" fill="#8899b4" text-anchor="middle">Outline</text>
+
+  <!-- B2: Job Category Tags Row -->
+  <!-- Domestic Helper -->
+  <rect x="50" y="468" width="120" height="30" rx="6" fill="#5b0f32"/>
+  <text x="110" y="487" font-family="Inter, sans-serif" font-size="13" font-weight="500" fill="#f9a8d4" text-anchor="middle">Domestic Helper</text>
+
+  <!-- Caregiver -->
+  <rect x="182" y="468" width="88" height="30" rx="6" fill="#3b0764"/>
+  <text x="226" y="487" font-family="Inter, sans-serif" font-size="13" font-weight="500" fill="#d8b4fe" text-anchor="middle">Caregiver</text>
+
+  <!-- Nurse -->
+  <rect x="282" y="468" width="68" height="30" rx="6" fill="#042f2e"/>
+  <text x="316" y="487" font-family="Inter, sans-serif" font-size="13" font-weight="500" fill="#5eead4" text-anchor="middle">Nurse</text>
+
+  <!-- Factory Worker -->
+  <rect x="362" y="468" width="120" height="30" rx="6" fill="#431407"/>
+  <text x="422" y="487" font-family="Inter, sans-serif" font-size="13" font-weight="500" fill="#fdba74" text-anchor="middle">Factory Worker</text>
+
+  <!-- Hospitality -->
+  <rect x="494" y="468" width="98" height="30" rx="6" fill="#3b1a06"/>
+  <text x="543" y="487" font-family="Inter, sans-serif" font-size="13" font-weight="500" fill="#fde68a" text-anchor="middle">Hospitality</text>
+
+  <!-- ==================== SECTION C: TABLE ==================== -->
+  <text x="50" y="545" font-family="JetBrains Mono, monospace" font-size="12" font-weight="500" fill="#8899b4">TABLES — 14px font, muted header, hover rows</text>
+
+  <!-- Table Clip Path for rounded corners -->
+  <clipPath id="table-clip">
+    <rect x="50" y="568" width="1020" height="236" rx="8"/>
+  </clipPath>
+
+  <!-- Table Body (clipped) -->
+  <g clip-path="url(#table-clip)">
+    <!-- Table Background -->
+    <rect x="50" y="568" width="1020" height="236" fill="#141c2e"/>
+    <!-- Header Row -->
+    <rect x="50" y="568" width="1020" height="44" fill="#0f172a"/>
+    <!-- Selected Row (Row 2) -->
+    <rect x="50" y="660" width="1020" height="48" fill="#172554"/>
+    <!-- Row Dividers -->
+    <line x1="50" y1="612" x2="1070" y2="612" stroke="#1e2d4a" stroke-width="1"/>
+    <line x1="50" y1="660" x2="1070" y2="660" stroke="#1e2d4a" stroke-width="0.5"/>
+    <line x1="50" y1="708" x2="1070" y2="708" stroke="#1e2d4a" stroke-width="0.5"/>
+    <line x1="50" y1="756" x2="1070" y2="756" stroke="#1e2d4a" stroke-width="0.5"/>
+  </g>
+
+  <!-- Table Border -->
+  <rect x="50" y="568" width="1020" height="236" rx="8" fill="none" stroke="#1e2d4a" stroke-width="1"/>
+
+  <!-- Header Text -->
+  <text x="74" y="595" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#8899b4" letter-spacing="0.5">NAME</text>
+  <text x="400" y="595" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#8899b4" letter-spacing="0.5">STATUS</text>
+  <text x="590" y="595" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#8899b4" letter-spacing="0.5">ROLE</text>
+  <text x="780" y="595" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#8899b4" letter-spacing="0.5">DATE</text>
+
+  <!-- Row 1: Juan Dela Cruz | Active | Applicant | Jul 12, 2025 -->
+  <text x="74" y="641" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#e2e8f0">Juan Dela Cruz</text>
+  <!-- Active Badge (dark) -->
+  <rect x="400" y="628" width="56" height="22" rx="4" fill="#0d3320"/>
+  <text x="428" y="643" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#86efac" text-anchor="middle">Active</text>
+  <text x="590" y="641" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#e2e8f0">Applicant</text>
+  <text x="780" y="641" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#8899b4">Jul 12, 2025</text>
+
+  <!-- Row 2 (Selected): Maria Santos | Pending | Agency | Jul 10, 2025 -->
+  <text x="74" y="689" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#e2e8f0">Maria Santos</text>
+  <!-- Pending Badge (dark) -->
+  <rect x="400" y="676" width="66" height="22" rx="4" fill="#3b1a06"/>
+  <text x="433" y="691" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#fde68a" text-anchor="middle">Pending</text>
+  <text x="590" y="689" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#e2e8f0">Agency</text>
+  <text x="780" y="689" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#8899b4">Jul 10, 2025</text>
+
+  <!-- Row 3: ABC Corp | Review | Employer | Jul 8, 2025 -->
+  <text x="74" y="737" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#e2e8f0">ABC Corp</text>
+  <!-- Review Badge (dark) -->
+  <rect x="400" y="724" width="56" height="22" rx="4" fill="#122542"/>
+  <text x="428" y="739" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#93c5fd" text-anchor="middle">Review</text>
+  <text x="590" y="737" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#e2e8f0">Employer</text>
+  <text x="780" y="737" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#8899b4">Jul 8, 2025</text>
+
+  <!-- Row 4: Pedro Reyes | Rejected | Applicant | Jul 5, 2025 -->
+  <text x="74" y="785" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#e2e8f0">Pedro Reyes</text>
+  <!-- Rejected Badge (dark) -->
+  <rect x="400" y="772" width="66" height="22" rx="4" fill="#3b1111"/>
+  <text x="433" y="787" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#fca5a5" text-anchor="middle">Rejected</text>
+  <text x="590" y="785" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#e2e8f0">Applicant</text>
+  <text x="780" y="785" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#8899b4">Jul 5, 2025</text>
+
+  <!-- Table Spec Labels (side annotations) -->
+  <!-- Connecting lines -->
+  <line x1="1070" y1="590" x2="1100" y2="590" stroke="#1e2d4a" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="1070" y1="640" x2="1100" y2="640" stroke="#1e2d4a" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="1070" y1="684" x2="1100" y2="684" stroke="#1e2d4a" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="1070" y1="740" x2="1100" y2="740" stroke="#1e2d4a" stroke-width="1" stroke-dasharray="3,2"/>
+
+  <!-- Label texts -->
+  <text x="1110" y="594" font-family="JetBrains Mono, monospace" font-size="11" fill="#8899b4">bg-muted header</text>
+  <text x="1110" y="644" font-family="JetBrains Mono, monospace" font-size="11" fill="#8899b4">px-4 py-3 cells</text>
+  <text x="1110" y="688" font-family="JetBrains Mono, monospace" font-size="11" fill="#8899b4">selected:bg-primary/5</text>
+  <text x="1110" y="744" font-family="JetBrains Mono, monospace" font-size="11" fill="#8899b4">hover:bg-muted/50 rows</text>
+
+</svg>

@@ -101,10 +101,10 @@ export function CmsPagesPage() {
     <div className="view-transition space-y-6 pb-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{L('CMS Pages', 'Mga Pahina ng CMS')}</h1>
+          <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground">{L('CMS Pages', 'Mga Pahina ng CMS')}</h1>
           <p className="text-muted-foreground text-sm">{L('Create and manage website pages', 'Lumikha at pamahalaan ang mga pahina ng website')}</p>
         </div>
-        <Button onClick={openNew} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> {L('New Page', 'Bagong Pahina')}</Button>
+        <Button onClick={openNew} className="rounded-md"><Plus className="h-4 w-4" /> {L('New Page', 'Bagong Pahina')}</Button>
       </div>
 
       <Tabs defaultValue="published" className="space-y-4">
@@ -154,7 +154,7 @@ export function CmsPagesPage() {
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setDialogOpen(false)}>{L('Cancel', 'Kanselahin')}</Button>
               <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save', 'I-save')}
+                {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save', 'I-save')}
               </Button>
             </div>
           </div>
@@ -170,7 +170,7 @@ function PageList({ pages, onEdit, onDelete, isLoading }: { pages: any[]; onEdit
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
 
   if (isLoading) return <div className="space-y-3">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)}</div>
-  if (pages.length === 0) return <Card className="p-8 text-center"><FileText className="h-10 w-10 mx-auto text-muted-foreground mb-2" /><p className="text-muted-foreground">{L('No pages found', 'Walang nahanap na pahina')}</p></Card>
+  if (pages.length === 0) return <Card className="py-12 px-4 text-center"><FileText className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" /><p className="text-lg font-medium text-foreground">{L('No pages found', 'Walang nahanap na pahina')}</p></Card>
   return (
     <div className="space-y-6 pb-8">
       {pages.map((page: any) => (

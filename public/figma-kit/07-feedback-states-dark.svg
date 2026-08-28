@@ -1,0 +1,91 @@
+<!-- Frame: Feedback & States — Dark Mode -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1400" viewBox="0 0 1440 1400" font-family="Inter, sans-serif">
+<rect width="1440" height="60" fill="#141c2e" stroke="#1e2d4a" stroke-width="0 0 2 0"/>
+<rect y="58" width="1440" height="2" fill="#1e2d4a"/>
+<text x="40" y="38" font-size="20" font-weight="700" fill="#60a5fa">FIRA Feedback &amp; States — Dark Mode</text>
+
+<!-- TOASTS -->
+<text x="40" y="105" font-size="11" font-weight="600" letter-spacing="0.08em" fill="#8899b4" font-family="JetBrains Mono, monospace">TOASTS — border-left colored, auto-dismiss 4-5s, shadow-lg</text>
+
+<rect x="40" y="125" width="400" height="72" rx="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<rect x="40" y="125" width="4" height="72" rx="2" fill="#4ade80"/>
+<text x="68" y="150" font-size="18" fill="#4ade80" font-weight="700">✓</text>
+<text x="94" y="152" font-size="14" font-weight="600" fill="#e2e8f0">Success</text>
+<text x="94" y="172" font-size="13" fill="#8899b4">Application submitted successfully.</text>
+<text x="460" y="155" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">border-l-4 border-l-green-400</text>
+
+<rect x="40" y="215" width="400" height="72" rx="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<rect x="40" y="215" width="4" height="72" rx="2" fill="#f87171"/>
+<text x="68" y="240" font-size="18" fill="#f87171" font-weight="700">✕</text>
+<text x="94" y="242" font-size="14" font-weight="600" fill="#e2e8f0">Error</text>
+<text x="94" y="262" font-size="13" fill="#8899b4">Failed to save changes. Please try again.</text>
+<text x="460" y="245" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">border-l-4 border-l-red-400</text>
+
+<rect x="40" y="305" width="400" height="72" rx="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<rect x="40" y="305" width="4" height="72" rx="2" fill="#fbbf24"/>
+<text x="68" y="330" font-size="18" fill="#fbbf24" font-weight="700">◐</text>
+<text x="94" y="332" font-size="14" font-weight="600" fill="#e2e8f0">Warning</text>
+<text x="94" y="352" font-size="13" fill="#8899b4">Your session will expire in 5 minutes.</text>
+<text x="460" y="335" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">border-l-4 border-l-amber-400</text>
+
+<rect x="40" y="395" width="400" height="72" rx="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<rect x="40" y="395" width="4" height="72" rx="2" fill="#60a5fa"/>
+<text x="68" y="420" font-size="18" fill="#60a5fa" font-weight="700">ℹ</text>
+<text x="94" y="422" font-size="14" font-weight="600" fill="#e2e8f0">Info</text>
+<text x="94" y="442" font-size="13" fill="#8899b4">A new version is available.</text>
+<text x="460" y="425" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">border-l-4 border-l-blue-400</text>
+
+<!-- LOADING -->
+<text x="40" y="510" font-size="11" font-weight="600" letter-spacing="0.08em" fill="#8899b4" font-family="JetBrains Mono, monospace">LOADING STATES</text>
+
+<circle cx="80" cy="570" r="16" fill="none" stroke="#1e2d4a" stroke-width="3"/>
+<path d="M 80 554 A 16 16 0 0 1 96 570" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round"/>
+<text x="40" y="605" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">Spinner — size-8, stroke-primary</text>
+
+<rect x="280" y="550" width="120" height="36" rx="8" fill="#60a5fa"/>
+<circle cx="340" cy="568" r="8" fill="none" stroke="rgba(11,17,32,0.3)" stroke-width="2.5"/>
+<path d="M 340 560 A 8 8 0 0 1 348 568" fill="none" stroke="#0b1120" stroke-width="2.5" stroke-linecap="round"/>
+<text x="280" y="605" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">Button Loading — spinner on primary-fg</text>
+
+<rect x="520" y="550" width="120" height="12" rx="6" fill="#1a2540"/>
+<rect x="520" y="572" width="160" height="12" rx="6" fill="#1a2540"/>
+<rect x="520" y="594" width="80" height="12" rx="6" fill="#1a2540"/>
+<text x="520" y="625" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">Skeleton — bg-muted (dark)</text>
+
+<!-- EMPTY STATES -->
+<text x="40" y="700" font-size="11" font-weight="600" letter-spacing="0.08em" fill="#8899b4" font-family="JetBrains Mono, monospace">EMPTY STATES</text>
+
+<rect x="40" y="720" width="320" height="220" rx="12" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<text x="200" y="790" font-size="48" fill="#1e2d4a" text-anchor="middle">📋</text>
+<text x="200" y="830" font-size="18" font-weight="500" fill="#e2e8f0" text-anchor="middle">No jobs found</text>
+<text x="200" y="855" font-size="14" fill="#8899b4" text-anchor="middle">Try adjusting your search or filters.</text>
+<rect x="152" y="875" width="96" height="32" rx="8" fill="none" stroke="#1e2d4a" stroke-width="1"/>
+<text x="200" y="896" font-size="13" fill="#e2e8f0" text-anchor="middle">Browse Jobs</text>
+
+<rect x="420" y="720" width="320" height="220" rx="12" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<text x="580" y="790" font-size="48" fill="#1e2d4a" text-anchor="middle">💬</text>
+<text x="580" y="830" font-size="18" font-weight="500" fill="#e2e8f0" text-anchor="middle">No messages yet</text>
+<text x="580" y="855" font-size="14" fill="#8899b4" text-anchor="middle">Your conversations will appear here.</text>
+
+<!-- ERROR STATES -->
+<text x="40" y="1010" font-size="11" font-weight="600" letter-spacing="0.08em" fill="#8899b4" font-family="JetBrains Mono, monospace">ERROR STATES</text>
+
+<text x="40" y="1040" font-size="13" font-weight="500" fill="#e2e8f0">Email</text>
+<rect x="40" y="1050" width="320" height="36" rx="8" fill="#141c2e" stroke="#f87171" stroke-width="2"/>
+<rect x="37" y="1047" width="326" height="42" rx="10" fill="none" stroke="#f87171" stroke-width="1" opacity="0.2"/>
+<text x="56" y="1074" font-size="14" fill="#e2e8f0">not-an-email</text>
+<text x="40" y="1106" font-size="12" fill="#f87171">⚠ Please enter a valid email address.</text>
+<text x="400" y="1060" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">border-destructive (#f87171)</text>
+<text x="400" y="1075" font-size="11" fill="#8899b4" font-family="JetBrains Mono, monospace">ring-destructive/40</text>
+
+<rect x="40" y="1130" width="360" height="72" rx="12" fill="#450a0a" stroke="#f87171" stroke-width="1"/>
+<text x="64" y="1158" font-size="14" font-weight="600" fill="#f87171">Something went wrong</text>
+<text x="64" y="1178" font-size="13" fill="#fca5a5">Unable to load data. Please check your connection.</text>
+
+<!-- SUCCESS -->
+<text x="40" y="1240" font-size="11" font-weight="600" letter-spacing="0.08em" fill="#8899b4" font-family="JetBrains Mono, monospace">SUCCESS STATE</text>
+<circle cx="80" cy="1280" r="16" fill="#052e16" stroke="#4ade80" stroke-width="2"/>
+<text x="80" y="1286" font-size="16" fill="#4ade80" text-anchor="middle" font-weight="700">✓</text>
+<text x="110" y="1286" font-size="15" font-weight="500" fill="#e2e8f0">Profile saved successfully!</text>
+
+</svg>

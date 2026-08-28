@@ -80,11 +80,11 @@ export function CmsSettingsPage() {
     <div className="view-transition space-y-6 pb-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{L('Site Settings', 'Mga Setting ng Site')}</h1>
+          <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground">{L('Site Settings', 'Mga Setting ng Site')}</h1>
           <p className="text-muted-foreground text-sm">{L('Configure general site information', 'I-configure ang pangkalahatang impormasyon ng site')}</p>
         </div>
         <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} className="rounded-xl">
-          {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save All', 'I-save lahat')}
+          {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save All', 'I-save lahat')}
         </Button>
       </div>
 

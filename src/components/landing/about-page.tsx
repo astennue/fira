@@ -122,7 +122,7 @@ export function AboutPage() {
           <p className="text-blue-200 max-w-lg mx-auto mb-8">
             {language === 'fil' ? 'Handa kaming tulungan ka sa iyong journey. Makipag-ugnay sa amin ngayon.' : 'We are ready to help you on your journey. Contact us today.'}
           </p>
-          <Button size="lg" className="bg-white text-blue-900 hover:bg-blue-50 rounded-xl" onClick={() => navigate('contact')}>
+          <Button size="lg" className="bg-white text-blue-900 hover:bg-blue-50 rounded-md" onClick={() => navigate('contact')}>
             {language === 'fil' ? 'Makipag-ugnay sa Amin' : 'Contact Us'}
           </Button>
         </div>

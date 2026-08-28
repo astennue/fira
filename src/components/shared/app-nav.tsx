@@ -155,7 +155,7 @@ export function AppNav() {
                               : 'hover:bg-accent hover:text-accent-foreground',
                           )}
                         >
-                          <Icon className="h-4 w-4 shrink-0" />
+                          <Icon className="h-5 w-5 shrink-0" />
                           <span>{language === 'fil' ? item.labelFil : item.label}</span>
                         </button>
                       )
@@ -191,11 +191,11 @@ export function AppNav() {
                           ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
                           : 'bg-white/20 text-white'
                         : scrolled
-                          ? 'text-foreground hover:text-foreground hover:bg-accent'
+                          ? 'text-slate-600 dark:text-slate-300 hover:text-foreground dark:hover:text-slate-100 hover:bg-accent'
                           : 'text-white/70 hover:text-white hover:bg-white/10',
                     )}
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-5 w-5" />
                     <span>{language === 'fil' ? item.labelFil : item.label}</span>
                   </button>
                 )
@@ -275,11 +275,11 @@ export function AppNav() {
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => navigate(getDashboardView(user.role))}>
-                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    <LayoutDashboard className="h-4 w-4" />
                     {language === 'fil' ? 'Dashboard' : 'Dashboard'}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('user-settings')}>
-                    <User className="mr-2 h-4 w-4" />
+                    <User className="h-4 w-4" />
                     {language === 'fil' ? 'Mga Setting' : 'Settings'}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -287,7 +287,7 @@ export function AppNav() {
                     onClick={logout}
                     className="text-destructive focus:text-destructive"
                   >
-                    <LogOut className="mr-2 h-4 w-4" />
+                    <LogOut className="h-4 w-4" />
                     {language === 'fil' ? 'Mag-logout' : 'Sign Out'}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -306,7 +306,7 @@ export function AppNav() {
                 </Button>
                 <Button
                   size="sm"
-                  className="rounded-xl"
+                  className="rounded-md"
                   onClick={() => setAuthModalOpen(true, 'register')}
                 >
                   {language === 'fil' ? 'Magparehistro' : 'Register'}

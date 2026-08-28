@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1200" viewBox="0 0 1440 1200">
+  <!-- Frame: 06-design-tokens-light -->
+
+  <defs>
+    <filter id="shadow-xs" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#0f172a" flood-opacity="0.05"/>
+    </filter>
+    <filter id="shadow-sm" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+    <filter id="shadow-md" x="-30%" y="-20%" width="160%" height="180%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.1"/>
+    </filter>
+    <filter id="shadow-lg" x="-40%" y="-30%" width="180%" height="200%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+    <filter id="focus-glow" x="-50%" y="80%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1440" height="1200" fill="#f8fafc"/>
+
+  <!-- Title Bar -->
+  <rect width="1440" height="60" fill="#ffffff"/>
+  <line x1="0" y1="60" x2="1440" y2="60" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="48" y="38" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#1e40af">FIRA Design Tokens — Light Mode</text>
+
+  <!-- ═══════════════════ SECTION A: BORDER RADIUS ═══════════════════ -->
+  <text x="80" y="102" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#0f172a" letter-spacing="0.08em">BORDER RADIUS — Base: 0.625rem (10px)</text>
+
+  <!-- 4px — rounded-sm -->
+  <rect x="295" y="128" width="80" height="80" rx="4" fill="#1e40af"/>
+  <text x="335" y="226" font-family="JetBrains Mono, monospace" font-size="11" fill="#0f172a" text-anchor="middle">4px — rounded-sm</text>
+  <text x="335" y="244" font-family="Inter, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">Checkbox, Tooltip</text>
+
+  <!-- 6px -->
+  <rect x="465" y="128" width="80" height="80" rx="6" fill="#1e40af"/>
+  <text x="505" y="226" font-family="JetBrains Mono, monospace" font-size="11" fill="#0f172a" text-anchor="middle">6px</text>
+  <text x="505" y="244" font-family="Inter, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">Checkbox</text>
+
+  <!-- 8px — rounded-md -->
+  <rect x="635" y="128" width="80" height="80" rx="8" fill="#1e40af"/>
+  <text x="675" y="226" font-family="JetBrains Mono, monospace" font-size="11" fill="#0f172a" text-anchor="middle">8px — rounded-md</text>
+  <text x="675" y="244" font-family="Inter, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">Button, Input, Badge, Dropdown</text>
+
+  <!-- 10px — rounded-lg -->
+  <rect x="805" y="128" width="80" height="80" rx="10" fill="#1e40af"/>
+  <text x="845" y="226" font-family="JetBrains Mono, monospace" font-size="11" fill="#0f172a" text-anchor="middle">10px — rounded-lg</text>
+  <text x="845" y="244" font-family="Inter, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">Base (--radius)</text>
+
+  <!-- 12px — rounded-xl -->
+  <rect x="975" y="128" width="80" height="80" rx="12" fill="#1e40af"/>
+  <text x="1015" y="226" font-family="JetBrains Mono, monospace" font-size="11" fill="#0f172a" text-anchor="middle">12px — rounded-xl</text>
+  <text x="1015" y="244" font-family="Inter, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">Card, Modal, Dialog</text>
+
+  <!-- 9999px — rounded-full -->
+  <rect x="1145" y="128" width="80" height="80" rx="9999" fill="#1e40af"/>
+  <text x="1185" y="226" font-family="JetBrains Mono, monospace" font-size="11" fill="#0f172a" text-anchor="middle">9999px — rounded-full</text>
+  <text x="1185" y="244" font-family="Inter, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">Avatar, Switch</text>
+
+  <!-- ═══════════════════ SECTION B: SHADOWS ═══════════════════ -->
+  <text x="80" y="296" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#0f172a" letter-spacing="0.08em">SHADOWS — Subtle on cards, flat buttons</text>
+
+  <!-- shadow-xs -->
+  <rect x="300" y="325" width="120" height="80" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-xs)"/>
+  <text x="360" y="430" font-family="JetBrains Mono, monospace" font-size="11" fill="#0f172a" text-anchor="middle">shadow-xs</text>
+  <text x="360" y="446" font-family="Inter, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">Buttons, inputs</text>
+
+  <!-- shadow-sm -->
+  <rect x="520" y="325" width="120" height="80" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+  <text x="580" y="430" font-family="JetBrains Mono, monospace" font-size="11" fill="#0f172a" text-anchor="middle">shadow-sm</text>
+  <text x="580" y="446" font-family="Inter, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">Cards at rest</text>
+
+  <!-- shadow-md -->
+  <rect x="740" y="325" width="120" height="80" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-md)"/>
+  <text x="800" y="430" font-family="JetBrains Mono, monospace" font-size="11" fill="#0f172a" text-anchor="middle">shadow-md</text>
+  <text x="800" y="446" font-family="Inter, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">Cards on hover</text>
+
+  <!-- shadow-lg -->
+  <rect x="960" y="325" width="120" height="80" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-lg)"/>
+  <text x="1020" y="430" font-family="JetBrains Mono, monospace" font-size="11" fill="#0f172a" text-anchor="middle">shadow-lg</text>
+  <text x="1020" y="446" font-family="Inter, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">Modals, dropdowns, toasts</text>
+
+  <!-- ═══════════════════ SECTION C: SPACING ═══════════════════ -->
+  <text x="80" y="498" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#0f172a" letter-spacing="0.08em">SPACING — 4px base unit</text>
+
+  <!-- 1 — 4px -->
+  <rect x="120" y="524" width="4" height="8" fill="#1e40af"/>
+  <text x="220" y="533" font-family="JetBrains Mono, monospace" font-size="12" fill="#0f172a">1 — 4px</text>
+  <text x="330" y="533" font-family="Inter, sans-serif" font-size="12" fill="#64748b">— Icon gaps</text>
+
+  <!-- 2 — 8px -->
+  <rect x="120" y="572" width="8" height="8" fill="#1e40af"/>
+  <text x="220" y="581" font-family="JetBrains Mono, monospace" font-size="12" fill="#0f172a">2 — 8px</text>
+  <text x="330" y="581" font-family="Inter, sans-serif" font-size="12" fill="#64748b">— Tight padding</text>
+
+  <!-- 3 — 12px -->
+  <rect x="120" y="620" width="12" height="8" fill="#1e40af"/>
+  <text x="220" y="629" font-family="JetBrains Mono, monospace" font-size="12" fill="#0f172a">3 — 12px</text>
+  <text x="330" y="629" font-family="Inter, sans-serif" font-size="12" fill="#64748b">— Section inner</text>
+
+  <!-- 4 — 16px -->
+  <rect x="120" y="668" width="16" height="8" fill="#1e40af"/>
+  <text x="220" y="677" font-family="JetBrains Mono, monospace" font-size="12" fill="#0f172a">4 — 16px</text>
+  <text x="340" y="677" font-family="Inter, sans-serif" font-size="12" fill="#64748b">— Standard padding</text>
+
+  <!-- 6 — 24px -->
+  <rect x="120" y="716" width="24" height="8" fill="#1e40af"/>
+  <text x="220" y="725" font-family="JetBrains Mono, monospace" font-size="12" fill="#0f172a">6 — 24px</text>
+  <text x="340" y="725" font-family="Inter, sans-serif" font-size="12" fill="#64748b">— Card padding, gaps</text>
+
+  <!-- 8 — 32px -->
+  <rect x="120" y="764" width="32" height="8" fill="#1e40af"/>
+  <text x="220" y="773" font-family="JetBrains Mono, monospace" font-size="12" fill="#0f172a">8 — 32px</text>
+  <text x="340" y="773" font-family="Inter, sans-serif" font-size="12" fill="#64748b">— Section padding</text>
+
+  <!-- 12 — 48px -->
+  <rect x="120" y="812" width="48" height="8" fill="#1e40af"/>
+  <text x="220" y="821" font-family="JetBrains Mono, monospace" font-size="12" fill="#0f172a">12 — 48px</text>
+  <text x="350" y="821" font-family="Inter, sans-serif" font-size="12" fill="#64748b">— Section vertical</text>
+
+  <!-- 16 — 64px -->
+  <rect x="120" y="860" width="64" height="8" fill="#1e40af"/>
+  <text x="220" y="869" font-family="JetBrains Mono, monospace" font-size="12" fill="#0f172a">16 — 64px</text>
+  <text x="350" y="869" font-family="Inter, sans-serif" font-size="12" fill="#64748b">— Major breaks</text>
+
+  <!-- ═══════════════════ SECTION D: BORDERS & DIVIDERS ═══════════════════ -->
+  <text x="80" y="930" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#0f172a" letter-spacing="0.08em">BORDERS &amp; DIVIDERS</text>
+
+  <!-- Default border: 1px #cbd5e1 -->
+  <rect x="100" y="960" width="220" height="60" rx="8" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="210" y="1046" font-family="JetBrains Mono, monospace" font-size="11" fill="#0f172a" text-anchor="middle">border-border — 1px solid #cbd5e1</text>
+
+  <!-- Subtle border: 0.5px #e2e8f0 -->
+  <rect x="430" y="960" width="220" height="60" rx="8" fill="none" stroke="#e2e8f0" stroke-width="0.5"/>
+  <text x="540" y="1046" font-family="JetBrains Mono, monospace" font-size="11" fill="#0f172a" text-anchor="middle">border-border/50 — subtle</text>
+
+  <!-- Focus border: 2px #2563eb with glow -->
+  <rect x="760" y="960" width="220" height="60" rx="8" fill="none" stroke="#2563eb" stroke-width="2" filter="url(#focus-glow)"/>
+  <text x="870" y="1046" font-family="JetBrains Mono, monospace" font-size="11" fill="#0f172a" text-anchor="middle">border-ring + ring — focus state</text>
+
+  <!-- Divider: horizontal line #cbd5e1 -->
+  <line x1="1090" y1="990" x2="1310" y2="990" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="1200" y="1046" font-family="JetBrains Mono, monospace" font-size="11" fill="#0f172a" text-anchor="middle">Separator — 1px solid border</text>
+
+</svg>

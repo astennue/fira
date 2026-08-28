@@ -28,7 +28,6 @@ import { useAppStore } from '@/store/app-store'
 import { apiFetch } from '@/lib/fetch'
 import { AnimatedCounter } from '@/components/shared/animated-counter'
 import { StatusBadge } from '@/components/shared/status-badge'
-import { GlassCard } from '@/components/shared/glass-card'
 import { getInitials } from '@/components/shared/get-initials'
 
 // ─── FIRA Dashboard Skeleton ──────────────────────────────────────────────
@@ -172,9 +171,9 @@ export function FiraDashboard() {
       label: isFil ? 'Aplikante' : 'Applicants',
       value: applicantCount,
       icon: Users,
-      gradient: 'from-emerald-500 to-green-600',
-      shadowColor: 'shadow-emerald-500/25',
-      ringColor: 'ring-emerald-500/20',
+      gradient: 'from-green-500 to-green-600',
+      shadowColor: 'shadow-green-500/25',
+      ringColor: 'ring-green-500/20',
     },
     {
       label: isFil ? 'Aktibong Trabaho' : 'Active Jobs',
@@ -215,7 +214,7 @@ export function FiraDashboard() {
               <Shield className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+              <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground">
                 FIRA Command Center
               </h1>
               <p className="text-sm text-muted-foreground mt-0.5">
@@ -291,7 +290,7 @@ export function FiraDashboard() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ delay: 0.15 + i * 0.07, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
-            <GlassCard hover className="relative overflow-hidden group p-0">
+            <Card className="relative overflow-hidden group p-0 shadow-sm hover:shadow-md transition-shadow">
               <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.gradient}`} />
               <CardContent className="p-5">
                 <div className="flex items-start justify-between">
@@ -310,7 +309,7 @@ export function FiraDashboard() {
                   </div>
                 </div>
               </CardContent>
-            </GlassCard>
+            </Card>
           </motion.div>
         ))}
       </motion.div>
@@ -333,8 +332,8 @@ export function FiraDashboard() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base font-semibold">
-                <div className="p-2 bg-emerald-100 dark:bg-emerald-900/50">
-                  <Activity className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <div className="p-2 bg-green-100 dark:bg-green-900/50">
+                  <Activity className="h-4 w-4 text-green-600 dark:text-green-400" />
                 </div>
                 {isFil ? 'Kamakailang Aktibidad' : 'Recent Activity'}
               </CardTitle>
@@ -358,18 +357,18 @@ export function FiraDashboard() {
                       className={`flex items-start gap-3 p-3 border transition-all duration-200 hover:shadow-md ${
                         isPending
                           ? 'bg-amber-50/60 dark:bg-amber-950/20 border-amber-200/60 dark:border-amber-800/40'
-                          : 'bg-card border-border hover:border-emerald-300 dark:hover:border-emerald-800'
+                          : 'bg-card border-border hover:border-green-300 dark:hover:border-green-700'
                       }`}
                     >
                       <div
                         className={`w-9 h-9 flex items-center justify-center shrink-0 ${
-                          isPending ? 'bg-amber-100 dark:bg-amber-900/50' : 'bg-emerald-100 dark:bg-emerald-900/50'
+                          isPending ? 'bg-amber-100 dark:bg-amber-900/50' : 'bg-green-100 dark:bg-green-900/50'
                         }`}
                       >
                         {isPending ? (
                           <CircleDot className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                         ) : (
-                          <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                          <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
@@ -394,10 +393,8 @@ export function FiraDashboard() {
                 })}
                 {recentEndorsements.length === 0 && (
                   <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <div className="p-4 bg-muted mb-3">
-                      <Activity className="h-8 w-8 text-muted-foreground" />
-                    </div>
-                    <p className="text-sm text-muted-foreground">
+                    <Activity className="h-12 w-12 text-muted-foreground/50 mb-3" />
+                    <p className="text-lg font-medium text-foreground">
                       {isFil ? 'Wala pang aktibidad.' : 'No recent activity.'}
                     </p>
                   </div>
@@ -450,10 +447,8 @@ export function FiraDashboard() {
                 ))}
                 {recentUsers.length === 0 && (
                   <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <div className="p-4 bg-muted mb-3">
-                      <Users className="h-8 w-8 text-muted-foreground" />
-                    </div>
-                    <p className="text-sm text-muted-foreground">
+                    <Users className="h-12 w-12 text-muted-foreground/50 mb-3" />
+                    <p className="text-lg font-medium text-foreground">
                       {isFil ? 'Wala pang bagong aplikante.' : 'No new applicants yet.'}
                     </p>
                   </div>

@@ -39,7 +39,7 @@ export function AgencyApplicantsPage() {
   return (
     <div className="view-transition space-y-6 pb-8">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold">{language === 'fil' ? 'Mga Aplikante' : 'Applicants'}</h1>
+        <h1 className="text-4xl font-bold leading-tight tracking-tight">{language === 'fil' ? 'Mga Aplikante' : 'Applicants'}</h1>
         <p className="text-muted-foreground mt-1">{language === 'fil' ? 'Tingnan at pamahalaan ang mga aplikante' : 'View and manage applicants'}</p>
       </div>
 
@@ -88,11 +88,11 @@ export function AgencyApplicantsPage() {
                     <div className="flex items-center gap-2 shrink-0">
                       {!p?.isComplete && (
                         <Badge variant="secondary" className="text-xs text-amber-600">
-                          <Clock className="h-3 w-3 mr-1" />Incomplete
+                          <Clock className="h-3 w-3 " />Incomplete
                         </Badge>
                       )}
                       <Button variant="outline" size="sm" onClick={() => useAppStore.getState().navigate('fira-applicant-detail', { userId: u.id })}>
-                        <Eye className="h-3.5 w-3.5 mr-1" />{language === 'fil' ? 'Tingnan' : 'View'}
+                        <Eye className="h-3.5 w-3.5 " />{language === 'fil' ? 'Tingnan' : 'View'}
                       </Button>
                     </div>
                   </CardContent>

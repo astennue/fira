@@ -1,0 +1,121 @@
+<!-- Frame: Application Pipeline — Dark Mode -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" font-family="Inter, sans-serif">
+<rect width="1440" height="60" fill="#141c2e" stroke="#1e2d4a" stroke-width="0 0 2 0"/>
+<rect y="58" width="1440" height="2" fill="#1e2d4a"/>
+<text x="40" y="38" font-size="20" font-weight="700" fill="#60a5fa">FIRA Application Pipeline — Dark Mode</text>
+
+<text x="40" y="105" font-size="11" font-weight="600" letter-spacing="0.08em" fill="#8899b4" font-family="JetBrains Mono, monospace">STAGE 1 — APPLICATION &amp; SCREENING</text>
+
+<rect x="40" y="125" width="130" height="60" rx="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<circle cx="65" cy="148" r="6" fill="#60a5fa"/>
+<text x="80" y="145" font-size="13" font-weight="500" fill="#e2e8f0">Applied</text>
+<text x="80" y="165" font-size="10" fill="#8899b4" font-family="JetBrains Mono, monospace">blue — info</text>
+<text x="40" y="200" font-size="10" fill="#60a5fa" font-family="JetBrains Mono, monospace">bg-blue-950/50 text-blue-300</text>
+
+<text x="185" y="160" font-size="20" fill="#1e2d4a">→</text>
+
+<rect x="210" y="125" width="130" height="60" rx="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<circle cx="235" cy="148" r="6" fill="#fbbf24"/>
+<text x="250" y="145" font-size="13" font-weight="500" fill="#e2e8f0">Screening</text>
+<text x="250" y="165" font-size="10" fill="#8899b4" font-family="JetBrains Mono, monospace">amber — action</text>
+<text x="210" y="200" font-size="10" fill="#fbbf24" font-family="JetBrains Mono, monospace">bg-amber-950/50 text-amber-300</text>
+
+<text x="355" y="160" font-size="20" fill="#1e2d4a">→</text>
+
+<rect x="380" y="125" width="130" height="60" rx="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<circle cx="405" cy="148" r="6" fill="#60a5fa"/>
+<text x="420" y="145" font-size="13" font-weight="500" fill="#e2e8f0">Interview</text>
+<text x="420" y="165" font-size="10" fill="#8899b4" font-family="JetBrains Mono, monospace">blue — info</text>
+
+<text x="525" y="160" font-size="20" fill="#1e2d4a">→</text>
+
+<rect x="550" y="125" width="130" height="60" rx="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<circle cx="575" cy="148" r="6" fill="#4ade80"/>
+<text x="590" y="145" font-size="13" font-weight="500" fill="#e2e8f0">Passed</text>
+<text x="590" y="165" font-size="10" fill="#8899b4" font-family="JetBrains Mono, monospace">green — milestone</text>
+<text x="550" y="200" font-size="10" fill="#4ade80" font-family="JetBrains Mono, monospace">bg-green-950/50 text-green-300</text>
+
+<text x="695" y="160" font-size="20" fill="#1e2d4a">→</text>
+
+<rect x="720" y="125" width="150" height="60" rx="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<circle cx="745" cy="148" r="6" fill="#fbbf24"/>
+<text x="760" y="145" font-size="13" font-weight="500" fill="#e2e8f0">Pending Docs</text>
+<text x="760" y="165" font-size="10" fill="#8899b4" font-family="JetBrains Mono, monospace">amber — action</text>
+
+<text x="40" y="255" font-size="11" font-weight="600" letter-spacing="0.08em" fill="#8899b4" font-family="JetBrains Mono, monospace">STAGE 2 — REVIEW &amp; APPROVAL</text>
+
+<rect x="40" y="275" width="150" height="60" rx="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<circle cx="65" cy="298" r="6" fill="#60a5fa"/>
+<text x="80" y="295" font-size="13" font-weight="500" fill="#e2e8f0">Docs Submitted</text>
+<text x="80" y="315" font-size="10" fill="#8899b4" font-family="JetBrains Mono, monospace">blue — info</text>
+
+<text x="205" y="310" font-size="20" fill="#1e2d4a">→</text>
+
+<rect x="230" y="275" width="140" height="60" rx="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<circle cx="255" cy="298" r="6" fill="#60a5fa"/>
+<text x="270" y="295" font-size="13" font-weight="500" fill="#e2e8f0">FIRA Review</text>
+<text x="270" y="315" font-size="10" fill="#8899b4" font-family="JetBrains Mono, monospace">blue — info</text>
+
+<text x="385" y="310" font-size="20" fill="#1e2d4a">→</text>
+
+<rect x="410" y="275" width="150" height="60" rx="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<circle cx="435" cy="298" r="6" fill="#4ade80"/>
+<text x="450" y="295" font-size="13" font-weight="500" fill="#e2e8f0">FIRA Approved</text>
+<text x="450" y="315" font-size="10" fill="#8899b4" font-family="JetBrains Mono, monospace">green — milestone</text>
+
+<text x="575" y="310" font-size="20" fill="#1e2d4a">→</text>
+
+<rect x="600" y="275" width="170" height="60" rx="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<circle cx="625" cy="298" r="6" fill="#60a5fa"/>
+<text x="640" y="295" font-size="13" font-weight="500" fill="#e2e8f0">Employer Review</text>
+<text x="640" y="315" font-size="10" fill="#8899b4" font-family="JetBrains Mono, monospace">blue — info</text>
+
+<text x="785" y="310" font-size="20" fill="#1e2d4a">→</text>
+
+<rect x="810" y="275" width="170" height="60" rx="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<circle cx="835" cy="298" r="6" fill="#4ade80"/>
+<text x="850" y="295" font-size="13" font-weight="500" fill="#e2e8f0">Employer Accepted</text>
+<text x="850" y="315" font-size="10" fill="#8899b4" font-family="JetBrains Mono, monospace">green — milestone</text>
+
+<text x="40" y="400" font-size="11" font-weight="600" letter-spacing="0.08em" fill="#8899b4" font-family="JetBrains Mono, monospace">TERMINAL STATES</text>
+
+<rect x="40" y="420" width="130" height="60" rx="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<circle cx="65" cy="443" r="6" fill="#4ade80"/>
+<text x="80" y="440" font-size="13" font-weight="500" fill="#e2e8f0">Deployed</text>
+<text x="80" y="460" font-size="10" fill="#4ade80" font-family="JetBrains Mono, monospace">green — success</text>
+
+<text x="185" y="455" font-size="20" fill="#1e2d4a">→</text>
+
+<rect x="210" y="420" width="130" height="60" rx="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<circle cx="235" cy="443" r="6" fill="#64748b"/>
+<text x="250" y="440" font-size="13" font-weight="500" fill="#94a3b8">Completed</text>
+<text x="250" y="460" font-size="10" fill="#64748b" font-family="JetBrains Mono, monospace">gray — ended</text>
+
+<rect x="500" y="420" width="130" height="60" rx="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<circle cx="525" cy="443" r="6" fill="#f87171"/>
+<text x="540" y="440" font-size="13" font-weight="500" fill="#f87171">Rejected</text>
+<text x="540" y="460" font-size="10" fill="#f87171" font-family="JetBrains Mono, monospace">red — failed</text>
+
+<rect x="760" y="420" width="130" height="60" rx="8" fill="#141c2e" stroke="#1e2d4a" stroke-width="1"/>
+<circle cx="785" cy="443" r="6" fill="#64748b"/>
+<text x="800" y="440" font-size="13" font-weight="500" fill="#94a3b8">Cancelled</text>
+<text x="800" y="460" font-size="10" fill="#64748b" font-family="JetBrains Mono, monospace">gray — ended</text>
+
+<text x="40" y="540" font-size="11" font-weight="600" letter-spacing="0.08em" fill="#8899b4" font-family="JetBrains Mono, monospace">COLOR LEGEND</text>
+<circle cx="56" cy="570" r="6" fill="#60a5fa"/>
+<text x="72" y="574" font-size="13" fill="#e2e8f0">Blue (Info) — Intermediate processing, no user action needed</text>
+<circle cx="56" cy="600" r="6" fill="#fbbf24"/>
+<text x="72" y="604" font-size="13" fill="#e2e8f0">Amber (Warning) — User action required</text>
+<circle cx="56" cy="630" r="6" fill="#4ade80"/>
+<text x="72" y="634" font-size="13" fill="#e2e8f0">Green (Success) — Milestone achieved</text>
+<circle cx="56" cy="660" r="6" fill="#f87171"/>
+<text x="72" y="664" font-size="13" fill="#e2e8f0">Red (Error) — Terminal failure</text>
+<circle cx="56" cy="690" r="6" fill="#64748b"/>
+<text x="72" y="694" font-size="13" fill="#e2e8f0">Gray (Muted) — Process ended neutrally</text>
+
+<text x="40" y="745" font-size="11" font-weight="600" letter-spacing="0.08em" fill="#8899b4" font-family="JetBrains Mono, monospace">BADGE SPECIFICATION</text>
+<text x="40" y="770" font-size="12" fill="#e2e8f0">• Variant: <tspan font-family="JetBrains Mono, monospace" fill="#60a5fa">outline</tspan> with <tspan font-family="JetBrains Mono, monospace" fill="#60a5fa">border-0</tspan> override</text>
+<text x="40" y="790" font-size="12" fill="#e2e8f0">• Font: <tspan font-family="JetBrains Mono, monospace" fill="#60a5fa">text-xs (12px) font-medium (500)</tspan></text>
+<text x="40" y="810" font-size="12" fill="#e2e8f0">• Radius: <tspan font-family="JetBrains Mono, monospace" fill="#60a5fa">rounded-md (8px)</tspan> • Padding: <tspan font-family="JetBrains Mono, monospace" fill="#60a5fa">px-2 py-0.5</tspan></text>
+
+</svg>

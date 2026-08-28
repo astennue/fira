@@ -143,18 +143,18 @@ export function CmsFormBuilderPage() {
     <div className="view-transition space-y-6 pb-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{L('Application Form Builder', 'Tagabuo ng Application Form')}</h1>
+          <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground">{L('Application Form Builder', 'Tagabuo ng Application Form')}</h1>
           <p className="text-muted-foreground text-sm">{L('Design your custom application form', 'Idisenyo ang iyong custom na application form')}</p>
         </div>
-        <Button onClick={openNew}><Plus className="mr-2 h-4 w-4" /> {L('Add Field', 'Magdagdag ng Field')}</Button>
+        <Button onClick={openNew}><Plus className="h-4 w-4" /> {L('Add Field', 'Magdagdag ng Field')}</Button>
       </div>
 
       {isLoading ? (
         <div className="space-y-3">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-16" />)}</div>
       ) : sortedFields.length === 0 ? (
-        <Card className="p-8 text-center">
-          <GripVertical className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
-          <p className="text-muted-foreground">{L('No fields added yet', 'Wala pang naidagdag na field')}</p>
+        <Card className="py-12 px-4 text-center">
+          <GripVertical className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
+          <p className="text-lg font-medium text-foreground">{L('No fields added yet', 'Wala pang naidagdag na field')}</p>
         </Card>
       ) : (
         <div className="space-y-6">
@@ -260,7 +260,7 @@ export function CmsFormBuilderPage() {
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setDialogOpen(false)}>{L('Cancel', 'Kanselahin')}</Button>
               <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save', 'I-save')}
+                {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save', 'I-save')}
               </Button>
             </div>
           </div>

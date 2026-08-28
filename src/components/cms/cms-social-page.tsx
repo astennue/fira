@@ -108,10 +108,10 @@ export function CmsSocialPage() {
     <div className="view-transition space-y-6 pb-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{L('Social Media Links', 'Mga Link sa Social Media')}</h1>
+          <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground">{L('Social Media Links', 'Mga Link sa Social Media')}</h1>
           <p className="text-muted-foreground text-sm">{L('Manage your social media presence', 'Pamahalaan ang iyong social media')}</p>
         </div>
-        <Button onClick={openNew} className="rounded-xl"><Plus className="mr-2 h-4 w-4" /> {L('Add Link', 'Magdagdag ng Link')}</Button>
+        <Button onClick={openNew} className="rounded-md"><Plus className="h-4 w-4" /> {L('Add Link', 'Magdagdag ng Link')}</Button>
       </div>
 
       {isLoading ? (
@@ -119,9 +119,9 @@ export function CmsSocialPage() {
       ) : (
         <div className="space-y-4">
           {!isLoading && links.length === 0 && (
-            <Card className="p-8 text-center">
-              <Share2 className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
-              <p className="text-muted-foreground">{L('No social media links added yet.', 'Wala pang social media link na naidagdag.')}</p>
+            <Card className="py-12 px-4 text-center">
+              <Share2 className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
+              <p className="text-lg font-medium text-foreground">{L('No social media links added yet.', 'Wala pang social media link na naidagdag.')}</p>
             </Card>
           )}
           {links.map((link: any) => {
@@ -196,7 +196,7 @@ export function CmsSocialPage() {
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setDialogOpen(false)}>{L('Cancel', 'Kanselahin')}</Button>
               <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
-                {saveMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save', 'I-save')}
+                {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {saveMutation.isPending ? L('Saving...', 'Nagsasave...') : L('Save', 'I-save')}
               </Button>
             </div>
           </div>

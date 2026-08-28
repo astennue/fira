@@ -31,7 +31,7 @@ function DashboardSkeleton() {
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-28 rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-[var(--color-card)]/60 backdrop-blur-xl">
+          <div key={i} className="h-28 rounded-2xl border border-border bg-muted">
             <div className="p-5 space-y-3">
               <Skeleton className="h-3 w-24" />
               <Skeleton className="h-7 w-12" />
@@ -40,15 +40,15 @@ function DashboardSkeleton() {
         ))}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="h-72 rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-[var(--color-card)]/60 backdrop-blur-xl" />
-        <div className="lg:col-span-2 h-72 rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-[var(--color-card)]/60 backdrop-blur-xl" />
+        <div className="h-72 rounded-2xl border border-border bg-muted" />
+        <div className="lg:col-span-2 h-72 rounded-2xl border border-border bg-muted" />
       </div>
     </div>
   )
 }
 
-/* ─── Glassmorphism Card wrapper (local: has custom styling) ─── */
-function GlassCard({
+/* ─── Standard Card wrapper (solid background) ─── */
+function DashboardCard({
   children,
   className = '',
 }: {
@@ -57,7 +57,7 @@ function GlassCard({
 }) {
   return (
     <Card className={cn(
-      'border border-border/50 bg-card/80 backdrop-blur-sm shadow-sm',
+      'border border-border bg-card shadow-sm',
       className
     )}>
       {children}
@@ -65,8 +65,8 @@ function GlassCard({
   )
 }
 
-/* ─── Glass stat card ─── */
-function GlassStatCard({
+/* ─── Stat card ─── */
+function StatCard({
   label,
   value,
   icon: Icon,
@@ -85,7 +85,7 @@ function GlassStatCard({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay, duration: 0.5, ease: 'easeOut' }}
     >
-      <GlassCard className="group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+      <DashboardCard className="group hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
         <CardContent className="p-5">
           <div className="flex items-start justify-between">
             <div className="space-y-1">
@@ -101,7 +101,7 @@ function GlassStatCard({
             </div>
           </div>
         </CardContent>
-      </GlassCard>
+      </DashboardCard>
     </motion.div>
   )
 }
@@ -187,7 +187,7 @@ export function AgencyDashboard() {
     {
       label: isFil ? 'Na-accept' : 'Accepted',
       count: approvedEndorse,
-      color: 'bg-emerald-500',
+      color: 'bg-green-500',
     },
   ]
   const maxPipeline = Math.max(...pipelineStages.map((s) => s.count), 1)
@@ -207,9 +207,9 @@ export function AgencyDashboard() {
   /* ── Stats ── */
   const stats = [
     { label: isFil ? 'Aktibong Trabaho' : 'Open Jobs', value: openJobs, icon: Briefcase, gradient: 'from-orange-500 to-amber-500' },
-    { label: isFil ? 'Aplikante' : 'Applicants', value: applicantCount, icon: Users, gradient: 'from-amber-500 to-yellow-500' },
+    { label: isFil ? 'Aplikante' : 'Applicants', value: applicantCount, icon: Users, gradient: 'from-amber-500 to-amber-500' },
     { label: isFil ? 'Pending Endorso' : 'Pending Endorsements', value: pendingEndorse, icon: FileText, gradient: 'from-rose-500 to-orange-500' },
-    { label: isFil ? 'Naaprubahan' : 'Approved', value: approvedEndorse, icon: UserCheck, gradient: 'from-emerald-500 to-teal-500' },
+    { label: isFil ? 'Naaprubahan' : 'Approved', value: approvedEndorse, icon: UserCheck, gradient: 'from-green-500 to-teal-500' },
   ]
 
   /* ── Quick Actions ── */
@@ -240,7 +240,7 @@ export function AgencyDashboard() {
          ═══════════════════════════════════════════════════════ */}
       <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold leading-tight tracking-tight bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 bg-clip-text text-transparent">
             {isFil ? `Dashboard ng ${agencyName || 'Ahensya'}` : `${agencyName || 'Agency'} Dashboard`}
           </h1>
           <p className="text-muted-foreground mt-1.5 text-sm md:text-base">
@@ -270,7 +270,7 @@ export function AgencyDashboard() {
          ═══════════════════════════════════════════════════════ */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, i) => (
-          <GlassStatCard key={stat.label} {...stat} delay={0.1 + i * 0.08} />
+          <StatCard key={stat.label} {...stat} delay={0.1 + i * 0.08} />
         ))}
       </div>
 
@@ -280,7 +280,7 @@ export function AgencyDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ──── COLUMN 1: Pipeline Status (1/3) ──── */}
         <motion.div variants={item}>
-          <GlassCard className="h-full">
+          <DashboardCard className="h-full">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2.5 text-base font-bold">
                 <div className="p-2 rounded-xl bg-gradient-to-br from-orange-400 to-amber-500 shadow-md shadow-orange-500/20">
@@ -331,16 +331,16 @@ export function AgencyDashboard() {
                 </Button>
               </div>
             </CardContent>
-          </GlassCard>
+          </DashboardCard>
         </motion.div>
 
         {/* ──── COLUMN 2: Recent Endorsements (2/3) ──── */}
         <motion.div variants={item} className="lg:col-span-2">
-          <GlassCard className="h-full">
+          <DashboardCard className="h-full">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2.5 text-base font-bold">
-                  <div className="p-2 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-500 shadow-md shadow-amber-500/20">
+                  <div className="p-2 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 shadow-md shadow-amber-500/20">
                     <UserPlus className="h-4 w-4 text-white" />
                   </div>
                   {isFil ? 'Kamakailang Mga Endorso' : 'Recent Endorsements'}
@@ -359,15 +359,13 @@ export function AgencyDashboard() {
             <CardContent className="pt-0">
               {recentEndorsements.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="p-4 rounded-full bg-amber-100 dark:bg-amber-900/30 mb-3">
-                    <Send className="h-8 w-8 text-amber-400" />
-                  </div>
-                  <p className="text-sm text-muted-foreground font-medium">
+                  <Send className="h-12 w-12 text-muted-foreground/50 mb-3" />
+                  <p className="text-lg font-medium text-foreground">
                     {isFil ? 'Wala pang endorsement.' : 'No endorsements yet.'}
                   </p>
                   <Button
                     size="sm"
-                    className="mt-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md shadow-orange-500/20"
+                    className="bg-primary hover:bg-primary/90 mt-4 text-white shadow-md shadow-orange-500/20"
                     onClick={() => navigate('agency-applicants')}
                   >
                     {isFil ? 'Simulan ang Endorso' : 'Start Endorsing'}
@@ -419,7 +417,7 @@ export function AgencyDashboard() {
                 </div>
               )}
             </CardContent>
-          </GlassCard>
+          </DashboardCard>
         </motion.div>
       </div>
 
@@ -429,7 +427,7 @@ export function AgencyDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ──── LEFT: Your Jobs (2/3) ──── */}
         <motion.div variants={item} className="lg:col-span-2">
-          <GlassCard>
+          <DashboardCard>
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2.5 text-base font-bold">
@@ -452,10 +450,8 @@ export function AgencyDashboard() {
             <CardContent className="pt-0">
               {jobs.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="p-4 rounded-full bg-orange-100 dark:bg-orange-900/30 mb-3">
-                    <Briefcase className="h-8 w-8 text-orange-400" />
-                  </div>
-                  <p className="text-sm text-muted-foreground font-medium">
+                  <Briefcase className="h-12 w-12 text-muted-foreground/50 mb-3" />
+                  <p className="text-lg font-medium text-foreground">
                     {isFil ? 'Wala pang trabaho.' : 'No jobs posted yet.'}
                   </p>
                 </div>
@@ -501,12 +497,12 @@ export function AgencyDashboard() {
                 </div>
               )}
             </CardContent>
-          </GlassCard>
+          </DashboardCard>
         </motion.div>
 
         {/* ──── RIGHT: Quick Actions (1/3) ──── */}
         <motion.div variants={item}>
-          <GlassCard className="h-full">
+          <DashboardCard className="h-full">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2.5 text-base font-bold">
                 <div className="p-2 rounded-xl bg-gradient-to-br from-amber-500 to-orange-400 shadow-md shadow-amber-500/20">
@@ -534,7 +530,7 @@ export function AgencyDashboard() {
                 </motion.button>
               ))}
             </CardContent>
-          </GlassCard>
+          </DashboardCard>
         </motion.div>
       </div>
 

@@ -153,11 +153,11 @@ export function ContactPage() {
                     <Label>{language === 'fil' ? 'Mensahe' : 'Message'}</Label>
                     <Textarea placeholder={language === 'fil' ? 'I-type ang iyong mensahe dito...' : 'Type your message here...'} className="min-h-[150px]" required value={message} onChange={(e) => setMessage(e.target.value)} />
                   </div>
-                  <Button type="submit" className="w-full h-11 rounded-xl" disabled={submitted || submitting}>
+                  <Button type="submit" className="w-full h-10 rounded-md" disabled={submitted || submitting}>
                     {submitted ? (
-                      <><CheckCircle className="mr-2 h-4 w-4" /> {language === 'fil' ? 'Naipadala!' : 'Sent!'}</>
+                      <><CheckCircle className="h-4 w-4" /> {language === 'fil' ? 'Naipadala!' : 'Sent!'}</>
                     ) : (
-                      <><Send className="mr-2 h-4 w-4" /> {language === 'fil' ? 'Ipadala' : 'Send Message'}</>
+                      <><Send className="h-4 w-4" /> {language === 'fil' ? 'Ipadala' : 'Send Message'}</>
                     )}
                   </Button>
                 </form>
