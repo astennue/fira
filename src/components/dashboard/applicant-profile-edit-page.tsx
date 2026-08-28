@@ -396,7 +396,7 @@ export function ApplicantProfileEditPage() {
       const form = new FormData()
       form.append('file', file)
       const res = await apiFetch('/api/resume/upload', { method: 'POST', body: form })
-      if (!res.ok) { const err = await res.json(); throw new Error(err.error || 'Upload failed') }
+      if (!res.ok) { const err = await res.json().catch(() => ({ error: 'Upload failed' })); throw new Error(err.error || 'Upload failed') }
       return res.json()
     },
     onSuccess: (data) => {
