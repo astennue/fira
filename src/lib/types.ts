@@ -1,13 +1,18 @@
 // ============ TYPES ============
 
-export type UserRole = 'applicant' | 'agency_admin' | 'agency_member' | 'fira' | 'employer';
+export type UserRole = 'super_admin' | 'staff' | 'applicant' | 'local_agency' | 'international_agency' | 'employer';
 
 export interface AppUser {
   id: string;
   email: string;
   name: string;
   role: UserRole;
-  avatarUrl?: string | null;
+  isActive: boolean;
+  isApproved: boolean;
+  phone?: string;
+  avatar?: string | null;
+  agencyId?: string;
+  agencyName?: string;
 }
 
 export type ViewName =
@@ -41,7 +46,7 @@ export type ViewName =
   | 'employer-profile'
   | 'employer-job-orders';
 
-export type Locale = 'en' | 'tl';
+export type Locale = 'en' | 'fil';
 
 // ============ CONSTANTS ============
 
@@ -130,18 +135,20 @@ export const COUNTRIES = [
 ];
 
 export const ROLE_LABELS: Record<UserRole, string> = {
+  super_admin: 'Super Admin',
+  staff: 'FIRA Staff',
   applicant: 'Applicant',
-  agency_admin: 'Agency Admin',
-  agency_member: 'Agency Member',
-  fira: 'FIRA Admin',
+  local_agency: 'Agency Admin',
+  international_agency: 'International Agency',
   employer: 'Employer',
 };
 
 export const ROLE_COLORS: Record<UserRole, string> = {
+  super_admin: 'bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-300',
+  staff: 'bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-300',
   applicant: 'bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300',
-  agency_admin: 'bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300',
-  agency_member: 'bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300',
-  fira: 'bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-300',
+  local_agency: 'bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300',
+  international_agency: 'bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300',
   employer: 'bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300',
 };
 

@@ -20,8 +20,8 @@ export async function GET(request: NextRequest) {
             certifications: true,
             references: true,
             documents: true,
-            agency: { select: { name: true } },
           },
+
         },
         employerProfile: true,
       },
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const { passwordHash, ...safeUser } = user;
+    const { password: _pw, ...safeUser } = user;
     return NextResponse.json(safeUser);
   } catch (error) {
     console.error('Profile GET error:', error);
