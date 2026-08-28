@@ -163,9 +163,9 @@ export function FiraDashboard() {
       label: isFil ? 'Empleyador' : 'Employers',
       value: employerCount,
       icon: Building2,
-      gradient: 'from-violet-500 to-purple-600',
-      shadowColor: 'shadow-violet-500/25',
-      ringColor: 'ring-violet-500/20',
+      gradient: 'from-blue-500 to-blue-700',
+      shadowColor: 'shadow-blue-500/25',
+      ringColor: 'ring-blue-500/20',
     },
     {
       label: isFil ? 'Aplikante' : 'Applicants',
@@ -179,7 +179,7 @@ export function FiraDashboard() {
       label: isFil ? 'Aktibong Trabaho' : 'Active Jobs',
       value: activeJobs,
       icon: Briefcase,
-      gradient: 'from-amber-500 to-orange-500',
+      gradient: 'from-amber-500 to-amber-600',
       shadowColor: 'shadow-amber-500/25',
       ringColor: 'ring-amber-500/20',
     },
@@ -187,17 +187,17 @@ export function FiraDashboard() {
       label: isFil ? 'Pending Endorso' : 'Pending Endorsements',
       value: pendingEndorse,
       icon: Send,
-      gradient: 'from-rose-500 to-pink-600',
-      shadowColor: 'shadow-rose-500/25',
-      ringColor: 'ring-rose-500/20',
+      gradient: 'from-red-500 to-red-600',
+      shadowColor: 'shadow-red-500/25',
+      ringColor: 'ring-red-500/20',
     },
     {
       label: isFil ? 'Kabuuang Endorso' : 'Total Endorsements',
       value: totalEndorsements,
       icon: BarChart3,
-      gradient: 'from-cyan-500 to-teal-600',
-      shadowColor: 'shadow-cyan-500/25',
-      ringColor: 'ring-cyan-500/20',
+      gradient: 'from-blue-500 to-blue-700',
+      shadowColor: 'shadow-blue-500/25',
+      ringColor: 'ring-blue-500/20',
     },
   ]
 
@@ -210,7 +210,7 @@ export function FiraDashboard() {
       <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-3 mb-1">
-            <div className="p-2.5 bg-gradient-to-br from-blue-600 to-violet-600 shadow-lg shadow-blue-500/25">
+            <div className="p-2.5 bg-gradient-to-br from-blue-600 to-blue-800 shadow-lg shadow-blue-500/25">
               <Shield className="h-5 w-5 text-white" />
             </div>
             <div>
@@ -236,7 +236,7 @@ export function FiraDashboard() {
             <MessageSquare className="h-4 w-4" />
             <span className="hidden sm:inline">{isFil ? 'Mensahe' : 'Messages'}</span>
             {unreadNotifs > 0 && (
-              <span className="relative flex h-4 min-w-4 items-center justify-center bg-rose-500 px-1">
+              <span className="relative flex h-4 min-w-4 items-center justify-center bg-red-500 px-1">
                 <span className="text-[10px] font-bold text-white leading-none">{unreadNotifs}</span>
               </span>
             )}
@@ -247,7 +247,7 @@ export function FiraDashboard() {
       {/* ═════════════════ ALERT BANNER ═══════════════ */}
       {(pendingAgencies > 0 || pendingEndorse > 0) && (
         <motion.div variants={item}>
-          <div className="border border-amber-400/50 bg-gradient-to-r from-amber-50 to-orange-50/80 dark:from-amber-950/30 dark:to-orange-950/20 p-4 flex items-center gap-3">
+          <div className="border border-amber-400/50 bg-gradient-to-r from-amber-50 to-amber-50/80 dark:from-amber-950/30 dark:to-amber-950/20 p-4 flex items-center gap-3">
             <div className="p-2.5 bg-amber-100 dark:bg-amber-900/50 shrink-0">
               <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
             </div>
@@ -272,7 +272,7 @@ export function FiraDashboard() {
             <Button
               size="sm"
               onClick={() => navigate('fira-agencies')}
-              className="shrink-0 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-md shadow-amber-500/25"
+              className="shrink-0 bg-gradient-to-r from-amber-500 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-white shadow-md shadow-amber-500/25"
             >
               {isFil ? 'Review' : 'Review'}
               <ChevronRight className="h-4 w-4 ml-1" />
@@ -433,7 +433,7 @@ export function FiraDashboard() {
                     className="flex items-center gap-3 p-3 border border-border hover:bg-accent/50 hover:shadow-md transition-all duration-200 cursor-pointer group"
                     onClick={() => navigate('fira-applicant-detail', { userId: u.id })}
                   >
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-violet-500 flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-md shadow-blue-500/20">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-md shadow-blue-500/20">
                       {getInitials(u.name || '')}
                     </div>
                     <div className="min-w-0 flex-1">

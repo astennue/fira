@@ -667,7 +667,7 @@ export function AtsPipelinePage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-4xl font-bold leading-tight tracking-tight flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-md">
+            <div className="p-2 rounded-xl bg-gradient-to-br from-blue-600 to-blue-800 shadow-md">
               <Columns3 className="h-5 w-5 text-white" />
             </div>
             {isFil ? 'ATS Pipeline' : 'ATS Pipeline'}
@@ -760,7 +760,7 @@ export function AtsPipelinePage() {
             {/* Total Applicants */}
             <Card className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-md">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-600 to-blue-800 shadow-md">
                   <User className="h-4 w-4 text-white" />
                 </div>
                 <div>
@@ -784,7 +784,7 @@ export function AtsPipelinePage() {
             {/* Conversion Rate */}
             <Card className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-md">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 shadow-md">
                   <ArrowRight className="h-4 w-4 text-white" />
                 </div>
                 <div>
@@ -906,7 +906,7 @@ export function AtsPipelinePage() {
               <div className="mt-6 space-y-5">
                 {/* Profile Header */}
                 <div className="flex items-start gap-4">
-                  <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center text-white text-lg font-bold shadow-lg shrink-0">
+                  <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-lg font-bold shadow-lg shrink-0">
                     {getInitials(selectedApp.applicant?.name)}
                   </div>
                   <div className="min-w-0 flex-1">

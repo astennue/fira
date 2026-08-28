@@ -309,7 +309,7 @@ export function CmsFaqPage() {
     'For Employers': 'bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',
     Deployment: 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
     Documents: 'bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',
-    'Fees & Payments': 'bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',
+    'Fees & Payments': 'bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-300',
     Other: 'bg-muted text-muted-foreground border-border',
   }
 

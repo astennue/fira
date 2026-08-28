@@ -185,7 +185,7 @@ export function AgencyDashboard({ showApplicants, showMembers, showJobOrders }: 
           { label: t('nav.applicants'), value: totalApps, icon: Users, color: 'bg-blue-100 text-blue-700' },
           { label: t('agency.dashboard.activeJobs'), value: openJobs.length, icon: Briefcase, color: 'bg-green-100 text-green-700' },
           { label: t('agency.dashboard.pendingEndorsements'), value: 0, icon: FileText, color: 'bg-amber-100 text-amber-700' },
-          { label: t('agency.dashboard.pipeline'), value: jobs.length, icon: GitBranch, color: 'bg-purple-100 text-purple-700' },
+          { label: t('agency.dashboard.pipeline'), value: jobs.length, icon: GitBranch, color: 'bg-blue-100 text-blue-700' },
         ].map(stat => (
           <Card key={stat.label}>
             <CardContent className="p-4">

@@ -28,7 +28,7 @@ export const APPLICATION_STATUSES: StatusConfig[] = [
   {
     value: 'applied',
     label: { en: 'Applied', fil: 'Nag-apply' },
-    color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+    color: 'bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300',
     category: 'info',
     description: { en: 'Application submitted', fil: 'Naisumite ang aplikasyon' },
     allowedBy: ['super_admin', 'staff', 'international_agency'],
@@ -38,7 +38,7 @@ export const APPLICATION_STATUSES: StatusConfig[] = [
   {
     value: 'screening',
     label: { en: 'Screening', fil: 'Pagsusuri' },
-    color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800',
+    color: 'bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300',
     category: 'active',
     description: { en: 'Under initial review', fil: 'Nasa pagsusuri' },
     allowedBy: ['super_admin', 'staff', 'international_agency', 'local_agency'],
@@ -48,7 +48,7 @@ export const APPLICATION_STATUSES: StatusConfig[] = [
   {
     value: 'shortlisted',
     label: { en: 'Shortlisted', fil: 'Naisala' },
-    color: 'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300 border-violet-200 dark:border-violet-800',
+    color: 'bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300',
     category: 'active',
     description: { en: 'Selected for further consideration', fil: 'Napili para sa karagdagang pagsusuri' },
     allowedBy: ['super_admin', 'staff', 'international_agency'],
@@ -58,7 +58,7 @@ export const APPLICATION_STATUSES: StatusConfig[] = [
   {
     value: 'interview',
     label: { en: 'Interview', fil: 'Panayam' },
-    color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border-purple-200 dark:border-purple-800',
+    color: 'bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300',
     category: 'active',
     description: { en: 'Scheduled for interview', fil: 'Nakatakdang panayam' },
     allowedBy: ['super_admin', 'staff', 'international_agency', 'local_agency'],
@@ -68,7 +68,7 @@ export const APPLICATION_STATUSES: StatusConfig[] = [
   {
     value: 'assessment',
     label: { en: 'Assessment', fil: 'Pagsusulit' },
-    color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+    color: 'bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300',
     category: 'active',
     description: { en: 'Taking tests or assessments', fil: 'Kumukuha ng pagsusulit' },
     allowedBy: ['super_admin', 'staff', 'international_agency'],
@@ -78,7 +78,7 @@ export const APPLICATION_STATUSES: StatusConfig[] = [
   {
     value: 'under_review',
     label: { en: 'Under Review', fil: 'Nasa Pagsusuri' },
-    color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300 border-orange-200 dark:border-orange-800',
+    color: 'bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300',
     category: 'active',
     description: { en: 'Being reviewed by FIRA', fil: 'Sinusuri ng FIRA' },
     allowedBy: ['super_admin', 'staff', 'international_agency'],
@@ -88,7 +88,7 @@ export const APPLICATION_STATUSES: StatusConfig[] = [
   {
     value: 'pending_fira_review',
     label: { en: 'Pending FIRA Review', fil: 'Naghihintay ng Pagsusuri ng FIRA' },
-    color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+    color: 'bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300',
     category: 'active',
     description: { en: 'Awaiting FIRA review for endorsement', fil: 'Naghihintay ng pagsusuri ng FIRA para sa endorsement' },
     allowedBy: ['super_admin', 'staff', 'international_agency'],
@@ -98,7 +98,7 @@ export const APPLICATION_STATUSES: StatusConfig[] = [
   {
     value: 'fira_approved',
     label: { en: 'FIRA Approved', fil: 'Na-aprubahan ng FIRA' },
-    color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+    color: 'bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-300',
     category: 'success',
     description: { en: 'Approved by FIRA, ready for employer review', fil: 'Na-aprubahan ng FIRA, handa na para sa review ng employer' },
     allowedBy: ['super_admin', 'staff', 'international_agency'],
@@ -108,7 +108,7 @@ export const APPLICATION_STATUSES: StatusConfig[] = [
   {
     value: 'fira_rejected',
     label: { en: 'FIRA Rejected', fil: 'Hindi Na-aprubahan ng FIRA' },
-    color: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 border-red-200 dark:border-red-800',
+    color: 'bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-300',
     category: 'failure',
     description: { en: 'Rejected by FIRA', fil: 'Hindi na-aprubahan ng FIRA' },
     allowedBy: ['super_admin', 'staff', 'international_agency'],
@@ -118,7 +118,7 @@ export const APPLICATION_STATUSES: StatusConfig[] = [
   {
     value: 'pending_employer_review',
     label: { en: 'Pending Employer Review', fil: 'Naghihintay ng Review ng Empleyador' },
-    color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+    color: 'bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300',
     category: 'active',
     description: { en: 'Endorsed to employer, awaiting response', fil: 'Inindorso sa empleyador, naghihintay ng sagot' },
     allowedBy: ['super_admin', 'staff', 'international_agency'],
@@ -128,7 +128,7 @@ export const APPLICATION_STATUSES: StatusConfig[] = [
   {
     value: 'employer_accepted',
     label: { en: 'Employer Accepted', fil: 'Tinanggap ng Empleyador' },
-    color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+    color: 'bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-300',
     category: 'success',
     description: { en: 'Employer accepted the candidate', fil: 'Tinanggap ng empleyador ang kandidato' },
     allowedBy: ['employer', 'super_admin', 'staff', 'international_agency'],
@@ -138,7 +138,7 @@ export const APPLICATION_STATUSES: StatusConfig[] = [
   {
     value: 'employer_declined',
     label: { en: 'Employer Declined', fil: 'Hindi Tinanggap ng Empleyador' },
-    color: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 border-red-200 dark:border-red-800',
+    color: 'bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-300',
     category: 'failure',
     description: { en: 'Employer declined the candidate', fil: 'Hindi tinanggap ng empleyador ang kandidato' },
     allowedBy: ['employer', 'super_admin', 'staff', 'international_agency'],
@@ -148,7 +148,7 @@ export const APPLICATION_STATUSES: StatusConfig[] = [
   {
     value: 'offered',
     label: { en: 'Offered', fil: 'May Offer' },
-    color: 'bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300 border-teal-200 dark:border-teal-800',
+    color: 'bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300',
     category: 'success',
     description: { en: 'Job offer extended', fil: 'Ipinakita ang job offer' },
     allowedBy: ['super_admin', 'staff', 'international_agency'],
@@ -158,7 +158,7 @@ export const APPLICATION_STATUSES: StatusConfig[] = [
   {
     value: 'hired',
     label: { en: 'Hired', fil: 'Nagawaran' },
-    color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+    color: 'bg-green-100 text-green-700 dark:bg-green-950/50 dark:text-green-300',
     category: 'success',
     description: { en: 'Candidate accepted the offer', fil: 'Tinanggap ng kandidato ang offer' },
     allowedBy: ['super_admin', 'staff', 'international_agency'],
@@ -168,7 +168,7 @@ export const APPLICATION_STATUSES: StatusConfig[] = [
   {
     value: 'processing',
     label: { en: 'Processing', fil: 'Pinoproseso' },
-    color: 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300 border-sky-200 dark:border-sky-800',
+    color: 'bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300',
     category: 'active',
     description: { en: 'Processing documents and requirements', fil: 'Pinoproseso ang mga dokumento at kinakailangan' },
     allowedBy: ['super_admin', 'staff', 'international_agency', 'local_agency'],
@@ -188,7 +188,7 @@ export const APPLICATION_STATUSES: StatusConfig[] = [
   {
     value: 'completed',
     label: { en: 'Completed', fil: 'Natapos' },
-    color: 'bg-slate-100 text-slate-700 dark:bg-slate-900/40 dark:text-slate-300 border-slate-200 dark:border-slate-800',
+    color: 'bg-gray-100 text-gray-700 dark:bg-gray-950/50 dark:text-gray-300',
     category: 'info',
     description: { en: 'Contract completed', fil: 'Natapos ang kontrata' },
     allowedBy: ['super_admin', 'staff', 'international_agency'],
@@ -198,7 +198,7 @@ export const APPLICATION_STATUSES: StatusConfig[] = [
   {
     value: 'rejected',
     label: { en: 'Rejected', fil: 'Hindi Tanggapin' },
-    color: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 border-red-200 dark:border-red-800',
+    color: 'bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-300',
     category: 'failure',
     description: { en: 'Application rejected', fil: 'Hindi tinanggap ang aplikasyon' },
     allowedBy: ['super_admin', 'staff', 'international_agency'],
@@ -208,7 +208,7 @@ export const APPLICATION_STATUSES: StatusConfig[] = [
   {
     value: 'withdrawn',
     label: { en: 'Withdrawn', fil: 'Hinila' },
-    color: 'bg-gray-100 text-gray-600 dark:bg-gray-900/40 dark:text-gray-400 border-gray-200 dark:border-gray-800',
+    color: 'bg-gray-100 text-gray-500 dark:bg-gray-950/50 dark:text-gray-400',
     category: 'info',
     description: { en: 'Application withdrawn by applicant', fil: 'Hinila ng aplikante ang aplikasyon' },
     allowedBy: ['applicant', 'super_admin', 'staff', 'international_agency'],

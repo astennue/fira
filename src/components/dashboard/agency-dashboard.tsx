@@ -31,7 +31,7 @@ function DashboardSkeleton() {
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-28 rounded-2xl border border-border bg-muted">
+          <div key={i} className="h-28 rounded-xl border border-border bg-muted">
             <div className="p-5 space-y-3">
               <Skeleton className="h-3 w-24" />
               <Skeleton className="h-7 w-12" />
@@ -40,8 +40,8 @@ function DashboardSkeleton() {
         ))}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="h-72 rounded-2xl border border-border bg-muted" />
-        <div className="lg:col-span-2 h-72 rounded-2xl border border-border bg-muted" />
+        <div className="h-72 rounded-xl border border-border bg-muted" />
+        <div className="lg:col-span-2 h-72 rounded-xl border border-border bg-muted" />
       </div>
     </div>
   )
@@ -95,7 +95,7 @@ function StatCard({
               </p>
             </div>
             <div
-              className={`p-3 rounded-2xl bg-gradient-to-br ${gradient} shadow-lg shadow-orange-500/20 group-hover:scale-110 transition-transform duration-300`}
+              className={`p-3 rounded-2xl bg-gradient-to-br ${gradient} shadow-lg shadow-amber-500/20 group-hover:scale-110 transition-transform duration-300`}
             >
               <Icon className="h-5 w-5 text-white" />
             </div>
@@ -182,7 +182,7 @@ export function AgencyDashboard() {
     {
       label: isFil ? 'Empleyador Review' : 'Employer Review',
       count: inReview,
-      color: 'bg-orange-500',
+      color: 'bg-amber-500',
     },
     {
       label: isFil ? 'Na-accept' : 'Accepted',
@@ -206,10 +206,10 @@ export function AgencyDashboard() {
 
   /* ── Stats ── */
   const stats = [
-    { label: isFil ? 'Aktibong Trabaho' : 'Open Jobs', value: openJobs, icon: Briefcase, gradient: 'from-orange-500 to-amber-500' },
+    { label: isFil ? 'Aktibong Trabaho' : 'Open Jobs', value: openJobs, icon: Briefcase, gradient: 'from-amber-500 to-amber-600' },
     { label: isFil ? 'Aplikante' : 'Applicants', value: applicantCount, icon: Users, gradient: 'from-amber-500 to-amber-500' },
-    { label: isFil ? 'Pending Endorso' : 'Pending Endorsements', value: pendingEndorse, icon: FileText, gradient: 'from-rose-500 to-orange-500' },
-    { label: isFil ? 'Naaprubahan' : 'Approved', value: approvedEndorse, icon: UserCheck, gradient: 'from-green-500 to-teal-500' },
+    { label: isFil ? 'Pending Endorso' : 'Pending Endorsements', value: pendingEndorse, icon: FileText, gradient: 'from-red-500 to-red-600' },
+    { label: isFil ? 'Naaprubahan' : 'Approved', value: approvedEndorse, icon: UserCheck, gradient: 'from-green-500 to-green-600' },
   ]
 
   /* ── Quick Actions ── */
@@ -240,7 +240,7 @@ export function AgencyDashboard() {
          ═══════════════════════════════════════════════════════ */}
       <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold leading-tight tracking-tight bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold leading-tight tracking-tight bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 bg-clip-text text-transparent">
             {isFil ? `Dashboard ng ${agencyName || 'Ahensya'}` : `${agencyName || 'Agency'} Dashboard`}
           </h1>
           <p className="text-muted-foreground mt-1.5 text-sm md:text-base">
@@ -258,7 +258,7 @@ export function AgencyDashboard() {
           <Bell className="h-4 w-4" />
           <span className="hidden sm:inline">{isFil ? 'Mensahe' : 'Messages'}</span>
           {unreadNotifs > 0 && (
-            <span className="absolute -top-2 -right-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-orange-500 px-1.5 text-[10px] font-bold text-white shadow-lg shadow-rose-500/30">
+            <span className="absolute -top-2 -right-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-gradient-to-r from-red-500 to-red-600 px-1.5 text-[10px] font-bold text-white shadow-lg shadow-red-500/30">
               {unreadNotifs > 99 ? '99+' : unreadNotifs}
             </span>
           )}
@@ -283,7 +283,7 @@ export function AgencyDashboard() {
           <DashboardCard className="h-full">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2.5 text-base font-bold">
-                <div className="p-2 rounded-xl bg-gradient-to-br from-orange-400 to-amber-500 shadow-md shadow-orange-500/20">
+                <div className="p-2 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 shadow-md shadow-amber-500/20">
                   <BarChart3 className="h-4 w-4 text-white" />
                 </div>
                 {isFil ? 'Pipeline Status' : 'Pipeline Status'}
@@ -314,7 +314,7 @@ export function AgencyDashboard() {
               <div className="pt-4 border-t border-border/50">
                 <div className="flex items-center justify-between text-sm mb-3">
                   <span className="text-muted-foreground font-medium">{isFil ? 'Kabuuang Pipeline' : 'Total Pipeline'}</span>
-                  <span className="font-bold text-orange-600 dark:text-orange-400">
+                  <span className="font-bold text-amber-600 dark:text-amber-400">
                     {endorsements.length} {isFil ? 'endorso' : 'endorsements'}
                   </span>
                 </div>
@@ -365,7 +365,7 @@ export function AgencyDashboard() {
                   </p>
                   <Button
                     size="sm"
-                    className="bg-primary hover:bg-primary/90 mt-4 text-white shadow-md shadow-orange-500/20"
+                    className="bg-primary hover:bg-primary/90 mt-4 text-white shadow-md shadow-amber-500/20"
                     onClick={() => navigate('agency-applicants')}
                   >
                     {isFil ? 'Simulan ang Endorso' : 'Start Endorsing'}
@@ -391,7 +391,7 @@ export function AgencyDashboard() {
                         className="flex items-center justify-between p-3.5 rounded-xl border border-border/50 hover:bg-accent/40 dark:hover:bg-accent/20 transition-colors group"
                       >
                         <div className="min-w-0 flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-md shadow-orange-500/20">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-md shadow-amber-500/20">
                             {applicantName[0].toUpperCase()}
                           </div>
                           <div className="min-w-0">
@@ -431,7 +431,7 @@ export function AgencyDashboard() {
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2.5 text-base font-bold">
-                  <div className="p-2 rounded-xl bg-gradient-to-br from-orange-500 to-amber-400 shadow-md shadow-orange-500/20">
+                  <div className="p-2 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 shadow-md shadow-amber-500/20">
                     <Briefcase className="h-4 w-4 text-white" />
                   </div>
                   {isFil ? 'Iyong Mga Trabaho' : 'Your Jobs'}
@@ -505,7 +505,7 @@ export function AgencyDashboard() {
           <DashboardCard className="h-full">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2.5 text-base font-bold">
-                <div className="p-2 rounded-xl bg-gradient-to-br from-amber-500 to-orange-400 shadow-md shadow-amber-500/20">
+                <div className="p-2 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 shadow-md shadow-amber-500/20">
                   <Zap className="h-4 w-4 text-white" />
                 </div>
                 {isFil ? 'Mabilis na Aksyon' : 'Quick Actions'}

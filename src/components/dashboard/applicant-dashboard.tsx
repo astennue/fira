@@ -200,8 +200,8 @@ export function ApplicantDashboard() {
       {/*  1. WELCOME BANNER                                     */}
       {/* ═══════════════════════════════════════════════════════ */}
       <motion.div variants={itemVariants}>
-        <Card className="rounded-2xl bg-card border border-border shadow-sm relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#1e40af] via-[#2563eb] to-[#06b6d4]" />
+        <Card className="rounded-xl bg-card border border-border shadow-sm relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1e40af] via-[#2563eb] to-[#1d4ed8]" />
           <BannerPattern />
           <div className="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-white/[0.06] blur-2xl" />
           <div className="absolute right-20 bottom-0 w-32 h-32 rounded-full bg-white/[0.04] blur-xl" />
@@ -284,7 +284,7 @@ export function ApplicantDashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 + i * 0.08, type: 'spring', stiffness: 100, damping: 15 }}
           >
-            <Card className="rounded-2xl bg-card border border-border shadow-sm group hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 cursor-default h-full">
+            <Card className="rounded-xl bg-card border border-border shadow-sm group hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 cursor-default h-full">
               <div className="p-4 md:p-5">
                 <div className="flex items-start justify-between">
                   <div>
@@ -564,7 +564,7 @@ export function ApplicantDashboard() {
                           onClick={() => navigate('applicant-applications')}
                         >
                           <div className="min-w-0 flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/40 dark:to-cyan-900/40 flex items-center justify-center shrink-0">
+                            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-100 to-blue-100 dark:from-blue-900/40 dark:to-blue-900/40 flex items-center justify-center shrink-0">
                               <Briefcase className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                             </div>
                             <div className="min-w-0">
@@ -593,10 +593,10 @@ export function ApplicantDashboard() {
           </TabsContent>
 
           <TabsContent value="jobs">
-            <Card className="rounded-2xl bg-card border border-border shadow-sm">
+            <Card className="rounded-xl bg-card border border-border shadow-sm">
               <CardHeader className="flex flex-row items-center justify-between pb-3">
                 <CardTitle className="flex items-center gap-2 text-base md:text-lg">
-                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-green-400 to-cyan-500">
+                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-green-400 to-green-600">
                     <Sparkles className="h-4 w-4 text-white" />
                   </div>
                   {isFil ? 'Inirerekomendang Trabaho' : 'Recommended Jobs'}

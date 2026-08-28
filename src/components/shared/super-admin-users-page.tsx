@@ -157,7 +157,7 @@ export function SuperAdminUsersPage() {
                       <UserCog className="h-4 w-4" />
                     </Button>
                     {user.isActive ? (
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-orange-500" onClick={() => updateMutation.mutate({ userId: user.id, action: 'deactivate' })}>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-amber-500" onClick={() => updateMutation.mutate({ userId: user.id, action: 'deactivate' })}>
                         <Ban className="h-4 w-4" />
                       </Button>
                     ) : (
@@ -202,7 +202,7 @@ export function SuperAdminUsersPage() {
                   <Button className="flex-1" onClick={() => updateMutation.mutate({ userId: selectedUser.id, action: 'approve' })}>{L('Approve', 'I-approve')}</Button>
                 )}
                 {selectedUser.isActive ? (
-                  <Button variant="outline" className="flex-1 text-orange-600" onClick={() => updateMutation.mutate({ userId: selectedUser.id, action: 'deactivate' })}>{L('Deactivate', 'I-deactivate')}</Button>
+                  <Button variant="outline" className="flex-1 text-amber-600" onClick={() => updateMutation.mutate({ userId: selectedUser.id, action: 'deactivate' })}>{L('Deactivate', 'I-deactivate')}</Button>
                 ) : (
                   <Button variant="outline" className="flex-1 text-green-600" onClick={() => updateMutation.mutate({ userId: selectedUser.id, action: 'activate' })}>{L('Activate', 'I-activate')}</Button>
                 )}

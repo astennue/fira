@@ -46,14 +46,14 @@ function MatchScoreRing({ score, size = 52 }: { score: number; size?: number }) 
       ? 'text-green-500 dark:text-green-400'
       : clamped >= 60
         ? 'text-amber-500 dark:text-amber-400'
-        : 'text-rose-500 dark:text-rose-400'
+        : 'text-red-500 dark:text-red-400'
 
   const trackColor =
     clamped >= 80
       ? 'stroke-green-100 dark:stroke-green-900/60'
       : clamped >= 60
         ? 'stroke-amber-200 dark:stroke-amber-900/60'
-        : 'stroke-rose-200 dark:stroke-rose-900/60'
+        : 'stroke-red-200 dark:stroke-red-900/60'
 
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
@@ -114,8 +114,8 @@ function InitialsCircle({
       className={cn(
         'rounded-full flex items-center justify-center font-bold shrink-0 bg-gradient-to-br',
         isPending
-          ? 'from-green-400 to-teal-500 text-white shadow-lg shadow-green-500/25'
-          : 'from-teal-400 to-green-600 text-white shadow-lg shadow-teal-500/20',
+          ? 'from-green-400 to-blue-500 text-white shadow-lg shadow-green-500/25'
+          : 'from-blue-400 to-green-600 text-white shadow-lg shadow-blue-500/20',
         sizeMap[size]
       )}
     >
@@ -143,7 +143,7 @@ function DashboardSkeleton() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="h-28 rounded-2xl border border-border bg-muted"
+            className="h-28 rounded-xl border border-border bg-muted"
           >
             <div className="p-4 space-y-3">
               <Skeleton className="h-3 w-24" />
@@ -154,10 +154,10 @@ function DashboardSkeleton() {
       </div>
       {/* Main content skeleton */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 h-[500px] rounded-2xl border border-border bg-muted" />
+        <div className="lg:col-span-2 h-[500px] rounded-xl border border-border bg-muted" />
         <div className="space-y-4">
-          <div className="h-64 rounded-2xl border border-border bg-muted" />
-          <div className="h-56 rounded-2xl border border-border bg-muted" />
+          <div className="h-64 rounded-xl border border-border bg-muted" />
+          <div className="h-56 rounded-xl border border-border bg-muted" />
         </div>
       </div>
     </div>
@@ -190,7 +190,7 @@ function StatCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 + delay * 0.07, duration: 0.4 }}
     >
-      <Card className="rounded-2xl border border-border bg-card shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+      <Card className="rounded-xl border border-border bg-card shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
         <div className="p-4">
           <div className="flex items-start justify-between">
             <div>
@@ -310,15 +310,15 @@ export function EmployerDashboard() {
       label: isFil ? 'Ibinalewala' : 'Declined',
       value: declined,
       icon: XCircle,
-      gradient: 'from-rose-500 to-red-500',
-      shadowColor: 'shadow-rose-500/20',
+      gradient: 'from-red-500 to-red-600',
+      shadowColor: 'shadow-red-500/20',
     },
     {
       label: isFil ? 'Kabuuang Endorso' : 'Total Endorsements',
       value: endorsements.length,
       icon: BarChart3,
-      gradient: 'from-teal-500 to-green-600',
-      shadowColor: 'shadow-teal-500/20',
+      gradient: 'from-blue-500 to-blue-600',
+      shadowColor: 'shadow-blue-500/20',
     },
   ]
 
@@ -356,12 +356,12 @@ export function EmployerDashboard() {
 
   /* ---- Gradient color map for initials (deterministic based on name) ---- */
   const gradientMap = [
-    'from-green-400 to-teal-500',
-    'from-teal-400 to-cyan-500',
+    'from-green-400 to-green-600',
+    'from-green-500 to-blue-600',
     'from-green-500 to-green-600',
     'from-green-400 to-green-600',
-    'from-teal-500 to-green-400',
-    'from-cyan-400 to-teal-600',
+    'from-blue-500 to-green-400',
+    'from-blue-500 to-blue-700',
   ]
   function getGradient(name: string, idx: number) {
     const code = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)
@@ -382,7 +382,7 @@ export function EmployerDashboard() {
         className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3"
       >
         <div>
-          <h1 className="text-4xl font-bold leading-tight tracking-tight bg-gradient-to-r from-green-700 via-teal-600 to-green-600 dark:from-green-400 dark:via-teal-300 dark:to-green-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold leading-tight tracking-tight bg-gradient-to-r from-green-700 via-green-500 to-green-600 dark:from-green-400 dark:via-green-300 dark:to-green-400 bg-clip-text text-transparent">
             {isFil ? 'Dashboard ng Empleyador' : 'Employer Dashboard'}
           </h1>
           <p className="text-muted-foreground mt-1">
@@ -402,7 +402,7 @@ export function EmployerDashboard() {
           <MessageSquare className="h-4 w-4 text-green-600 dark:text-green-400" />
           {isFil ? 'Mensahe' : 'Messages'}
           {unreadNotifs > 0 && (
-            <Badge className="bg-rose-500 text-white text-[10px] h-4 min-w-4 px-1.5 rounded-full">
+            <Badge className="bg-red-500 text-white text-[10px] h-4 min-w-4 px-1.5 rounded-full">
               {unreadNotifs}
             </Badge>
           )}
@@ -435,10 +435,10 @@ export function EmployerDashboard() {
         {/*  LEFT (2/3): Endorsed Candidates — THE MAIN FEATURE           */}
         {/* ------------------------------------------------------------ */}
         <motion.div variants={item} className="lg:col-span-2">
-          <Card className="rounded-2xl border border-border bg-card shadow-sm h-full">
+          <Card className="rounded-xl border border-border bg-card shadow-sm h-full">
             <div className="p-4 md:p-5 pb-0 md:pb-0 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-gradient-to-br from-green-500/10 to-teal-500/10 dark:from-green-500/20 dark:to-teal-500/20">
+                <div className="p-1.5 rounded-lg bg-gradient-to-br from-green-500/10 to-blue-500/10 dark:from-green-500/20 dark:to-blue-500/20">
                   <UserCheck className="h-4 w-4 text-green-600 dark:text-green-400" />
                 </div>
                 <h2 className="text-base font-semibold">
@@ -504,7 +504,7 @@ export function EmployerDashboard() {
                               getGradient(name, idx),
                               isPending
                                 ? 'shadow-green-500/25 ring-2 ring-green-400/30 dark:ring-green-600/30'
-                                : 'shadow-teal-500/15'
+                                : 'shadow-blue-500/15'
                             )}
                           >
                             {getInitials(name)}
@@ -588,10 +588,10 @@ export function EmployerDashboard() {
         {/* ------------------------------------------------------------ */}
         <motion.div variants={item} className="space-y-4">
           {/* Quick Actions */}
-          <Card className="rounded-2xl border border-border bg-card shadow-sm">
+          <Card className="rounded-xl border border-border bg-card shadow-sm">
             <div className="p-4 md:p-5 pb-0 md:pb-0">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-gradient-to-br from-green-500/10 to-teal-500/10 dark:from-green-500/20 dark:to-teal-500/20">
+                <div className="p-1.5 rounded-lg bg-gradient-to-br from-green-500/10 to-blue-500/10 dark:from-green-500/20 dark:to-blue-500/20">
                   <Zap className="h-4 w-4 text-green-600 dark:text-green-400" />
                 </div>
                 <h2 className="text-base font-semibold">
@@ -632,11 +632,11 @@ export function EmployerDashboard() {
           </Card>
 
           {/* Accept Rate */}
-          <Card className="rounded-2xl border border-border bg-card shadow-sm">
+          <Card className="rounded-xl border border-border bg-card shadow-sm">
             <div className="p-4 md:p-5 pb-0 md:pb-0">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-gradient-to-br from-teal-500/10 to-green-500/10 dark:from-teal-500/20 dark:to-green-500/20">
-                  <TrendingUp className="h-4 w-4 text-teal-600 dark:text-teal-400" />
+                <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-500/10 to-green-500/10 dark:from-blue-500/20 dark:to-green-500/20">
+                  <TrendingUp className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 </div>
                 <h2 className="text-base font-semibold">
                   {isFil ? 'Accept Rate' : 'Accept Rate'}
@@ -652,7 +652,7 @@ export function EmployerDashboard() {
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.4, duration: 0.5 }}
                 >
-                  <p className="text-5xl font-extrabold bg-gradient-to-br from-green-600 to-teal-500 dark:from-green-400 dark:to-teal-300 bg-clip-text text-transparent">
+                  <p className="text-5xl font-extrabold bg-gradient-to-br from-green-600 to-blue-500 dark:from-green-400 dark:to-blue-300 bg-clip-text text-transparent">
                     <AnimatedCounter value={acceptRate} />
                     <span className="text-3xl">%</span>
                   </p>
@@ -681,7 +681,7 @@ export function EmployerDashboard() {
                   </p>
                 </div>
                 <div className="text-center">
-                  <p className="text-xl font-bold text-rose-600 dark:text-rose-400">
+                  <p className="text-xl font-bold text-red-600 dark:text-red-400">
                     <AnimatedCounter value={declined} />
                   </p>
                   <p className="text-[10px] text-muted-foreground font-medium mt-0.5">
