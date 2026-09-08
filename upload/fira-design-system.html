@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FIRA Design System — High Fidelity Reference</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue-50:#eff6ff;--blue-100:#dbeafe;--blue-200:#bfdbfe;--blue-400:#60a5fa;--blue-500:#3b82f6;--blue-600:#2563eb;--blue-700:#1d4ed8;--blue-800:#1&"933e;--blue-900:#1e3a8a;
+  --green-100:#dcfce7;--green-500:#22c55e;--green-600:#16a34a;--green-700:#15803d;
+  --red-100:#fee2e2;--red-500:#ef4444;--red-600:#dc2626;
+  --amber-100:#fef3c7;--amber-500:#f59e0b;--amber-600:#d97706;
+  --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;--gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;--gray-700E:#374151;--gray-700:#374151;--gray-800:#1f2937;--gray-900:#111827;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--gray-900);background:#fff;line-height:1.5}
+a{color:var(--blue-600);text-decoration:none}
+.container{max-width:1280px;margin:0 auto;padding:0 24px}
+
+/* Sticky Nav */
+.top-nav{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--gray-200);padding:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.top-nav-inner{display:flex;align-items:center;gap:8px;flex-wrap:wrap;max-width:1400px;margin:0 auto;padding:0 16px;font-size:13px}
+.top-nav .brand{font-weight:700;color:var(--blue-600);margin-right:16px;font-size:15px}
+.top-nav .group{display:flex;align-items:center;gap:2px;margin-right:12px}
+.top-nav .group-label{font-weight:600;color:var(--gray-400);margin-right:4px;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.top-nav a{color:var(--gray-600);padding:4px 8px;border-radius:6px;transition:all .15s;white-space:nowrap}
+.top-nav a:hover{background:var(--blue-50);color:var(--blue-600)}
+
+/* Section divider */
+.screen-section{margin-bottom:0}
+.screen-label{background:var(--gray-100);border-bottom:1px solid var(--gray-200);padding:32px 0 16px;text-align:center}
+.screen-label h2{font-size:13px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:2px;margin-bottom:4px}
+.screen-label h1{font-size:28px;font-weight:700;color:var(--gray-900)}
+.screen-content{padding:32px 0 64px}
+
+/* Common */
+.card{background:#fff;border:1px solid var(--gray-200);border-radius:12px;padding:24px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card-hover:hover{box-shadow:0 4px 12px rgba(0,0,0,.08);transform:translateY(-1px);transition:all .2s}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:500;border:none;cursor:pointer;transition:all .15s}
+.btn-primary{background:var(--blue-600);color:#fff}.btn-primary:hover{background:var(--blue-700)}
+.btn-amber{background:var(--amber-600);color:#fff}.btn-amber:hover{background:#b45309}
+.btn-green{background:var(--green-600);color:#fff}.btn-green:hover{background:var(--green-700)}
+.btn-red{background:var(--red-600);color:#fff}.btn-red:hover{background:#b91c1c}
+.btn-outline{background:transparent;border:1px solid var(--gray-300);color:var(--gray-700)}.btn-outline:hover{background:var(--gray-50)}
+.btn-ghost{background:transparent;color:var(--gray-600)}.btn-ghost:hover{background:var(--gray-100)}
+.btn-sm{padding:6px 12px;font-size:13px;border-radius:6px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:500}
+.badge-blue{background:var(--blue-100);color:var(--blue-600)}
+.badge-green{background:var(--green-100);color:var(--green-600)}
+.badge-red{background:var(--red-100);color:var(--red-600)}
+.badge-amber{background:var(--amber-100);color:var(--amber-600)}
+.badge-gray{background:var(--gray-100);color:var(--gray-600)}
+.input{width:100%;padding:10px 14px;border:1px solid var(--gray-300);border-radius:8px;font-size:14px;font-family:inherit;transition:border-color .15s}
+.input:focus{outline:none;border-color:var(--blue-500);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.grid-6{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+@media(max-width:768px){.grid-2,.grid-3,.grid-4,.grid-6{grid-template-columns:1fr}}
+@media(min-width:769px)and(max-width:1024px){.grid-3,.grid-6{grid-template-columns:repeat(2,1fr)}.grid-4{grid-template-columns:repeat(2,1fr)}}
+.flex-between{display:flex;align-items:center;justify-content:space-between}
+.flex-center{display:flex;align-items:center;justify-content:center}
+.avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;color:#fff}
+.avatar-sm{width:32px;height:32px;font-size:12px}
+.avatar-lg{width:56px;height:56px;font-size:18px}
+.progress-bar{height:8px;background:var(--gray-200);border-radius:99px;overflow:hidden}
+.progress-bar-fill{height:100%;border-radius:99px;transition:width .5s ease}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--gray-200);margin-bottom:24px}
+.tab{padding:10px 16px;font-size:14px;font-weight:500;color:var(--gray-500);border-bottom:2px solid transparent;cursor:pointer;transition:all .15s}
+.tab:hover{color:var(--gray-700)}
+.tab.active{color:var(--blue-600);border-bottom-color:var(--blue-600)}
+.stat-card{text-align:center;padding:24px}
+.stat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.stat-value{font-size:32px;font-weight:700;line-height:1.2}
+.stat-label{font-size:14px;color:var(--gray-500);margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;padding:12px 16px;font-weight:600;color:var(--gray-500);font-size:12px;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--gray-200);background:var(--gray-50)}
+td{padding:12px 16px;border-bottom:1px solid var(--gray-200)}
+tr:hover td{background:var(--gray-50)}
+
+/* Match score ring */
+.match-ring{position:relative;width:48px;height:48px}
+.match-ring svg{transform:rotate(-90deg)}
+.match-ring-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:11px;font-weight:700}
+
+/* Kanban */
+.kanban{display:flex;gap:16px;overflow-x:auto;padding-bottom:16px}
+.kanban-col{min-width:280px;max-width:280px;background:var(--gray-100);border-radius:12px;padding:12px;flex-shrink:0}
+.kanban-col-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-weight:600;font-size:14px}
+.kanban-card{background:#fff;border:1px solid var(--gray-200);border-radius:8px;padding:12px;margin-bottom:8px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+
+/* Hero gradient */
+.hero-gradient{background:linear-gradient(135deg,var(--blue-600),var(--blue-800));position:relative;overflow:hidden}
+.hero-gradient::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hero-gradient *{position:relative}
+.amber-gradient-text{background:linear-gradient(90deg,#fbbf24,#f59e0b,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* Section-specific */
+.landing-hero{padding:80px 0 64px;color:#fff;text-align:center}
+.landing-hero h1{font-size:56px;font-weight:800;line-height:1.1;margin-bottom:24px;letter-spacing:-.02em}
+@media(max-width:768px){.landing-hero h1{font-size:36px}}
+.landing-hero p{font-size:20px;color:rgba(255,255,255,.8);max-width:600px;margin:0 auto 32px}
+.search-bar{display:flex;align-items:center;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:4px;max-width:480px;margin:0 auto}
+.search-bar input{flex:1;background:transparent;border:none;color:#fff;padding:12px 16px;font-size:16px;font-family:inherit}
+.search-bar input::placeholder{color:rgba(255,255,255,.6)}
+.search-bar button{background:var(--amber-500);color:#fff;border:none;padding:10px 24px;border-radius:8px;font-weight:600;cursor:pointer}
+
+/* Modal overlay */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:200}
+.modal{background:#fff;border-radius:16px;padding:32px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+/* For design reference, show modals inline */
+.modal-inline{background:#fff;border-radius:16px;padding:32px;width:100%;max-width:440px;box-shadow:0 4px 24px rgba(0,0,0,.1);border:1px solid var(--gray-200);margin:0 auto}
+
+/* Password strength */
+.strength-bar{height:4px;backgroundGIF;background:var(--gray-200);border-radius:99px;overflow:hidden;margin-top:8px}
+.strength-fill{height:100%;border-radius:99px;transition:width .3s}
+
+/* Form row */
+.form-row{margin-bottom:16px}
+.form-label{display:block;font-size:14px;font-weight:500;margin-bottom:6px;color:var(--gray-700)}
+
+/* Drag drop zone */
+.drop-zone{border:2px dashed var(--gray-300);border-radius:12px;padding:48px;text-align:center;background:var(--gray-50);cursor:pointer;transition:all .15s}
+.drop-zone:hover{border-color:var(--blue-400);background:var(--blue-50)}
+
+/* Chart placeholder */
+.chart-placeholder{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:12px;height:200px;display:flex;align-items:center;justify-content:center;color:var(--gray-400);font-size:14px}
+
+/* SVG Icons */
+.icon{display:inline-block;width:20px;height:20px;vertical-align:middle}
+.icon-sm{width:16px;height:16px}
+.icon-lg{width:24px;height:24px}
+</style>
+</head>
+<body>
+
+<!-- ==================== STICKY NAVIGATION ==================== -->
+<nav class="top-nav">
+<div class="top-nav-inner">
+  <span class="brand">FIRA Design System</span>
+  <div class="group"><span class="group-label">Landing</span><a href="#landing">Landing</a></div>
+  <div class="group"><span class="group-label">Auth</span><a href="#login">Login</a><a href="#register">Register</a></div>
+  <div class="group"><span class="group-label">Applicant</span><a href="#applicant-dash">Dashboard</a><a href="#applicant-profile">Profile</a><a href="#applicant-jobs">Jobs</a><a href="#applicant-apps">Applications</a><a href="#resume-upload">Resume</a></div>
+  <div class="group"><span class="group-label">FIRA Admin</span><a href="#fira-dash">Dashboard</a><a href="#fira-jobs">Jobs</a><a href="#fira-applicants">Applicants</a><a href="#fira-agencies">Agencies</a><a href="#fira-employers">Employers</a><a href="#fira-users">Users</a></div>
+  <div class="group"><span class="group-label">Agency</span><a href="#agency-dash">Dashboard</a><a href="#agency-pipeline">Pipeline</a><a href="#agency-endorse">Endorsements</a></div>
+  <div class="group"><span class="group-label">Employer</span><a href="#employer-dash">Dashboard</a><a href="#employer-endorsed">Endorsed</a></div>
+  <div class="group"><span class="group-label">Shared</span><a href="#ats-pipeline">ATS</a><a href="#ai-matching">AI Match</a><a href="#resume-enhance">Resume AI</a><a href="#notifications">Notifs</a><a href="#settings">Settings</a><a href="#cms">CMS</a><a href="#reports">Reports</a></div>
+</div>
+</nav>
+
+<!-- ==================== 1. LANDING PAGE ==================== -->
+<section id="landing" class="screen-section">
+<div class="screen-label"><h2>LANDING</h2><h1>Landing Page</h1></div>
+<div class="screen-content">
+
+<!-- Nav -->
+<div style="background:#fff;border-bottom:1px solid var(--gray-200);padding:16px 0">
+<div class="container flex-between">
+  <div style="display:flex;align-items:center;gap:24px">
+    <span style="font-weight:700;font-size:20px;color:var(--blue-600)">FIRA</span>
+    <a href="#" style="font-size:14px;font-weight:500;color:var(--gray-600)">Home</a>
+    <a href="#" style="font-size:14px;font-weight:500;color:var(--gray-600)">About</a>
+    <a href="#" style="font-size:14px;font-weight:500;color:var(--gray-600)">Services</a>
+    <a href="#" style="font-size:14px;font-weight:500;color:var(--gray-600)">Jobs</a>
+    <a href="#" style="font-size:14px;font-weight:500;color:var(--gray-600)">For Employers</a>
+    <a href="#" style="font-size:14px;font-weight:500;color:var(--gray-600)">FAQ</a>
+    <a href="#" style="font-size:14px;font-weight:500;color:var(--gray-600)">Contact</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="badge badge-blue">EN</span>
+    <button class="btn btn-outline btn-sm">Sign In</button>
+    <button class="btn btn-primary btn-sm">Register</button>
+  </div>
+</div>
+</div>
+
+<!-- Hero -->
+<div class="hero-gradient landing-hero">
+<div class="container">
+  <h1>Your Career<br><span class="amber-gradient-text">Starts Here.</span></h1>
+  <p>FIRA connects skilled Filipino workers with the best international opportunities. Your journey to a rewarding career abroad starts today.</p>
+  <div class="search-bar">
+    <svg class="icon" style="margin-left:12px;color:rgba(255,255,255,.6)" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" placeholder="Search jobs by title, country, or keyword...">
+    <button>Search</button>
+  </div>
+  <div style="display:flex;justify-content:center;gap:40px;margin-top:40px;flex-wrap:wrap">
+    <div style="text-align:center"><div style="font-size:28px;font-weight:700">30+</div><div style="font-size:13px;opacity:.7">Countries</div></div>
+    <div style="text-align:center"><div style="font-size:28px;font-weight:700">10K+</div><div style="font-size:13px;opacity:.7">Deployed</div></div>
+    <div style="text-align:center"><div style="font-size:28px;font-weight:700">500+</div><div style="font-size:13px;opacity:.7">Agencies</div></div>
+    <div style="text-align:center"><div style="font-size:28px;font-weight:700">Safe</div><div style="font-size:13px;opacity:.7">&amp; Legal</div></div>
+  </div>
+</div>
+</div>
+
+<!-- Three Steps -->
+<div style="padding:64px 0;background:var(--gray-50)">
+<div class="container">
+  <h2 style="text-align:center;font-size:32px;font-weight:700;margin-bottom:8px">Three Steps to Your Dream Career</h2>
+  <p style="text-align:center;color:var(--gray-500);margin-bottom:40px">Simple, secure, and fully supported from application to deployment</p>
+  <div class="grid-3">
+    <div class="card card-hover" style="text-align:center;padding:32px">
+      <div style="width:64px;height:64px;border-radius:16px;background:var(--blue-100);margin:0 auto 16px;display:flex;align-items:center;justify-content:center">
+        <svg class="icon-lg" style="color:var(--blue-600)" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <h3 style="font-weight:600;margin-bottom:8px">Create Account</h3>
+      <p style="color:var(--gray-500);font-size:14px">Register and complete your profile with your skills, experience, and documents.</p>
+    </div>
+    <div class="card card-hover" style="text-align:center;padding:32px">
+      <div style="width:64px;height:64px;border-radius:16px;background:var(--green-100);margin:0 auto 16px;display:flex;align-items:center;justify-content:center">
+        <svg class="icon-lg" style="color:var(--green-600)" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+      </div>
+      <h3 style="font-weight:600;margin-bottom:8px">Find &amp; Apply</h3>
+      <p style="color:var(--gray-500);font-size:14px">Browse matched job openings and apply with one click. AI helps find your best fit.</p>
+    </div>
+    <div class="card card-hover" style="text-align:center;padding:32px">
+      <div style="width:64px;height:64px;border-radius:16px;background:var(--amber-100);margin:0 auto 16px;display:flex;align-items:center;justify-content:center">
+        <svg class="icon-lg" style="color:var(--amber-600)" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.6-.1-1.1.1-1.4.6l-1.5 2.6c-.3.5 0 1.1.5 1.3L9 13l-2 5 5-2 2.3 6.6c.2.5.8.8 1.3.5l2.6-1.5c.5-.3.7-.8.6-1.4Z"/></svg>
+      </div>
+      <h3 style="font-weight:600;margin-bottom:8px">Get Deployed</h3>
+      <p style="color:var(--gray-500);font-size:14px">FIRA handles processing, visas, and pre-departure orientation. You focus on your new career.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Latest Opportunities -->
+<div style="padding:64px 0">
+<div class="container">
+  <div class="flex-between" style="margin-bottom:32px">
+    <h2 style="font-size:28px;font-weight:700">Latest Opportunities</h2>
+    <button class="btn btn-outline btn-sm">View All →</button>
+  </div>
+  <div class="grid-2" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">
+    <div class="card card-hover"><span class="badge badge-amber" style="margin-bottom:8px">Domestic Helper</span><h3 style="font-weight:600;margin-bottom:4px">Household Service Worker / Nanny</h3><p style="color:var(--gray-500);font-size:13px;margin-bottom:8px">📍 Casablanca, Morocco</p><p style="font-weight:600;margin-bottom:12px">$400 – $600/mo</p><div class="flex-between"><span style="font-size:13px;color:var(--gray-500)">10 slots</span><button class="btn btn-primary btn-sm">Apply Now</button></div></div>
+    <div class="card card-hover"><span class="badge badge-red" style="margin-bottom:8px">Caregiver</span><h3 style="font-weight:600;margin-bottom:4px">Caregiver for Elderly Care</h3><p style="color:var(--gray-500);font-size:13px;margin-bottom:8px">📍 Rabat, Morocco</p><p style="font-weight:600;margin-bottom:12px">$500 – $700/mo</p><div class="flex-between"><span style="font-size:13px;color:var(--gray-500)">5 slots</span><button class="btn btn-primary btn-sm">Apply Now</button></div></div>
+    <div class="card card-hover"><span class="badge badge-blue" style="margin-bottom:8px">Nurse</span><h3 style="font-weight:600;margin-bottom:4px">Professional Nurse — Hospital</h3><p style="color:var(--gray-500);font-size:13px;margin-bottom:8px">📍 Casablanca, Morocco</p><p style="font-weight:600;margin-bottom:12px">$1,200 – $1,800/mo</p><div class="flex-between"><span style="font-size:13px;color:var(--gray-500)">15 slots</span><button class="btn btn-primary btn-sm">Apply Now</button></div></div>
+    <div class="card card-hover"><span class="badge badge-amber" style="margin-bottom:8px">Factory</span><h3 style="font-weight:600;margin-bottom:4px">Factory Worker — Electronics</h3><p style="color:var(--gray-500);font-size:13px;margin-bottom:8px">📍 Tangier, Morocco</p><p style="font-weight:600;margin-bottom:12px">$600 – $900/mo</p><div class="flex-between"><span style="font-size:13px;color:var(--gray-500)">20 slots</span><button class="btn btn-primary btn-sm">Apply Now</button></div></div>
+    <div class="card card-hover"><span class="badge badge-amber" style="margin-bottom:8px">Hospitality</span><h3 style="font-weight:600;margin-bottom:4px">Hotel Staff — Hospitality</h3><p style="color:var(--gray-500);font-size:13px;margin-bottom:8px">📍 Marrakech, Morocco</p><p style="font-weight:600;margin-bottom:12px">$700 – $1,000/mo</p><div class="flex-between"><span style="font-size:13px;color:var(--gray-500)">8 slots</span><button class="btn btn-primary btn-sm">Apply Now</button></div></div>
+  </div>
+</div>
+</div>
+
+<!-- Testimonials -->
+<div style="padding:64px 0;background:var(--gray-50)">
+<div class="container">
+  <h2 style="text-align:center;font-size:28px;font-weight:700;margin-bottom:40px">What Our Deployed Workers Say</h2>
+  <div class="grid-3">
+    <div class="card" style="padding:32px"><div style="color:var(--amber-500);font-size:20px;margin-bottom:12px">★★★★★</div><p style="9font-style:italic;margin-bottom:16px;color:var(--gray-700)">"FIRA helped me find a good job in Morocco. They supported me every step of the way. Now I can provide a better life for my family."</p><div style="display:flex;align-items:center;gap:12px"><div class="avatar" style="background:var(--blue-600)">MS</div><div><div style="font-weight:600;font-size:14px">Maria Santos</div><div style="color:var(--gray-500);font-size:13px">Household Worker · Al Baraka</div></div></div></div>
+    <div class="card" style="padding:32px"><div style="color:var(--amber-500);font-size:20px;margin-bottom:12px">★★★★★</div><p style="font-style:italic;margin-bottom:16px;color:var(--gray-700)">"The process was smooth and professional. FIRA staff are very caring and always available to answer questions."</p><div style="display:flex;align-items:center;gap:12px"><div class="avatar" style="background:var(--green-600)">AR</div><div><div style="font-weight:600;font-size:14px">Ana Reyes</div><div style="color:var(--gray-500);font-size:13px">Caregiver · Rabat Healthcare</div></div></div></div>
+    <div class="card" style="padding:32px"><div style="color:var(--amber-500);font-size:20px;margin-bottom:12px">★★★★★</div><p style="font-style:italic;margin-bottom:16px;color:var(--gray-700)">"I am grateful to FIRA for this opportunity. Working in Morocco has been a great experience for me and my family."</p><div style="display:flex;align-items:center;gap:12px"><div class="avatar" style="background:var(--amber-600)">CG</div><div><div style="font-weight:600;font-size:14px">Carmen Garcia</div><div style="color:var(--gray-500);font-size:13px">Hotel Staff · Marrakech Resort</div></div></div></div>
+  </div>
+</div>
+</div>
+
+<!-- CTA Banner -->
+<div class="hero-gradient" style="padding:64px 0;text-align:center;color:#fff">
+<div class="container">
+  <h2 style="font-size:32px;font-weight:700;margin-bottom:16px">Ready to Start Your Journey?</h2>
+  <p style="font-size:18px;opacity:.8;margin-bottom:32px">Join thousands of Filipino workers who found their dream careers abroad with FIRA.</p>
+  <div style="display:flex;gap:16px;justify-content:center"><button class="btn" style="background:#fff;color:var(--blue-600);font-weight:600;padding:14px 32px;border-radius:10px">Find Jobs</button><button class="btn" style="background:var(--amber-500);color:#fff;font-weight:600;padding:14px 32px;border-radius:10px">Register Now</button></div>
+</div>
+</div>
+
+<!-- Footer -->
+<div style="background:var(--gray-900);color:var(--gray-300);padding:48px 0 32px">
+<div class="container">
+  <div class="grid-4" style="font-size:14px">
+    <div><h4 style="color:#fff;font-weight:600;margin-bottom:16px">About FIRA</h4><p style="line-height:1.7;color:var(--gray-400)">Fil International Recruitment Agency — connecting Filipino workers with international opportunities since 2024.</p></div>
+    <div><h4 style="color:#fff;font-weight:600;margin-bottom:16px">For Applicants</h4><p style="line-height:2"><a href="#" style="color:var(--gray-400)">Find Jobs</a><br><a href="#" style="color:var(--gray-400)">Create Profile</a><br><a href="#" style="color:var(--gray-400)">Upload Resume</a><br><a href="#" style="color:var(--gray-400)">Check Status</a></p></div>
+    <div><h4 style="color:#fff;font-weight:600;margin-bottom:16px">For Agencies</h4><p style="line-height:2"><a href="#" style="color:var(--gray-400)">Partner With Us</a><br><a href="#" style="color:var(--gray-400)">Post Jobs</a><br><a href="#" style="color:var(--gray-400)">Manage Pipeline</a><br><a href="#" style="color:var(--gray-400)">Resources</a></p></div>
+    <div><h4 style="color:#fff;font-weight:600;margin-bottom:16px">Contact</h4><p style="line-height:2;color:var(--gray-400)">59 Blvd Zerktouni<br>Casablanca, Morocco<br>+212 662 261 499<br>manpower@filinternational.ma</p></div>
+  </div>
+  <div style="border-top:1px solid var(--gray-700);margin-top:32px;padding-top:16px;text-align:center;font-size:13px;color:var(--gray-500)">© 2025 Fil International Recruitment Agency (FIRA). All rights reserved.</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- ==================== 2. LOGIN ==================== -->
+<section id="login" class="screen-section">
+<div class="screen-label"><h2>AUTH</h2><h1>Login</h1></div>
+<div class="screen-content">
+<div class="container" style="display:flex;justify-content:center;padding-top:32px">
+<div class="modal-inline">
+  <div style="text-align:center;margin-bottom:24px"><span style="font-weight:700;font-size:20px;color:var(--blue-600)">FIRA</span></div>
+  <div class="tabs" style="margin-bottom:24px">
+    <div class="tab active" style="flex:1;text-align:center;border-radius:8px 8px 0 0">Sign In</div>
+    <div class="tab" style="flex:1;text-align:center;border-radius:8px 8px 0 0">Register</div>
+  </div>
+  <div class="form-row"><label class="form-label">Email</label><input class="input" type="email" placeholder="you@example.com" value="admin@fira.com.ph"></div>
+  <div class="form-row"><label class="form-label">Password</label><div style="position:relative"><input class="input" type="password" placeholder="••••••••" value="admin2025!"><span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--gray-400)">👁</span></div></div>
+  <button class="btn btn-primary" style="width:100%;margin-bottom:16px;padding:12px">Sign In</button>
+  <div style="text-align:center"><a href="#" style="font-size:13px">Forgot password?</a></div>
+  <div style="margin-top:20px;background:var(--blue-50);border-radius:8px;padding:16px;font-size:13px;color:var(--gray-600)">
+    <p style="font-weight:600;margin-bottom:4px">Test Accounts:</p>
+    <p>Applicant: applicant@fira.com.ph</p>
+    <p>Agency: agency@fira.com.ph</p>
+    <p>Admin: admin@fira.com.ph</p>
+    <p style="color:var(--gray-400)">Password: role + 2025!</p>
+  </div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ==================== 3. REGISTER ==================== -->
+<section id="register" class="screen-section">
+<div class="screen-label"><h2>AUTH</h2><h1>Register</h1></div>
+<div class="screen-content">
+<div class="container" style="display:flex;justify-content:center;padding-top:32px">
+<div class="modal-inline">
+  <div style="text-align:center;margin-bottom:24px"><span style="font-weight:700;font-size:20px;color:var(--blue-600)">FIRA</span></div>
+  <div class="tabs" style="margin-bottom:24px">
+    <div class="tab" style="flex:1;text-align:center">Sign In</div>
+    <div class="tab active" style="flex:1;text-align:center">Register</div>
+  </div>
+  <div class="form-row"><label class="form-label">Full Name</label><input class="input" placeholder="Juan Dela Cruz"></div>
+  <div class="form-row"><label class="form-label">Email</label><input class="input" type="email" placeholder="you@example.com"></div>
+  <div class="form-row"><label class="form-label">Phone (Optional)</label><input class="input" placeholder="+63 917 000 0000"></div>
+  <div class="form-row">
+    <label class="form-label">Password</label>
+    <input class="input" type="password" placeholder="••••••••" value="Str0ng!Pass">
+    <div class="strength-bar"><div class="strength-fill" style="width:80%;background:var(--green-500)"></div></div>
+    <span style="font-size:12px;color:var(--green-600);font-weight:500">Strong</span>
+  </div>
+  <div class="form-row"><label class="form-label">Confirm Password</label><input class="input" type="password" placeholder="••••••••"></div>
+  <div class="form-row" style="display:flex;align-items:start;gap:8px">
+    <input6input type="checkbox" style="margin-top:4px">
+    <span style="font-size:13px;color:var(--gray-600)">I agree to the <a href="#">Terms of Service</a> and <a href="#">Data Privacy Consent</a></span>
+  </div>
+  <button class="btn btn-primary" style="width:100%;padding:12px">Create Account</button>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ==================== 4. APPLICANT DASHBOARD ==================== -->
+<section id="applicant-dash" class="screen-section">
+<div class="screen-label"><h2>APPLICANT</h2><h1>Applicant Dashboard</h1></div>
+<div class="screen-content">
+<div class="container">
+
+<!-- Welcome Banner -->
+<div class="hero-gradient" style="padding:32px;border-radius:16px;margin-bottom:24px;color:#fff;display:flex;justify-content:space-between;align-items:center">
+  <div><h2 style="font-size:24px;font-weight:700">Welcome back, Maria! 👋</h2><p style="opacity:.8;font-size:14px">View your dashboard and track your applications</p></div>
+  <div style="position:relative"><span style="font-size:24px;cursor:pointer">🔔</span><span style="position:absolute;top:-4px;right:-4px;background:var(--red-600);color:#fff;font-size:10px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center">3</span></div>
+</div>
+
+<!-- Stats -->
+<div class="grid-4">
+  <div class="card stat-card card-hover"><div class="stat-icon" style="background:var(--blue-100)"><svg class="icon-lg" style="color:var(--blue-600)" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v7"/><path d="M3 13h18v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg></div><div class="stat-value" style="color:var(--blue-600)">12</div><div class="stat-label">Applications</div></div>
+  <div class="card stat-card card-hover"><div class="stat-icon" style="background:var(--green-100)"><svg class="icon-lg" style="color:var(--green-600)" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg></div><div class="stat-value" style="color:var(--green-600)">45</div><div class="stat-label">Active Jobs</div></div>
+  <div class="card stat-card card-hover"><div class="stat-icon" style="background:var(--amber-100)"><svg class="icon-lg" style="color:var(--amber-600)" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="stat-value" style="color:var(--amber-600)">3</div><div class="stat-label">Interviews</div></div>
+  <div class="card stat-card card-hover"><div class="stat-icon" style="background:var(--blue-100)"><svg class="icon-lg" style="color:var(--blue-600)" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.2a2 2 0 0 1 1.275 1.275L12 21l1.2-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.8E813-1.2a2 2 0 0 1-1.275-1.275Z"/></svg></div><div class="stat-value" style="color:var(--blue-600)">78%</div><div class="stat-label">Match Score</div></div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs" style="margin-top:24px">
+  <div class="tab active">Recommended Jobs</div>
+  <div class="tab">My Applications</div>
+</div>
+
+<!-- Recommended Jobs -->
+<div class="grid-2" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">
+  <div class="card card-hover"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px"><span class="badge badge-amber">Domestic Helper</span><span class="badge badge-green">85% match</span></div><h3 style="font-weight:600;margin-bottom:4px">Household Service Worker</h3><p style="color:var(--gray-500);font-size:13px;margin-bottom:8px">📍 Casablanca, Morocco</p><p style="font-weight:600;margin-bottom:12px">$400 – $600/mo</p><button class="btn btn-primary btn-sm" style="width:100%">View Job</button></div>
+  <div class="card card-hover"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px"><span class="badge badge-red">Caregiver</span><span class="badge badge-blue">72% match</span></div><h3 style="font-weight:600;margin-bottom:4px">Caregiver for Elderly Care</h3><p style="color:var(--gray-500);font-size:13px;margin-bottom:8px">📍 Rabat, Morocco</p><p style="font-weight:600;margin-bottom:12px">$500 – $700/mo</p><button class="btn btn-primary btn-sm" style="width:100%">View Job</button></div>
+  <div class="card card-hover"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px"><span class="badge badge-blue">Nurse</span><span class="badge badge-green">92% match</span></div><h3 style="font-weight:600;margin-bottom:4px">Professional Nurse — Hospital</h3><p style="color:var(--gray-500);font-size:13px;margin-bottom:8px">📍 Casablanca, Morocco</p><p style="font-weight:600;margin-bottom:12px">$1,200 – $1,800/mo</p><button class="btn btn-primary btn-sm" style="width:100%">View Job</button></div>
+  <div class="card card-hover"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px"><span class="badge badge-amber">Hospitality</span><span class="badge badge-amber">65% match</span></div><h3 style="font-weight:600;margin-bottom:4px">Hotel Staff — Luxury Resort</h3><p style="color:var(--gray-500);font-size:13px;margin-bottom:8px">📍 Marrakech, Morocco</p><p style="font-weight:600;margin-bottom:12px">$700 – $1,000/mo</p><button class="btn btn-primary btn-sm" style="width:100%">View Job</button></div>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- ==================== 5. APPLICANT PROFILE ==================== -->
+<section id="applicant-profile" class="screen-section">
+<div class="screen-label"><h2>APPLICANT</h2><h1>Applicant Profile</h1></div>
+<div class="screen-content">
+<div class="container">
+
+<!-- Header -->
+<div class="flex-between" style="margin-bottom:24px">
+  <div><h2 style="font-size:24px;font-weight:700">My Profile</h2><p style="color:var(--gray-500);font-size:14px">85% complete</p></div>
+  <button class="btn btn-primary">Edit Profile</button>
+</div>
+<div class="progress-bar" style="margin-bottom:32px"><div class="progress-bar-fill" style="width:85%;background:var(--green-500)"></div></div>
+
+<!-- Resume Card -->
+<div class="card" style="border-color:var(--blue-200);background:var(--blue-50);margin-bottom:24px;display:flex;align-items:center;gap:16px">
+  <svg class="icon-lg" style="color:var(--blue-600)" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v;v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+  <div style="flex:1"><div style="font-weight:600">Resume_Santos.pdf</div><div style="color:var(--gray-500);font-size:13px">245 KB · Uploaded Aug 28, 2025</div></div>
+  <span class="badge badge-green">Verified</span>
+</div>
+
+<!-- Personal Info -->
+<div class="card" style="margin-bottom:24px">
+  <h3 style="font-weight:600;margin-bottom:16px">Personal Information</h3>
+  <div class="grid-3" style="font-size:14px">
+    <div><span style="color:var(--gray-500);font-size:12px;text-transform:uppercase">Full Name</span><div style="font-weight:500;margin-top:2px">Maria Garcia Santos</div></div>
+    <div><span style="color:var(--gray-500);font-size:12px;text-transform:uppercase">Gender</span><div style="font-weight:500;margin-top:2px">Female</div></div>
+    <div><span style="color:var(--gray-500);font-size:12px;text-transform:uppercase">Civil Status</span><div style="font-weight:500;margin-top:2px">Single</div></div>
+    <div><span style="color:var(--gray-500);font-size:12px;text-transform:uppercase">Nationality</span><div style="font-weight:500;margin-top:2px">Filipino</div></div>
+    <div><span style="color:var(--gray-500);font-size:12px;text-transform:uppercase">Phone</span><div style="font-weight:500;margin-top:2px">+63 917 123 4567</div></div>
+    <div><span style="color:var(--gray-500);font-size:12px;text-transform:uppercase">Email</span><div style="font-weight:500;margin-top:2px">applicant@fira.com.ph</div></div>
+    <div style="grid-column:span 2"><span style="color:var(--gray-500);font-size:12px;text-transform:uppercase">Address</span><div style="font-weight:500;margin-top:2px">456 Rizal St, Quezon City, Metro Manila, NCR</div></div>
+    <div><span style="color:var(--gray-500);font-size:12px;text-transform:uppercase">Applicant Type</span><div style="font-weight:500;margin-top:2px">Domestic Helper</div></div>
+  </div>
+</div>
+
+<!-- Passport / Visa / Medical -->
+<div class="grid-3" style="margin-bottom:24px">
+  <div class="card"><h4 style="font-weight:600;margin-bottom:12px">🛂 Passport</h4><div style="font-size:14px"><div style="margin-bottom:8px"><span style="color:var(--gray-500);font-size:12px">Number</span><div style="font-weight:500">PN1234567</div></div><div style="margin-bottom:8px"><span style="color:var(--gray-500);font-size:12px">Expiry</span><div style="font-weight:500">March 2028</div></div><div><span style="color:var(--gray-500);font-size:12px">Status</span><div><span class="badge badge-green">Valid</span></div></div></div></div>
+  <div class="card"><h4 style="font-weight:600;margin-bottom:12px">🌍 Visa</h4><div style="font-size:14px"><div style="margin-bottom:8px"><span style="color:var(--gray-500);font-size:12px">Country</span><div style="font-weight:500">Morocco</div></div><div style="margin-bottom:8px"><span style="color:var(--gray-500);font-size:12px">Type</span><div style="font-weight:500">Work Visa</div></div><div><span style="color:var(--gray-500);font-size:12px">Status</span><div><span class="badge badge-green">Active</span></div></div></div></div>
+  <div class="card"><h4 style="font-weight:600;margin-bottom:12px">🏥 Medical</h4><div style="font-size:14px"><div style="margin-bottom:8px"><span style="color:var(--gray-500);font-size:12px">Status</span><div><span class="badge badge-green">Passed</span></div></div><div style="margin-bottom:8px"><span style="color:var(--gray-500);font-size:12px<">Expiry</span><div style="font-weight:500">December 2026</div></div></div></div>
+</div>
+
+<!-- Education -->
+<div class="card" style="margin-bottom:24px">
+  <h3 style="font-weight:600;margin-bottom:16px">Education</h3>
+  <div class="grid-2">
+    <div style="border-left:3px solid var(--blue-500);padding-left:12px"><div style="font-weight:600">BS Nursing</div><div style="color:var(--gray-500);font-size:13px">University of the Philippines · 2018–2022</div><div style="color:var(--gray-400);font-size:13px">Cum Laude</div></div>
+    <div style="border-left:3px solid var(--gray-300);padding-left:12px"><div style="font-weight:600">High School Diploma</div><div style="color:var(--gray-500);font-size:13px">Quezon City Science HS · 2014–2018</div></div>
+  </div>
+</div>
+
+<!-- Experience -->
+<div class="card" style="margin-bottom:24px">
+  <h3 style="font-weight:600;margin-bottom:16px">Experience</h3>
+  <div class="grid-2">
+    <div style="border-left:3px solid var(--green-500);padding-left:12px"><div style="font-weight:600">Staff Nurse</div><div style="color:var(--gray-500);font-size:13px">St. Luke's Medical Center · Philippines</div><div style="color:var(--gray-400);font-size:13px">2022 – Present <span class="badge badge-green" style="font-size:10px">Current</span></div></div>
+    <div style="border-left:3px solid var(--gray-300);padding-left:12px"><div style="font-weight:600">Nursing Aide</div><div style="color:var(--gray-500);font-size:13px">Philippine General Hospital · Philippines</div><div style="color:var(--gray-400);font-size:13px">2020 – 2022</div></div>
+  </div>
+</div>
+
+<!-- Skills & Languages row -->
+<div class="grid-2" style="margin-bottom:24px">
+  <div class="card"><h3 style="font-weight:600;margin-bottom:12px">Skills</h3><div style="display:flex;flex-wrap:wrap;gap:8px"><span class="badge badge-blue">Patient Care (adv)</span><span class="badge badge-blue">IV Therapy (int)</span><span class="badge badge-blue">First Aid (exp)</span><span class="badge badge-blue">CPR (adv)</span><span class="badge badge-blue">Med Admin (int)</span></div></div>
+  <div class="card"><h3 style="font-weight:600;margin-bottom:12px">Languages</h3><div style="display:flex;flex-wrap:wrap;gap:8px"><span class="badge badge-green">Filipino · Native</span><span class="badge badge-green">English · Fluent</span><span class="badge badge-amber">Arabic · Basic</span></div></div>
+</div>
+
+<!-- Documents -->
+<div class="card">
+  <h3 style="font-weight:600;margin-bottom:16px">Documents</h3>
+  <div class="grid-2" style="font-size:14px">
+    <div style="display:flex;align-items:center;gap:8px">📄 Resume_Santos.pdf <span class="badge badge-green" style="font-size:10px">Verified</span></div>
+    <div style="display:flex;align-items:center;gap:8px">📄 NBI_Clearance.pdf <span class="badge badge-green" style="font-size:10px">Verified</span></div>
+    <div style="display:flex;align-items:center;gap:8px">📄 Passport_Copy.pdf <span class="badge badge-amber" style="font-size:10px">Pending</span></div>
+    <div style="display:flex;align-items:center;gap:8px">📄 Medical_Cert.pdf <span class="badge badge-green" style="font-size:10px">Verified</span></div>
+  </div>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- ==================== 6. APPLICANT JOBS ==================== -->
+<section id="applicant-jobs" class="screen-section">
+<div class="screen-label"><h2>APPLICANT</h2><h1>Find Jobs</h1></div>
+<div class="screen-content">
+<div class="container">
+<div class="flex-between" style="margin-bottom:24px"><h2 style="font-size:24px;font-weight:700">Find Jobs</h2><span style="color:var(--gray-500)">45 jobs found</span></div>
+<div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap"><input class="input" style="max-width:320px" placeholderB8 placeholder="Search jobs..."><select class="input" style="max-width:180px"><option>All Countries</option><option>Morocco</option><option>Saudi Arabia</option><option>UAE</option></select><select class="input" style="max-width:180px"><option>All Categories</option><option>Domestic Helper</option><option>Caregiver</option><option>Nurse</option></select></div>
+<div class="grid-2" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">
+  <div class="card card-hover"><span class="badge badge-amber" style="margin-bottom:8px">Domestic Helper</span><h3 style="font-weight:600;margin-bottom:4px">Household Service Worker</h3><p style="color:var(--gray-500);font-size:13px;margin-bottom:8px">📍 Casablanca, Morocco · Al Baraka Holding</p><p style="font-weight:600;margin-bottom:12px">$400 – $600/mo · 10 slots</p><button class="btn btn-primary btn-sm" style="width:100%">Apply Now</button></div>
+  <div class="card card-hover"><span class="badge badge-red" style="margin-bottom:8px">Caregiver</span><h3 style="font-weight:600;margin-bottom:4px">Caregiver for Elderly Care</h3><p style="color:var(--gray-500);font-size:13px;margin-bottom:8px">📍 Rabat, Morocco · Rabat Healthcare</p><p style="font-weight:600;margin-bottom:12px">$500 – $700/mo · 5 slots</p><button class="btn btn-primary btn-sm" style="width:100%">Apply Now</button></div>
+  <div class="card card-hover"><span class="badge badge-blue" style="margin-bottom:8px">Nurse</span><h3 style="font-weight:600;margin-bottom:4px">Professional Nurse — Hospital</h3><p style="color:var(--gray-500);font-size:13px;margin-bottom:8px">📍 Casablanca, Morocco · Casablanca Medical</p><p style="font-weight:600;margin-bottom:12px">$1,200 – $1,800/mo · 15 slots</p><button class="btn btn-primary btn-sm" style="width:100%">Apply Now</button></div>
+  <div class="card card-hover"><span class="badge badge-amber" style="margin-bottom:8px">Factory</span><h3 style="font-weight:600;margin-bottom:4px">Factory Worker — Electronics</h3><p style="color:var(--gray-500);font-size:13px;margin-bottom:8px">📍 Tangier, Morocco · Tangier Electronics</p><p style="font-weight:600;margin-bottom:12px">$600 – $900/mo · 20 slots</p><button class="btn btn-primary btn-sm" style="width:100%">Apply Now</button></div>
+  <div class="card card-hover"><span class="badge badge-amber" style="margin-bottom:8px">Hospitality</span><h3 style="font-weight:600;margin-bottom:4px">Hotel Staff — Luxury Resort</h3><p style="color:var(--gray-500);font-size:13px;margin-bottom:8px">📍 Marrakech, Morocco · Marrakech Resort</p><p style="font-weight:600;margin-bottom:12px">$700 – $1,000/mo · 8 slots</p><button class="btn btn-primary btn-sm" style="width:100%">Apply Now</button></div>
+  <div class="card card-hover"><span class="badge badge-blue" style="margin-bottom:8px">Nurse</span><h3 style="font-weight:600;margin-bottom:4px">ICU3ICU Nurse — Critical Care</h3><p style="color:var(--gray-500);font-size:13px;margin-bottom:8px">📍 Rabat, Morocco · King Salman Hospital</p><p style="font-weight:600;margin-bottom:12px">$1,500 – $2,200/mo · 4 slots</p><button class="btn btn-primary btn-sm" style="width:100%">Apply Now</button></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ==================== 7. APPLICANT APPLICATIONS ==================== -->
+<section id="applicant-apps" class="screen-section">
+<div class="screen-label"><h2>APPLICANT</h2><h1>My Applications</h1></div>
+<div class="screen-content">
+<div class="container">
+<div class="flex-between" style="margin-bottom:24px"><h2 style="font-size:24px;font-weight:700">My Applications</h2><span class="badge badge-blue">4 active</span></div>
+<div class="tabs" style="margin-bottom:24px">
+  <div class="tab active">All</div><div class="tab">Applied</div><div class="tab">Interviewing</div><div class="tab">Offered</div><div class="tab">Rejected</div>
+</div>
+<div class="card" style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;padding:20px"><div style="display:flex;align-items:center;gap:16px"><div class="avatar" style="background:var(--blue-600)">HS</div><div><div style="font-weight:600">Household Service Worker</div><div style="color:var(--gray-500);font-size:13px">Al Baraka Holding · Morocco · Applied 3 days ago</div></div></div><div style="display:flex;align-items:center;gap:12px"><span class="badge badge-blue">Applied</span><span class="badge badge-green">85%</span></div></div>
+<div class="card" style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;padding:20px"><div style="display:flex;align-items:center;gap:16px"><div class="avatar" style="background:var(--amber-600)">CE</div><div><div style="font-weight:600">Caregiver for Elderly Care</div><div style="color:var(--gray-500);font-size:13px">Rabat Healthcare · Morocco · Applied 1 week ago</div></div></div><div style="display:flex;align-items:center;gap:12px"><span class="badge badge-amber">Interviewing</span><span class="badge badge-green">72%</span></div></div>
+<div class="card" style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;padding:20px"><div style="display:flex;align-items:center;gap:16px"><div class="avatar" style="background:var(--green-600)">PN</div><div><div style="font-weight:600">Professional Nurse — Hospital</div><div style="color:var(--gray-500);font-size:13px">Casablanca Medical · Morocco · Applied 2 weeks ago</div></div></div><div style="display:flex;align-items:center;gap:12px"><span class="badge badge-green">Offered</span><span class="badge badge-green">92%</span></div></div>
+<div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:20px"><div style="display:flex;align-items:center;gap:16px"><div class="avatar" style="background:var(--gray-400)">HS</div><div><div style="font-weight:600">Hotel Staff — Luxury Resort</div><div style="color:var(--gray-500);font-size:13px">Marrakech Resort · Morocco · Applied 3 weeks ago</div></div></div><div style="display:flex;align-items:center;gap:12px"><span class="badge badge-red">Rejected</span><span class="badge badge-amber">65%</span></div></div>
+</div>
+</div>
+</section>
+
+<!-- ==================== 8. RESUME UPLOAD ==================== -->
+<section id="resume-upload" class="screen-section">
+<div class="screen-label"><h2>APPLICANT</h2><h1>Resume Upload</h1></div>
+<div class="screen-content">
+<div class="container" style="max-width:640px">
+<h2 style="font-size:24px;font-weight:700;margin-bottom:24px">Upload Resume</h2>
+<div class="drop-zone" style="margin-bottom:24px">
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--gray-400)" stroke-width="1.5" style="margin:0 auto 12px;display:block"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x+2="!x2="12" y2="15"/></svg>
+  <p style="font-weight:500;margin-bottom:4px">Drag &amp; drop or click to upload</p>
+  <p style="color:var(--gray-500);font-size:13px">Accepted: PDF, DOCX, JPG, PNG (max 10MB)</p>
+</div>
+<div class="card" style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+  <div style="width:48px;height:48px;border-radius:8px;background:var(--blue-100);display:flex;align-items:center;justify-content:center"><svg class="icon-lg" style="color:var(--blue-600)" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg></div>
+  <div style="flex:1"><div style="font-weight:600">Resume_Santos.pdf</div><div style="color:var(--gray-500);font-size:13px">245 KB · Verified</div></div>
+  <button class="btn btn-primary btn-sm">Parse with AI</button>
+</div>
+<div class="card" style="background:var(--green-100);border-color:var(--green-500)">
+  <h4 style="font-weight:600;color:var(--green-700);margin-bottom:12px">✓ AI Parse Successful</h4>
+  <div class="grid-2" style="font-size:14px">
+    <div>Name: Maria Garcia Santos</div><div>Email: applicant@fira.com.ph</div>
+    <div>Skills: 5 extracted</div><div>Experience: 2 entries</div>
+  </div>
+  <button class="btn btn-green btn-sm" style="margin-top:12px">Fill Profile from Resume</button>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ==================== 9. FIRA ADMIN DASHBOARD ==================== -->
+<section id="fira-dash" class="screen-section">
+<div class="screen-label"><h2>FIRA ADMIN</h2><h1>FIRA Command Center</h1></div>
+<div class="screen-content">
+<div class="container">
+<div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+  <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--blue-600),var(--blue-800));display:flex;align-items:center;justify-content:center"><svg class="icon-lg" style="color:#fff" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg></div>
+  <div><h2 style="font-size:24px;font-weight:700">FIRA Command Center</h2><p style="color:var(--gray-500)">System-wide management and monitoring</p></div>
+</div>
+
+<!-- Alert Banner -->
+<div class="card" style="background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:var(--amber-500);margin-bottom:24px;display:flex;align-items:center;gap:12px;padding:16px">
+  <span style="font-size:20px">⚠️</span>
+  <div style="flex:1"><strong>Action Required:</strong> 3 pending endorsements require review</div>
+  <button class="btn btn-amber btn-sm">Review</button>
+</div>
+
+<!-- Stats -->
+<div class="grid-3" style="margin-bottom:24px">
+  <div class="card stat-card card-hover"><div class="stat-icon" style="background:var(--blue-100)"><span style="font-size:24px">🏢</span></div><div class="stat-value" style="color:var(--blue-600)">24</div><div class="stat-label">Partner Agencies</div></div>
+  <div class="card stat-card card-hover"><div class="stat-icon" style="background:var(--blue-100)"><span style="font-size:24px">🏭</span></div><div class="stat-value" style="color:var(--blue-600)">18</div><div class="stat-label">Employers</div></div>
+  <div class="card stat-card card-hover"><div class="stat-icon" style="background:var(--green-100)"><span style="font-size:24px">👥</span></div><div class="stat-value" style="color:var(--green-600)">1,247</div><div class="stat-label">Applicants</div></div>
+  <div class="card stat-card card-hover"><div class="stat-icon" style="background:var(--amber-100)"><span style="font-size:24px">📋</span></div><div class="stat-value" style="color:var(--amber-600)">156</div><div class="stat-label">Active Jobs</div></div>
+  <div class="card stat-card card-hover"><div class="stat-icon" style="background:var(--red-100)"><span style="font-size:24px">📨</span></div><div class="stat-value" style="color:var(--red-600)">3</div><div class="stat-label">Pending Endorsements</div></div>
+  <div class="card stat-card card-hover"><div class="stat-icon" style="background:var(--blue-100)"><span style="font-size:24px">📊</span></div><div class="stat-value" style="color:var(--blue-600)">89</div><div class="stat-label">Total Endorsements</div></div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active">Recent Activity</div>
+  <div class="tab">Recent Registrations</div>
+</div>
+
+<div class="card">
+  <div style="display:flex;flex-direction:column;gap:12px;font-size:14px">
+    <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--gray-100)"><span style="color:var(--amber-500)">●</span><div style="flex:1"><strong>Rosa Lim</strong> endorsed for <strong>Staff Nurse</strong></div><span class="badge badge-amber">Pending</span><span style="color:var(--gray-400);font-size:13px">2h ago</span></div>
+    <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--gray-100)"><span style="color:var(--green-500)">●</span><div style="flex:1"><strong>Jose Mendoza</strong> endorsed for <strong>Factory Worker</strong></div><span class="badge badge-green">Approved</span><span style="color:var(--gray-400);font-size:13px">5h ago</span></div>
+    <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--gray-100)"><span style="color:var(--green-500)">*●</span><div style="flex:1"><strong>Ana Reyes</strong> endorsed for <strong>Caregiver</strong></div><span class="badge badge-green">Approved</span><span style="color:var(--gray-400);font-size:13px">1d ago</span></div>
+    <div style="display:flex;align-items:center;gap:12px;padding:8px 0"><span style="color:var(--amber-500)">●</span><div style="flex:1"><strong>Carmen Garcia</strong> endorsed for <strong>Hotel Staff</strong></div><span class="badge badge-amber">Pending</span><span style="color:var(--gray-400);font-size:13px">2d ago</span></div>
+  </div>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- ==================== 10. FIRA JOBS ==================== -->
+<section id="fira-jobs" class="screen-section">
+<div class="screen-label"><h2>FIRA ADMIN</h2><h1>'Job Orders Management</h1></div>
+<div class="screen-content">
+<div class="container">
+<div class="flex-between" style="margin-bottom:24px"><h2 style="font-size:24px;font-weight:700">Job Orders</h2><button class="btn btn-primary">+ Create Job</button></div>
+<div style="display:flex;gap:12px;margin-bottom:24px"><input class="input" style="max-width:240px" placeholder="Search..."><select class="input" style="max-width:160px"><option>All Status</option><option>Open</option><option>Closed</option></select></div>
+<div class="card" style="padding:0;overflow:hidden">
+<table>
+  <thead><tr><th>Title</th><th>Category</th><th>Country</th><th>Slots</th><th>Applicants</th><th>Status</th><th>Actions</th></tr></thead>
+  <tbody>
+    <tr><td style="font-weight:500">Household Service Worker</td><td><span class="badge badge-amber">Domestic Helper</span></td><td>Morocco</td><td>10</td><td>23</td><td><span class="badge badge-green">Open</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+    <tr><td style="font-weight:500">Caregiver for Elderly Care</td><td><span class="badge badge-red">Caregiver</span></td><td>Morocco</td><td>5</td><td>12</td><td><span class="badge badge-green">Open</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+    <tr><td style="font-weight:500">Professional Nurse — Hospital</td><td><span class="badge badge-blue">Nurse</span></td><td>Morocco</td><td>15</td><td>45</td><td><span class="badge badge-green">Open</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+    <tr><td style="font-weight:500">Factory Worker — Electronics</td><td><span class="badge badge-amber">Factory</span></td><td>Morocco</td><td>20</td><td>67</td><td><span class="badge badge-green">Open</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+    <tr><td style="font-weight:500">Hotel Staff — Hospitality</td><td><span class="badge badge-amber">Hospitality</span></td><td>Morocco</td><td>8</td><td>19</td><td><span class="badge badge-green">Open</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+    <tr><td style="font-weight:500">Construction Worker</td><td><span class="badge badge-amber">Construction</span></td><td>Saudi Arabia</td><td>30</td><td>89</td><td><span class="badge badge-gray">Closed</span></td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+  </tbody>
+</table>
+</div>
+<div style="text-align:center;color:var(--gray-500);font-size:13px;margin-top:16px">Showing 1–6 of 156</div>
+</div>
+</div>
+</section>
+
+<!-- ==================== 11. FIRA APPLICANTS ==================== -->
+<section id="fira-applicants" class="screen-section">
+<div class="screen-label"><h2>FIRA ADMIN</h2><h1>Applicants Management</h1></div>
+<div class="screen-content">
+<div class="container">
+<div class="flex-between" style="margin-bottom:24px"><h2 style="font-size:24px;font-weight:700">Applicants</h2><button class="btn btn-outline btn-sm">Export CSV</button></div>
+<input class="input" style="max-width:320px;margin-bottom:24px" placeholder="Search applicants...">
+<div class="card" style="padding:0;overflow:hidden">
+<table>
+  <thead><tr><th>Name</th><th>Email</th><th>Type</th><th>Match Score</th><th>Applications</th><th>Status</th><th>Actions</th></tr></thead>
+  <tbody>
+    <tr><td style="display:flex;align-items:center;gap:8px"><div class="avatar avatar-sm" style="background:var(--blue-600)">MS</div><span style="font-weight:500">Maria SantosB1 Santos</span></td><td>maria@email.com</td><td>Domestic Helper</td><td><span class="badge badge-green">85%</span></td><td>3</td><td><span class="badge badge-green">Active</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+    <tr><td style="display:flex;align-items:center;gap:8px"><div class="avatar avatar-sm" style="background:var(--green-600)">AR</div><span style="font-weight:500">Ana Reyes</span></td><td>ana@email.com</td2><td>Caregiver</td><td><span class="badge badge-blue">72%</span></td><td>2</td><td><span class="badge badge-green">Active</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+    <tr><td style="display:flex;align-items:center;gap:8px"><div class="avatar avatar-sm" style="background:var(--amber-600)">CG</div><span style="font-weight:500">Carmen Garcia</span></td><td>carmen@email@email.com</td><td>Hotel Staff</td><td><span class="badge badge-amber">65%</span></td><td>1</td><td><span class="badge badge-green">Active</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+    <tr><td style="display:flex;align-items:center;gap:8px"><div class="avatar avatar-sm" style="background:var(--blue-500)">RL</div><span style="font-weight:500">Rosa Lim</span></td><td>rosa@email.com</td><td>Nurse</td><td><span class="badge badge-green">92%</span></td><td>4</td><td><span class="badge badge-green">Active</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+    <tr><td style="display:flex;align-items:center;gap:8px"><div class="avatar avatar-sm" style="background:var(--gray-600)">JM</div><span style="font-weight:500">Jose Mendoza</span></td><td>jose@email*!jose@email.com</td><td>Factory Worker</td><td><span class="badge badge-blue">78%</span></td><td>2</td><td><span class="badge badge-amber">Pending</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ==================== 12-26 REMAINING SCREENS (compact) ==================== -->
+<!-- Due to file size, remaining screens use abbreviated but still high-fidelity layouts -->
+
+<section id="fira-agencies" class="screen-section">
+<div class="screen-label"><h2>FIRA ADMIN</h2><h1>Partner Agencies</h1></div>
+<div class="screen-content">
+<div class="container">
+<div class="flex-between" style="margin-bottom:24px"><h2 style="font-size:24px;font-weight:700">Partner Agencies</h2><button class="btn btn-primary">+ Add Agency</button></div>
+<div class="grid-2" style="grid-template-columns:repeat(auto-fill,minmax(320px,1fr))">
+  <div class="card card-hover"><div style="display:flex;align-items:center;gap:12px;margin-bottom:16px"><div class="avatar" style="background::var(--amber-600)">MR</div><div><div style="font-weight:600">Manila Recruitment Corp</div><div style="color:var(--gray-500);font-size:13px">Local Agency</div></div></div><div style="font-size:14px;color:var(--gray-600);margin-bottom:8px">License: POEA-LB-2024-001</div><div style="font-size:14px;color:var(--gray-600);margin-bottom:8px">📍? �%📍 1235 Ayala Ave, Makati City</div><div class="flex-between"><span class="badge badge-green">Approved</span><button class="btn btn-outline btn-sm">Manage</button></div></div>
+  <div classA7A7<div class="card card-hover"><div style="display:flex;align-items:center;gap:12px;margin-bottom:16px"><div class="avatar" style="background:var(--blue-600)">IS</div><div><div style="font-weight:600">Int'l Staffing Solutions</div><div style="color:var(--gray-500);font-size:13px">International Agency</div></div></div><div style="font-size:14px;color:var(--gray-600);margin-bottom:8px">License: POEA-LB-2024-042</div><div style="font-size:14px;color:var(--gray-600);margin-bottom:8px">📍 Dubai, UAE</div><div class="flex-between"><span class="badge badge-amber">Pending</span><button class="btn btn-outline btn-sm">Manage</button></div></div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="fira-employers" class="screen-section">
+<div class="screen-label"><h2>FIRA ADMIN</h2><h1>Employers</h1></div>
+<div class="screen-content">
+<div class="container">
+<div class="flex-between" style="margin-bottom:24px"><h2 style="font-size:24px;font-weight:700">Employers</h2><button class="btn btn-primary">+ Add Employer</button></div>
+<div class="grid-2" style="grid-template-columns:repeat(auto-fill,minmax(320px,1fr))">
+  <div class="card card-hover"><div style="font-weight:600;font-size:18px;margin-bottom:4px">Al Baraka Holding</div><div style="color:var(--gray-500);font-size:13px;margin-bottom:12px">Morocco · Household Services</div><div style="font-size:14px;color:var(--gray-600);margin-bottom:4px">Contact: Ahmed Bennani</div><div style="font-size:14px;color:var(--gray-600);margin-bottom:12px">Active Jobs: 8</div><div class="flex-between"><span class="badge badge-green">Approved</span><button class="btn btn-outline btn-sm">View</button></div></div>
+  <div class="card card-hover"><div style="font-weight:600;font-size:18px;margin-bottom:4px">Rabat Healthcare Group</div><div style="color:var(--gray-500);font-size:13px;margin-bottom:12px">Morocco · Healthcare</div><div style="font-size:14px;color:var(--gray-600);margin-bottom:4px">Contact: Youssef El Amrani</div><div style="font-size:14px;color:var(--gray-600);margin-bottom:12px">Active Jobs: 5</div><div class="flex-between"><span class="badge badge-green">Approved</span><button class="btn btn-outline btn-sm">View</button></div></div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="fira-users" class="screen-section">
+<div class="screen-label"><h2>FIRA ADMIN</h2><h1>User Management</h1></div>
+<div class="screen-content">
+<div class="container">
+<h2 style="font-size:24px;font-weight:700;margin-bottom:24px">User Management</h2>
+<div class="tabs" style="margin-bottom:24px"><div class="tab active">All Users</div><div class="tab">Super Admin</div><div class="tab">Staff</div><div class="tab">Applicant</div><div class="tab">Agency</div><div class="tab">5Employer</div></div>
+<div class="card" style="padding:0;overflow:hidden">
+<table>
+  <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Approved</th><th>Actions</th></tr></thead>
+  <tbody>
+    <tr><td style="display:flex;align-items:center;gap:8px"><div class="avatar avatar-sm" style="background:var(--blue-800)">FA</div>FIRA Super Admin</td><td>admin@fira.com.ph</td><td><span class="badge badge-blue">super_admin</span></td><td><span class="badge badge-green">Active</span></td><td>✓</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+    <tr><td style="display:flex;align-items:center;gap:8px"><div class="avatar avatar-sm" style="background:var(--blue-600)">FS</div#FS</div>FIRA Staff</td><td>*staff@fira.com.ph</td><td><span class="badge badge-blue">staff</span></td><td><span class="badge badge-green">Active</span></td><2A2A✓</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+    <tr><td style="display:flex;align-items:center;gap:8px"><div class="avatar avatar-sm" style="background:var(--green-600)">MS</div>Maria Santos</td><td>applicant@fira.com.ph</td><td><span class="badge badge-green">applicant</span></td><td><span class="badge badge-green">Active</span></td><td>✓</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+    <tr><td style="display:flex;align-items:center;gap:8px"><div class="avatar avatar-sm" style="background:var(--amber-600)">JD</div>Juan Dela Cruz</td><td>agency@fira.com.ph</td><td><span class="badge badge-amber">local_agency</span></td><td><span class="badge badge-green">Active</span></td><td>✓</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+    <tr><td style="display:flex;align-items:center;gap:8px"><div class="avatar avatar-sm" style="background:var(--blue-500)">AB</div>Ahmed Bennani</td><td>employer@fira.com.ph</td><td><span class="badge badge-blue">employer</span></td><td><span class="badge badge-green">Active</span></td><td>✓</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ==================== AGENCY DASHBOARD ==================== -->
+<section id="agency-dash" class="screen-section">
+<div class="screen-label"><h2>AGENCY</h2><h1>Agency Dashboard</h1></div>
+<div class="screen-content">
+<div class="container">
+<h2 style="font-size:28px;font-weight:700;margin-bottom:4px"><span style="background:linear-gradient(90deg,#d97706,#f59e0b,#d97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Manila Recruitment Corp</span></h2>
+<p style="color:var(--gray-500);margin-bottom:24px">Welcome back, Juan!</p>
+
+<div class="grid-4" style="margin-bottom:24px">
+  <div class="card stat-card card-hover"><div class="stat-icon" style="background:var(--amber-100)"><span style="font-size:20px">📋</span></div><div class="stat-value" style="color:var(--amber-600)">12</div><div class="stat-label">Open Jobs</div></div>
+  <div class="card stat-card card-hover"><div class="stat-icon" style="background:var(--amber-100)"><span style="font-size:20px">👥</span></div><div class="stat-value" style="color:var(--amber-600)">87</div><div class="stat-label">Applicants</div></div>
+  <div class="card stat-card card-hover"><div class="stat-icon" style="background:var(--red-100)"><span style="font-size:20px">📨</span></div><div class="stat-value" style="color:var(--red-600)">5</div><div class="stat-label">Pending</div></div>
+  <div class="card stat-card card-hover"><div class="stat-icon" style="background:var(--green-100)"><span style="font-size:20px">✅</span></div><div class="stat-value" style="color:var(--green-600)">42</div><div class="stat-label">Approved</div></div>
+</div>
+
+<div class="grid-2" style="grid-template-columns:1fr 2fr;margin-bottom:24px">
+  <div class="card"><h3 style="font-weight:600;margin-bottom:16px">Pipeline Status</h3>
+    <div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>New Applications</span><span style="font-weight:600">23</span></div><div class="progress-bar"><div class="progress-bar-fill" style="width:60%;background:var(--amber-500)"></div></div></div>
+    <div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>In Review</span><span style="font-weight:600">15</span></div><div class="progress-bar"><div class="progress-bar-fill" style="width:40%;background:var(--:blue-500)"></div></div></div>
+    <div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>FIRA Approved</span><span style="font-weight:600">8</span></div><div class="progress-bar"><div class="progress-bar-fill" style="width:20%;background:var(--green-500)"></div></div></div>
+    <div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>Employer Accepted</span><span style="font-weight:600">5</span></div><div class="progress-bar"><div class="progress-bar-fill" style="width:13%;background:var(--green-500)"></div></div></div>
+  </div>
+  <div class="card"><h3 style="font-weight:600;margin-bottom:16px">Recent Endorsements</h3><div style="font-size:14px">
+    <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--gray-100)"><div class="avatar avatar-sm" style="background:var(--amber-600)">RL</div><div style="flex:1"><div style="font-weight:500">Rosa Lim</div><div style="color:var(--gray-500);font-size:13px">Staff Nurse · Morocco</div></div><span class="badge badge-amber">Pending</span></div>
+    <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--gray-100)"><div class="avatar avatar-sm" style="background:var(--amber-600)">MS</div><div style="flex:1"><div style="font-weight:500">Maria Santos</div><div style="color:var(--gray-500);font-size:13px">Household Worker · Morocco</div></div><span class="badge badge-green">Approved</span></div>
+    <div style="display:flex;align-items:center;gap:12px;padding:8px 0"><div class="avatar avatar-sm" style="background:var(--amber-600)">AR</div><div style="flex:1"><div style="font-weight:500">Ana Reyes</div><div style="color:var(--gray-500);font-size:13px">Caregiver · Morocco</div></div><span class="badge badge-green">Approved</span></div>
+  </div></div>
+</div?">
+</div>
+</div>
+</section>
+
+<!-- ==================== ATS PIPELINE ==================== -->
+<section id="agency-pipeline" class="screen-section">
+<div class="screen-label"><h2>AGENCY</h2><h1>ATS Pipeline</h1></div>
+<div class="screen-content">
+<div class="container">
+<div class="flex-between" style="margin-bottom:24px"><h2 style="font-size:24px;font-weight:700">ATS Pipeline</h2><select class="input" style="max-width:280px"><option>Household Service Worker / Nanny</option></select></div>
+<div class="grid-3" style="margin-bottom:24px">
+  <div class="card stat-card"><div class="stat-value" style="font-size:24px">12</div><div class="stat-label">Total Applicants</div></div>
+  <div class="card stat-card"><div class="stat-value" style="font-size:24px">8</div><div class="stat-label">In Progress</div></div>
+  <div class="card stat-card"><div class="stat-value" style="font-size:24px">4</div><div class="stat-label">Completed</div></div>
+</div>
+<div class="kanban">
+  <div class="kanban-col"><div class="kanban-col-header"><span style="width:8px;height:8px;border-radius:50%;background:var(--blue-500)"></span>Applied <span class="badge badge-blue">5</span></div>
+    <div class="kanban-card"><div style="font-weight:600;font-size:13px;margin-bottom:4px">Maria Santos</div><div style="color:var(--gray-500);font-size:12px;margin-bottom:8px">!Domestic Helper · +63 917...</div><div style="display:flex;gap:4px;margin-bottom:8px"><span class="badge badge-green" style="font-size:10px">85%</span><span class="badge badge-blue" style="font-size:10px">Child Care</span></div><div style="display:flex;gap:4px"><button class="btn btn-primary btn-sm" style="flex:1;font-size:11px">Next</button><button class="btn btn-outline btn-sm" style="font-size:11px">View</button></div></div>
+    <div class="kanban-card"><div style="font-weight:600;font-size:13px;margin-bottom:4px">Elena Cruz</div><div style="color:var(--gray-500);font-size:12px;margin-bottom:8px">Domestic Helper · +63 928...</div><div style="display:flex;gap:4px;margin-bottom:8px"><span class="badge badge-blue" style="font-size:10px">72%</span><span class="badge badge?badge-blue"5* badge-blue" style="font-size:10px">Cooking</span></div><div style="display:flex;gap:4px"><button class="btn btn-primary btn-sm" style="flex:1;font-size:11px">Next</button><button class="btn btn-outline btn-sm" style="font-size:11px">View</button></div></div>
+  </div>
+  <div class="kanban-col"><div class="kanban-col-header"><span style="width:8px;height:8px;border-radius:50%;background:var(--amber-500)"></span>Screening <span class="badge badge-amber">3</span></div>
+    <div class="kanban-card"><div style="font-weight:600;font-size:13px;margin-bottom:4px">Rosa Lim</div><div style="color:var(--gray-500);font-size:12px;margin-bottom:8px">Domestic Helper · +63 935...</div><div style="display:flex;gap:4px;margin-bottom:8px"><span class="badge badge-green" style="font-size:10px">91%</span></div><div style="display:flex;gap:4px"><button class="btn btn-primary btn-sm" style="flex:1;font-size:11px">Next</button><button class="btn btn-outline btn-sm" style="font-size:11px">View</button></div></div>
+  </div>
+  <div class="kanban-col"><div class="kanban-col-header"><span style="width:8px;height:8px;border-radius:50%;background:var(--green-500)"></span>Interview <span class="badge badge-green">2</span></div>
+    <div class="kanban-card"><div style="font-weight:600;font-size:13px;margin-bottom:4px">9Ana Reyes</,"><div style="color:var(--gray-500);font-size:12px;margin-bottom:8px">Caregiver · +63 918...</div><div style="display:flex;gap:4px;margin-bottom:8px"><span class="badge badge-green" style="font-size:10px">88%</span></div><div style="display:flex;gap:4px"><button class="btn btn-primary btn-sm" style="flex:1;font-size:11px">Next</button><button class="btn btn-outline btn-sm"2I" style="font?style="font-size:11px">View</button></div></div>
+  </div>
+  <div class="kanban-col"><div class="kanban-col-header"><span style="width:8px;height:8px;border-radius:50%;background:var(--blue-400)"></span>Offer <span class="badge badge-blue">1</span></div></div>
+  <div class="kanban-col"><div class="kanban-col-header"><span style="width:8px;height:8px;border-radius:50%;background:var(--green-600)"></span>Deployed <span class="badge badge-green">1</span></div></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ==================== AGENCY ENDORSEMENTS ==================== -->
+<section id="agency-endorse" class="screen-section">
+<div class="screen-label"><h2>AGENCY</h2><h1>Endorsements</h1></div>
+<div class="screen-content">
+<div class="container">
+<h2 style="font-size:24px;font-weight:700;margin-bottom:24px">Endorsements</h2>
+<div class="tabs" style="margin-bottom:24px"><div class="tab active">Pending (3)</div><div class="tab">Approved</div><div class="tab">Rejected</div></div>
+<div class="card" style="margin-bottom:12px;padding:20px"><div style="display:flex;justify-content:space-between;align-items:start"><div><div style="font-weight:600;margin-bottom:4px">Rosa Lim → Staff Nurse</div><div style="color:var(--gray-500);font-size:13px">Employer: Al Baraka Holding · Morocco</div><div style="color:var(--gray-400);font-size:13px;margin-top:4px">"Experienced nurse with excellent patient.3patient care skills..."</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px"><span class="badge badge-amber">Pending Review</span><button class="btn btn-primary btn-sm">Review</button></div></div></div>
+<div class="card" style="margin-bottom:12px;padding:20px"><div style="display:flex;justify-content:space-between;align-items:start"><div><div style="font-weight:600;margin-bottom:4px">Jose Mendoza → Factory Worker</div><div style="color:var(--gray-500);font-size:13px">Employer: Tangier Electronics · Morocco</div><div style="color:var(--5-gray-400);font-size:13px;margin-top:4px">6"Hardworking and reliable worker with 5E5 5 years experience..."</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px"><span class="badge badge-amber">Pending FIRA</span><button class="btn btn-ghost btn-sm">View</button></div></div></div>
+</div>
+</div>
+</section>
+
+<!-- ==================== EMPLOYER DASHBOARD ==================== -->
+<section id="employer-dash" class="screen-section">
+<div class="screen-label"><h2>EMPLOYER</h2><h1>Employer Dashboard</h1></div>
+<div class="screen-content">
+<div class="container">
+<h2 style="font-size:24px;font-weight:700;margin-bottom:4px">Al Baraka Holding Dashboard</h2>
+<p style="color:var(--gray-500);margin-bottom:24px">Welcome back, Ahmed!</p>
+<div class="grid-4" style="margin-bottom:24px">
+  <div class="card stat-card card-hover"><div class="stat-icon" style="background:var(--amber-100)"><span style="font-size:20px">📋</span></div><div class="stat-value" style="color:var(--amber-600)">8</div><div class="stat-label">Active Jobs</div></div>
+  <div class="card stat-card card-hover"><div class="stat-icon" style="background:var(--blue-100)"><span style="font-size:20px">👥</span></div><div class="stat-value" style="color:var(--blue-600)">64</div><div class="stat-label">Total Applicants</div></div>
+  <div class="card stat-card card-hover"><div class="stat-icon" style="background:var(--blue-100)"><span style="font-size:20px">🎯</span></div><div class="stat-value" style="color:var(--blue-600)">12</div><div class="stat-label">Interviews</div></div>
+  <div class="card stat-card card-hover"><div class="stat-icon" style="background:var(--green-100)"><span style="font-size:20px">✅</span></div><div class="stat-value" style="color:var(--green-600)">7</div><div class="stat-label">Hired</div></div>
+</div>
+<div class="grid-2" style="grid-template-columns:1fr 2fr">
+  <div class="card"><h3 style="font-weight:600;margin-bottom:16px">Top Candidates</h3>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;gap:12px"><div class="avatar" style="background:var(--green-600)">92%</div><div><div style="font-weight:500;font-size:14px">Rosa Lim</div><div style="color:var(--gray-500);font-size:13px">Staff Nurse</div></div></div>
+      <div style="display:flex;align-items:center;gap:12px"><div class="avatar" style="background:var(--blue-600)">87%</div><div><div style="font-weight:500;font-size:14px">Ana Reyes</div><div style="color:var(--gray-500);font-size:13px.6:13px">Caregiver</div></div></div>
+      <div style="display:flex;align-items:center;gap:12px"><div class="avatar" style="background:var(--amber-600)">81%</div><div><div style="font-weight:500;font-size:14px">Maria Santos</div><div style="color:var(--gray-500);font-size:13px">Household Worker</div></div></div>
+    </div>
+  </div>
+  <div class="card"><h3 style="font-weight:600;margin-bottom:16px">Recent Applications</h3><div style="font-size:14px">
+    <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--gray-100)"><div class="avatar avatar-sm" style="background:var(--green-600)">RL</div><div style="flex:1"><div style="font-weight:500">Rosa Lim — Staff Nurse</div><div style="color:var(--gray-500);font-size:13px">2 days ago</div></div><span class="badge badge-amber">Interviewing</span></div>
+    <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--gray-100)"><div class="avatar avatar-sm" style="background:var(--blue-600)">AR</div><div style="flex:1"><div style="font-weight:500">Ana Reyes — Caregiver</div><div style="color:var(--gray-500);font-size:13px">5 days ago</div></div><span class="badge badge-green">Offered</span></div>
+    <div style="display:flex;align-items:center;gap:12px;padding:8px 0"><div class="avatar avatar-sm" style="background:var(--amber-600)">MS</div><div style="flex:1"><div style="font-weight:500">Maria Santos — Household Worker</div><div style="color:var(--gray-500);font-size:13px">1 week ago</div></div><span class="badge badge-blue">Applied</span></div>
+  </div></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ==================== EMPLOYER ENDORSED ==================== -->
+<section id="employer-endorsed" class="screen-section">
+<div class="screen-label"><h2>EMPLOYER</h2><h1>Endorsed Workers</h1></div>
+<div class="screen-content">
+<div class="container">
+<h2 style="font-size:24px;font-weight:700;margin-bottom:24px">Endorsed Workers</h2>
+<div class="grid-2" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">
+  <div class="card card-hover"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div class="avatar" style="background:var(--green-600)">RL</div><div><div style="font-weight:600">Rosa Lim</div><div style="color:var(--gray-500);font-size:13px">Staff Nurse · 92% match</div></div></div><div style="font-size:14px;color:var(--gray-600);margin-bottom:12px">Agency: Manila Recruitment Corp</div><div class="flex-between"><span class="badge badge-amber">Under Review</span><button class="btn btn-outline btn-sm">View Profile</button></div></div>
+  <div class="card card-hover"><div style="display:flex;align-items:centerG:12px;margin-bottom:12px"><div class="avatar" style="background:var(--blue-600)">AR</div><div><div style="font-weight:600">Ana Reyes</div><div style="color:var(--gray-500);font-size:13px">Caregiver · 87% match</div></div></div><div style="font-size:14px;color:var(--gray-600);margin-bottom:12px">Agency: Manila Recruitment Corp</div><div class="flex-between"><span class="badge badge-green">Accepted</span><button class="btn btn-outline btn-sm">View Profile</button></div></div>
+  <div class="card card-hover"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div class="avatar" style="background:var(--amber-600)">MS</div><div><div style="font-weight:600">Maria Santos</div><div style="color:var(--gray-500);font-size:13px">Household Worker · 85% match</div></div></div><div style="font-size:14px;color:var(--gray-600);margin-bottom:12px">Agency: Manila Recruitment Corp</div><div class="flex-between"><span class="badge badge-green">Accepted</span><button class="btn btn-outline btn-sm">View Profile</button></div></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ==================== ATS PIPELINE FULL ==================== -->
+<section id="ats-pipeline" class="screen-section">
+<div class="screen-label"><h2>SHARED</h2><h1>ATS Pipeline (Full View)</h1></div>
+<div class="screen-content">
+<div class="container">
+<div class="flex-between" style="margin-bottom:24px"><h2 style="font-size:24px;font-weight:700">Applicant Tracking System</h2><div style="display:flex;gap:8px"><select class="input" style="width:280px"><option>Household Service Worker / Nanny</option><option>Professional Nurse</option></select><button class="btn btn-outline btn-sm">Manage* 2Manage Stages</button></div></div>
+<div class="grid-3" style="margin-bottom:24px">
+  <div class="card stat-card"><div class="stat-value" style="font-size:28px">12</div><div class="stat-label">Total Applicants</div></div>
+  <div class="card stat-card"><div class="stat-value" style="font-size:28px">8</div><div class="stat-label">In Progress</div></div>
+  <div class="card stat-card"><div class="stat-value" style="font-size:28*x:x:28px">4</div><div class="stat-label">Completed</div></div>
+</div>
+<div class="kanban">
+  <div class="kanban-col"><div class="kanban-col-header"><span style@style="width:10px;height:10px;border-radius:50%;background:var(--blue-500)"></span>Applied <span class="badge badge-blue">5</span></div><div class="kanban-card"><div style="font-weight:600;font-size:13px">Maria Santos</div><div style="color:var(--gray-500);font-size:12px">Domestic Helper</div></div><div class="kanban-card"><div style="font-weight:600;font-size:13px">Elena Cruz</div><div style="color:var(--gray-500);font-size:12px">Domestic Helper</div></div></div>
+  <div class="kanban-col"><div class="kanban-col-header"><span style="width:10px;height:10px;border-radius:50%;background:var(--amber-500)"></span>Screening <span class="badge badge-amber">3</span></div><div class="kanban-card"><div style="font-weight:600;font-size:13px">Rosa Lim</div><div style="color:var(--gray-500);font-size:12px">Nurse</div></div></div>
+  <div class="kanban-col"><div class="kanban-col-header"><span style="width:10px;height:10px;border-radius:50%;background:var(--green-500)"></span>Interview <span class="badge badge-green">2</span></div></div>
+  <div class="kanban-col"><div class="kanban-col-header"><span style="width:10px;height:10px;border-radius:50%;background:var(--blue-400)"></span>Offer <span class="badge badge-blue">1</span></div></div>
+  <div class="kanban-col"><div class="kanban-col-header"><span style="width:10px;height:10px;border-radius:50%;background:var(--green-600)"></span>Deployed <span class="badge badge-green">1</span></div></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ====================4!4 AI MATCHING ==================== -->
+<section id="ai-matching" class="screen-section">
+<div class="screen-label"><h2>SHARED</h2><h1>AI-Powered Matching</h1></div>
+<div class="screen-content">
+<div class="container">
+<div class="flex-between" style="margin-bottom:24px"><h2 style="font-size:24px;font-weight:700">✨ AI-Powered Matching</h2><select class="input" style="max-width:280px"><option>Staff Nurse — Hospital</option></select></div>
+<div class="card" style="margin-bottom:12px;padding:20px"><div style="display:flex;align-items:center;gap:16px"><div class="avatar avatar-lg" style="background:var(--green-600);width:56px;height:56px;font-size:18px">95%</div><div style="flex:1"><div style="font-weight:600;font-size:16px">Rosa Lim</div><div style="color:var(--gray-500);font-size:13px;margin-bottom:8px">BS Nursing · 3 years experience · PE0PRC Licensed</div><div style="display:flex;gap:4px"><span class="badge badge-green" style="font-size:11px">Patient Care ✓</span><span class="badge badge-green" style="font-size:11px">IV Therapy ✓</span><span class="badge badge-green" style="font-size:11px">BLS ✓</span></div></div><div style="display:flex;flex-direction:column;gap:4px"><button class="btn btn-primary btn-sm">View Profile</button><button class="btn btn-outline btn-sm">Shortlist</button></div></div></div>
+<div class="card" style="margin-bottom:12px;padding:20px"><div style="display:flex;align-items:center;gap:16px"><div class="avatar avatar-lg" style="background:var(--blue-600);width:56px;height:56px;font-size:18px">88%</div><div style="flex:1"><div style="font-weight:600;font-size:16px">Ana Reyes</div><div style="color:var(--gray-500);font-size:13px;margin-bottom:8px">Care-!2Caregiving Cert · 2 years · First Aid</div><div style="display:flex;gap:4px"><span class="badge badge-green" style="font-size:11px">E@E1E5*E1Elderly Care ✓</span><spanB0<span class="badge badge-green" style="font-size:11px">EFirst Aid ✓4 First Aid ✓</span><span class="badge badge-redF3F badge-red" style="font-size:11px">IV Therapy ✗</span></div></div><div style="display:flex;flex-direction:column;gap:4px"><button class="btn btn-primary btn-sm">View Profile</button><button class="btn btn-outline btn-sm">Shortlist</button></div></div></div>
+</div>
+</div>
+</section>
+
+<!-- ==================== RESUME ENHANCEMENT ==================== -->
+<section id="resume-enhance" class="screen-section">
+<div class="screen-label"><h2>SHARED</h2><h1>Resume Enhancement</h1></div>
+<div class="screen-content">
+<div class="container">
+<h2 style="font-size:24px;font-weight:700;margin-bottom:24px">✨ AI Resume Enhancement</h2>
+<div class="grid-2" style="grid-template-columns:1fr 1fr;margin-bottom:24px">
+  <div class="card" style="border-color:var(--gray-300)"><h3 style="font-weight:600;margin-bottom:12px;color:var(--gray-500)">Original</h3><div style="font-sizeC3font-size:14px;color:var(--gray-600);line-height:1.7"><p>WorkA7Worked as a nurse at a hospital in Manila. Took care of patients and gave medicine.</p><p style="margin-top:8px">Skills: nursing, patient care</p></div></div>
+  <div class="card" style="border-color:var(--green-500)"><h3 style="font-weight:600;margin-bottom:12px;color:var(--green-600)">Enhanced</h3><div style="font-size:14px;line2A14px;line-height:1.7"><p>5<span style="background:var(--green-100)">6E<span style="background:var(--green-100);padding:0 2px;border-radius:2px">Served as a Registered Nurse</span> at St. Luke's Medical=3Luke's Medical Center, Manila. <span style="background:var(--green-100);padding:0 2px;border-radius:2px">Provided comprehensive patient care</span> and <span style="background:var(--green-100);padding:0 2px;border-radius:2px">administered prescribed medications</span> with 100% accuracy.</p><p styleC0<p style="margin-top:8px">Skills: <span style="background:var(--green-100);padding:0 2px;border-radius:2px">Critical Care Nursing</span>, <span style<0span style="background:var(--green-100);padding:0 2px;border-radius<0border-radius:2px">Patient Assessment</span>, <spanG3span style="background:var(-F8var(--green-100);padding:0 2px;border-radius:2px">IV Therapy</span>, Patient Care</p></div></div>
+</div>
+<div style="display:flex;gap:12px"><button class="btn btn-green">Accept All Changes</button><button class="btn btn-outline">Reject</button></div>
+</div>
+</div>
+</section>
+
+<!-- ==================== NOTIFICATIONS ==================== -->
+<section id="notifications" class="screen-section">
+<div class="screen-label"><h2>SHARED</h2><h1>Notifications</h1></div>
+<div class="screen-content">
+<div class="container" style="max-width:640px">
+<div class="flex-between" style="margin-bottom:24px"><h2 style="font-size:24px;font-weight:700">Notifications</h2><button class="btn btn-ghost btn-sm">Mark All Read</button></div>
+<div class="tabs" style="margin-bottom:24px"><div class="tab active">All</div><div class="tab">Unread</div><div class="tab">M&3Mentions</div></div>
+<div class="card" style="margin-bottom:8px;display:flex;gap:12px;padding:16px;background:var(--blue-50)"><span style="font-size:18px">ℹ️</span><div style="flex:1"><div style="font-weight:600;font-size:14px">Welcome!3! Welcome to FIRA!</div><div style="color:@9color:var(--gray-500);font-size:13px">Thank you for registering. Browse available jobs.</div></4G</div><span style="color:var(--gray-400);font-size:12px">2h</span></div>
+<div class="card" style="margin-bottom:8px;display:flex;gap:12px;padding:16px;background:var(--blue-50)"><span style="font-size:18px">ℹ️</span><div style="flex:1"><div style="font-weight:600;font-size:14px">New Jobs Available</div><div style="color:var(--gray-500);font-size4Gfont-size:13px">5 new job openings in Morocco. Check them out!</div></div><span style="color:var(--gray-400);font-size:12px">5h</span<:12px">5h</span></div>
+<div class="card" style="margin-bottom:8px;display:flex;gap:12px;padding:16px"><span style="font-size:18px">✅</span><div style="flex:1"><div style="font-weight:500;font-size:14px">Application Viewed</div><div style="color:var(--gray-500);font-size:13px">Your application for Household Worker was viewed by the employer.</div></div><span style="color:var(--gray-400);font-size:12px">1d</span></div>
+<div class="card" style="margin-bottom:8px;display:flex;gap:12px;padding:16px"><span style="font-size:18px">⚠️</span><div style="flex:1"><div style,="font-weight:500;font-size:14px">Interview Scheduled</div><div style="color:var(--gray-500);font-size:13px">Caregiver interview on Sep 15, 10:00 AM (PHT).</div></div><span style="color:var(--gray-400);font-size:12px">2d</span></div>
+</div>
+</div>
+</section>
+
+<!-- ==================== SETTINGS ==================== -->
+<section id="settings" class="screen-section">
+<div class="screen-label"><h2<2>SHARED</h2><h1>Settings</h1></div>
+<div class="screen-content">
+<div class="container" style8" style="max-width:640pxC7640px">
+<h2 style="font-size:24px;font-weight:700;margin-bottom:24px">Settings</h2>
+<div class="tabs" style="margin-bottom:24?9margin-bottom:24px"><div class="tab active">Profile</div><div class="tab">Security</div><div class="tab">Preferences</div></div>
+<div class="card" style="margin-bottom:16px">
+  <div2@div style="display:flex;align-items:center;gap:16px;margin-bottom:24px"><div class=9class="avatar avatar-lg" style="background:var(--blue-600)">MS</div><div><div style9Bstyle="font-weight:600">Maria Santos</div><div style9Astyle="color:var(--gray-500);font-size:14px">applicant@fira.com.ph</div></div></div>
+8;  <div class="form-row"><label class="form-label">Name</label><input class="input" value="Maria Santos"></div>
+:8  <div class="form-row"><label class="form-label">Phone</label><input class="input" value="+63 917 123 4567"></div>
+  <button class="btn btn-primary">Save Changes</button>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ==================== CMS ==================== -->
+<section id="cms" class="screen-section">
+<div class="screen-label"><h2>SHARED</h2><h1>CMS</h1></div>
+<div class="screen-content">
+<div class="container">
+<h2 style="font-size:24px;font-weight:700;margin-bottom:24px">Content Management</h2>
+<div class="tabs" style="margin-bottom:24px"><div class="tab active">Pages</div><div class="tab">FAQs</div><div class="tab">Testimonials</div><div class="tab">Social Media</div></div>
+<div class="card" style="padding:0;overflow:hidden">
+<table>
+  <thead><tr><th>Title</th><th>Slug</th><th>Status</th><th>Last Updated</th><th>Actions</th></tr></thead>
+  <tbody>
+    <tr><td style="font-weight:500">About FIRA</td><td>about-fira</td><td><span class="badge badge-green">Published</span></td><td>Aug 28, 2025</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+    <tr><td style7Btd style="font-weight:5Q5font-weight:500">Our Services</td><td>our-services</td><td><span class="badge badge-green">Published</span></td><td>Aug 28, 2025</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+    <tr><td style="font-weight:500">Terms of Service</td><td>terms</td><td><span class="badgeD9badge-green">Published</span></td><td>Aug 15, 202G52E15, 2025</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+    <tr><td style="font-weight:;9font-weight:500">Data Privacy Policy</td><td>privacy</td><td><span class="badge badge-amber">Draft</span></td><td>Aug 10, 2025</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ==================== REPORTS ==================== -->
+<section id="reports" class="screen-section">
+<div class="screen-label"><h2>SHARED</h2><h1>Reports &amp; Analytics</"1></div>
+<div class="screen-content">
+<div class="container">
+<div class="flex-between" style="margin-bottom:24px"><h2 style="font-size:24px;font-weight:700">Reports &amp; Analytics</h2"><div style="display:flex;gap:8B8gap:8px"><button class="btn btn-outline btn-sm">Last 30 Days</button><button class="btn btn-outline btn-sm">Export PDF</button></div></div>
+<div class="grid-4" style="margin-bottom:32px">
+  <div class="card stat-card card-hover"><div class="stat-value" style="font-size:28px;color:var(--green-600)">342</div><div class="5@2I5*2I1<div class="stat-label">Total Placements</div></div>
+  <div class="card stat2,1 stat-card card-hover"><div class="stat-value"A7stat-value" style="font-size:28px;color:var(-G2var(--blue-600)">45</div><div2I2I<div class="stat-label">Avg Processing (days)</div></div>
+  <div9I<div class="card stat-card card-hover"><div class="stat-value"5Fstat-value" style="font-size:283928px;color:2I9)color:var(--green-600)">94%</div><div class="stat-label">Success Rate</div></div>
+  <div2G(div class="card stat-card card-hover"><div7+7div class="stat-value" style="font-size:281I28px;color:var(--blue-600)">128</div><div class="stat-label">Active Deployments</div></div>
+</div>
+<div class="grid-3" style="margin-bottom:24px">
+  <div class="chart-placeholder"><span>📊 Placements by Month</span></div>
+  <div class="chart-placeholder"><span>🌍 Top Destinations</span></div>
+  <div class="chart-placeholder"><span>📈 Processing Time Trend</span></div>
+</div>
+<div style="display:flex;gap:8px"><button class="btn btn-outline btn-sm">Export PDF</button><button class="btn btn-outline btn-sm">Export CSV</button><button class="btn btn-outline btn-sm">Export Excel</button></div>
+</div>
+</div>
+</section>
+
+</body>
+</html>
