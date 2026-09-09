@@ -18,6 +18,7 @@ import {
   UserPlus,
   CheckCircle2,
   CircleDot,
+  BarChart3,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'

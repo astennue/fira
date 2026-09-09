@@ -1,0 +1,163 @@
+
+  <!-- ==================== CATEGORY: APPLICANT ==================== -->
+  <section class="screen" id="scr-applicant" aria-labelledby="h-appcat">
+    <div class="reveal">
+      <div class="screen-meta"><span class="screen-index">20–27</span><span class="screen-category">Category</span></div>
+      <h2 id="h-appcat">Applicant Workspace</h2>
+      <p class="screen-desc">Worker-facing screens: dashboard with profile completion and recommendations, full profile, 5-step edit wizard, applications tracking, resume AI parse, saved jobs, and messaging.</p>
+    </div>
+
+    <!-- 20 · Applicant Dashboard -->
+    <div class="screen reveal" id="scr-app-dashboard" aria-labelledby="h-appdash">
+      <div class="screen-meta"><span class="screen-index">20</span><span class="screen-category">Applicant</span></div>
+      <h2 id="h-appdash" style="font-size:20px;">Applicant Dashboard</h2>
+      <p class="screen-desc">Welcome banner with profile-completion progress, quick stats, recent applications, and AI-recommended jobs (matches applicant-dashboard.tsx).</p>
+      <div class="screen-frame">
+        <div class="frame-note"><span class="dot"></span>gradient welcome banner · animated counters · 2-col grid</div>
+        <div class="app-shell">
+          <aside class="app-side">
+            <div class="side-user"><span class="avatar av-blue">MS</span><div><div style="font-size:13.5px; font-weight:700;">Maria Santos</div><div class="small muted">Applicant</div></div></div>
+            <nav class="side-nav" aria-label="Applicant navigation">
+              <button class="side-link active" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Dashboard</button>
+              <button class="side-link" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M7 20.66V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.66"/></svg>My Profile</button>
+              <button class="side-link" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>Browse Jobs</button>
+              <button class="side-link" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4Z"/></svg>Applications<span class="s-badge">3</span></button>
+              <button class="side-link" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>Saved Jobs<span class="s-badge">8</span></button>
+              <button class="side-link" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>Messages<span class="s-badge">2</span></button>
+            </nav>
+          </aside>
+          <div class="app-content">
+            <div class="card" style="background:linear-gradient(135deg,#1e3a8a,#2563eb 55%,#0891b2); border:none; color:#fff; margin-bottom:18px; padding:24px; position:relative; overflow:hidden;">
+              <div style="position:absolute; inset:0; background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.25) 1px, transparent 0); background-size:22px 22px; opacity:.3;" aria-hidden="true"></div>
+              <div class="row-between" style="position:relative; flex-wrap:wrap; gap:14px;">
+                <div>
+                  <p style="font-size:13px; color:#93c5fd; margin-bottom:2px;">Magandang umaga ☀️</p>
+                  <h3 style="font-size:22px; font-weight:800; letter-spacing:-.02em;">Kumusta, Maria Santos!</h3>
+                  <p style="font-size:13px; color:#bfdbfe; margin-top:4px;">Your profile is <strong>85% complete</strong> — add your passport details to unlock employer endorsements.</p>
+                  <div class="progress" style="width:280px; margin-top:10px; background:rgba(255,255,255,.2);"><span style="width:85%"></span></div>
+                </div>
+                <button class="btn btn-white" type="button">Complete Profile →</button>
+              </div>
+            </div>
+            <div class="stat-grid">
+              <div class="card stat-card card-pad"><div class="row-between"><div><div class="stat-label">Active Applications</div><div class="stat-value" data-count="3">0</div></div><span class="stat-icon grad-blue"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4Z"/></svg></span></div><span class="stat-trend" style="color:var(--success-fg);">↑ 1 this week</span></div>
+              <div class="card stat-card card-pad"><div class="row-between"><div><div class="stat-label">Profile Views</div><div class="stat-value" data-count="24">0</div></div><span class="stat-icon grad-green"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></span></div><span class="stat-trend" style="color:var(--success-fg);">↑ 12% this week</span></div>
+              <div class="card stat-card card-pad"><div class="row-between"><div><div class="stat-label">Saved Jobs</div><div class="stat-value" data-count="8">0</div></div><span class="stat-icon grad-amber"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></span></div><span class="stat-trend muted">3 closing soon</span></div>
+              <div class="card stat-card card-pad"><div class="row-between"><div><div class="stat-label">Avg Match Score</div><div class="stat-value" data-count="88" data-suffix="%">0</div></div><span class="stat-icon grad-slate"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg></span></div><span class="stat-trend" style="color:var(--success-fg);">AI matching</span></div>
+            </div>
+            <div class="dash-grid">
+              <div class="card">
+                <div class="card-head"><div><div class="card-title">Recent Applications</div><div class="card-sub">Status updates from agencies and FIRA</div></div><button class="btn btn-ghost btn-sm" type="button">View all →</button></div>
+                <div style="padding:6px 20px;">
+                  <div class="list-row">
+                    <span class="avatar av-blue avatar-sm">CM</span>
+                    <div class="lr-main"><div class="lr-title">Professional Nurse — Hospital</div><div class="lr-sub">Casablanca Medical Center · applied 3 days ago</div></div>
+                    <span class="badge badge-info"><span class="bdot"></span>Pending FIRA Review</span>
+                  </div>
+                  <div class="list-row">
+                    <span class="avatar av-teal avatar-sm">RH</span>
+                    <div class="lr-main"><div class="lr-title">Caregiver for Elderly Care</div><div class="lr-sub">Rabat Healthcare · applied 1 week ago</div></div>
+                    <span class="badge badge-warning"><span class="bdot"></span>Pending Documents</span>
+                  </div>
+                  <div class="list-row">
+                    <span class="avatar av-amber avatar-sm">MR</span>
+                    <div class="lr-main"><div class="lr-title">Hotel Staff — Hospitality</div><div class="lr-sub">Marrakech Resort Group · applied 2 weeks ago</div></div>
+                    <span class="badge badge-danger"><span class="bdot"></span>Rejected</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-head"><div><div class="card-title">Recommended For You</div><div class="card-sub">AI-matched to your skills</div></div><span class="badge badge-primary">AI</span></div>
+                <div style="padding:6px 20px;">
+                  <div class="list-row">
+                    <span class="avatar av-green avatar-sm">RL</span>
+                    <div class="lr-main"><div class="lr-title">Staff Nurse — ICU</div><div class="lr-sub">Rabat · <span class="mono" style="color:var(--primary)">$1,400/mo</span></div></div>
+                    <span class="kan-score">94%</span>
+                  </div>
+                  <div class="list-row">
+                    <span class="avatar av-blue avatar-sm">CM</span>
+                    <div class="lr-main"><div class="lr-title">Clinic Nurse — Pediatrics</div><div class="lr-sub">Casablanca · <span class="mono" style="color:var(--primary)">$1,250/mo</span></div></div>
+                    <span class="kan-score">87%</span>
+                  </div>
+                  <div class="list-row">
+                    <span class="avatar av-teal avatar-sm">TH</span>
+                    <div class="lr-main"><div class="lr-title">Health Educator</div><div class="lr-sub">Tangier · <span class="mono" style="color:var(--primary)">$950/mo</span></div></div>
+                    <span class="kan-score">81%</span>
+                  </div>
+                </div>
+                <div class="card-foot"><button class="btn btn-outline btn-sm" type="button" style="width:100%;">See all recommendations</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 21 · Applicant Profile -->
+    <div class="screen reveal" id="scr-app-profile" aria-labelledby="h-appprof">
+      <div class="screen-meta"><span class="screen-index">21</span><span class="screen-category">Applicant</span></div>
+      <h2 id="h-appprof" style="font-size:20px;">Applicant Profile</h2>
+      <p class="screen-desc">Comprehensive profile: personal, passport/travel, education, experience, skills, documents — mirrors applicant-profile-page.tsx sections.</p>
+      <div class="screen-frame">
+        <div class="frame-note"><span class="dot"></span>section cards · completion badges · document chips</div>
+        <div class="app-content" style="margin:0;">
+          <div class="app-topbar"><div><div class="crumb">Applicant / <span style="color:var(--fg)">Profile</span></div><h3>My Profile</h3></div>
+            <div class="row"><button class="btn btn-outline btn-sm" type="button">Download CV</button><button class="btn btn-primary btn-sm" type="button">Edit Profile</button></div>
+          </div>
+          <div class="stack-14">
+            <div class="card card-pad row" style="gap:16px; flex-wrap:wrap;">
+              <span class="avatar av-blue" style="width:64px; height:64px; font-size:22px;">MS</span>
+              <div style="flex:1; min-width:220px;">
+                <div class="row" style="gap:10px; flex-wrap:wrap;"><h4 style="font-size:19px; font-weight:800;">Maria Garcia Santos</h4><span class="badge badge-success"><span class="bdot"></span>Profile Complete</span></div>
+                <p class="small muted" style="margin-top:3px;">Registered Nurse · 4 years experience · 📍 Quezon City, Philippines</p>
+                <div class="row" style="gap:14px; margin-top:8px; flex-wrap:wrap;" class="small muted"><span class="small muted">📧 maria.santos@gmail.com</span><span class="small muted">📱 +63 917 123 4567</span></div>
+              </div>
+              <div style="text-align:center;"><div class="score-ring" style="--val:85; --ring-color:#2563eb; width:64px; height:64px; font-size:15px;"><span>85%</span></div><div class="small muted" style="margin-top:4px;">Profile</div></div>
+            </div>
+            <div class="grid-2">
+              <div class="card">
+                <div class="card-head"><div class="card-title">Passport &amp; Travel Documents</div><span class="badge badge-success"><span class="bdot"></span>Verified</span></div>
+                <div style="padding:16px 20px;" class="stack-8 small">
+                  <div class="row-between"><span class="muted">Passport No.</span><strong class="mono">P1234567A</strong></div>
+                  <div class="row-between"><span class="muted">Valid Until</span><strong>Mar 12, 2031</strong></div>
+                  <div class="row-between"><span class="muted">OEC Status</span><span class="badge badge-warning"><span class="bdot"></span>Expiring</span></div>
+                  <div class="row-between"><span class="muted">OWWA Membership</span><span class="badge badge-success"><span class="bdot"></span>Active</span></div>
+                  <div class="row-between"><span class="muted">Medical (GAMCA)</span><span class="badge badge-success"><span class="bdot"></span>Cleared · Jan 2025</span></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-head"><div class="card-title">Education</div><button class="btn btn-ghost btn-sm" type="button" aria-label="Add education">+ Add</button></div>
+                <div style="padding:8px 20px 12px;">
+                  <div class="list-row"><span class="avatar av-teal avatar-sm">BS</span><div class="lr-main"><div class="lr-title">BS Nursing</div><div class="lr-sub">University of the Philippines Manila · 2016–2020</div></div></div>
+                  <div class="list-row"><span class="avatar av-blue avatar-sm">PR</span><div class="lr-main"><div class="lr-title">PRC Nursing License #0123456</div><div class="lr-sub">Passed July 2020 · valid until 2028</div></div></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-head"><div class="card-title">Work Experience</div><button class="btn btn-ghost btn-sm" type="button" aria-label="Add experience">+ Add</button></div>
+                <div style="padding:8px 20px 12px;">
+                  <div class="list-row"><span class="avatar av-green avatar-sm">SG</span><div class="lr-main"><div class="lr-title">Staff Nurse — Medical Ward</div><div class="lr-sub">St. Luke's Medical Center · 2021–Present · 3 yrs</div></div></div>
+                  <div class="list-row"><span class="avatar av-amber avatar-sm">VC</span><div class="lr-main"><div class="lr-title">Volunteer Nurse — Vaccination Drive</div><div class="lr-sub">Quezon City Health Dept · 2020–2021 · 1 yr</div></div></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-head"><div class="card-title">Skills &amp; Languages</div><button class="btn btn-ghost btn-sm" type="button" aria-label="Add skill">+ Add</button></div>
+                <div style="padding:16px 20px;" class="stack-14">
+                  <div class="job-tags"><span class="chip chip-active">Patient Assessment</span><span class="chip chip-active">IV Therapy</span><span class="chip chip-active">Medication Administration</span><span class="chip">Wound Care</span><span class="chip">BLS / CPR Certified</span></div>
+                  <div class="stack-8 small">
+                    <div class="row-between"><span>English</span><span class="badge badge-success">Fluent</span></div>
+                    <div class="row-between"><span>Filipino / Tagalog</span><span class="badge badge-success">Native</span></div>
+                    <div class="row-between"><span>Arabic</span><span class="badge badge-warning">Basic</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><div class="card-title">Documents</div><button class="btn btn-outline btn-sm" type="button">Upload Document</button></div>
+              <div style="padding:14px 20px;" class="job-tags">
+                <span class="chip">📄 resume-maria-santos.pdf</span><span class="chip">📄 PRC-license.jpg</span><span class="chip">📄 passport-scan.pdf</span><span class="chip">📄 NBI-clearance.pdf</span><span class="chip">📄 medical-gamca.pdf</span><span class="chip">📄 training-cert-dos.pdf</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

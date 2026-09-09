@@ -1,0 +1,91 @@
+
+    <!-- 26 · Messages -->
+    <div class="screen reveal" id="scr-messages" aria-labelledby="h-msg">
+      <div class="screen-meta"><span class="screen-index">26</span><span class="screen-category">Applicant</span></div>
+      <h2 id="h-msg" style="font-size:20px;">Messages — Worker ↔ Agency ↔ FIRA</h2>
+      <p class="screen-desc">Two-pane chat with conversation list, unread badges, and input with send state. This replaces the current "Coming Soon" stub as the target design.</p>
+      <div class="screen-frame">
+        <div class="frame-note"><span class="dot"></span>future: realtime via socket.io mini-service</div>
+        <div class="chat-shell">
+          <aside class="chat-list">
+            <div class="chat-list-head"><div class="input-icon-wrap">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="search" class="input" placeholder="Search conversations…" aria-label="Search conversations" style="height:36px;"></div></div>
+            <div class="chat-items" role="list">
+              <button class="chat-item active" type="button" role="listitem">
+                <span class="avatar av-blue avatar-sm">MR</span>
+                <span style="flex:1; min-width:0;"><span class="ci-name">Manila Recruitment Corp <time>2m</time></span><span class="ci-prev">Good news! Your employer interview is…</span></span>
+                <span class="ci-unread" aria-label="2 unread messages">2</span>
+              </button>
+              <button class="chat-item" type="button" role="listitem">
+                <span class="avatar av-amber avatar-sm">FA</span>
+                <span style="flex:1; min-width:0;"><span class="ci-name">FIRA — Ana (Welfare) <time>1h</time></span><span class="ci-prev">Please upload your TESDA NC II cert…</span></span>
+              </button>
+              <button class="chat-item" type="button" role="listitem">
+                <span class="avatar av-teal avatar-sm">RH</span>
+                <span style="flex:1; min-width:0;"><span class="ci-name">Rabat Healthcare HR <time>1d</time></span><span class="ci-prev">We received your application for…</span></span>
+              </button>
+              <button class="chat-item" type="button" role="listitem">
+                <span class="avatar av-green avatar-sm">AB</span>
+                <span style="flex:1; min-width:0;"><span class="ci-name">Al Baraka Holding <time>3d</time></span><span class="ci-prev">Thank you for your interest.</span></span>
+              </button>
+            </div>
+          </aside>
+          <div class="chat-main">
+            <div class="chat-head">
+              <span class="avatar av-blue">MR</span>
+              <div style="flex:1;"><div style="font-weight:700; font-size:14px;">Manila Recruitment Corp</div><div class="small muted" style="display:flex; align-items:center; gap:5px;"><span style="width:7px;height:7px;border-radius:999px;background:var(--success-fg);display:inline-block;"></span>Online — replies in ~10 min</div></div>
+              <button class="btn btn-ghost btn-sm btn-icon" type="button" aria-label="Conversation info">ⓘ</button>
+            </div>
+            <div class="chat-msgs">
+              <div class="msg msg-them"><div class="bubble">Magandang araw, Maria! This is JL from Manila Recruitment Corp regarding your application for <strong>Professional Nurse — Hospital</strong> at Casablanca Medical Center.</div><time>Oct 10 · 9:14 AM</time></div>
+              <div class="msg msg-them"><div class="bubble">The employer wants to schedule a video interview. Are you available <strong>Thursday, Oct 16, 3:00 PM</strong> Manila time?</div><time>Today · 8:02 AM</time></div>
+              <div class="msg msg-me"><div class="bubble">Hi! Yes, Thursday 3PM works. What platform po?</div><time>Today · 8:31 AM</time></div>
+              <div class="msg msg-them"><div class="bubble">Great news! 🎉 Google Meet — we'll send the link 30 minutes before. Please prepare: PRC license, passport, and a stable connection. Wishing you luck!</div><time>Today · 8:35 AM</time></div>
+            </div>
+            <div class="chat-input">
+              <button class="btn btn-ghost btn-icon" type="button" aria-label="Attach file">📎</button>
+              <input class="input" placeholder="Type your message…" aria-label="Type your message">
+              <button class="btn btn-primary btn-icon" type="button" aria-label="Send message"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 27 · Notifications -->
+    <div class="screen reveal" id="scr-notifications" aria-labelledby="h-notif">
+      <div class="screen-meta"><span class="screen-index">27</span><span class="screen-category">Applicant</span></div>
+      <h2 id="h-notif" style="font-size:20px;">Notifications Center</h2>
+      <p class="screen-desc">Grouped by recency with unread dots, type badges, and empty state per brandkit spec.</p>
+      <div class="screen-frame">
+        <div class="frame-note"><span class="dot"></span>aria-live region · mark-all-read action</div>
+        <div style="padding:20px;" class="stack-14">
+          <div class="row-between"><strong style="font-size:15px;">Notifications <span class="badge badge-danger" style="margin-left:6px;">3 new</span></strong><button class="btn btn-ghost btn-sm" type="button">Mark all as read</button></div>
+          <div class="card" style="padding:4px 0;">
+            <div class="list-row" style="padding:13px 20px; background:var(--primary-softer);">
+              <span class="stat-icon grad-blue" style="width:34px;height:34px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4Z"/></svg></span>
+              <div class="lr-main"><div class="lr-title">Interview scheduled 🎯</div><div class="lr-sub">Casablanca Medical Center interview — Thu, Oct 16, 3:00 PM via Google Meet</div></div>
+              <span class="badge badge-info"><span class="bdot"></span>Application</span><span class="badge badge-primary" style="min-width:fit-content;">New</span>
+            </div>
+            <div class="list-row" style="padding:13px 20px; background:var(--primary-softer);">
+              <span class="stat-icon grad-amber" style="width:34px;height:34px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+              <div class="lr-main"><div class="lr-title">Document needed</div><div class="lr-sub">Rabat Healthcare requested your TESDA NC II certificate</div></div>
+              <span class="badge badge-info"><span class="bdot"></span>Documents</span><span class="badge badge-primary">New</span>
+            </div>
+            <div class="list-row" style="padding:13px 20px; background:var(--primary-softer);">
+              <span class="stat-icon grad-green" style="width:34px;height:34px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg></span>
+              <div class="lr-main"><div class="lr-title">Profile viewed</div><div class="lr-sub">Al Baraka Holding viewed your profile — 96% match for Nanny role</div></div>
+              <span class="badge badge-info"><span class="bdot"></span>Matching</span><span class="badge badge-primary">New</span>
+            </div>
+            <div class="list-row" style="padding:13px 20px;">
+              <span class="stat-icon grad-slate" style="width:34px;height:34px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+              <div class="lr-main"><div class="lr-title">Application status update</div><div class="lr-sub">Nurse application moved to Pending FIRA Review — 2 days ago</div></div>
+              <span class="badge badge-info"><span class="bdot"></span>Application</span>
+            </div>
+          </div>
+          <div class="card"><div class="empty-state"><svg class="es-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><div class="es-title">You're all caught up</div><p class="es-desc">Older notifications beyond 30 days are archived automatically.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>

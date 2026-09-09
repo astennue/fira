@@ -1,0 +1,143 @@
+
+    <!-- 22 · Profile Edit Wizard -->
+    <div class="screen reveal" id="scr-profile-edit" aria-labelledby="h-pedit">
+      <div class="screen-meta"><span class="screen-index">22</span><span class="screen-category">Applicant</span></div>
+      <h2 id="h-pedit" style="font-size:20px;">Profile Edit — 5-Step Wizard</h2>
+      <p class="screen-desc">Multi-step form (applicant-profile-edit-page.tsx): resume-first parsing, then personal, education/experience, skills, and travel/documents steps.</p>
+      <div class="screen-frame">
+        <div class="frame-note"><span class="dot"></span>current/done step states · date inputs via popover calendar</div>
+        <div style="padding:24px;">
+          <div class="wizard-steps" role="list" aria-label="Profile completion steps">
+            <div class="w-step done" role="listitem"><span class="w-dot">✓</span><span class="w-lbl">Resume &amp; Personal</span></div><span class="w-connector done"></span>
+            <div class="w-step done" role="listitem"><span class="w-dot">✓</span><span class="w-lbl">Education &amp; Experience</span></div><span class="w-connector done"></span>
+            <div class="w-step current" role="listitem"><span class="w-dot">3</span><span class="w-lbl">Skills &amp; Languages</span></div><span class="w-connector"></span>
+            <div class="w-step" role="listitem"><span class="w-dot">4</span><span class="w-lbl">Travel &amp; Medical</span></div><span class="w-connector"></span>
+            <div class="w-step" role="listitem"><span class="w-dot">5</span><span class="w-lbl">Documents &amp; References</span></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><div class="card-title">Step 3 · Skills, Languages &amp; Certifications</div><div class="card-sub">Drag to reorder — top skills get weighted higher in AI matching</div></div></div>
+            <div style="padding:20px;" class="stack-14">
+              <div class="field"><label class="label" for="sk-add">Add a skill</label>
+                <div class="row" style="gap:10px;"><input id="sk-add" class="input" placeholder="e.g. IV Therapy, Elderly Care…"><button class="btn btn-primary" type="button">Add</button></div>
+                <span class="hint">Press Enter to add quickly</span></div>
+              <div class="grid-2">
+                <div class="stack-14">
+                  <div class="card card-pad row-between"><div class="row" style="gap:10px;"><span class="muted" aria-hidden="true">⠿</span><div><div style="font-weight:600; font-size:14px;">Patient Assessment</div><div class="small muted">Expert · 4 years</div></div></div><span class="badge badge-primary">Primary</span></div>
+                  <div class="card card-pad row-between"><div class="row" style="gap:10px;"><span class="muted" aria-hidden="true">⠿</span><div><div style="font-weight:600; font-size:14px;">IV Therapy</div><div class="small muted">Expert · 3 years</div></div></div><span class="badge badge-primary">Primary</span></div>
+                  <div class="card card-pad row-between"><div class="row" style="gap:10px;"><span class="muted" aria-hidden="true">⠿</span><div><div style="font-weight:600; font-size:14px;">Wound Care</div><div class="small muted">Intermediate · 2 years</div></div></div></div>
+                </div>
+                <div class="stack-14">
+                  <div class="field"><label class="label" for="lang-1">English Proficiency</label><select id="lang-1" class="select"><option>Native</option><option selected>Fluent</option><option>Conversational</option><option>Basic</option></select></div>
+                  <div class="field"><label class="label" for="lang-2">Arabic Proficiency</label><select id="lang-2" class="select"><option>Fluent</option><option>Conversational</option><option selected>Basic</option><option>None</option></select></div>
+                  <div class="field"><label class="label" for="cert-1">Certifications</label><input id="cert-1" class="input" value="BLS/CPR — Philippine Heart Center, 2023"></div>
+                </div>
+              </div>
+            </div>
+            <div class="card-foot row-between">
+              <button class="btn btn-ghost" type="button">← Back</button>
+              <div class="row"><button class="btn btn-outline" type="button">Save Draft</button><button class="btn btn-primary" type="button">Continue →</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 23 · Applications Tracking -->
+    <div class="screen reveal" id="scr-applications" aria-labelledby="h-appt">
+      <div class="screen-meta"><span class="screen-index">23</span><span class="screen-category">Applicant</span></div>
+      <h2 id="h-appt" style="font-size:20px;">My Applications — Status Tracking</h2>
+      <p class="screen-desc">Pipeline tracker per application with the 14 semantic statuses from BRANDING-KIT §4.2.</p>
+      <div class="screen-frame">
+        <div class="frame-note"><span class="dot"></span>semantic colors only: green/red/amber/blue/gray</div>
+        <div style="padding:22px;" class="stack-14">
+          <div class="card">
+            <div class="card-head row-between"><div class="job-co"><span class="co-logo av-blue">CM</span><div><div class="card-title">Professional Nurse — Hospital</div><div class="card-sub">Casablanca Medical Center · applied Oct 3, 2025</div></div></div><span class="badge badge-info badge-lg"><span class="bdot"></span>Pending FIRA Review</span></div>
+            <div style="padding:16px 20px 20px;">
+              <div class="wizard-steps" aria-label="Application progress">
+                <div class="w-step done"><span class="w-dot">✓</span><span class="w-lbl">Applied</span></div><span class="w-connector done"></span>
+                <div class="w-step done"><span class="w-dot">✓</span><span class="w-lbl">Screening</span></div><span class="w-connector done"></span>
+                <div class="w-step done"><span class="w-dot">✓</span><span class="w-lbl">Interview</span></div><span class="w-connector done"></span>
+                <div class="w-step current"><span class="w-dot">4</span><span class="w-lbl">FIRA Review</span></div><span class="w-connector"></span>
+                <div class="w-step"><span class="w-dot">5</span><span class="w-lbl">Employer</span></div><span class="w-connector"></span>
+                <div class="w-step"><span class="w-dot">6</span><span class="w-lbl">Deployed</span></div>
+              </div>
+              <div class="alert alert-info"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg><span>FIRA is verifying your PRC license and GAMCA medical. Typical turnaround: 5–10 business days. Last update: 2 days ago.</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head row-between"><div class="job-co"><span class="co-logo av-teal">RH</span><div><div class="card-title">Caregiver for Elderly Care</div><div class="card-sub">Rabat Healthcare · applied Sep 26, 2025</div></div></div><span class="badge badge-warning badge-lg"><span class="bdot"></span>Pending Documents</span></div>
+            <div style="padding:14px 20px;" class="stack-8">
+              <p class="small muted">Agency requested additional documents on Oct 8:</p>
+              <div class="row" style="gap:8px; flex-wrap:wrap;">
+                <span class="badge badge-success">✓ PSA Birth Certificate</span>
+                <span class="badge badge-success">✓ NBI Clearance</span>
+                <span class="badge badge-warning">⏳ TESDA NC II Certificate</span>
+                <button class="btn btn-primary btn-sm" type="button">Upload TESDA NC II</button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head row-between"><div class="job-co"><span class="co-logo av-amber">MR</span><div><div class="card-title">Hotel Staff — Hospitality</div><div class="card-sub">Marrakech Resort Group · applied Sep 12, 2025</div></div></div><span class="badge badge-danger badge-lg"><span class="bdot"></span>Rejected</span></div>
+            <div style="padding:14px 20px;"><p class="small muted">Position filled internally on Oct 1. <a href="#scr-job-listing">See similar hospitality jobs →</a></p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 24 · Resume Upload + AI Parse -->
+    <div class="screen reveal" id="scr-resume" aria-labelledby="h-resume">
+      <div class="screen-meta"><span class="screen-index">24</span><span class="screen-category">Applicant</span></div>
+      <h2 id="h-resume" style="font-size:20px;">Resume Upload — AI Parse</h2>
+      <p class="screen-desc">Drag-and-drop upload (PDF/DOCX/JPG/PNG, max 10MB) with VLM text extraction progress and parsed-field preview.</p>
+      <div class="screen-frame">
+        <div class="frame-note"><span class="dot"></span>keyboard-droppable · loading skeletons · retry state</div>
+        <div style="padding:24px;" class="stack-14">
+          <div class="card" style="border:2px dashed var(--border-strong); background:var(--primary-softer); padding:40px; text-align:center;" role="button" tabindex="0" aria-label="Upload resume: drag and drop or press Enter to browse">
+            <span class="stat-icon grad-blue" style="width:56px; height:56px; margin:0 auto 14px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg></span>
+            <p style="font-weight:700; font-size:15.5px; margin-bottom:4px;">Drag &amp; drop your resume here</p>
+            <p class="small muted">or <a href="#scr-resume" style="font-weight:600;">browse files</a> — PDF, DOCX, JPG, PNG up to 10MB</p>
+            <p class="small" style="margin-top:10px; color:var(--primary); font-weight:600;">✨ Our AI reads your resume and fills your profile automatically</p>
+          </div>
+          <div class="grid-2">
+            <div class="card card-pad">
+              <div class="row-between" style="margin-bottom:12px;"><strong style="font-size:14.5px;">resume-maria-santos.pdf</strong><span class="badge badge-success"><span class="bdot"></span>Parsed</span></div>
+              <div class="progress" style="margin-bottom:14px;"><span style="width:100%"></span></div>
+              <div class="stack-8 small">
+                <div class="row-between"><span class="muted">Extracted text</span><strong>4,213 chars</strong></div>
+                <div class="row-between"><span class="muted">Skills detected</span><strong>12</strong></div>
+                <div class="row-between"><span class="muted">Experience entries</span><strong>2</strong></div>
+                <div class="row-between"><span class="muted">Education</span><strong>1 degree + PRC</strong></div>
+              </div>
+            </div>
+            <div class="card card-pad">
+              <strong style="font-size:14.5px; display:block; margin-bottom:10px;">AI pre-fill preview</strong>
+              <div class="stack-8 small">
+                <div class="row-between"><span class="muted">Full name</span><strong>Maria Garcia Santos ✓</strong></div>
+                <div class="row-between"><span class="muted">Profession</span><strong>Registered Nurse ✓</strong></div>
+                <div class="row-between"><span class="muted">Years of experience</span><strong>4 ✓</strong></div>
+                <div class="row-between"><span class="muted">Languages</span><strong>English, Filipino ✓</strong></div>
+                <div class="row-between"><span class="muted">Certifications</span><span class="badge badge-warning"><span class="bdot"></span>Review needed</span></div>
+              </div>
+              <div class="row" style="gap:8px; margin-top:14px;"><button class="btn btn-primary btn-sm" type="button">Apply to Profile</button><button class="btn btn-ghost btn-sm" type="button">Discard</button></div>
+            </div>
+          </div>
+          <div class="alert alert-warning"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4m0 4h.01"/></svg><span><span class="alert-title">Profile not found auto-fix</span>First-time uploaders get an auto-created profile shell — the "Applicant profile not found" bug from Task 9 is fixed: uploading before saving your profile now works.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 25 · Saved Jobs -->
+    <div class="screen reveal" id="scr-saved" aria-labelledby="h-saved">
+      <div class="screen-meta"><span class="screen-index">25</span><span class="screen-category">Applicant</span></div>
+      <h2 id="h-saved" style="font-size:20px;">Saved Jobs</h2>
+      <p class="screen-desc">Bookmarked jobs with closing-soon urgency flags and one-click apply.</p>
+      <div class="screen-frame">
+        <div class="frame-note"><span class="dot"></span>synced to localStorage key fira-saved-jobs</div>
+        <div class="grid-2" style="padding:22px;">
+          <div class="card card-hover job-card"><div class="job-card-top"><div class="job-co"><span class="co-logo av-green">RL</span><div><div class="job-title">Staff Nurse — ICU</div><div class="small muted">Rabat International Clinic</div></div></div><span class="badge badge-warning">Closes in 4 days</span></div><div class="row-between"><span class="job-salary">$1,400/mo</span><div class="row" style="gap:6px;"><button class="btn btn-primary btn-sm" type="button">Apply</button><button class="btn btn-ghost btn-sm btn-icon" type="button" aria-label="Remove from saved">✕</button></div></div></div>
+          <div class="card card-hover job-card"><div class="job-card-top"><div class="job-co"><span class="co-logo av-blue">CM</span><div><div class="job-title">Clinic Nurse — Pediatrics</div><div class="small muted">Casablanca Children's Hospital</div></div></div><span class="badge badge-neutral">Closes Nov 30</span></div><div class="row-between"><span class="job-salary">$1,250/mo</span><div class="row" style="gap:6px;"><button class="btn btn-primary btn-sm" type="button">Apply</button><button class="btn btn-ghost btn-sm btn-icon" type="button" aria-label="Remove from saved">✕</button></div></div></div>
+          <div class="card card-hover job-card"><div class="job-card-top"><div class="job-co"><span class="co-logo av-teal">TH</span><div><div class="job-title">Health Educator</div><div class="small muted">Tangier Health Foundation</div></div></div><span class="badge badge-neutral">Closes Dec 15</span></div><div class="row-between"><span class="job-salary">$950/mo</span><div class="row" style="gap:6px;"><button class="btn btn-primary btn-sm" type="button">Apply</button><button class="btn btn-ghost btn-sm btn-icon" type="button" aria-label="Remove from saved">✕</button></div></div></div>
+          <div class="card card-hover job-card" style="border-style:dashed; display:grid; place-items:center; min-height:120px;"><div class="empty-state" style="padding:20px;"><svg class="es-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg><div class="es-title">No more saved jobs</div><a href="#scr-job-listing" style="font-size:13.5px; font-weight:600;">Browse open positions →</a></div></div>
+        </div>
+      </div>
+    </div>

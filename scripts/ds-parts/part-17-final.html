@@ -1,0 +1,285 @@
+
+    <!-- 48 · Settings -->
+    <div class="screen reveal" id="scr-settings" aria-labelledby="h-settings">
+      <div class="screen-meta"><span class="screen-index">48</span><span class="screen-category">Shared</span></div>
+      <h2 id="h-settings" style="font-size:20px;">Account Settings</h2>
+      <p class="screen-desc">Profile, security, language (EN/FIL), and accessibility preferences — dyslexia font, contrast modes, font size (accessibility-toolbar.tsx parity).</p>
+      <div class="screen-frame">
+        <div class="frame-note"><span class="dot"></span>a11y controls are first-class — not hidden</div>
+        <div style="padding:22px;" class="stack-14">
+          <div class="grid-2" style="align-items:start;">
+            <div class="card card-pad stack-14">
+              <strong style="font-size:14.5px;">Profile</strong>
+              <div class="field"><label class="label" for="st-name">Display Name</label><input id="st-name" class="input" value="Maria Garcia Santos"></div>
+              <div class="field"><label class="label" for="st-email">Email</label><input id="st-email" class="input" type="email" value="applicant@fira.com.ph" disabled aria-describedby="st-email-hint"><span class="hint" id="st-email-hint">Contact FIRA support to change your login email</span></div>
+              <div class="field"><label class="label" for="st-phone">Mobile</label><input id="st-phone" class="input" value="+63 917 123 4567"></div>
+              <strong style="font-size:14.5px; margin-top:6px;">Security</strong>
+              <div class="row-between card card-pad" style="padding:10px 14px;"><div><div style="font-weight:600; font-size:13.5px;">Two-Factor Authentication</div><div class="small muted">SMS to +63 917 ••• 4567</div></div><span class="switch"><input type="checkbox" checked aria-label="Toggle two-factor authentication"><span class="track"></span></span></div>
+              <button class="btn btn-outline btn-sm" type="button" style="align-self:flex-start;">Change Password</button>
+            </div>
+            <div class="stack-14">
+              <div class="card card-pad stack-14">
+                <strong style="font-size:14.5px;">Language &amp; Region</strong>
+                <div class="field"><label class="label" for="st-lang">Interface Language</label>
+                  <div class="tabs" role="radiogroup" aria-label="Language"><button class="tab" role="radio" aria-selected="true" type="button">🇬🇧 English</button><button class="tab" role="radio" aria-selected="false" type="button">🇵🇭 Filipino</button></div></div>
+                <div class="field"><label class="label" for="st-tz">Timezone</label><select id="st-tz" class="select"><option>Asia/Manila (GMT+8)</option><option>Africa/Casablanca (GMT+1)</option></select></div>
+              </div>
+              <div class="card card-pad stack-14">
+                <strong style="font-size:14.5px;">Accessibility</strong>
+                <div class="row-between card card-pad" style="padding:10px 14px;"><div><div style="font-weight:600; font-size:13.5px;">Dyslexia-friendly font</div><div class="small muted">OpenDyslexic with adjusted spacing</div></div><span class="switch"><input type="checkbox" aria-label="Toggle dyslexia-friendly font"><span class="track"></span></span></div>
+                <div class="field"><label class="label" for="st-contrast">Contrast Mode</label><select id="st-contrast" class="select"><option selected>Standard</option><option>High contrast</option><option>Inverted</option></select></div>
+                <div class="field"><label class="label" for="st-fs">Font Size — <span class="mono" id="fs-val">16px</span></label><input id="st-fs" type="range" min="14" max="20" value="16" style="width:100%; accent-color:var(--primary);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CATEGORY: ERROR PAGES ==================== -->
+  <section class="screen" id="scr-errors" aria-labelledby="h-errcat">
+    <div class="reveal">
+      <div class="screen-meta"><span class="screen-index">49–51</span><span class="screen-category">Category</span></div>
+      <h2 id="h-errcat">Error States</h2>
+      <p class="screen-desc">Branded error pages for 404 (not found), 403 (forbidden), and 500 (server error) with role-aware recovery links.</p>
+    </div>
+    <div class="grid-3 reveal" style="gap:16px;">
+      <div class="screen-frame">
+        <div class="frame-note"><span class="dot"></span>404 — job removed or moved</div>
+        <div class="err-shell">
+          <div class="err-code" aria-hidden="true">404</div>
+          <div class="err-title">Page not found</div>
+          <p class="err-desc">The job order or page you're looking for may have been removed, filled, or the link is incorrect.</p>
+          <div class="row" style="gap:10px;"><button class="btn btn-primary" type="button">Browse Jobs</button><button class="btn btn-outline" type="button">Go Home</button></div>
+        </div>
+      </div>
+      <div class="screen-frame">
+        <div class="frame-note"><span class="dot"></span>403 — role-guarded area</div>
+        <div class="err-shell">
+          <div class="err-code" aria-hidden="true">403</div>
+          <div class="err-title">Access restricted</div>
+          <p class="err-desc">Your account (applicant) doesn't have permission to view this FIRA admin area.</p>
+          <div class="row" style="gap:10px;"><button class="btn btn-primary" type="button">Back to Dashboard</button><button class="btn btn-outline" type="button">Contact Support</button></div>
+        </div>
+      </div>
+      <div class="screen-frame">
+        <div class="frame-note"><span class="dot"></span>500 — something broke</div>
+        <div class="err-shell">
+          <div class="err-code" aria-hidden="true">500</div>
+          <div class="err-title">Something went wrong</div>
+          <p class="err-desc">An unexpected error occurred on our side. Our team has been notified — reference ERR-2025-8841.</p>
+          <div class="row" style="gap:10px;"><button class="btn btn-primary" type="button">Try Again</button><button class="btn btn-outline" type="button">Status Page</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Component index -->
+  <section class="screen reveal" id="scr-components" aria-labelledby="h-comp">
+    <div class="screen-meta"><span class="screen-index">52</span><span class="screen-category">Appendix</span></div>
+    <h2 id="h-comp" style="font-size:20px;">Component Index — Status &amp; Feedback</h2>
+    <p class="screen-desc">Quick reference of the 5-color semantic status system, toasts, and interactive states used across all screens (BRANDING-KIT §4, §16–25).</p>
+    <div class="screen-frame">
+      <div class="frame-note"><span class="dot"></span>toasts render bottom-right · aria-live="polite"</div>
+      <div style="padding:22px;" class="stack-14">
+        <div class="grid-2">
+          <div class="stack-8">
+            <strong style="font-size:14px;">Semantic status badges</strong>
+            <div class="row" style="gap:8px; flex-wrap:wrap;">
+              <span class="badge badge-success"><span class="bdot"></span>Success / Open / Deployed</span>
+              <span class="badge badge-danger"><span class="bdot"></span>Rejected / Failed</span>
+              <span class="badge badge-warning"><span class="bdot"></span>Pending / Screening</span>
+              <span class="badge badge-info"><span class="bdot"></span>Info / Applied / FIRA Review</span>
+              <span class="badge badge-neutral"><span class="bdot"></span>Inactive / Completed</span>
+            </div>
+            <strong style="font-size:14px; margin-top:8px;">Interactive states</strong>
+            <div class="row" style="gap:10px; flex-wrap:wrap;">
+              <button class="btn btn-primary" type="button">Default</button>
+              <button class="btn btn-primary" type="button" style="filter:brightness(1.12);">Hover</button>
+              <button class="btn btn-primary" type="button" style="transform:scale(.96);">Active</button>
+              <button class="btn btn-primary" type="button" disabled>Disabled</button>
+            </div>
+          </div>
+          <div class="stack-8">
+            <strong style="font-size:14px;">Toasts</strong>
+            <div class="toast" role="status" style="position:static; animation:none;"><span class="stat-icon grad-green" style="width:30px;height:30px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><div><div class="t-title">Endorsement sent</div><div class="t-desc">Maria G. Santos endorsed to Casablanca Medical Center</div></div></div>
+            <div class="toast error" role="alert" style="position:static; animation:none;"><span class="stat-icon grad-red" style="width:30px;height:30px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6m0-6 6 6"/></svg></span><div><div class="t-title">Upload failed</div><div class="t-desc">File exceeds 10MB limit — compress and try again</div></div></div>
+            <div class="toast success" role="status" style="position:static; animation:none;"><span class="stat-icon grad-blue" style="width:30px;height:30px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span><div><div class="t-title">Demo hint</div><div class="t-desc">Toggle dark mode ↑ and watch every screen adapt</div></div></div>
+          </div>
+        </div>
+        <div class="stack-8">
+          <strong style="font-size:14px;">Loading states</strong>
+          <div class="card card-pad"><div class="grid-4" style="gap:14px;"><div class="skeleton" style="height:14px; width:40%;"></div><div class="skeleton" style="height:14px;"></div><div class="skeleton" style="height:14px;"></div><div class="skeleton" style="height:14px; width:70%;"></div></div><div style="height:12px;"></div><div class="grid-4" style="gap:14px;"><div class="skeleton" style="height:64px;"></div><div class="skeleton" style="height:64px;"></div><div class="skeleton" style="height:64px;"></div><div class="skeleton" style="height:64px;"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer style="border-top:1px solid var(--border); padding:28px 24px 100px; text-align:center;">
+  <p class="small muted">FIRA Design System v2.0 · Fil International Recruitment Agency · 50 screens · dark mode · WCAG-aligned · Built with real FIRA data</p>
+</footer>
+
+<button class="to-top" id="toTop" type="button" aria-label="Back to top">↑</button>
+<div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="false"></div>
+
+<script>
+/* ============ FIRA DS v2 INTERACTIONS ============ */
+(function () {
+  'use strict';
+
+  /* Theme toggle — persists, respects prefers-color-scheme */
+  var root = document.documentElement;
+  var toggle = document.getElementById('themeToggle');
+  function applyTheme(t) {
+    root.setAttribute('data-theme', t);
+    if (toggle) toggle.setAttribute('aria-pressed', String(t === 'dark'));
+  }
+  var stored = null;
+  try { stored = localStorage.getItem('fira-ds-theme'); } catch (e) {}
+  applyTheme(stored || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+  if (toggle) toggle.addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    try { localStorage.setItem('fira-ds-theme', next); } catch (e) {}
+  });
+
+  /* Category nav — scroll + active state */
+  var catBtns = Array.prototype.slice.call(document.querySelectorAll('.ds-cat-btn'));
+  catBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var target = document.querySelector(b.getAttribute('data-goto'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  /* Scroll progress + to-top + scrollspy */
+  var progress = document.getElementById('dsProgress');
+  var toTop = document.getElementById('toTop');
+  function onScroll() {
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var pct = max > 0 ? Math.round((h.scrollTop / max) * 100) : 0;
+    if (progress) { progress.style.width = pct + '%'; progress.setAttribute('aria-valuenow', String(pct)); }
+    if (toTop) toTop.classList.toggle('show', h.scrollTop > 700);
+    /* scrollspy */
+    var sections = ['scr-landing','scr-auth','scr-applicant','scr-admin','scr-agency','scr-employer','scr-shared','scr-errors'];
+    var current = null;
+    for (var i = 0; i < sections.length; i++) {
+      var el = document.getElementById(sections[i]);
+      if (el && el.getBoundingClientRect().top <= 120) current = sections[i];
+    }
+    catBtns.forEach(function (b) {
+      var active = current && b.getAttribute('data-goto') === '#' + current;
+      if (active) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  if (toTop) toTop.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+  /* Reveal on scroll */
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: 0.06 });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+  }
+
+  /* Animated counters */
+  function animateCount(el) {
+    var target = parseInt(el.getAttribute('data-count') || '0', 10);
+    var suffix = el.getAttribute('data-suffix') || '';
+    var dur = 1100, start = null;
+    function step(ts) {
+      if (!start) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * eased).toLocaleString() + suffix;
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  if ('IntersectionObserver' in window) {
+    var cio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { animateCount(en.target); cio.unobserve(en.target); } });
+    }, { threshold: 0.4 });
+    document.querySelectorAll('[data-count]').forEach(function (el) { cio.observe(el); });
+  } else {
+    document.querySelectorAll('[data-count]').forEach(function (el) {
+      el.textContent = (el.getAttribute('data-count') || '0') + (el.getAttribute('data-suffix') || '');
+    });
+  }
+
+  /* Animate progress bars when visible */
+  if ('IntersectionObserver' in window) {
+    var pio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          var span = en.target.querySelector('span');
+          var w = span && span.style.width;
+          if (span) { span.style.width = '0'; requestAnimationFrame(function () { requestAnimationFrame(function () { span.style.width = w || '0'; }); }); }
+          pio.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.progress').forEach(function (el) { pio.observe(el); });
+  }
+
+  /* Save-job hearts */
+  document.querySelectorAll('[aria-label^="Save job"], [aria-label^="Saved job"]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var pressed = b.getAttribute('aria-pressed') === 'true';
+      b.setAttribute('aria-pressed', String(!pressed));
+      var svg = b.querySelector('svg');
+      if (svg) svg.style.fill = pressed ? 'none' : 'currentColor';
+      toast(pressed ? 'Removed from saved jobs' : 'Job saved', pressed ? 'Find it again in Browse Jobs' : 'Synced to your Saved Jobs list', pressed ? 'info' : 'success');
+    });
+  });
+
+  /* Toast demo */
+  function toast(title, desc, kind) {
+    var region = document.getElementById('toastRegion');
+    if (!region) return;
+    var t = document.createElement('div');
+    t.className = 'toast ' + (kind || '');
+    t.setAttribute('role', 'status');
+    t.innerHTML = '<div><div class="t-title"></div><div class="t-desc"></div></div>';
+    t.querySelector('.t-title').textContent = title;
+    t.querySelector('.t-desc').textContent = desc || '';
+    region.appendChild(t);
+    setTimeout(function () { t.style.opacity = '0'; t.style.transition = 'opacity .4s'; }, 3400);
+    setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 3900);
+  }
+  setTimeout(function () { toast('Welcome to FIRA DS v2', '50 screens · press Tab to explore focus states'); }, 1200);
+
+  /* OTP auto-advance */
+  var otps = document.querySelectorAll('.otp-row input');
+  otps.forEach(function (inp, i) {
+    inp.addEventListener('input', function () {
+      if (inp.value.length === 1 && i < otps.length - 1) otps[i + 1].focus();
+    });
+    inp.addEventListener('keydown', function (e) {
+      if (e.key === 'Backspace' && !inp.value && i > 0) otps[i - 1].focus();
+    });
+  });
+
+  /* Role picker */
+  document.querySelectorAll('.role-opt').forEach(function (opt) {
+    function select() {
+      document.querySelectorAll('.role-opt').forEach(function (o) { o.classList.remove('selected'); o.setAttribute('aria-checked', 'false'); });
+      opt.classList.add('selected'); opt.setAttribute('aria-checked', 'true');
+    }
+    opt.addEventListener('click', select);
+    opt.addEventListener('keydown', function (e) {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); select(); }
+    });
+  });
+})();
+</script>
+</body>
+</html>

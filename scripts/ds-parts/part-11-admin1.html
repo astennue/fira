@@ -1,0 +1,86 @@
+
+  <!-- ==================== CATEGORY: FIRA ADMIN ==================== -->
+  <section class="screen" id="scr-admin" aria-labelledby="h-admincat">
+    <div class="reveal">
+      <div class="screen-meta"><span class="screen-index">28–36</span><span class="screen-category">Category</span></div>
+      <h2 id="h-admincat">FIRA Admin — Command Center</h2>
+      <p class="screen-desc">Internal staff screens: six-stat command center with alerts, job order management, applicant processing, agencies/employers registries, user administration with role tabs, CMS, and reports.</p>
+    </div>
+
+    <!-- 28 · Command Center -->
+    <div class="screen reveal" id="scr-command" aria-labelledby="h-command">
+      <div class="screen-meta"><span class="screen-index">28</span><span class="screen-category">FIRA Admin</span></div>
+      <h2 id="h-command" style="font-size:20px;">Command Center Dashboard</h2>
+      <p class="screen-desc">Live operational overview: 6 KPI stats, action-required alerts, and activity feeds (fira-dashboard.tsx parity).</p>
+      <div class="screen-frame">
+        <div class="frame-note"><span class="dot"></span>stat gradients: blue/green/amber only (Phase 11 audit)</div>
+        <div class="app-content" style="margin:0;">
+          <div class="app-topbar"><div><div class="crumb">FIRA Admin / <span style="color:var(--fg)">Command Center</span></div><h3>FIRA Command Center</h3></div>
+            <div class="row"><button class="btn btn-outline btn-sm" type="button">Export</button><button class="btn btn-primary btn-sm" type="button">+ New Job Order</button></div>
+          </div>
+          <div class="stat-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
+            <div class="card stat-card card-pad"><div class="row-between"><div><div class="stat-label">Total Jobs</div><div class="stat-value" data-count="24">0</div></div><span class="stat-icon grad-blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span></div><span class="stat-trend" style="color:var(--success-fg);">↑ 4 this month</span></div>
+            <div class="card stat-card card-pad"><div class="row-between"><div><div class="stat-label">Active Applicants</div><div class="stat-value" data-count="1247">0</div></div><span class="stat-icon grad-green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span></div><span class="stat-trend" style="color:var(--success-fg);">↑ 86 this week</span></div>
+            <div class="card stat-card card-pad"><div class="row-between"><div><div class="stat-label">Total Endorsements</div><div class="stat-value" data-count="89">0</div></div><span class="stat-icon grad-amber"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m16 11 2 2 4-4M8 21v-2a4 4 0 0 1 4-4h4M6 21l.5-2.5"/></svg></span></div><span class="stat-trend muted">12 pending</span></div>
+            <div class="card stat-card card-pad"><div class="row-between"><div><div class="stat-label">Deployed</div><div class="stat-value" data-count="2532">0</div></div><span class="stat-icon grad-blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></span></div><span class="stat-trend" style="color:var(--success-fg);">↑ 31 this month</span></div>
+            <div class="card stat-card card-pad"><div class="row-between"><div><div class="stat-label">Agencies</div><div class="stat-value" data-count="47">0</div></div><span class="stat-icon grad-slate"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 21h18M5 21V7l7-4 7 4v14"/></svg></span></div><span class="stat-trend muted">3 pending approval</span></div>
+            <div class="card stat-card card-pad"><div class="row-between"><div><div class="stat-label">Employers</div><div class="stat-value" data-count="112">0</div></div><span class="stat-icon grad-green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg></span></div><span class="stat-trend" style="color:var(--success-fg);">↑ 8 this month</span></div>
+          </div>
+          <div class="alert alert-warning" role="alert" style="margin-bottom:16px;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4m0 4h.01"/></svg>
+            <span style="flex:1;"><span class="alert-title">3 items need attention</span>2 agency approvals pending · 1 employer verification stalled (Al Baraka docs) · 5 endorsements waiting &gt; 48h</span>
+            <button class="btn btn-sm btn-outline" type="button" style="border-color:var(--warning-border); color:var(--warning-fg); background:transparent;">Review</button></div>
+          <div class="dash-grid">
+            <div class="card">
+              <div class="card-head"><div class="card-title">Recent Activity</div><span class="badge badge-neutral">Live</span></div>
+              <div style="padding:6px 20px;">
+                <div class="list-row"><span class="avatar av-blue avatar-sm">AB</span><div class="lr-main"><div class="lr-title">Al Baraka Holding posted a new job order</div><div class="lr-sub">Household Service Worker / Nanny · Casablanca · 10 slots</div></div><time class="small muted mono">12m</time></div>
+                <div class="list-row"><span class="avatar av-teal avatar-sm">MR</span><div class="lr-main"><div class="lr-title">Manila Recruitment endorsed 5 applicants</div><div class="lr-sub">Caregiver for Elderly Care · Rabat Healthcare</div></div><time class="small muted mono">1h</time></div>
+                <div class="list-row"><span class="avatar av-green avatar-sm">MS</span><div class="lr-main"><div class="lr-title">Maria Santos passed interview</div><div class="lr-sub">Professional Nurse — Hospital · moved to FIRA Review</div></div><time class="small muted mono">2h</time></div>
+                <div class="list-row"><span class="avatar av-amber avatar-sm">JD</span><div class="lr-main"><div class="lr-title">New agency registered</div><div class="lr-sub">Juan Dela Cruz · Cebu Overseas Partners · awaiting approval</div></div><time class="small muted mono">4h</time></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><div class="card-title">Deployments by Status</div></div>
+              <div style="padding:18px 20px;" class="stack-14">
+                <div><div class="row-between small" style="margin-bottom:5px;"><span>Applied</span><strong class="mono">318</strong></div><div class="progress"><span style="width:88%"></span></div></div>
+                <div><div class="row-between small" style="margin-bottom:5px;"><span>Screening</span><strong class="mono">164</strong></div><div class="progress gold"><span style="width:46%"></span></div></div>
+                <div><div class="row-between small" style="margin-bottom:5px;"><span>FIRA Review</span><strong class="mono">89</strong></div><div class="progress"><span style="width:25%"></span></div></div>
+                <div><div class="row-between small" style="margin-bottom:5px;"><span>Employer Review</span><strong class="mono">41</strong></div><div class="progress"><span style="width:12%"></span></div></div>
+                <div><div class="row-between small" style="margin-bottom:5px;"><span>Deployed</span><strong class="mono">2,532</strong></div><div class="progress green"><span style="width:100%"></span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 29 · Jobs Management -->
+    <div class="screen reveal" id="scr-admin-jobs" aria-labelledby="h-ajobs">
+      <div class="screen-meta"><span class="screen-index">29</span><span class="screen-category">FIRA Admin</span></div>
+      <h2 id="h-ajobs" style="font-size:20px;">Jobs Management Table</h2>
+      <p class="screen-desc">Full job order registry with filters, status badges, salary in mono, and row actions.</p>
+      <div class="screen-frame">
+        <div class="frame-note"><span class="dot"></span>horizontal scroll on mobile · sortable headers</div>
+        <div class="stack-14" style="padding:22px;">
+          <div class="filter-bar" style="border-radius:var(--radius-lg); border:1px solid var(--border); background:var(--surface);">
+            <div class="input-icon-wrap" style="flex:1; min-width:200px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input type="search" class="input" placeholder="Search jobs, agencies, employers…" aria-label="Search jobs"></div>
+            <select class="select" style="width:150px;" aria-label="Status filter"><option>All Status</option><option>Open</option><option>Filling Fast</option><option>Closed</option></select>
+            <select class="select" style="width:150px;" aria-label="Country filter"><option>All Countries</option><option>Morocco</option></select>
+            <button class="btn btn-outline btn-sm" type="button">Clear</button>
+          </div>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th scope="col">Job Title</th><th scope="col">Agency</th><th scope="col">Location</th><th scope="col">Salary (USD)</th><th scope="col">Slots</th><th scope="col">Applicants</th><th scope="col">Status</th><th scope="col" style="text-align:right;">Actions</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Professional Nurse — Hospital</strong></td><td>Manila Recruitment Corp</td><td>Casablanca</td><td class="cell-num">1,200–1,800</td><td class="cell-num">15</td><td class="cell-num">37</td><td><span class="badge badge-success"><span class="bdot"></span>Open</span></td><td><div class="actions-cell"><button class="btn btn-ghost btn-sm btn-icon" type="button" aria-label="View job">👁</button><button class="btn btn-ghost btn-sm btn-icon" type="button" aria-label="Edit job">✎</button></div></td></tr>
+                <tr><td><strong>Caregiver for Elderly Care</strong></td><td>Manila Recruitment Corp</td><td>Rabat</td><td class="cell-num">500–700</td><td class="cell-num">5</td><td class="cell-num">22</td><td><span class="badge badge-success"><span class="bdot"></span>Open</span></td><td><div class="actions-cell"><button class="btn btn-ghost btn-sm btn-icon" type="button" aria-label="View job">👁</button><button class="btn btn-ghost btn-sm btn-icon" type="button" aria-label="Edit job">✎</button></div></td></tr>
+                <tr><td><strong>Household Service Worker / Nanny</strong></td><td>Cebu Overseas Partners</td><td>Casablanca</td><td class="cell-num">400–600</td><td class="cell-num">10</td><td class="cell-num">48</td><td><span class="badge badge-warning"><span class="bdot"></span>Filling Fast</span></td><td><div class="actions-cell"><button class="btn btn-ghost btn-sm btn-icon" type="button" aria-label="View job">👁</button><button class="btn btn-ghost btn-sm btn-icon" type="button" aria-label="Edit job">✎</button></div></td></tr>
+                <tr><td><strong>Factory Worker — Electronics</strong></td><td>Cebu Overseas Partners</td><td>Tangier</td><td class="cell-num">600–900</td><td class="cell-num">20</td><td class="cell-num">64</td><td><span class="badge badge-success"><span class="bdot"></span>Open</span></td><td><div class="actions-cell"><button class="btn btn-ghost btn-sm btn-icon" type="button" aria-label="View job">👁</button><button class="btn btn-ghost btn-sm btn-icon" type="button" aria-label="Edit job">✎</button></div></td></tr>
+                <tr><td><strong>Hotel Staff — Hospitality</strong></td><td>Manila Recruitment Corp</td><td>Marrakech</td><td class="cell-num">700–1,000</td><td class="cell-num">8</td><td class="cell-num">29</td><td><span class="badge badge-neutral"><span class="bdot"></span>Closed</span></td><td><div class="actions-cell"><button class="btn btn-ghost btn-sm btn-icon" type="button" aria-label="View job">👁</button><button class="btn btn-ghost btn-sm btn-icon" type="button" aria-label="Edit job">✎</button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pager"><span class="small muted">Showing 1–5 of 24 jobs</span><div class="pages" role="navigation" aria-label="Jobs pagination"><button class="pg-btn" type="button">‹</button><button class="pg-btn current" type="button" aria-current="page">1</button><button class="pg-btn" type="button">2</button>…<button class="pg-btn" type="button">5</button><button class="pg-btn" type="button">›</button></div></div>
+        </div>
+      </div>
+    </div>

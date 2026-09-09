@@ -1,0 +1,134 @@
+
+    <!-- 40 · Agency Jobs & Applicants -->
+    <div class="screen reveal" id="scr-agency-jobs" aria-labelledby="h-agjobs">
+      <div class="screen-meta"><span class="screen-index">40–41</span><span class="screen-category">Agency</span></div>
+      <h2 id="h-agjobs" style="font-size:20px;">Agency Jobs &amp; Applicants</h2>
+      <p class="screen-desc">Job order list per agency with applicant counts and quick pipeline jumps.</p>
+      <div class="screen-frame">
+        <div class="frame-note"><span class="dot"></span>empty states follow brandkit: 48px icon, lg/medium title</div>
+        <div style="padding:22px;" class="stack-14">
+          <div class="row-between"><strong style="font-size:15.5px;">My Job Orders</strong><button class="btn btn-primary btn-sm" type="button">+ Browse New Orders</button></div>
+          <div class="grid-3">
+            <article class="card card-hover card-pad">
+              <div class="row-between" style="margin-bottom:10px;"><strong style="font-size:14.5px;">Professional Nurse — Hospital</strong><span class="badge badge-success"><span class="bdot"></span>Open</span></div>
+              <p class="small muted">Casablanca Medical Center · 15 slots</p>
+              <div class="row-between" style="margin-top:12px;"><span class="small muted">Applicants</span><div class="row" style="gap:6px;"><strong class="mono">37</strong><button class="btn btn-outline btn-sm" type="button">Pipeline →</button></div></div>
+            </article>
+            <article class="card card-hover card-pad">
+              <div class="row-between" style="margin-bottom:10px;"><strong style="font-size:14.5px;">Caregiver for Elderly Care</strong><span class="badge badge-success"><span class="bdot"></span>Open</span></div>
+              <p class="small muted">Rabat Healthcare · 5 slots</p>
+              <div class="row-between" style="margin-top:12px;"><span class="small muted">Applicants</span><div class="row" style="gap:6px;"><strong class="mono">22</strong><button class="btn btn-outline btn-sm" type="button">Pipeline →</button></div></div>
+            </article>
+            <article class="card card-pad" style="border-style:dashed; display:grid; place-items:center;">
+              <div class="empty-state" style="padding:12px;">
+                <svg class="es-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                <div class="es-title">No more orders</div><p class="es-desc">Endorse candidates to request more job orders from FIRA.</p>
+              </div>
+            </article>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><div class="card-title">Recent Applicants — All Orders</div><div class="card-sub">Newest first</div></div><button class="btn btn-ghost btn-sm" type="button">Export</button></div>
+            <div style="padding:6px 20px;">
+              <div class="list-row"><span class="avatar av-blue avatar-sm">LM</span><div class="lr-main"><div class="lr-title">Liza Macapagal</div><div class="lr-sub">Nurse · applied to Professional Nurse · 2d ago</div></div><span class="kan-score">71%</span><button class="btn btn-outline btn-sm" type="button">Review</button></div>
+              <div class="list-row"><span class="avatar av-teal avatar-sm">IC</span><div class="lr-main"><div class="lr-title">Imelda Cruz</div><div class="lr-sub">Nurse · applied to Professional Nurse · 3d ago</div></div><span class="kan-score">82%</span><button class="btn btn-outline btn-sm" type="button">Review</button></div>
+              <div class="list-row"><span class="avatar av-amber avatar-sm">GP</span><div class="lr-main"><div class="lr-title">Grace Po</div><div class="lr-sub">Nurse · applied to Professional Nurse · 5d ago</div></div><span class="kan-score">66%</span><button class="btn btn-outline btn-sm" type="button">Review</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CATEGORY: EMPLOYER ==================== -->
+  <section class="screen" id="scr-employer" aria-labelledby="h-empcat">
+    <div class="reveal">
+      <div class="screen-meta"><span class="screen-index">42–45</span><span class="screen-category">Category</span></div>
+      <h2 id="h-empcat">Employer Workspace</h2>
+      <p class="screen-desc">Employer-side hiring: candidate dashboard with score rings, endorsed worker roster, job posting, and employer job management.</p>
+    </div>
+
+    <!-- 42 · Employer Dashboard -->
+    <div class="screen reveal" id="scr-emp-dash" aria-labelledby="h-empd">
+      <div class="screen-meta"><span class="screen-index">42</span><span class="screen-category">Employer</span></div>
+      <h2 id="h-empd" style="font-size:20px;">Employer Dashboard</h2>
+      <p class="screen-desc">Top endorsed candidates with score rings, active job stats, and acceptance rate (employer-dashboard.tsx parity — solid cards, no glass).</p>
+      <div class="screen-frame">
+        <div class="frame-note"><span class="dot"></span>score-ring via conic-gradient · gradientMap blue/green</div>
+        <div class="app-content" style="margin:0;">
+          <div class="app-topbar"><div><div class="crumb">Employer / <span style="color:var(--fg)">Dashboard</span></div><h3>Employer Dashboard</h3></div><span class="badge badge-gold badge-lg">Casablanca Medical Center</span></div>
+          <div class="stat-grid">
+            <div class="card stat-card card-pad"><div class="row-between"><div><div class="stat-label">Open Positions</div><div class="stat-value" data-count="3">0</div></div><span class="stat-icon grad-blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span></div></div>
+            <div class="card stat-card card-pad"><div class="row-between"><div><div class="stat-label">Endorsed Candidates</div><div class="stat-value" data-count="14">0</div></div><span class="stat-icon grad-green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span></div></div>
+            <div class="card stat-card card-pad"><div class="row-between"><div><div class="stat-label">Hired This Year</div><div class="stat-value" data-count="18">0</div></div><span class="stat-icon grad-green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg></span></div></div>
+            <div class="card stat-card card-pad"><div class="row-between"><div><div class="stat-label">Accept Rate</div><div class="stat-value" data-count="93" data-suffix="%">0</div></div><span class="stat-icon grad-blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m18 16 4-4-4-4M6 8l-4 4 4 4M14.5 4l-5 16"/></svg></span></div></div>
+          </div>
+          <div class="dash-grid">
+            <div class="card">
+              <div class="card-head"><div><div class="card-title">Top Endorsed Candidates</div><div class="card-sub">Ready for your review</div></div></div>
+              <div style="padding:6px 20px;">
+                <div class="list-row">
+                  <span class="score-ring" style="--val:92;"><span>92</span></span>
+                  <div class="lr-main"><div class="lr-title">Maria G. Santos — Registered Nurse</div><div class="lr-sub">4 yrs · BSN, PRC · English fluent · available Nov 2025</div></div>
+                  <div class="row"><button class="btn btn-success btn-sm" type="button">Accept</button><button class="btn btn-danger btn-sm" type="button">Decline</button></div>
+                </div>
+                <div class="list-row">
+                  <span class="score-ring" style="--val:85; --ring-color:#15803d;"><span>85</span></span>
+                  <div class="lr-main"><div class="lr-title">Rosa Lim — ICU Nurse</div><div class="lr-sub">6 yrs · ICU certified · available Dec 2025</div></div>
+                  <div class="row"><button class="btn btn-success btn-sm" type="button">Accept</button><button class="btn btn-danger btn-sm" type="button">Decline</button></div>
+                </div>
+                <div class="list-row">
+                  <span class="score-ring" style="--val:78; --ring-color:#b45309;"><span>78</span></span>
+                  <div class="lr-main"><div class="lr-title">Imelda Cruz — Ward Nurse</div><div class="lr-sub">5 yrs · medical-surg · IELTS pending</div></div>
+                  <div class="row"><button class="btn btn-success btn-sm" type="button">Accept</button><button class="btn btn-danger btn-sm" type="button">Decline</button></div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><div class="card-title">Current Workers</div><span class="badge badge-success">18 active</span></div>
+              <div style="padding:6px 20px;">
+                <div class="list-row"><span class="avatar av-green avatar-sm">NR</span><div class="lr-main"><div class="lr-title">Nenita Ramos</div><div class="lr-sub">ICU · contract until 2027 · ⭐ 4.9</div></div><span class="badge badge-success"><span class="bdot"></span>Active</span></div>
+                <div class="list-row"><span class="avatar av-blue avatar-sm">JD</span><div class="lr-main"><div class="lr-title">Jasmine Dizon</div><div class="lr-sub">Ward · contract until 2026 · ⭐ 4.7</div></div><span class="badge badge-success"><span class="bdot"></span>Active</span></div>
+                <div class="list-row"><span class="avatar av-amber avatar-sm">EV</span><div class="lr-main"><div class="lr-title">Elena Villareal</div><div class="lr-sub">ER · vacation leave until Nov 5</div></div><span class="badge badge-warning"><span class="bdot"></span>On Leave</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 43 · Endorsed Workers -->
+    <div class="screen reveal" id="scr-emp-endorsed" aria-labelledby="h-empend">
+      <div class="screen-meta"><span class="screen-index">43</span><span class="screen-category">Employer</span></div>
+      <h2 id="h-empend" style="font-size:20px;">Endorsed Workers — Review</h2>
+      <p class="screen-desc">Detailed endorsement review cards with full candidate dossier and decision actions.</p>
+      <div class="screen-frame">
+        <div class="frame-note"><span class="dot"></span>decision actions update endorsement + application status</div>
+        <div style="padding:22px;" class="stack-14">
+          <div class="card">
+            <div class="card-head">
+              <div class="job-co" style="gap:14px;"><span class="avatar av-blue" style="width:48px;height:48px;">MS</span>
+                <div><div class="card-title">Maria Garcia Santos</div><div class="card-sub">Registered Nurse · endorsed by Manila Recruitment Corp · Oct 10</div></div></div>
+              <div class="row"><span class="kan-score" style="font-size:14px;">92%</span><button class="btn btn-success btn-sm" type="button">✓ Accept</button><button class="btn btn-danger btn-sm" type="button">✕ Decline</button><button class="btn btn-outline btn-sm" type="button">Interview</button></div>
+            </div>
+            <div style="padding:16px 20px;" class="grid-3">
+              <div class="stack-8 small"><strong style="font-size:13px;">Experience</strong><span class="muted">Staff Nurse, St. Luke's — 3 yrs</span><span class="muted">Volunteer Nurse, QC Health — 1 yr</span></div>
+              <div class="stack-8 small"><strong style="font-size:13px;">Credentials</strong><span class="muted">✓ BSN, UP Manila 2020</span><span class="muted">✓ PRC #0123456</span><span class="muted">✓ GAMCA cleared Jan 2025</span></div>
+              <div class="stack-8 small"><strong style="font-size:13px;">AI Assessment</strong><span class="muted">Skills alignment 95%</span><span class="muted">Language fit 88%</span><span class="muted" style="color:var(--success-fg); font-weight:600;">Recommend: Interview</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div class="job-co" style="gap:14px;"><span class="avatar av-green" style="width:48px;height:48px;">RL</span>
+                <div><div class="card-title">Rosa Lim</div><div class="card-sub">ICU Nurse · endorsed by Manila Recruitment Corp · Oct 9</div></div></div>
+              <div class="row"><span class="kan-score" style="font-size:14px;">85%</span><button class="btn btn-success btn-sm" type="button">✓ Accept</button><button class="btn btn-danger btn-sm" type="button">✕ Decline</button><button class="btn btn-outline btn-sm" type="button">Interview</button></div>
+            </div>
+            <div style="padding:16px 20px;" class="grid-3">
+              <div class="stack-8 small"><strong style="font-size:13px;">Experience</strong><span class="muted">ICU Nurse, Makati Med — 6 yrs</span><span class="muted">Charge Nurse rotation — 2 yrs</span></div>
+              <div class="stack-8 small"><strong style="font-size:13px;">Credentials</strong><span class="muted">✓ BSN, UST 2017</span><span class="muted">✓ PRC #0088123</span><span class="muted">✓ ICU Advanced Cert 2023</span></div>
+              <div class="stack-8 small"><strong style="font-size:13px;">AI Assessment</strong><span class="muted">Skills alignment 90%</span><span class="muted">Language fit 91%</span><span class="muted" style="color:var(--success-fg); font-weight:600;">Recommend: Hire</span></div>
+            </div>
+          </div>
+          <div class="card"><div class="empty-state"><svg class="es-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></svg><div class="es-title">No more pending endorsements</div><p class="es-desc">All endorsed candidates have been reviewed. New endorsements appear here in real time.</p></div></div>
+        </div>
+      </div>
+    </div>
