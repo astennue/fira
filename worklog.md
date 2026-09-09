@@ -618,3 +618,23 @@ Stage Summary:
 - LOGIN FIXED for all roles in prod parity setup; deploy needs only DATABASE_URL+DIRECT_URL env vars (values in FIRA-credentials-handoff.md)
 - 0 TS errors, 0 lint errors, production build green
 - Messaging-page "Coming Soon" + email service TODO remain (next candidates)
+
+---
+Task ID: 5
+Agent: Super Z (main)
+Task: Change favicon to updated FIRA logo (user-uploaded FIRA LOGO.jpg)
+
+Work Log:
+- Received /home/z/my-project/upload/FIRA LOGO.jpg (4096x4096 RGB, updated emblem: blue globe + 3 people + red handshake)
+- Audited current favicon setup: layout.tsx metadata pointed to old /logo.svg; public/logo.png (horizontal lockup) used in app-nav + auth-modal headers
+- Wrote /home/z/my-project/scripts/make_favicon.py: auto-crop white border (bbox threshold 245), square-center-crop, flood-fill transparency from 4 corners (thresh=30, magenta sentinel), LANCZOS downscales
+- Emitted: src/app/favicon.ico (16/32/48/64 multi-res), public/icon-192.png, public/icon-512.png, public/apple-touch-icon.png (180)
+- Visual QA via 16/32/64px preview on dark+light backgrounds — crisp, transparent bg works
+- Updated src/app/layout.tsx metadata.icons: favicon.ico (48) + icon-192.png + apple-touch-icon
+- Committed locally: f4443be "brand: replace favicon with updated 2026 FIRA emblem logo" (NOT pushed — main divergence/force-push plan still pending)
+
+Stage Summary:
+- New favicon live in codebase (src/app/favicon.ico takes precedence in Next App Router)
+- public/logo.svg now unused by metadata (file left in place)
+- NOTE: header nav + auth modal still show OLD horizontal lockup (public/logo.png with "FIL INTERNATIONAL RECRUTEMENT AGENCY" text + old emblem) — flagged to user, offer to rebuild lockup with new emblem
+- Preview artifact: /home/z/my-project/download/fira-favicon-preview.png
