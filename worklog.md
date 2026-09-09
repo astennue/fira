@@ -638,3 +638,18 @@ Stage Summary:
 - public/logo.svg now unused by metadata (file left in place)
 - NOTE: header nav + auth modal still show OLD horizontal lockup (public/logo.png with "FIL INTERNATIONAL RECRUTEMENT AGENCY" text + old emblem) — flagged to user, offer to rebuild lockup with new emblem
 - Preview artifact: /home/z/my-project/download/fira-favicon-preview.png
+
+---
+Task ID: 6
+Agent: Super Z (main)
+Task: Push favicon commit (and verify branch sync) to GitHub
+
+Work Log:
+- git fetch: main was only 1 ahead / 0 behind origin (no divergence — login-fix commit aa9fdd6 already on remote from prior session; force-push no longer needed)
+- Pushed: aa9fdd6..f4443be main -> main (fast-forward) ✅
+- fira-rebuild: 0/0 vs origin — already in sync, nothing to push ✅
+- Safety check: only .env.example tracked; real .env with credentials NOT in repo ✅
+
+Stage Summary:
+- origin/main HEAD = f4443be (favicon + new logo icons)
+- Vercel auto-deploy should pick this up; favicon may need hard-refresh (Ctrl+Shift+R) due to browser cache
