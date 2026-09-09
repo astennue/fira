@@ -595,3 +595,26 @@ Stage Summary:
 - Supabase prod DATABASE_URL working: postgres.vilqiivxemphmjhjiydw:TOg6AtZKRBZ8IIdv@aws-0-ap-southeast-2.pooler.supabase.com:6543 — VERIFIED
 - seed-supabase.js contains OUTDATED DB password — flagged in handoff doc
 - Handoff deliverable saved to download/FIRA-credentials-handoff.md (includes quick-start for new dev)
+
+---
+Task ID: 4
+Agent: Super Z (main, long fullstack session)
+Task: Fix login failure + full system audit + brandkit compliance across all roles
+
+Work Log:
+- Diagnosed login failure: DB passwords/hashes in prod Supabase are CORRECT (bcrypt verified per user)
+- Root cause #1: prisma/schema.prisma provider=sqlite but prod DB is Postgres → every Prisma query fails in prod deploys
+- Root cause #2: sandbox globally exports DATABASE_URL=file:/home/z/my-project/db/custom.db which overrides .env (Next.js env precedence)
+- Fixed schema.prisma → postgresql + directUrl; added schema.sqlite.prisma variant + npm scripts (db:seed, db:dev:switch, db:dev:setup)
+- Hardened src/lib/db.ts (fail-fast actionable errors) + api/auth returns 503 w/ clear message on DB issues
+- Verified: all 5 roles login vs live Supabase prod (API 200 + browser UI), key APIs 200, prod build passes
+- Removed 14 orphaned duplicate files (components/{agency,applicant,employer,fira}, shared/auth-modal, language-toggle, providers.tsx, lib/i18n) — killed dual-language dead system; app-store.language is canonical
+- TS errors 57 → 0 (framer-motion Variants typing, zod v4 errorMap→error, ReactNode helper, invalid ringColor, redundant isLastStage prop)
+- Brandkit fixes: button pressed state, dialog/alert-dialog (backdrop-blur, bg-card, rounded-xl), skeleton bg-muted, switch 44×24, table §15 spec, sonner §16 toast colors, contact h-11→default h-9
+- Browser-verified: applicant/employer/agency/super_admin UI logins, ATS Pipeline view (previously broken), dark mode render
+- Committed aa9fdd6 → pushed origin/main
+
+Stage Summary:
+- LOGIN FIXED for all roles in prod parity setup; deploy needs only DATABASE_URL+DIRECT_URL env vars (values in FIRA-credentials-handoff.md)
+- 0 TS errors, 0 lint errors, production build green
+- Messaging-page "Coming Soon" + email service TODO remain (next candidates)
