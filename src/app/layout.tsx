@@ -20,7 +20,11 @@ export const metadata: Metadata = {
   description: "Connect Filipino workers with international opportunities. AI-powered recruitment platform for OFWs.",
   keywords: ["FIRA", "OFW", "recruitment", "Filipino", "international jobs", "domestic helper", "caregiver"],
   icons: {
-    icon: "/logo.svg",
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
   },
 };
 
