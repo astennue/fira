@@ -138,16 +138,16 @@ export function ContactPage() {
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>{language === 'fil' ? 'Pangalan' : 'Name'}</Label>
-                      <Input placeholder={language === 'fil' ? 'Iyong pangalan' : 'Your name'} className="h-11" required value={name} onChange={(e) => setName(e.target.value)} />
+                      <Input placeholder={language === 'fil' ? 'Iyong pangalan' : 'Your name'} required value={name} onChange={(e) => setName(e.target.value)} />
                     </div>
                     <div className="space-y-2">
                       <Label>Email</Label>
-                      <Input type="email" placeholder={language === 'fil' ? 'iyong@email.com' : 'your@email.com'} className="h-11" required value={email} onChange={(e) => setEmail(e.target.value)} />
+                      <Input type="email" placeholder={language === 'fil' ? 'iyong@email.com' : 'your@email.com'} required value={email} onChange={(e) => setEmail(e.target.value)} />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label>{language === 'fil' ? 'Paksa' : 'Subject'}</Label>
-                    <Input placeholder={language === 'fil' ? 'Paksa ng iyong mensahe...' : 'Subject of your message...'} className="h-11" required value={subject} onChange={(e) => setSubject(e.target.value)} />
+                    <Input placeholder={language === 'fil' ? 'Paksa ng iyong mensahe...' : 'Subject of your message...'} required value={subject} onChange={(e) => setSubject(e.target.value)} />
                   </div>
                   <div className="space-y-2">
                     <Label>{language === 'fil' ? 'Mensahe' : 'Message'}</Label>

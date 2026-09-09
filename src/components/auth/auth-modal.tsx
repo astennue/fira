@@ -38,7 +38,7 @@ const registerSchema = z
     confirmPassword: z.string(),
     phone: z.string().optional(),
     agreeTerms: z.literal(true, {
-      errorMap: () => ({ message: 'You must agree to the Terms of Service and Data Privacy Consent' }),
+      error: 'You must agree to the Terms of Service and Data Privacy Consent',
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {

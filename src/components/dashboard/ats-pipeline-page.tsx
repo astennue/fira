@@ -347,7 +347,7 @@ function DroppableColumn({
       <div className="flex items-center gap-2 mb-2 px-1">
         <div
           className="h-3 w-3 rounded-sm shrink-0 ring-2 ring-offset-1 ring-offset-background"
-          style={{ background: color, ringColor: color + '60', boxShadow: `0 0 0 2px ${color}30` }}
+          style={{ background: color, boxShadow: `0 0 0 2px ${color}30` }}
         />
         <div className="min-w-0 flex-1">
           <h3 className="text-sm font-semibold truncate leading-tight">{stage.name}</h3>
@@ -433,7 +433,6 @@ function DroppableColumn({
                     stageColor={color}
                     stageIdx={stageIdx}
                     stagesLength={stagesLength}
-                    isLastStage={isLastStage}
                     isFil={isFil}
                     onMoveToNext={onMoveToNext}
                     onCardClick={onCardClick}

@@ -12,11 +12,20 @@ const Toaster = ({ ...props }: ToasterProps) => {
       className="toaster group"
       style={
         {
-          "--normal-bg": "var(--popover)",
-          "--normal-text": "var(--popover-foreground)",
+          "--normal-bg": "var(--card)",
+          "--normal-text": "var(--foreground)",
           "--normal-border": "var(--border)",
         } as React.CSSProperties
       }
+      toastOptions={{
+        classNames: {
+          // Brandkit §16.1 — semantic left border per toast type
+          success: "border-l-4 border-l-green-500",
+          error: "border-l-4 border-l-red-500",
+          warning: "border-l-4 border-l-amber-500",
+          info: "border-l-4 border-l-blue-500",
+        },
+      }}
       {...props}
     />
   )

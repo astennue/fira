@@ -144,6 +144,21 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error)
     console.error('[AUTH] Error:', msg)
+    // Surface database connectivity problems distinctly — a 401 "invalid
+    // credentials" is misleading when the real cause is an unreachable DB.
+    if (
+      /DATABASE_URL|PrismaClientInitializationError|Can't reach database|ECONNREFUSED|must start with the protocol|Environment variable not found/i.test(
+        msg
+      )
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            'Database connection unavailable. If you are the administrator, verify DATABASE_URL / DIRECT_URL in your environment (.env locally, or hosting provider settings).',
+        },
+        { status: 503 }
+      )
+    }
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

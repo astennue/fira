@@ -7,7 +7,7 @@ import {
   MessageSquare, Clock, ChevronRight, UserPlus, BarChart3, Zap,
   Bell,
 } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { motion, type Variants } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -222,11 +222,11 @@ export function AgencyDashboard() {
   ]
 
   /* ── Animation Variants ── */
-  const container = {
+  const container: Variants = {
     hidden: { opacity: 0 },
     show: { opacity: 1, transition: { staggerChildren: 0.06 } },
   }
-  const item = {
+  const item: Variants = {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
   }

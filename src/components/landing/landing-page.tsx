@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, type ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { motion, useInView, AnimatePresence } from 'framer-motion'
+import { motion, useInView, AnimatePresence, type Variants } from 'framer-motion'
 import {
   Search, Briefcase, Globe, CheckCircle, Users, MapPin,
   ArrowRight, Shield, HeartHandshake, Plane, Mail, Phone,
@@ -30,28 +30,28 @@ import { apiFetch } from '@/lib/fetch'
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: (i: number) => ({
-    opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+    opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
   }),
 }
 
-const stagger = {
+const stagger: Variants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.1 } },
 }
 
-const slideInLeft = {
+const slideInLeft: Variants = {
   hidden: { opacity: 0, x: -40 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
 }
 
-const slideInRight = {
+const slideInRight: Variants = {
   hidden: { opacity: 0, x: 40 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
 }
 
-const scaleIn = {
+const scaleIn: Variants = {
   hidden: { opacity: 0, scale: 0.85 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
 }
 
 /* ============================================================
@@ -115,7 +115,7 @@ function TestimonialsCarousel({ testimonials }: { testimonials: any[] }) {
 
   if (testimonials.length === 0) return null
 
-  const variants = {
+  const variants: Variants = {
     enter: (dir: number) => ({ x: dir > 0 ? 200 : -200, opacity: 0 }),
     center: { x: 0, opacity: 1 },
     exit: (dir: number) => ({ x: dir < 0 ? 200 : -200, opacity: 0 }),
@@ -134,7 +134,7 @@ function TestimonialsCarousel({ testimonials }: { testimonials: any[] }) {
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
             className="glass-card rounded-2xl p-8 md:p-10 max-w-2xl mx-auto text-center"
           >
             <Quote className="h-8 w-8 text-blue-400/60 mx-auto mb-4" />
@@ -267,7 +267,8 @@ export function LandingPage() {
   }
 
   // ── Bilingual Labels ──────────────────────────────────────
-  const L = (fil: string, en: string) => language === 'fil' ? fil : en
+  const L = (fil: string, en: string): string => language === 'fil' ? fil : en
+  const Lr = (fil: ReactNode, en: ReactNode): ReactNode => language === 'fil' ? fil : en
 
   // ── Hero Bento Cards ───────────────────────────────────────
   const heroBentoCards = [
@@ -352,7 +353,7 @@ export function LandingPage() {
 
               {/* Main Headline */}
               <motion.h1 variants={fadeUp} custom={1} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] text-white">
-                {L(
+                {Lr(
                   <><span className="block">Ang Iyong</span><span className="block mt-1">Karera sa</span></>,
                   <><span className="block">Your Career</span><span className="block mt-1">Starts</span></>
                 )}
@@ -662,7 +663,7 @@ export function LandingPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
             className="relative max-w-5xl mx-auto rounded-3xl overflow-hidden"
           >
             {/* Background */}

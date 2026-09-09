@@ -1,21 +1,15 @@
-// FIRA Prisma schema — POSTGRESQL (production / Supabase)
+// FIRA Prisma schema — SQLITE (offline local dev only)
 // ────────────────────────────────────────────────────────
-// Prod DB is Supabase Postgres (project vilqiivxemphmjhjiydw).
-// DATABASE_URL  → pooled connection (pgbouncer, port 6543) for app queries
-// DIRECT_URL    → direct/session connection (port 5432) for migrations & seed
-//
-// Offline local dev without Supabase?
-//   Copy prisma/schema.sqlite.prisma over this file (or run `npm run db:dev:switch`),
-//   set DATABASE_URL="file:./prisma/dev.db", then `npm run db:dev:setup`.
+// Not used in production. Prod runs on Supabase Postgres via prisma/schema.prisma.
+// Usage: npm run db:dev:switch → set DATABASE_URL="file:./prisma/dev.db" → npm run db:dev:setup
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider  = "sqlite"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 // ============ CORE USER & ORG MODELS ============

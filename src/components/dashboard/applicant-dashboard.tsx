@@ -9,7 +9,7 @@ import {
   Target, ClipboardList, ChevronRight,
   Zap, MapPin, DollarSign, CheckCircle2, AlertCircle
 } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { motion, type Variants } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -80,7 +80,7 @@ function formatSalary(job: any): string {
 }
 
 /* ─── Framer Motion Variants ───────────────────────────────── */
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -88,12 +88,12 @@ const containerVariants = {
   },
 }
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 120, damping: 20 } },
 }
 
-const listItemVariants = {
+const listItemVariants: Variants = {
   hidden: { opacity: 0, x: -12 },
   show: { opacity: 1, x: 0 },
 }

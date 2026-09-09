@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, type Variants } from 'framer-motion'
 import {
   Plus,
   Edit,
@@ -96,7 +96,7 @@ const DEFAULT_CATEGORIES = [
 
 // ─── Animation Variants ──────────────────────────────────────────────────────
 
-const listContainerVariants = {
+const listContainerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -104,7 +104,7 @@ const listContainerVariants = {
   },
 }
 
-const listItemVariants = {
+const listItemVariants: Variants = {
   hidden: { opacity: 0, y: 12, scale: 0.97 },
   visible: {
     opacity: 1,
