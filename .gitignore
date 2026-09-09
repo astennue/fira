@@ -60,3 +60,10 @@ tool-results/.*
 prisma/db/
 db/
 tool-results/
+
+# Sandbox system files (not part of FIRA app)
+/skills/
+/.zscripts/
+/download/
+/upload/pasted_image_*
+/upload/*search*.json
