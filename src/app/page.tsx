@@ -36,9 +36,11 @@ const AgencyDashboard = lazy(() => import('@/components/dashboard/agency-dashboa
 const AgencyApplicantsPage = lazy(() => import('@/components/dashboard/agency-applicants-page').then(m => ({ default: m.AgencyApplicantsPage })))
 const AgencyJobsPage = lazy(() => import('@/components/dashboard/agency-jobs-page').then(m => ({ default: m.AgencyJobsPage })))
 const AgencyEndorsementsPage = lazy(() => import('@/components/dashboard/agency-endorsements-page').then(m => ({ default: m.AgencyEndorsementsPage })))
+const AgencyJobCreatePage = lazy(() => import('@/components/dashboard/agency-job-create-page').then(m => ({ default: m.AgencyJobCreatePage })))
 const EmployerDashboard = lazy(() => import('@/components/dashboard/employer-dashboard').then(m => ({ default: m.EmployerDashboard })))
 const EmployerJobsPage = lazy(() => import('@/components/dashboard/employer-jobs-page').then(m => ({ default: m.EmployerJobsPage })))
 const EmployerEndorsedPage = lazy(() => import('@/components/dashboard/employer-endorsed-page').then(m => ({ default: m.EmployerEndorsedPage })))
+const EmployerJobCreatePage = lazy(() => import('@/components/dashboard/employer-job-create-page').then(m => ({ default: m.EmployerJobCreatePage })))
 const FiraDashboard = lazy(() => import('@/components/dashboard/fira-dashboard').then(m => ({ default: m.FiraDashboard })))
 const FiraAgenciesPage = lazy(() => import('@/components/dashboard/fira-agencies-page').then(m => ({ default: m.FiraAgenciesPage })))
 const FiraEmployersPage = lazy(() => import('@/components/dashboard/fira-employers-page').then(m => ({ default: m.FiraEmployersPage })))
@@ -254,23 +256,12 @@ function ViewRenderer({ view }: { view: ViewName }) {
         )
       case 'applicant-profile-edit':
         return <ApplicantProfileEditPage />
+      case 'employer-job-create':
+        return <EmployerJobCreatePage />
       case 'fira-applicant-detail': return <FiraApplicantDetailPage />
       case 'fira-job-create': return <FiraJobCreatePage />
       case 'agency-job-create':
-        return (
-          <div className="view-transition space-y-6 pb-8">
-            <div>
-              <h2 className="text-2xl font-bold">Create Job Posting</h2>
-              <p className="text-muted-foreground text-sm mt-1">Post a new job opening for your agency</p>
-            </div>
-            <Card className="p-8 text-center">
-              <Briefcase className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Coming Soon</h3>
-              <p className="text-muted-foreground mb-4">Agency job creation is being developed. Please use the FIRA admin portal to create jobs.</p>
-              <Button variant="outline" onClick={() => navigate('agency-jobs')}><ArrowLeft className="h-4 w-4" />Back to Jobs</Button>
-            </Card>
-          </div>
-        )
+        return <AgencyJobCreatePage />
       case 'employer-candidate-detail':
         return (
           <div className="view-transition space-y-6 pb-8">

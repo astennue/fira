@@ -59,6 +59,7 @@ export function JobListingPage() {
   const [search, setSearch] = useState(viewParams?.search || '')
 
   const queryParams = new URLSearchParams()
+  queryParams.set('public', 'true') // public catalog — no auth required
   if (country !== 'all') queryParams.set('country', country)
   if (category !== 'all') queryParams.set('category', category)
   if (search) queryParams.set('search', search)
