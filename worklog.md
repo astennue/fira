@@ -675,3 +675,22 @@ Stage Summary:
 - Commit 8e15da6 pushed to main → Vercel auto-deploy
 - Prod now has: 1 pending job (Domestic Helper — Riyadh DEMO endorsement) in approvals queue; 1 public job (Caregiver — Casablanca DEMO approved) on public board
 - Employer sees own pending endorsement in My Job Orders
+
+---
+Task ID: 8
+Agent: Super Z (main)
+Task: FIRA Data Dictionary (Excel) aligned to the matching & ranking algorithm
+
+Work Log:
+- Clarified requirements with user first: scope=full system grouped, format=xlsx, detail=algorithm-ready per field, enums=code-verified via codebase audit, language=English, extra=relationship map
+- Audited repo at /home/z/my-project (new lineage, not the old gdrive_workspace copy): prisma/schema.prisma (35 models), src/lib/status.ts (19-state application machine), src/app/api/{matching,jobs,applications,endorsements}/route.ts, python-ai/models/matcher.py, UI constants (categories, currencies, skill levels, proficiencies, statuses)
+- Extracted code-verified enums: ApiRole, AgencyMember.role, agencyType, applicantType, householdTasks, passport/medical statuses, skill levels, language proficiency, 11 job categories, 19 currencies, salary periods, visibility, endorsement 2-step flow, JobOrder.status behavior
+- Documented matching algorithm: candidate pool gate (role=applicant+isActive+isApproved), SBERT similarity, skill overlap ratio, exp factor min(yrs/10,1), RF/heuristic scoring 0-100, JS fallback (cap 99), ranking desc, persistence to AIAnalysisResult + Application.matchScore
+- Built scripts/fira_dd_data1.py, fira_dd_data2.py, fira_dd_data3.py + build_fira_dd.py (uses xlsx skill templates/base.py design system)
+- Fixed MergedCell crash in auto_fit by replacing merged section rows with fill-span rows
+- QA: audit 0 errors, scan 0 findings, validate exit 0; spot-checked content (status machine, core fields, inventory sums)
+
+Stage Summary:
+- Deliverable: /home/z/my-project/download/FIRA-Data-Dictionary.xlsx (11 sheets, 35 tables, 358 fields)
+- Sheets: README / Algorithm Mapping (pipeline, formulas, feature map, 10 data-quality notes) / Relationship Map (27 FKs + 14 data-flow edges) / 8 group sheets with per-field: Type, Required, Description, Allowed Values (code-verified), Populated By, FK, Algorithm Role tag
+- Scripts persisted under /home/z/my-project/scripts/ for future regeneration

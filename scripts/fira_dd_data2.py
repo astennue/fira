@@ -1,0 +1,328 @@
+# FIRA Data Dictionary - Part 2: Job, ATS, Endorsement, AI, Support, CMS models
+# Field tuple: (field, type, required, description, allowed_values, populated_by, fk, algo_role)
+
+JOB_TABLES = [
+{
+"name": "JobOrder",
+"purpose": "Job vacancy / deployment order. `requiredSkills` + `description` are the demand-side inputs of the matching algorithm; `status`/`visibility` control the application funnel.",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("title", "String", "Yes", "Job title; display and keyword context for matching.", "Free text", "FIRA Staff / Int'l Agency", "-", "Context Input"),
+("description", "String", "Yes", "Full job description text. PRIMARY demand-side feature for SBERT semantic similarity against ApplicantProfile.resumeText.", "Long text", "FIRA Staff / Int'l Agency", "-", "Core Input"),
+("country", "String", "Yes", "Destination country of the job (indexed for filtering).", "Free text", "Creator", "-", "Context Input"),
+("city", "String?", "No", "Destination city.", "Free text", "Creator", "-", "Context Input"),
+("category", "String", "Yes", "Job category; primary segmentation aligned with ApplicantProfile.applicantType (indexed).", "Domestic Helper | Caregiver | Healthcare Worker | Construction Worker | Hospitality Staff | Office Staff | Engineering | IT Professional | Manufacturing | Agriculture | Other", "Creator", "-", "Context Input (segment)"),
+("jobType", "String?", "No", "Employment arrangement selected in the form.", "Full Time | Part Time | Contract", "Creator", "-", "Context Input"),
+("salaryMin", "Float?", "No", "Minimum offered salary (in salaryCurrency).", "Decimal number", "Creator", "-", "Context Input"),
+("salaryMax", "Float?", "No", "Maximum offered salary (in salaryCurrency).", "Decimal number", "Creator", "-", "Context Input"),
+("salaryCurrency", "String", "Yes", "ISO currency code for the salary range.", "USD (default) | EUR | GBP | JPY | AED | SAR | QAR | KWD | BHD | OMR | SGD | HKD | MYR | TWD | KRW | CAD | AUD | NZD | PHP", "Creator", "-", "Context Input"),
+("salaryPeriod", "String?", "No", "Pay period of the quoted salary.", "Monthly | Weekly | Daily | Annual", "Creator", "-", "Context Input"),
+("contractType", "String", "Yes", "Contract type; NOTE: the create form writes the jobType value here (duplication to reconcile).", "full_time (default) | part_time | contract (values as written by form)", "Creator", "-", "Context Input"),
+("duration", "String?", "No", "Contract duration (free text, e.g. '2 years').", "Free text", "Creator", "-", "Context Input"),
+("slots", "Int", "Yes", "Number of workers needed (quota).", "Integer >= 1 (default: 1)", "Creator", "-", "Context Input"),
+("filledSlots", "Int", "Yes", "Number of positions already filled (manually maintained).", "Integer >= 0 (default: 0)", "FIRA Staff", "-", "Lifecycle"),
+("requirements", "String", "Yes", "Qualification requirements text (display + potential semantic input).", "Long text", "Creator", "-", "Context Input"),
+("benefits", "String?", "No", "Benefits package text (food, accommodation, overtime, etc.).", "Long text", "Creator", "-", "Profile"),
+("requiredSkills", "String", "Yes", "Demand-side skill list. CORE algorithm input; stored as a JSON array string OR comma-separated text (parser handles both).", 'JSON array string, e.g. [\"cooking\",\"childcare\"] | comma-separated text', "Creator", "-", "Core Input"),
+("status", "String", "Yes", "Job order lifecycle state; public board lists status='open'.", "open (default on create) | pending | closed (other values settable via PATCH)", "System / FIRA Staff", "-", "Lifecycle"),
+("visibility", "String", "Yes", "Who can discover the job; gates the application funnel (indexed).", "public (default) | private | agency_only", "Creator", "-", "Access"),
+("employerId", "String?", "No", "Employer owning the job order (null = FIRA-posted).", "-", "System", "-> EmployerProfile.id", "System"),
+("agencyId", "String?", "No", "Agency associated with the job order (null = direct).", "-", "System", "-> Agency.id", "System"),
+("createdBy", "String?", "No", "Account that created the record (audit).", "-", "System", "-> User.id", "System"),
+("postedDate", "DateTime", "Yes", "Publication date; usable for freshness features.", "Auto now()", "System", "-", "Context Input"),
+("deadline", "DateTime?", "No", "Application deadline; usable for urgency features.", "ISO date", "Creator", "-", "Context Input"),
+("createdAt", "DateTime", "Yes", "Record creation timestamp.", "Auto now()", "System", "-", "System"),
+("updatedAt", "DateTime", "Yes", "Last modification timestamp.", "Auto on update", "System", "-", "System"),
+]},
+{
+"name": "JobCustomField",
+"purpose": "Per-job custom screening questions defined by the job creator; answered via ApplicationCustomResponse.",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID); referenced by ApplicationCustomResponse.fieldId.", "System-generated CUID", "System", "-", "System"),
+("jobOrderId", "String", "Yes", "Owning job order.", "-", "System", "-> JobOrder.id (cascade)", "System"),
+("label", "String", "Yes", "Question / field label shown to applicants.", "Free text", "Creator", "-", "Context Input"),
+("fieldType", "String", "Yes", "Input control type of the field.", "text (default) | other HTML-ish types per UI", "Creator", "-", "Profile"),
+("options", "String?", "No", "Choices for selection-type fields.", "Free text / JSON", "Creator", "-", "Profile"),
+("isRequired", "Boolean", "Yes", "Whether the applicant must answer.", "false (default) | true", "Creator", "-", "Lifecycle"),
+("order", "Int", "Yes", "Display position within the form.", "Integer (default: 0)", "Creator", "-", "System"),
+("createdAt", "DateTime", "Yes", "Record creation timestamp.", "Auto now()", "System", "-", "System"),
+]},
+]
+
+ATS_TABLES = [
+{
+"name": "Application",
+"purpose": "A candidate's application to a job order (unique per applicant+job). Carries the algorithm OUTPUT (matchScore) and the workflow status used for ranking shortlists and endorsements.",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID); referenced by Endorsement, ATSStageHistory, AIAnalysisResult.", "System-generated CUID", "System", "-", "System"),
+("applicantId", "String", "Yes", "Applying user account (role='applicant').", "-", "System", "-> User.id (cascade); UNIQUE with jobOrderId", "System"),
+("jobOrderId", "String", "Yes", "Job being applied for.", "-", "System", "-> JobOrder.id (cascade)", "System"),
+("status", "String", "Yes", "Workflow state; 19-value state machine (see Status Reference block below). Transitions are role-gated.", "applied (default) | screening | shortlisted | interview | assessment | under_review | pending_fira_review | fira_approved | fira_rejected | pending_employer_review | employer_accepted | employer_declined | offered | hired | processing | deployed | completed | rejected | withdrawn", "System / FIRA Staff / Agency / Employer", "-", "Lifecycle"),
+("coverLetter", "String?", "No", "Applicant's message/ motivation text.", "Long text", "Applicant", "-", "Context Input"),
+("matchScore", "Float?", "No", "DENORMALIZED copy of AIAnalysisResult.matchScore (0-100); the ranking key used by dashboards/shortlists.", "0.0 - 100.0 (1 decimal)", "AI Engine (via matching run)", "-", "Output"),
+("currentStageId", "String?", "No", "Current ATS pipeline stage for this application.", "-", "FIRA Staff / Agency", "-> ATSStage.id", "Lifecycle"),
+("createdAt", "DateTime", "Yes", "Submission timestamp.", "Auto now()", "System", "-", "System"),
+("updatedAt", "DateTime", "Yes", "Last modification timestamp.", "Auto on update", "System", "-", "System"),
+]},
+{
+"name": "ApplicationCustomResponse",
+"purpose": "Applicant's answer to one JobCustomField question (soft-linked by fieldId).",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("applicationId", "String", "Yes", "Owning application.", "-", "System", "-> Application.id (cascade)", "System"),
+("fieldId", "String", "Yes", "Question being answered (soft reference, no DB constraint).", "-", "Applicant", "-> JobCustomField.id (soft)", "System"),
+("value", "String?", "No", "Answer content.", "Free text", "Applicant", "-", "Context Input"),
+("createdAt", "DateTime", "Yes", "Record creation timestamp.", "Auto now()", "System", "-", "System"),
+]},
+{
+"name": "ATSStage",
+"purpose": "Per-job pipeline stage (11 defaults auto-created on job creation: New Application, Document Review, Initial Screening, Interview Scheduled, Interview Completed, Skills Assessment, Background Check, Medical Examination, Government Processing, Pre-Departure Orientation, Contract Signing).",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("jobOrderId", "String", "Yes", "Owning job order.", "-", "System", "-> JobOrder.id (cascade)", "System"),
+("name", "String", "Yes", "Stage name shown in the pipeline board.", "Free text (defaults above)", "System (defaults) / FIRA Staff", "-", "Lifecycle"),
+("order", "Int", "Yes", "Stage sequence within the job (unique per job).", "Integer >= 1", "System", "-", "System"),
+("color", "String", "Yes", "Kanban badge color (hex).", "Hex color (default: #10b981)", "System", "-", "System"),
+("isDefault", "Boolean", "Yes", "Whether the stage is one of the system defaults.", "true (default) | false", "System", "-", "System"),
+("createdAt", "DateTime", "Yes", "Record creation timestamp.", "Auto now()", "System", "-", "System"),
+]},
+{
+"name": "ATSStageHistory",
+"purpose": "Immutable audit trail of stage moves (who moved which application from which stage to which stage, with notes).",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("applicationId", "String", "Yes", "Application that was moved.", "-", "System", "-> Application.id (cascade)", "System"),
+("stageId", "String", "Yes", "Destination stage.", "-", "System", "-> ATSStage.id", "System"),
+("fromStageId", "String?", "No", "Origin stage (null on first entry).", "-", "System", "-> ATSStage.id (soft)", "System"),
+("movedBy", "String?", "No", "User who performed the move (soft reference).", "-", "System", "-> User.id (soft)", "System"),
+("notes", "String?", "No", "Free-text remark recorded with the move.", "Free text", "FIRA Staff / Agency", "-", "Profile"),
+("createdAt", "DateTime", "Yes", "Move timestamp.", "Auto now()", "System", "-", "System"),
+]},
+]
+
+ENDORSEMENT_TABLES = [
+{
+"name": "Endorsement",
+"purpose": "Formal candidate endorsement that triggers the two-step approval: FIRA review, then employer decision. Statuses mirror into Application.status.",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("applicationId", "String", "Yes", "Endorsed application.", "-", "System", "-> Application.id (cascade)", "System"),
+("endorsedById", "String", "Yes", "User who created the endorsement (FIRA staff or agency).", "-", "System", "-> User.id (cascade)", "System"),
+("employerId", "String", "Yes", "Employer receiving the endorsement.", "-", "System", "-> EmployerProfile.id", "System"),
+("status", "String", "Yes", "Two-step approval state. Flow: pending_fira_review -> (fira_approve) -> pending_employer_review -> (employer_accept) -> employer_accepted; branches: fira_rejected, employer_declined.", "pending_fira_review (default) | pending_employer_review | employer_accepted | fira_rejected | employer_declined", "FIRA Staff / Employer", "-", "Lifecycle"),
+("coverNote", "String?", "No", "Endorser's note about the candidate.", "Long text", "FIRA Staff / Agency", "-", "Context Input"),
+("agencyNote", "String?", "No", "Agency-side note.", "Long text", "Agency", "-", "Context Input"),
+("firaNote", "String?", "No", "FIRA reviewer's note (written on approve/reject).", "Long text", "FIRA Staff", "-", "Context Input"),
+("employerNote", "String?", "No", "Employer's note (written on accept/decline).", "Long text", "Employer", "-", "Context Input"),
+("createdAt", "DateTime", "Yes", "Endorsement creation timestamp.", "Auto now()", "System", "-", "System"),
+("updatedAt", "DateTime", "Yes", "Last modification timestamp.", "Auto on update", "System", "-", "System"),
+]},
+]
+
+AI_TABLES = [
+{
+"name": "AIAnalysisResult",
+"purpose": "PERSISTED algorithm output per application (1:1). Written/upserted by /api/matching; the authoritative store of match evidence.",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("applicationId", "String", "Yes", "Analyzed application; unique (one result per application).", "-", "System", "-> Application.id, UNIQUE", "System"),
+("matchScore", "Float", "Yes", "Overall suitability score used for RANKING; 0-100, 1 decimal. AI model output or heuristic fallback (JS fallback caps at 99).", "0.0 - 100.0", "AI Engine", "-", "Output"),
+("semanticScore", "Float", "Yes", "Cosine similarity between resume and job description embeddings; 0-1, 4 decimals.", "0.0 - 1.0", "AI Engine", "-", "Output"),
+("matchedSkills", "String", "Yes", "JSON string array of required skills the applicant HAS.", 'JSON array string, e.g. [\"cooking\"]', "AI Engine", "-", "Output"),
+("missingSkills", "String", "Yes", "JSON string array of required skills the applicant LACKS.", 'JSON array string, e.g. [\"first aid\"]', "AI Engine", "-", "Output"),
+("explanation", "String?", "No", "Human-readable justification generated by the AI service (scores, skill counts, experience).", "Long text", "AI Engine", "-", "Output"),
+("createdAt", "DateTime", "Yes", "First computation timestamp.", "Auto now()", "System", "-", "System"),
+("updatedAt", "DateTime", "Yes", "Last re-computation timestamp.", "Auto on update", "System", "-", "System"),
+]},
+{
+"name": "ResumeEnhancement",
+"purpose": "AI-assisted resume rewrites (original vs enhanced text) with a change summary; improves resumeText quality that feeds semantic scoring.",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("applicantId", "String", "Yes", "Owner of the resume.", "-", "System", "-> User.id (cascade)", "System"),
+("jobOrderId", "String?", "No", "Optional target job the resume was tailored for (soft reference, no DB constraint).", "-", "System", "-> JobOrder.id (soft)", "System"),
+("originalText", "String", "Yes", "Resume text before enhancement.", "Long text", "Applicant / AI Engine", "-", "Context Input"),
+("enhancedText", "String", "Yes", "AI-enhanced resume text (candidate replacement for resumeText).", "Long text", "AI Engine", "-", "Context Input"),
+("changesSummary", "String", "Yes", "Summary of the improvements made.", "Long text", "AI Engine", "-", "Profile"),
+("isUsed", "Boolean", "Yes", "Whether the applicant applied the enhanced version to their profile.", "false (default) | true", "Applicant", "-", "Lifecycle"),
+("createdAt", "DateTime", "Yes", "Record creation timestamp.", "Auto now()", "System", "-", "System"),
+]},
+]
+
+SUPPORT_TABLES = [
+{
+"name": "Notification",
+"purpose": "In-app notification feed per user (approvals, status changes, announcements).",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("userId", "String", "Yes", "Recipient user.", "-", "System", "-> User.id (cascade)", "System"),
+("title", "String", "Yes", "Short notification heading.", "Free text", "System / FIRA Staff", "-", "System"),
+("message", "String", "Yes", "Notification body text.", "Free text", "System / FIRA Staff", "-", "System"),
+("type", "String", "Yes", "Notification kind used for styling/severity (free string).", "info (default) | others settable by API", "System", "-", "System"),
+("isRead", "Boolean", "Yes", "Read receipt flag.", "false (default) | true", "Recipient", "-", "System"),
+("link", "String?", "No", "In-app navigation target when clicked.", "URL path", "System", "-", "System"),
+("createdAt", "DateTime", "Yes", "Creation timestamp.", "Auto now()", "System", "-", "System"),
+]},
+{
+"name": "VerificationCode",
+"purpose": "Time-limited codes for email verification and password reset.",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("userId", "String", "Yes", "Owner of the code.", "-", "System", "-> User.id (cascade)", "System"),
+("code", "String", "Yes", "The verification code value.", "Numeric/alphanumeric code", "System", "-", "System"),
+("type", "String", "Yes", "Purpose of the code.", "email_verification (default) | password_reset", "System", "-", "System"),
+("expiresAt", "DateTime", "Yes", "Expiry timestamp.", "ISO datetime", "System", "-", "System"),
+("usedAt", "DateTime?", "No", "When the code was consumed (null = unused).", "ISO datetime", "System", "-", "System"),
+("createdAt", "DateTime", "Yes", "Creation timestamp.", "Auto now()", "System", "-", "System"),
+]},
+{
+"name": "ContactSubmission",
+"purpose": "Public contact-us form messages (read-flagged by staff).",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("name", "String", "Yes", "Sender name.", "Free text", "Guest (public)", "-", "System"),
+("email", "String", "Yes", "Sender email.", "Free text", "Guest (public)", "-", "System"),
+("subject", "String", "Yes", "Message subject.", "Free text", "Guest (public)", "-", "System"),
+("message", "String", "Yes", "Message body.", "Long text", "Guest (public)", "-", "System"),
+("isRead", "Boolean", "Yes", "Whether staff have read the message.", "false (default) | true", "FIRA Staff", "-", "System"),
+("createdAt", "DateTime", "Yes", "Submission timestamp.", "Auto now()", "System", "-", "System"),
+]},
+{
+"name": "NewsletterSubscription",
+"purpose": "Public newsletter opt-in emails (unique).",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("email", "String", "Yes", "Subscriber email; unique.", "Valid email; UNIQUE", "Guest (public)", "-", "System"),
+("isActive", "Boolean", "Yes", "Whether the subscription is active.", "true (default) | false", "FIRA Staff", "-", "System"),
+("createdAt", "DateTime", "Yes", "Subscription timestamp.", "Auto now()", "System", "-", "System"),
+]},
+{
+"name": "PartnerInquiry",
+"purpose": "B2B partnership inquiries from employers/agencies (read-flagged by staff).",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("companyName", "String", "Yes", "Inquiring company.", "Free text", "Guest (public)", "-", "System"),
+("contactName", "String", "Yes", "Contact person.", "Free text", "Guest (public)", "-", "System"),
+("email", "String", "Yes", "Contact email.", "Free text", "Guest (public)", "-", "System"),
+("phone", "String?", "No", "Contact phone.", "Free text", "Guest (public)", "-", "System"),
+("country", "String?", "No", "Company country.", "Free text", "Guest (public)", "-", "System"),
+("industry", "String?", "No", "Company industry.", "Free text", "Guest (public)", "-", "System"),
+("workerCount", "String?", "No", "Number of workers requested (free text).", "Free text", "Guest (public)", "-", "System"),
+("message", "String?", "No", "Inquiry message.", "Long text", "Guest (public)", "-", "System"),
+("isRead", "Boolean", "Yes", "Whether staff have read the inquiry.", "false (default) | true", "FIRA Staff", "-", "System"),
+("createdAt", "DateTime", "Yes", "Submission timestamp.", "Auto now()", "System", "-", "System"),
+]},
+]
+
+CMS_TABLES = [
+{
+"name": "CmsPage",
+"purpose": "Static marketing/info pages managed by staff (About, etc.).",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("title", "String", "Yes", "Page title.", "Free text", "FIRA Staff", "-", "System"),
+("slug", "String", "Yes", "URL slug; unique.", "Free text; UNIQUE", "FIRA Staff", "-", "System"),
+("content", "String", "Yes", "Page body content.", "Long text", "FIRA Staff", "-", "System"),
+("status", "String", "Yes", "Publication state.", "draft | published (default: published)", "FIRA Staff", "-", "System"),
+("order", "Int", "Yes", "Display order.", "Integer (default: 0)", "FIRA Staff", "-", "System"),
+("createdAt", "DateTime", "Yes", "Creation timestamp.", "Auto now()", "System", "-", "System"),
+("updatedAt", "DateTime", "Yes", "Last modification timestamp.", "Auto on update", "System", "-", "System"),
+]},
+{
+"name": "CmsFaq",
+"purpose": "FAQ entries grouped by category.",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("question", "String", "Yes", "FAQ question.", "Free text", "FIRA Staff", "-", "System"),
+("answer", "String", "Yes", "FAQ answer.", "Long text", "FIRA Staff", "-", "System"),
+("category", "String", "Yes", "FAQ grouping.", "Free text (default: General)", "FIRA Staff", "-", "System"),
+("order", "Int", "Yes", "Display order.", "Integer (default: 0)", "FIRA Staff", "-", "System"),
+("isActive", "Boolean", "Yes", "Visibility flag.", "true (default) | false", "FIRA Staff", "-", "System"),
+("createdAt", "DateTime", "Yes", "Creation timestamp.", "Auto now()", "System", "-", "System"),
+("updatedAt", "DateTime", "Yes", "Last modification timestamp.", "Auto on update", "System", "-", "System"),
+]},
+{
+"name": "CmsTestimonial",
+"purpose": "Success-story testimonials shown on the landing page.",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("name", "String", "Yes", "Featured person name.", "Free text", "FIRA Staff", "-", "System"),
+("position", "String?", "No", "Person's role/title.", "Free text", "FIRA Staff", "-", "System"),
+("company", "String?", "No", "Related company.", "Free text", "FIRA Staff", "-", "System"),
+("feedback", "String", "Yes", "Testimonial text.", "Long text", "FIRA Staff", "-", "System"),
+("rating", "Int", "Yes", "Star rating.", "Integer 1-5 (default: 5)", "FIRA Staff", "-", "System"),
+("avatar", "String?", "No", "Photo path.", "File path", "FIRA Staff", "-", "System"),
+("isActive", "Boolean", "Yes", "Visibility flag.", "true (default) | false", "FIRA Staff", "-", "System"),
+("createdAt", "DateTime", "Yes", "Creation timestamp.", "Auto now()", "System", "-", "System"),
+("updatedAt", "DateTime", "Yes", "Last modification timestamp.", "Auto on update", "System", "-", "System"),
+]},
+{
+"name": "CmsSocialMedia",
+"purpose": "Social media links rendered in the site footer.",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("platform", "String", "Yes", "Social platform identifier.", "facebook | twitter | instagram | linkedin | whatsapp | tiktok | youtube", "FIRA Staff", "-", "System"),
+("title", "String?", "No", "Display label.", "Free text", "FIRA Staff", "-", "System"),
+("url", "String", "Yes", "Target URL.", "URL", "FIRA Staff", "-", "System"),
+("icon", "String?", "No", "Icon name or SVG.", "Free text", "FIRA Staff", "-", "System"),
+("logo", "String?", "No", "Uploaded logo path.", "File path", "FIRA Staff", "-", "System"),
+("order", "Int", "Yes", "Display order.", "Integer (default: 0)", "FIRA Staff", "-", "System"),
+("isActive", "Boolean", "Yes", "Visibility flag.", "true (default) | false", "FIRA Staff", "-", "System"),
+("createdAt", "DateTime", "Yes", "Creation timestamp.", "Auto now()", "System", "-", "System"),
+("updatedAt", "DateTime", "Yes", "Last modification timestamp.", "Auto on update", "System", "-", "System"),
+]},
+{
+"name": "CmsOrgChart",
+"purpose": "Organization chart entries (self-referencing parent hierarchy).",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("name", "String", "Yes", "Person name.", "Free text", "FIRA Staff", "-", "System"),
+("position", "String", "Yes", "Job title.", "Free text", "FIRA Staff", "-", "System"),
+("department", "String?", "No", "Department name.", "Free text", "FIRA Staff", "-", "System"),
+("parentId", "String?", "No", "Parent node for hierarchy (self-reference, soft).", "-", "FIRA Staff", "-> CmsOrgChart.id (soft)", "System"),
+("avatar", "String?", "No", "Photo path.", "File path", "FIRA Staff", "-", "System"),
+("email", "String?", "No", "Contact email.", "Free text", "FIRA Staff", "-", "System"),
+("phone", "String?", "No", "Contact phone.", "Free text", "FIRA Staff", "-", "System"),
+("order", "Int", "Yes", "Display order.", "Integer (default: 0)", "FIRA Staff", "-", "System"),
+("isActive", "Boolean", "Yes", "Visibility flag.", "true (default) | false", "FIRA Staff", "-", "System"),
+("createdAt", "DateTime", "Yes", "Creation timestamp.", "Auto now()", "System", "-", "System"),
+("updatedAt", "DateTime", "Yes", "Last modification timestamp.", "Auto on update", "System", "-", "System"),
+]},
+{
+"name": "CmsTermsPrivacy",
+"purpose": "Legal documents (Terms of Service, Data Privacy Consent) with versioning; one row per type.",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("type", "String", "Yes", "Document kind; unique per type.", "terms_of_service | data_privacy_consent; UNIQUE", "FIRA Staff", "-", "System"),
+("title", "String", "Yes", "Document title.", "Free text", "FIRA Staff", "-", "System"),
+("content", "String", "Yes", "Document body.", "Long text", "FIRA Staff", "-", "System"),
+("version", "String", "Yes", "Document version tag.", "Free text (default: 1.0)", "FIRA Staff", "-", "System"),
+("isActive", "Boolean", "Yes", "Whether this version is in effect.", "true (default) | false", "FIRA Staff", "-", "System"),
+("createdAt", "DateTime", "Yes", "Creation timestamp.", "Auto now()", "System", "-", "System"),
+("updatedAt", "DateTime", "Yes", "Last modification timestamp.", "Auto on update", "System", "-", "System"),
+]},
+{
+"name": "CmsFormField",
+"purpose": "Dynamically configurable applicant form fields (staff-defined sections and controls).",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("label", "String", "Yes", "Field label.", "Free text", "FIRA Staff", "-", "System"),
+("fieldType", "String", "Yes", "Control type of the field.", "text (default) | textarea | select | multiselect | checkbox | date | number | file | email | phone", "FIRA Staff", "-", "System"),
+("options", "String?", "No", "Choices for select/multiselect (JSON array).", "JSON array string", "FIRA Staff", "-", "System"),
+("isRequired", "Boolean", "Yes", "Whether the field must be filled.", "false (default) | true", "FIRA Staff", "-", "System"),
+("order", "Int", "Yes", "Display order.", "Integer (default: 0)", "FIRA Staff", "-", "System"),
+("section", "String", "Yes", "Form section the field belongs to.", "Free text (default: Personal Information)", "FIRA Staff", "-", "System"),
+("isActive", "Boolean", "Yes", "Whether the field is currently used.", "true (default) | false", "FIRA Staff", "-", "System"),
+("createdAt", "DateTime", "Yes", "Creation timestamp.", "Auto now()", "System", "-", "System"),
+("updatedAt", "DateTime", "Yes", "Last modification timestamp.", "Auto on update", "System", "-", "System"),
+]},
+{
+"name": "CmsSettings",
+"purpose": "Key-value site settings store (branding, flags, configuration).",
+"fields": [
+("id", "String", "Yes", "Primary key (CUID).", "System-generated CUID", "System", "-", "System"),
+("key", "String", "Yes", "Setting key; unique.", "Free text; UNIQUE", "FIRA Staff", "-", "System"),
+("value", "String", "Yes", "Setting value.", "Free text (default: empty)", "FIRA Staff", "-", "System"),
+("updatedAt", "DateTime", "Yes", "Last modification timestamp.", "Auto on update", "System", "-", "System"),
+]},
+]
