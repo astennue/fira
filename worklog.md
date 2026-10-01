@@ -694,3 +694,23 @@ Stage Summary:
 - Deliverable: /home/z/my-project/download/FIRA-Data-Dictionary.xlsx (11 sheets, 35 tables, 358 fields)
 - Sheets: README / Algorithm Mapping (pipeline, formulas, feature map, 10 data-quality notes) / Relationship Map (27 FKs + 14 data-flow edges) / 8 group sheets with per-field: Type, Required, Description, Allowed Values (code-verified), Populated By, FK, Algorithm Role tag
 - Scripts persisted under /home/z/my-project/scripts/ for future regeneration
+
+---
+Task ID: 9
+Agent: Main agent (Super Z)
+Task: Redo high-fidelity system design as "MatchWise" — desktop frames, refined/polished, HTML + PDF deliverables
+
+Work Log:
+- Clarified with user first: scope=core journeys (~20 screens), format=HTML+PDF, frame=desktop+floating (+ minimal variant), theme=light+dark dual-mode, branding=MatchWise for the SYSTEM while FIRA stays as the COMPANY name (contextual), palette=exact logo colors (#1F3FA6/#2859D5 royal blue, #F6C615 gold — extracted from uploaded logo PNG), highlights=AI Match Score + 19-state Status Tracker + Endorsement flow
+- Read pdf skill (SKILL.md, fonts.md, creative-fixed-canvas brief) + followed bypass-HTML rules: @page 1440x810 margin 0, no overflow:hidden on containers, no backdrop-filter, @media screen zoom scaling, body bg = darkest slide bg
+- Downloaded Space Grotesk/Inter/JetBrains Mono (latin woff2) and embedded as base64 @font-face → fully self-contained 683KB HTML
+- Built modular deck: scripts/mw_deck/{css/base,frame,ui}.css + 20 slide fragments + build.py assembler → /home/z/my-project/download/MatchWise-HiFi-System-Design.html
+- 20 slides: cover, design system (palette/type/frame legend/naming rule), landing hero, job discovery, login, register, applicant dashboard, job detail w/ AI match panel, applications tracker (8-milestone + 19-state timeline), resume AI parse (SBERT vector), employer dashboard, post job, endorsed workers, agency dashboard, ATS kanban, endorsement detail (2-step flow + audit trail), FIRA Staff command center, job orders table, AI engine blueprint (0.40/0.40/0.20 weights, RF scorer, JS fallback cap 99), closing
+- Fixed during QA: CSS alias vars (--pri/--panel/--text) undefined outside .du scope (broke chips/ring holes on s02/s16) → :root light aliases + .du wrappers; .lg chip scoping; s07 4th row; s12 column compression; s18 +2 table rows; s19 ranked-output strip; s01/s20 spacing
+- Validated: poster_validate check-html → 0 real errors (9 @font-face false positives; var() fallbacks added inline); screenshot QA of all 20 slides via agent-browser with 3 fix iterations
+- PDF: html2pdf-next.js --nopaged @1440x810px → 20-page vector PDF (5.8MB); pdf_qa.py → WARN only (interpunct-separator false positives); metadata set (Title/Author=FIRA/Creator/Subject)
+
+Stage Summary:
+- Deliverables: MatchWise-HiFi-System-Design.html (self-contained deck), .pdf (20-page vector), MatchWise-HiFi-Preview.png (cover)
+- Build scripts persisted in scripts/mw_deck/ (frag/*.html + css/*.css + build.py) for future edits — regenerate via python3 build.py
+- Branding decision encoded in deck slide 02: MatchWise = system/platform name; FIRA = company (FIRA Staff workspace, governance)

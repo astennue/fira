@@ -1,0 +1,129 @@
+<!-- ============ SLIDE 19 · AI MATCHING ENGINE SHOWCASE (DARK) ============ -->
+<section class="page" id="s19">
+  <div class="wall"></div>
+  <div class="kicker"><span class="tick"></span><span class="kt">System · Engine Room</span><span class="kd">/ 19 · AI Matching — how scoring works</span></div>
+
+  <!-- headline -->
+  <div style="position:absolute;left:44px;top:76px;z-index:4">
+    <div style="font-family:var(--f-disp),sans-serif;font-weight:700;font-size:30px;color:#fff;letter-spacing:-.01em">Every match is a <span style="color:var(--gold)">weighted, explainable score</span></div>
+    <div style="font-size:12.5px;color:rgba(255,255,255,.55);margin-top:6px;max-width:760px;line-height:1.6">Resume and job description are encoded with SBERT; skill overlap and experience complete the signal. A RandomForest ranks the pool — with a deterministic fallback so the platform never stalls.</div>
+  </div>
+
+  <!-- pipeline canvas -->
+  <div style="position:absolute;left:44px;right:44px;top:192px;z-index:4;background:rgba(14,20,58,.66);border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:24px 26px">
+    <div style="display:flex;align-items:stretch;gap:0">
+      <!-- inputs -->
+      <div style="width:210px;flex:none;display:flex;flex-direction:column;gap:10px">
+        <div style="background:rgba(91,123,255,.10);border:1px solid rgba(91,123,255,.35);border-radius:12px;padding:11px 13px">
+          <div style="font-size:10.5px;font-weight:700;color:#9DB2FF">Applicant resume text</div>
+          <div class="mono" style="font-size:9px;color:var(--d-sub);margin-top:3px">resumeText · parsed profile</div>
+          <div style="display:flex;gap:3px;align-items:flex-end;height:26px;margin-top:8px">
+            <div style="flex:1;height:60%;background:#5B7BFF;opacity:.75;border-radius:2px"></div><div style="flex:1;height:90%;background:#5B7BFF;opacity:.75;border-radius:2px"></div><div style="flex:1;height:45%;background:#5B7BFF;opacity:.75;border-radius:2px"></div><div style="flex:1;height:78%;background:#5B7BFF;opacity:.75;border-radius:2px"></div><div style="flex:1;height:55%;background:#5B7BFF;opacity:.75;border-radius:2px"></div><div style="flex:1;height:85%;background:#5B7BFF;opacity:.75;border-radius:2px"></div>
+          </div>
+        </div>
+        <div style="background:rgba(91,123,255,.10);border:1px solid rgba(91,123,255,.35);border-radius:12px;padding:11px 13px">
+          <div style="font-size:10.5px;font-weight:700;color:#9DB2FF">Job description</div>
+          <div class="mono" style="font-size:9px;color:var(--d-sub);margin-top:3px">JobOrder.description</div>
+          <div style="display:flex;gap:3px;align-items:flex-end;height:26px;margin-top:8px">
+            <div style="flex:1;height:70%;background:#5B7BFF;opacity:.75;border-radius:2px"></div><div style="flex:1;height:40%;background:#5B7BFF;opacity:.75;border-radius:2px"></div><div style="flex:1;height:82%;background:#5B7BFF;opacity:.75;border-radius:2px"></div><div style="flex:1;height:60%;background:#5B7BFF;opacity:.75;border-radius:2px"></div><div style="flex:1;height:88%;background:#5B7BFF;opacity:.75;border-radius:2px"></div><div style="flex:1;height:50%;background:#5B7BFF;opacity:.75;border-radius:2px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="farrow gold" style="width:34px;align-self:center"></div>
+      <!-- factors -->
+      <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:12px">
+          <span class="mono" style="width:30px;height:30px;border-radius:9px;background:rgba(246,198,21,.15);color:var(--gold);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none">.40</span>
+          <div style="flex:1"><div style="font-size:11.5px;font-weight:700;color:var(--d-text)">Semantic similarity — SBERT cosine</div><div class="mono" style="font-size:9px;color:var(--d-sub)">768-dim embeddings · resume vs description</div></div>
+          <div class="fbar" style="width:150px"><i style="width:88%;background:linear-gradient(90deg,#2859D5,#5B7BFF)"></i></div>
+        </div>
+        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:12px">
+          <span class="mono" style="width:30px;height:30px;border-radius:9px;background:rgba(246,198,21,.15);color:var(--gold);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none">.40</span>
+          <div style="flex:1"><div style="font-size:11.5px;font-weight:700;color:var(--d-text)">Skill overlap — case-insensitive match</div><div class="mono" style="font-size:9px;color:var(--d-sub)">ApplicantSkill.name ∩ JobOrder.requiredSkills</div></div>
+          <div class="fbar" style="width:150px"><i style="width:84%;background:linear-gradient(90deg,#FFD84D,#F6C615)"></i></div>
+        </div>
+        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:12px">
+          <span class="mono" style="width:30px;height:30px;border-radius:9px;background:rgba(246,198,21,.15);color:var(--gold);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none">.20</span>
+          <div style="flex:1"><div style="font-size:11.5px;font-weight:700;color:var(--d-text)">Experience factor</div><div class="mono" style="font-size:9px;color:var(--d-sub)">min(yearsExperience / 10, 1)</div></div>
+          <div class="fbar" style="width:150px"><i style="width:70%;background:linear-gradient(90deg,#34D399,#059669)"></i></div>
+        </div>
+      </div>
+      <div class="farrow gold" style="width:34px;align-self:center"></div>
+      <!-- scorer -->
+      <div style="width:200px;flex:none;display:flex;flex-direction:column;gap:10px">
+        <div style="background:linear-gradient(135deg,rgba(246,198,21,.14),rgba(246,198,21,.05));border:1px solid rgba(246,198,21,.45);border-radius:12px;padding:12px 14px;text-align:center">
+          <div style="font-size:11px;font-weight:700;color:var(--gold)">RandomForest scorer</div>
+          <div class="mono" style="font-size:9px;color:var(--d-sub);margin-top:3px">python-ai · port 8000</div>
+          <div style="font-family:var(--f-disp),sans-serif;font-weight:700;font-size:26px;color:var(--d-text);margin-top:6px">0 – 100</div>
+        </div>
+        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:9px 13px">
+          <div style="display:flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:50%;background:var(--warn-bright);flex:none"></span><span style="font-size:9.8px;font-weight:600;color:var(--d-text)">JS fallback if AI &gt; 5s</span></div>
+          <div class="mono" style="font-size:9px;color:var(--d-sub);margin-top:3px">heuristic · capped at 99</div>
+        </div>
+      </div>
+    </div>
+    <!-- outputs -->
+    <div style="display:flex;align-items:center;gap:12px;margin-top:16px;padding-top:14px;border-top:1px dashed rgba(255,255,255,.14)">
+      <span class="chip c-gold"><i></i>Ranked shortlist</span>
+      <span class="ic m-up" style="width:13px;height:13px;color:var(--d-sub)"></span>
+      <span class="chip c-blue"><i></i>Application.matchScore</span>
+      <span class="ic m-up" style="width:13px;height:13px;color:var(--d-sub)"></span>
+      <span class="chip c-blue"><i></i>AIAnalysisResult — 1:1 per application</span>
+      <div style="flex:1"></div>
+      <span class="mono" style="font-size:9px;color:var(--d-sub)">candidate pool gate: role = applicant · isActive · isApproved</span>
+    </div>
+    <!-- sample ranked output -->
+    <div style="margin-top:14px;background:rgba(11,16,48,.55);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">
+        <span class="mono" style="font-size:9px;letter-spacing:.14em;color:var(--d-sub);text-transform:uppercase">Sample output — ranked pool for JOB-2026-01148</span>
+        <div style="flex:1"></div>
+        <span class="mono" style="font-size:9px;color:var(--d-sub)">34 candidates scored · 0.14s</span>
+      </div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1.35;display:flex;align-items:center;gap:10px;background:rgba(246,198,21,.07);border:1px solid rgba(246,198,21,.35);border-radius:9px;padding:8px 12px">
+          <span class="mono" style="font-size:9px;color:var(--d-sub)">#1</span>
+          <span style="font-size:11px;font-weight:700;color:var(--d-text)">Maria C. Santos</span>
+          <span style="font-size:9px;color:var(--d-sub)">7 yrs · Cebu</span>
+          <div style="flex:1;height:6px;border-radius:4px;background:rgba(255,255,255,.10);position:relative"><i style="position:absolute;left:0;top:0;bottom:0;width:92%;border-radius:4px;background:linear-gradient(90deg,#FFD84D,#F6C615)"></i></div>
+          <span class="mono" style="font-size:11px;font-weight:600;color:var(--gold)">92</span>
+        </div>
+        <div style="flex:1;display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);border-radius:9px;padding:8px 12px">
+          <span class="mono" style="font-size:9px;color:var(--d-sub)">#2</span>
+          <span style="font-size:11px;font-weight:600;color:var(--d-text)">Jasmine B. Reyes</span>
+          <div style="flex:1;height:6px;border-radius:4px;background:rgba(255,255,255,.10);position:relative"><i style="position:absolute;left:0;top:0;bottom:0;width:89%;border-radius:4px;background:linear-gradient(90deg,#2859D5,#5B7BFF)"></i></div>
+          <span class="mono" style="font-size:11px;color:var(--d-text)">89</span>
+        </div>
+        <div style="flex:1;display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);border-radius:9px;padding:8px 12px">
+          <span class="mono" style="font-size:9px;color:var(--d-sub)">#3</span>
+          <span style="font-size:11px;font-weight:600;color:var(--d-text)">Ana Liza M. Cruz</span>
+          <div style="flex:1;height:6px;border-radius:4px;background:rgba(255,255,255,.10);position:relative"><i style="position:absolute;left:0;top:0;bottom:0;width:85%;border-radius:4px;background:linear-gradient(90deg,#2859D5,#5B7BFF)"></i></div>
+          <span class="mono" style="font-size:11px;color:var(--d-text)">85</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- bottom trio -->
+  <div style="position:absolute;left:44px;right:44px;bottom:78px;z-index:4;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+    <div style="background:rgba(18,26,72,.72);border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center">
+      <div style="width:34px;height:34px;border-radius:10px;background:rgba(91,123,255,.16);display:flex;align-items:center;justify-content:center;flex:none"><span class="ic m-spark" style="width:15px;height:15px;color:#9DB2FF"></span></div>
+      <div><div style="font-size:11.5px;font-weight:700;color:#fff">Explainable by design</div><div style="font-size:10px;color:rgba(255,255,255,.55);margin-top:2px;line-height:1.5">Each score ships with per-factor breakdown shown to applicants and employers.</div></div>
+    </div>
+    <div style="background:rgba(18,26,72,.72);border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center">
+      <div style="width:34px;height:34px;border-radius:10px;background:rgba(246,198,21,.14);display:flex;align-items:center;justify-content:center;flex:none"><span class="ic m-shield" style="width:15px;height:15px;color:var(--gold)"></span></div>
+      <div><div style="font-size:11.5px;font-weight:700;color:#fff">Never stalls</div><div style="font-size:10px;color:rgba(255,255,255,.55);margin-top:2px;line-height:1.5">5-second timeout falls back to a deterministic heuristic — scoring always completes.</div></div>
+    </div>
+    <div style="background:rgba(18,26,72,.72);border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center">
+      <div style="width:34px;height:34px;border-radius:10px;background:rgba(52,211,153,.14);display:flex;align-items:center;justify-content:center;flex:none"><span class="ic m-chart" style="width:15px;height:15px;color:var(--ok-bright)"></span></div>
+      <div><div style="font-size:11.5px;font-weight:700;color:#fff">Auditable</div><div style="font-size:10px;color:rgba(255,255,255,.55);margin-top:2px;line-height:1.5">Scores persist to AIAnalysisResult for review, QA and model retraining.</div></div>
+    </div>
+  </div>
+
+  <div class="caption">
+    <div class="cap-l">
+      <div class="cap-t">The engine room — weights you can read, numbers you can trust</div>
+      <div class="cap-s">This is the pipeline behind every match ring in this deck: 0.40 semantic + 0.40 skills + 0.20 experience, scored by RandomForest with a guaranteed fallback path.</div>
+    </div>
+    <div class="cap-r"><span>Diagram</span><b>System Blueprint</b><span>·</span><span>Theme</span><b>Dark</b><span>·</span><span>19 / 20</span></div>
+  </div>
+</section>
