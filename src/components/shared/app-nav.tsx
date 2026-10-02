@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/sheet'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useAppStore, getDashboardView, type ViewName, roleDisplayNames } from '@/store/app-store'
+import { MwWordmark, MwMark } from '@/components/shared/mw-logo'
 import { cn } from '@/lib/utils'
 
 const publicNavItems = [
@@ -133,10 +134,8 @@ export function AppNav() {
               <SheetContent side="left" className="w-72 p-0">
                 <SheetHeader className="border-b px-4 py-3">
                   <SheetTitle className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-700 to-blue-900 text-white font-bold text-sm">
-                      F
-                    </div>
-                    <span className="text-lg font-bold bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent">FIRA</span>
+                    <MwMark className="size-8" />
+                    <span className="text-lg font-bold">Match<span className="text-gold">Wise</span></span>
                   </SheetTitle>
                 </SheetHeader>
                 <ScrollArea className="flex-1 h-[calc(100vh-8rem)]">
@@ -170,8 +169,9 @@ export function AppNav() {
           <button
             onClick={handleLogoClick}
             className="flex items-center gap-2 shrink-0"
+            aria-label="MatchWise home"
           >
-            <img src="/logo.png" alt="FIRA Logo" className="h-8 sm:h-9 object-contain" />
+            <MwWordmark light={!user && isPublicView && !scrolled} />
           </button>
 
           {/* Desktop Nav Links (public only, when not logged in) */}

@@ -22,6 +22,8 @@ import {
 } from '@/components/ui/accordion'
 import { useAppStore } from '@/store/app-store'
 import { apiFetch } from '@/lib/fetch'
+import { MwMark } from '@/components/shared/mw-logo'
+import { Sparkles } from 'lucide-react'
 
 /* ============================================================
    ANIMATION VARIANTS
@@ -64,6 +66,18 @@ const categoryColors: Record<string, string> = {
   nurse: 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300',
   factory: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
   hospitality: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300',
+}
+
+/* ============================================================
+   HERO MOCKUP HELPERS
+   ============================================================ */
+
+function cnmockItem(active: boolean) {
+  return `flex items-center gap-2 rounded-lg px-2 py-1.5 ${active ? 'bg-white/10 text-white' : 'text-white/55 hover:bg-white/5'} transition-colors cursor-pointer`
+}
+
+function cnDot(active: boolean) {
+  return `h-1.5 w-1.5 rounded-full ${active ? 'bg-[#F6C615]' : 'bg-white/25'}`
 }
 
 /* ============================================================
@@ -270,13 +284,10 @@ export function LandingPage() {
   const L = (fil: string, en: string): string => language === 'fil' ? fil : en
   const Lr = (fil: ReactNode, en: ReactNode): ReactNode => language === 'fil' ? fil : en
 
-  // ── Hero Bento Cards ───────────────────────────────────────
-  const heroBentoCards = [
-    { icon: Globe2, label: L('30+ Bansa', '30+ Countries'), size: 'large' as const, accent: 'from-blue-500/20 to-blue-600/10' },
-    { icon: Users, label: L('10K+ Na-deploy', '10K+ Deployed'), size: 'small' as const, accent: 'from-amber-500/20 to-amber-600/10' },
-    { icon: Shield, label: L('Ligtas & Legal', 'Safe & Legal'), size: 'small' as const, accent: 'from-green-500/20 to-green-600/10' },
-    { icon: BadgeCheck, label: L('DOLE License', 'DOLE Licensed'), size: 'small' as const, accent: 'from-sky-500/20 to-sky-600/10' },
-    { icon: HeartHandshake, label: L('Buong Suporta', 'Full Support'), size: 'large' as const, accent: 'from-rose-500/20 to-rose-600/10' },
+  // ── Hero Dashboard Mockup (deck cover visual) ─────────────
+  const mockMatches = [
+    { score: 92, title: 'Domestic Helper · Casablanca', meta: 'MAD 4,200/mo · Verified Employer' },
+    { score: 87, title: 'Caregiver · Rabat', meta: 'MAD 5,500/mo · AI Amal Clinic' },
   ]
 
   // ── How It Works Steps ────────────────────────────────────
@@ -352,23 +363,29 @@ export function LandingPage() {
               </motion.div>
 
               {/* Main Headline */}
-              <motion.h1 variants={fadeUp} custom={1} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] text-white">
-                {Lr(
-                  <><span className="block">Ang Iyong</span><span className="block mt-1">Karera sa</span></>,
-                  <><span className="block">Your Career</span><span className="block mt-1">Starts</span></>
-                )}
-                <span className="block mt-1 bg-gradient-to-r from-amber-300 via-amber-400 to-amber-300 bg-clip-text text-transparent">
-                  {L('Dito.', 'Here.')}
-                </span>
+              <motion.h1 variants={fadeUp} custom={1} className="font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.08] text-white">
+                <span className="block">One Platform.</span>
+                <span className="block mt-1 text-[#F6C615]">Smarter Matching.</span>
+                <span className="block mt-1">Better Hiring.</span>
               </motion.h1>
 
               {/* Subtitle */}
-              <motion.p variants={fadeUp} custom={2} className="text-blue-100/80 text-lg md:text-xl max-w-lg leading-relaxed">
+              <motion.p variants={fadeUp} custom={2} className="text-blue-100/85 text-lg md:text-xl max-w-lg leading-relaxed">
                 {L(
-                  'Ang FIRA ay nagkonekta ng bihasang manggagawang Pilipino sa mga pinakamahusay na oportunidad sa buong mundo.',
-                  'FIRA connects skilled Filipino workers with the best opportunities worldwide.'
+                  'AI-matched na platform ng FIRA para sa mga manggagawang Pilipino patungong verified na employer sa ibang bansa.',
+                  'FIRA\u2019s AI-matched recruitment platform — applicants, employers, agencies, and staff operations on one intelligent pipeline from Manila to Morocco.'
                 )}
               </motion.p>
+
+              {/* Role chips */}
+              <motion.div variants={fadeUp} custom={2} className="flex flex-wrap items-center gap-2">
+                {[L('Aplikante', 'Applicant'), L('Empleyador', 'Employer'), L('Lokal na Ahensya', 'Local Agency'), 'FIRA Staff'].map((r) => (
+                  <span key={r} className="inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/20 px-3 py-1 text-xs font-medium text-white/90 backdrop-blur-sm">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#F6C615]" />
+                    {r}
+                  </span>
+                ))}
+              </motion.div>
 
               {/* Search Bar */}
               <motion.form variants={fadeUp} custom={3} onSubmit={handleSearch} className="max-w-lg">
@@ -381,7 +398,7 @@ export function LandingPage() {
                     value={heroSearch}
                     onChange={(e) => setHeroSearch(e.target.value)}
                   />
-                  <Button type="submit" className="rounded-md h-10 px-5 shrink-0 bg-amber-500 hover:bg-amber-600 text-white font-semibold shadow-lg shadow-amber-500/30">
+                  <Button type="submit" className="rounded-md h-10 px-5 shrink-0 bg-[#F6C615] hover:bg-[#e0b40e] text-[#14205a] font-semibold shadow-lg shadow-black/20">
                     {L('Hanapin', 'Search')}
                   </Button>
                 </div>
@@ -403,30 +420,81 @@ export function LandingPage() {
               </motion.div>
             </motion.div>
 
-            {/* RIGHT: Bento Grid */}
+            {/* RIGHT: MatchWise Dashboard Mockup (deck visual) */}
             <motion.div
               initial="hidden"
               animate="visible"
               variants={stagger}
-              className="hidden lg:grid grid-cols-3 grid-rows-3 gap-3 h-[420px]"
+              className="hidden lg:block relative"
             >
-              {heroBentoCards.map((card, i) => (
-                <motion.div
-                  key={i}
-                  variants={fadeUp}
-                  custom={i}
-                  className={`${card.size === 'large' ? 'col-span-2' : 'col-span-1'} row-span-1 rounded-2xl bg-gradient-to-br ${card.accent} backdrop-blur-md border border-white/15 p-5 flex flex-col justify-between group hover:border-white/30 transition-all duration-500 cursor-pointer`}
-                  onClick={() => navigate('about')}
-                >
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 group-hover:bg-white/25 transition-colors`}>
-                    <card.icon className="h-5 w-5 text-white" />
+              <motion.div variants={fadeUp} custom={1} className="relative rounded-2xl border border-white/15 bg-[#0d1428]/90 shadow-2xl shadow-black/40 overflow-hidden">
+                {/* window bar */}
+                <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10">
+                  <span className="mw-mono text-[10px] uppercase text-white/50">app.matchwise</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-white/20" />
+                    <span className="h-2 w-2 rounded-full bg-white/20" />
+                    <span className="h-2 w-2 rounded-full bg-[#F6C615]/70" />
                   </div>
-                  <div>
-                    <p className="text-white/70 text-xs font-medium tracking-wide uppercase">{L('Tampok', 'Feature')}</p>
-                    <p className="text-white font-semibold text-lg mt-0.5">{card.label}</p>
+                </div>
+                <div className="flex">
+                  {/* mini sidebar */}
+                  <div className="w-40 border-r border-white/10 p-3 space-y-1 hidden xl:block">
+                    <div className="flex items-center gap-2 px-2 py-2">
+                      <MwMark className="size-6" />
+                      <span className="font-display text-sm font-bold text-white">MatchWise</span>
+                    </div>
+                    {[['Dashboard', true], ['Browse Jobs', false], ['Applications', false], ['Messages', false], ['My Profile', false]].map(([label, active]) => (
+                      <div key={label as string} className={cnmockItem(active as boolean)}>
+                        <span className={cnDot(active as boolean)} />
+                        <span className="text-xs font-medium">{label as string}</span>
+                        {label === 'Applications' && <span className="ml-auto rounded-full bg-[#F6C615] px-1.5 text-[10px] font-bold text-[#14205a]">3</span>}
+                      </div>
+                    ))}
                   </div>
-                </motion.div>
-              ))}
+                  {/* content */}
+                  <div className="flex-1 p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <p className="font-display text-sm font-semibold text-white">Good morning, Maria</p>
+                      <span className="mw-mono text-[9px] uppercase text-white/40">app.matchwise</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+                        <p className="mw-section-label !text-white/50">Active Applications</p>
+                        <p className="font-display text-3xl font-bold text-white mt-1">3</p>
+                        <span className="mt-2 inline-flex rounded-md bg-emerald-400/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">1 interview set</span>
+                      </div>
+                      <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+                        <p className="mw-section-label !text-white/50">Top Match</p>
+                        <p className="font-display text-3xl font-bold text-white mt-1">92<span className="text-base text-white/50">/100</span></p>
+                        <span className="mt-2 inline-flex rounded-md mw-gold-chip px-2 py-0.5 text-[10px] font-semibold">Caregiver · Rabat</span>
+                      </div>
+                    </div>
+                    <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Sparkles className="h-3.5 w-3.5 text-[#F6C615]" />
+                        <p className="text-xs font-semibold text-white">AI Recommended for you</p>
+                        <span className="ml-auto text-[9px] text-white/40">updated 2m ago</span>
+                      </div>
+                      <div className="space-y-2">
+                        {mockMatches.map((m) => (
+                          <div key={m.title} className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/5 px-3 py-2">
+                            <svg viewBox="0 0 36 36" className="h-9 w-9 shrink-0">
+                              <circle cx="18" cy="18" r="14" stroke="rgba(255,255,255,0.12)" strokeWidth="4" fill="none" />
+                              <circle cx="18" cy="18" r="14" stroke="#F6C615" strokeWidth="4" fill="none" strokeDasharray={`${(m.score / 100) * 88} 88`} strokeLinecap="round" transform="rotate(-90 18 18)" />
+                              <text x="18" y="21.5" textAnchor="middle" fill="#fff" fontSize="10" fontWeight="700">{m.score}</text>
+                            </svg>
+                            <div className="min-w-0">
+                              <p className="truncate text-xs font-semibold text-white">{m.title}</p>
+                              <p className="text-[10px] text-white/50">{m.meta}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
           </div>
         </div>

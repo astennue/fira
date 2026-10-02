@@ -469,6 +469,7 @@ export const getNavItems = (role: UserRole): NavItem[] => {
       return [
         ...common,
         { label: 'All Jobs', labelFil: 'Lahat ng Trabaho', icon: 'Briefcase', view: 'fira-jobs' as ViewName },
+        { label: 'Endorsements', labelFil: 'Mga Endorso', icon: 'Send', view: 'agency-endorsements' as ViewName },
         { label: 'Reports', labelFil: 'Mga Ulat', icon: 'FileText', view: 'fira-reports' as ViewName },
         { label: 'Messages', labelFil: 'Mensahe', icon: 'MessageCircle', view: 'messages' as ViewName },
         { label: 'Manage Users', labelFil: 'Pamahalaan ang Users', icon: 'Users', view: 'super-admin-users' as ViewName },

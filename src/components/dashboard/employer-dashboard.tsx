@@ -230,21 +230,23 @@ export function EmployerDashboard() {
 
   /* ---- API queries ---- */
   const { data: endorseData, isLoading: endorseLoading } = useQuery({
-    queryKey: ['employer-endorsements'],
+    queryKey: ['employer-endorsements', user?.id],
     queryFn: async () => {
       const res = await apiFetch('/api/endorsements')
       if (!res.ok) return { endorsements: [] }
       return res.json()
     },
+    enabled: !!user?.id,
   })
 
   const { data: jobsData } = useQuery({
-    queryKey: ['employer-jobs'],
+    queryKey: ['employer-jobs', user?.id],
     queryFn: async () => {
       const res = await apiFetch('/api/jobs')
       if (!res.ok) return { jobs: [] }
       return res.json()
     },
+    enabled: !!user?.id,
   })
 
   const { data: notifData } = useQuery({
@@ -382,7 +384,7 @@ export function EmployerDashboard() {
         className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3"
       >
         <div>
-          <h1 className="text-4xl font-bold leading-tight tracking-tight bg-gradient-to-r from-green-700 via-green-500 to-green-600 dark:from-green-400 dark:via-green-300 dark:to-green-400 bg-clip-text text-transparent">
+          <h1 className="font-display text-4xl font-bold leading-tight tracking-tight bg-gradient-to-r from-[#1f3fa6] via-[#2859d5] to-[#3d6be0] dark:from-[#8ba7f4] dark:via-[#5b84f0] dark:to-[#8ba7f4] bg-clip-text text-transparent">
             {isFil ? 'Dashboard ng Empleyador' : 'Employer Dashboard'}
           </h1>
           <p className="text-muted-foreground mt-1">
@@ -396,10 +398,10 @@ export function EmployerDashboard() {
         <Button
           variant="outline"
           size="sm"
-          className="gap-1.5 border-green-100 dark:border-green-700 hover:bg-green-50 dark:hover:bg-green-950/30 transition-colors"
+          className="gap-1.5 border-[#dce6fb] dark:border-[#1e2c52] hover:bg-[#eef3fd] dark:hover:bg-[#182449] transition-colors"
           onClick={() => navigate('messages')}
         >
-          <MessageSquare className="h-4 w-4 text-green-600 dark:text-green-400" />
+          <MessageSquare className="h-4 w-4 text-[#2859d5] dark:text-[#5b84f0]" />
           {isFil ? 'Mensahe' : 'Messages'}
           {unreadNotifs > 0 && (
             <Badge className="bg-red-500 text-white text-[10px] h-4 min-w-4 px-1.5 rounded-full">
@@ -479,7 +481,7 @@ export function EmployerDashboard() {
                     const applicant = e.application?.applicant
                     const job = e.application?.jobOrder
                     const isPending = e.status === 'pending_employer_review'
-                    const matchScore = e.matchScore || applicant?.matchScore || 0
+                    const matchScore = Math.round(e.matchScore || e.application?.matchScore || applicant?.matchScore || 0)
                     const name = applicant?.name || 'Candidate'
 
                     return (
@@ -514,7 +516,7 @@ export function EmployerDashboard() {
                             {/* Name + Match Score */}
                             <div className="flex items-start justify-between gap-2">
                               <div className="min-w-0">
-                                <p className="font-semibold text-sm truncate group-hover:text-green-700 dark:group-hover:text-green-300 transition-colors">
+                                <p className="font-semibold text-sm truncate group-hover:text-[#2859d5] dark:group-hover:text-[#5b84f0] transition-colors">
                                   {name}
                                 </p>
                                 <p className="text-xs text-muted-foreground mt-0.5 truncate">

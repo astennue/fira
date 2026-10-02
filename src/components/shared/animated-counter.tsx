@@ -8,21 +8,21 @@ interface AnimatedCounterProps {
 }
 
 export function AnimatedCounter({ value, duration = 800, className }: AnimatedCounterProps) {
-  const [count, setCount] = useState(0)
+  // null = "show value directly" (first render / no animation needed)
+  const [count, setCount] = useState<number | null>(null)
   const prevValueRef = useRef(value)
 
   useEffect(() => {
     const prev = prevValueRef.current
     prevValueRef.current = value
-    let start = prev
-    const end = value
-    if (start === end) return
-    const diff = end - start
+    if (prev === value) return
+    const diff = value - prev
     const increment = diff / (duration / 16)
+    let start = prev
     const timer = setInterval(() => {
       start += increment
-      if ((diff > 0 && start >= end) || (diff < 0 && start <= end)) {
-        setCount(end)
+      if ((diff > 0 && start >= value) || (diff < 0 && start <= value)) {
+        setCount(value)
         clearInterval(timer)
       } else {
         setCount(Math.floor(start))
@@ -31,5 +31,5 @@ export function AnimatedCounter({ value, duration = 800, className }: AnimatedCo
     return () => clearInterval(timer)
   }, [value, duration])
 
-  return <span className={className}>{count.toLocaleString()}</span>
+  return <span className={className}>{(count ?? value).toLocaleString()}</span>
 }

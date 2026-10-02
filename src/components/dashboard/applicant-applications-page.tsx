@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/select'
 import { useAppStore } from '@/store/app-store'
 import { getStatusLabel, getStatusColor, getNextStatuses } from '@/lib/status'
+import { StatusTimeline } from '@/components/shared/status-timeline'
 import { formatDistanceToNow } from 'date-fns'
 import { toast } from 'sonner'
 
@@ -136,6 +137,10 @@ export function ApplicantApplicationsPage() {
                           <ExternalLink className="h-3.5 w-3.5" />
                         </Button>
                       </div>
+                    </div>
+                    {/* 19-state MatchWise tracker */}
+                    <div className="mt-4 pt-4 border-t">
+                      <StatusTimeline status={app.status} />
                     </div>
                   </CardContent>
                 </Card>

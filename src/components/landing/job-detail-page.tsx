@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import {
-  ArrowLeft, MapPin, Briefcase, Clock, DollarSign, Shield,
-  CheckCircle, User, Building2, Send, AlertCircle, CheckCheck,
+  ArrowLeft, MapPin, Briefcase, Clock, Banknote, Shield,
+  CheckCircle, User, Building2, Send, AlertCircle, CheckCheck, Sparkles,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -14,7 +14,41 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useAppStore } from '@/store/app-store'
 import { toast } from 'sonner'
 import { apiFetch } from '@/lib/fetch'
-import { convertToPHP, formatPHP, getCurrencySymbol } from '@/lib/currency'
+import { convertToPHP, formatPHP } from '@/lib/currency'
+import { simulateMatch, type MatchBreakdown } from '@/lib/match-sim'
+
+function MatchRing({ score, size = 120 }: { score: number; size?: number }) {
+  const r = 42
+  const c = 2 * Math.PI * r
+  const filled = (score / 100) * c
+  const color = score >= 85 ? '#10b981' : score >= 70 ? '#2859d5' : '#f6c615'
+  return (
+    <div className="relative" style={{ width: size, height: size }}>
+      <svg viewBox="0 0 100 100" width={size} height={size} className="mw-score-ring">
+        <circle cx="50" cy="50" r={r} stroke="var(--border)" strokeWidth="9" />
+        <circle cx="50" cy="50" r={r} stroke={color} strokeWidth="9" strokeDasharray={`${filled} ${c}`} />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="font-display text-3xl font-bold leading-none">{score}</span>
+        <span className="text-[10px] text-muted-foreground">/ 100</span>
+      </div>
+    </div>
+  )
+}
+
+function MatchBar({ label, pct, weight }: { label: string; pct: number; weight: string }) {
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-xs font-medium">{label} <span className="mw-mono text-[10px] text-muted-foreground">{weight}</span></span>
+        <span className="text-xs font-semibold">{pct}%</span>
+      </div>
+      <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+        <div className="h-full rounded-full bg-gradient-to-r from-[#1f3fa6] to-[#3d6be0]" style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  )
+}
 
 export function JobDetailPage() {
   const { navigate, viewParams, user, language } = useAppStore()
@@ -116,8 +150,8 @@ export function JobDetailPage() {
               <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" />{job.city ? `${job.city}, ` : ''}{job.country}</span>
               {job.duration && <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" />{job.duration}</span>}
               <span className="flex items-center gap-1.5">
-                <DollarSign className="h-4 w-4" />
-                {getCurrencySymbol(job.salaryCurrency || 'USD')}{job.salaryMin ?? '?'} - {getCurrencySymbol(job.salaryCurrency || 'USD')}{job.salaryMax ?? '?'} {job.salaryCurrency || 'USD'}/{job.salaryPeriod || 'month'}
+                <Banknote className="h-4 w-4" />
+                {job.salaryCurrency || 'USD'} {Number(job.salaryMin ?? 0).toLocaleString()} - {Number(job.salaryMax ?? 0).toLocaleString()} / {job.salaryPeriod || 'month'}
               </span>
               {job.salaryCurrency && job.salaryCurrency !== 'PHP' && job.salaryMin != null && (
                 <span className="text-xs text-muted-foreground">
@@ -132,6 +166,51 @@ export function JobDetailPage() {
 
       <div className="flex-1 container mx-auto px-4 py-6 max-w-3xl">
         <div className="grid gap-6">
+          {/* AI Match Panel — MatchWise signature */}
+          {isApplicant && (() => {
+            let reqSkills: string[] = []
+            try { reqSkills = JSON.parse(job.requiredSkills) } catch { reqSkills = (job.requiredSkills || '').split(',').map((s: string) => s.trim()).filter(Boolean) }
+            const match: MatchBreakdown = simulateMatch(String(job.id), user!.id, reqSkills)
+            return (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <Card className="overflow-hidden">
+                  <div className="h-1 w-full bg-gradient-to-r from-[#1f3fa6] via-[#3d6be0] to-[#f6c615]" />
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-[#e0a800]" />
+                      <CardTitle className="font-display text-base">AI Match Score</CardTitle>
+                      <span className="mw-mono ml-auto text-[10px] uppercase text-muted-foreground">0.40 · 0.40 · 0.20</span>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="grid gap-5 sm:grid-cols-[auto_1fr] items-center">
+                    <div className="flex flex-col items-center gap-1">
+                      <MatchRing score={match.score} />
+                      <span className="text-[10px] text-muted-foreground">weighted composite</span>
+                    </div>
+                    <div className="space-y-3">
+                      <MatchBar label="Semantic fit" pct={match.semanticPct} weight="×0.40" />
+                      <MatchBar label="Skills overlap" pct={match.skillsPct} weight="×0.40" />
+                      <MatchBar label="Experience" pct={match.experiencePct} weight="×0.20" />
+                    </div>
+                  </CardContent>
+                  <CardContent className="pt-0">
+                    <div className="rounded-lg bg-muted/60 p-3">
+                      <p className="mw-section-label mb-2">Why this match</p>
+                      <ul className="space-y-1.5">
+                        {match.why.map((w, i) => (
+                          <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
+                            <CheckCircle className="h-3.5 w-3.5 mt-0.5 shrink-0 text-primary" />
+                            <span>{w}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )
+          })()}
+
           {/* Description */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
             <Card>
@@ -233,7 +312,7 @@ export function JobDetailPage() {
       </div>
 
       <footer className="mt-auto border-t bg-card py-6 text-center text-xs text-muted-foreground">
-        &copy; {new Date().getFullYear()} FIRA - Fil International Recruitment Agency
+        &copy; {new Date().getFullYear()} MatchWise <span className="text-[#e0a800]">·</span> by FIRA — smarter matching, better hiring.
       </footer>
     </div>
   )

@@ -272,8 +272,8 @@ export function FiraDashboard() {
             </div>
             <Button
               size="sm"
-              onClick={() => navigate('fira-agencies')}
-              className="shrink-0 bg-gradient-to-r from-amber-500 to-amber-500 hover:from-amber-600 hover:to-amber-600 text-white shadow-md shadow-amber-500/25"
+              onClick={() => navigate('agency-endorsements')}
+              className="shrink-0 bg-gradient-to-r from-[#f6c615] to-[#e0b40e] hover:from-[#e0b40e] hover:to-[#c9a00d] text-[#14205a] font-semibold shadow-md shadow-black/10"
             >
               {isFil ? 'Review' : 'Review'}
               <ChevronRight className="h-4 w-4 ml-1" />

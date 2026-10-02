@@ -1,4 +1,6 @@
 import { PrismaClient } from '@prisma/client'
+import fs from 'fs'
+import path from 'path'
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
@@ -8,6 +10,7 @@ const globalForPrisma = globalThis as unknown as {
  * Fail fast with an actionable message when DATABASE_URL is missing or
  * mismatches the Prisma provider (e.g. postgres client + sqlite URL).
  * This turns cryptic "Internal server error" logins into diagnosable errors.
+ * Provider-aware: reads the active prisma/schema.prisma datasource provider.
  */
 function assertDatabaseUrl() {
   const url = process.env.DATABASE_URL
@@ -17,7 +20,35 @@ function assertDatabaseUrl() {
         'or configure it in your hosting provider (Vercel → Settings → Environment Variables).'
     )
   }
-  // schema.prisma provider = postgresql (Supabase prod parity)
+
+  // Detect the active provider from the GENERATED client (source of truth at runtime),
+  // falling back to prisma/schema.prisma (source of truth at generate time).
+  let provider = 'postgresql'
+  const candidates = [
+    path.join(process.cwd(), 'node_modules', '.prisma', 'client', 'schema.prisma'),
+    path.join(process.cwd(), 'prisma', 'schema.prisma'),
+  ]
+  for (const p of candidates) {
+    try {
+      const schema = fs.readFileSync(p, 'utf8')
+      const m = schema.match(/datasource\s+db\s*{[^}]*?provider\s*=\s*"([^"]+)"/)
+      if (m) { provider = m[1]; break }
+    } catch {
+      // try next candidate
+    }
+  }
+
+  if (provider === 'sqlite') {
+    if (!url.startsWith('file:')) {
+      throw new Error(
+        '[FIRA/db] prisma/schema.prisma uses sqlite but DATABASE_URL is not a file: URL. ' +
+          'Set DATABASE_URL="file:" + path to your dev.db, or run db:prod:switch for Supabase.'
+      )
+    }
+    return
+  }
+
+  // postgresql (Supabase prod parity)
   if (url.startsWith('file:')) {
     throw new Error(
       '[FIRA/db] DATABASE_URL points to a SQLite file but prisma/schema.prisma uses the "postgresql" provider. ' +

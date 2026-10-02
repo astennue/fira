@@ -20,6 +20,7 @@ import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Checkbox } from '@/components/ui/checkbox'
 import { useAppStore, getDashboardView, type UserRole, roleDisplayNames } from '@/store/app-store'
+import { MwWordmark } from '@/components/shared/mw-logo'
 import { toast } from 'sonner'
 import { apiFetch } from '@/lib/fetch'
 
@@ -145,7 +146,7 @@ export function AuthModal() {
       registerForm.reset()
       toast.success(
         language === 'fil' ? 'Matagumpay ang pagpaparehistro!' : 'Account created!',
-        { description: language === 'fil' ? 'Maligayang bago sa FIRA!' : 'Welcome to FIRA!' }
+        { description: language === 'fil' ? 'Maligayang pagdating sa MatchWise!' : 'Welcome to MatchWise!' }
       )
       navigate(getDashboardView('applicant'))
     },
@@ -162,7 +163,7 @@ export function AuthModal() {
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <img src="/logo.png" alt="FIRA Logo" className="h-8 object-contain" />
+            <MwWordmark />
           </DialogTitle>
           <DialogDescription>
             {language === 'fil'
