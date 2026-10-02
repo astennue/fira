@@ -3,7 +3,7 @@
 import os, glob
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-OUT = "/home/z/my-project/download/MatchWise-HiFi-System-Design.html"
+OUT = "/home/z/my-project/download/System Prototype/MatchWise-HiFi-System-Design.html"
 
 fonts = open(os.path.join(BASE, "fonts_b64.css")).read()
 css = "\n".join(open(p).read() for p in sorted(glob.glob(os.path.join(BASE, "css", "*.css"))))

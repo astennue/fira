@@ -2,8 +2,8 @@
 """Set PDF metadata + render cover preview PNG for the MatchWise deck."""
 import pypdf, pypdfium2 as pdfium
 
-PDF = "/home/z/my-project/download/MatchWise-HiFi-System-Design.pdf"
-PNG = "/home/z/my-project/download/MatchWise-HiFi-Preview.png"
+PDF = "/home/z/my-project/download/System Prototype/MatchWise-HiFi-System-Design.pdf"
+PNG = "/home/z/my-project/download/System Prototype/MatchWise-HiFi-Preview.png"
 
 # 1) Metadata
 r = pypdf.PdfReader(PDF)

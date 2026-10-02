@@ -731,3 +731,17 @@ Work Log:
 Stage Summary:
 - All 3 deliverables restored to /home/z/my-project/download/: MatchWise-HiFi-System-Design.html (684 KB), MatchWise-HiFi-System-Design.pdf (6.1 MB, 20 pp), MatchWise-HiFi-Preview.png (305 KB)
 - finalize.py persisted for future metadata/preview regeneration
+
+---
+Task ID: 11
+Agent: Main agent (Super Z)
+Task: Create "System Prototype" folder per user request (files not visible in user's download panel)
+
+Work Log:
+- User reported deliverables not visible in their download UI
+- Created /home/z/my-project/download/System Prototype/ and copied all 3 deliverables there
+- Updated scripts/mw_deck/build.py OUT + finalize.py PDF/PNG paths → future rebuilds target the new folder
+
+Stage Summary:
+- Deliverables now in BOTH /home/z/my-project/download/ (root) and /home/z/my-project/download/System Prototype/
+- Build pipeline (build.py, finalize.py) now points to System Prototype folder
