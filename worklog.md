@@ -714,3 +714,20 @@ Stage Summary:
 - Deliverables: MatchWise-HiFi-System-Design.html (self-contained deck), .pdf (20-page vector), MatchWise-HiFi-Preview.png (cover)
 - Build scripts persisted in scripts/mw_deck/ (frag/*.html + css/*.css + build.py) for future edits — regenerate via python3 build.py
 - Branding decision encoded in deck slide 02: MatchWise = system/platform name; FIRA = company (FIRA Staff workspace, governance)
+
+---
+Task ID: 10
+Agent: Main agent (Super Z)
+Task: Restore lost MatchWise deliverables (download/ folder was reset) and report output locations
+
+Work Log:
+- User asked "ano ang location ng output?" — found download/ wiped (only old gdrive_workspace remained)
+- Source survived intact: scripts/mw_deck/ (build.py + 20 frag + css + fonts_b64.css)
+- Rebuilt: python3 build.py → MatchWise-HiFi-System-Design.html (684 KB, 20 slides)
+- Regenerated PDF via skills/pdf/scripts/html2pdf-next.js --nopaged @1440x810px → 20-page vector 5.8 MB
+- New scripts/mw_deck/finalize.py: pypdf metadata (Title/Author=FIRA/Creator/Subject) + pypdfium2 cover render → MatchWise-HiFi-Preview.png (1620x912)
+- Verified cover PNG renders correctly (MatchWise brand, royal blue/gold, dashboard mockup)
+
+Stage Summary:
+- All 3 deliverables restored to /home/z/my-project/download/: MatchWise-HiFi-System-Design.html (684 KB), MatchWise-HiFi-System-Design.pdf (6.1 MB, 20 pp), MatchWise-HiFi-Preview.png (305 KB)
+- finalize.py persisted for future metadata/preview regeneration
