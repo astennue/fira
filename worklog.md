@@ -789,3 +789,17 @@ Work Log:
 Stage Summary:
 - Files now in: download/ root, download/System Prototype/, download/gdrive_workspace/, download/gdrive_workspace/System Prototype/
 - If user still sees nothing anywhere → definitive: frozen snapshot → session restart required
+
+---
+Task ID: 15
+Agent: Main agent (Super Z)
+Task: Push MatchWise deliverables to GitHub (panel permanently frozen, user requested GitHub)
+
+Work Log:
+- download/ is gitignored → created system-prototype/ at repo root with 3 deliverables + README
+- Commit 40d260c; push rejected (remote ahead) → git pull --rebase origin main (14 commits replayed) → push OK (8e15da6..40d260c)
+- Repo: github.com/astennue/fira, branch main
+
+Stage Summary:
+- Live URLs: github.com/astennue/fira/tree/main/system-prototype (PDF blob renders inline on GitHub)
+- Future regenerations: build to download/ then cp into system-prototype/ and push
