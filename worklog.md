@@ -828,3 +828,24 @@ Stage Summary:
 - Live prototype on sandbox :3000 (single-page view routing); repo pushed a6cf25f → github.com/astennue/fira main
 - Demo accounts: applicant@/employer@/agency@/staff@/admin@fira.com.ph (+ amal@, resorts@, cebu@, 7 applicants) — password pattern <role>2025!
 - 5 QA screenshots in scripts/mw_proto/qa/
+
+---
+Task ID: 17
+Agent: Main (Super Z)
+Task: Build standalone single-file HTML clickable prototype (same UX as Next.js app, like the hi-fi design file)
+
+Work Log:
+- Extracted flows/data from Next.js app: match-sim.ts (0.40/0.40/0.20 weights), status-timeline.tsx (19-state), seed-ext.ts (demo data), globals.css (brand tokens)
+- Built modular scripts at scripts/mw_proto_html/: p01-head, p02-css (light+dark tokens), p03-data (8 applicants, 3 employers, 2 agencies, 7 jobs, 16 applications, 4 endorsements, verifications, audit trail), p04-core (icons/router/shell/theme/toasts/sim engine/tracker), p05-login, p06-applicant, p07-employer, p08-agency, p09-fira, p10-tail + build.sh
+- Compiled to download/MatchWise-Clickable-Prototype.html (140KB self-contained, Google Fonts CDN w/ fallbacks)
+- Fixed: router detail-view resolution (#/app/jobs/:id), shell title override, compact tracker for hero mock card, added AI Amal Clinic demo account
+- QA via agent-browser (fresh session): 0 JS errors, 0 console errors
+- Verified flows: applicant login/dashboard/jobs/detail AI panel/applications tracker/withdraw modal; employer accept endorsement (AI Amal); FIRA approve endorsement + verify docs; agency endorse modal -> new pending_fira_review; dark mode all pages
+- Pushed to GitHub: commit 23293e9 -> astennue/fira main (system-prototype/MatchWise-Clickable-Prototype.html)
+
+Stage Summary:
+- Deliverable: /home/z/my-project/download/MatchWise-Clickable-Prototype.html (open directly in any browser, no install)
+- GitHub: https://github.com/astennue/fira (system-prototype/)
+- Rebuild: scripts/mw_proto_html/build.sh (edit part files then run)
+- QA screenshots: scripts/mw_proto_html/qa/ (14 screenshots)
+- Demo accounts: 6 quick-login chips on login screen (all passwords <role>2025!)
