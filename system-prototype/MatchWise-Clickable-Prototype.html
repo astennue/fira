@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MatchWise — Clickable Prototype · FIRA Overseas Recruitment Platform</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%231F3FA6'/%3E%3Cpath d='M9.5 27.5V13.5L14.5 22 19.5 13.5V27.5' stroke='%23fff' stroke-width='2.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M23 27.5V13.5L27 21.5 31 13.5V27.5' stroke='%23F6C615' stroke-width='2.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ═══ MatchWise Clickable Prototype — Design System ═══ */
+:root{
+  --bg:#f6f8fd; --fg:#101733; --card:#ffffff; --muted:#f1f5f9; --muted-fg:#64748b;
+  --primary:#2859d5; --royal:#1f3fa6; --blue2:#3d6be0; --gold:#f6c615; --gold-fg:#3d3000; --gold-soft:#fdf3c9;
+  --secondary:#eef3fd; --secondary-fg:#1f3fa6; --accent:#e6ecfb;
+  --destructive:#ef4444; --green:#16a34a; --green-soft:#dcfce7; --amber:#d97706; --amber-soft:#fef3c7;
+  --border:#d7dff0; --ring:#2859d5; --shadow:0 1px 3px rgba(16,23,51,.08),0 4px 14px rgba(16,23,51,.06);
+  --shadow-lg:0 10px 30px rgba(16,23,51,.14); --r:12px; --sidebar:#ffffff;
+}
+html.dark{
+  --bg:#0a1022; --fg:#dbe4f8; --card:#111a35; --muted:#182449; --muted-fg:#8b9ac2;
+  --primary:#5b84f0; --royal:#6d93ea; --blue2:#3d6be0; --gold:#f6c615; --gold-fg:#0a1022; --gold-soft:#2b2410;
+  --secondary:#182449; --secondary-fg:#9bb7f2; --accent:#1a2750;
+  --destructive:#f87171; --green:#34d399; --green-soft:#0d2b22; --amber:#fbbf24; --amber-soft:#2b2410;
+  --border:#1e2c52; --ring:#5b84f0; --shadow:0 1px 3px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.3);
+  --shadow-lg:0 10px 30px rgba(0,0,0,.5); --sidebar:#0d1428;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--fg);
+  font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.font-display{font-family:'Space Grotesk','Inter',sans-serif;letter-spacing:-.015em}
+a{color:var(--primary);text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;font-size:inherit}
+input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+::selection{background:rgba(40,89,213,.25)}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:9px}
+::-webkit-scrollbar-track{background:transparent}
+*,*::before,*::after{transition-property:background-color,border-color,color;transition-timing-function:ease;transition-duration:.15s}
+
+/* ── Utilities ── */
+.flex{display:flex}.col{display:flex;flex-direction:column}.wrap{flex-wrap:wrap}
+.between{justify-content:space-between}.center{align-items:center}.aic{align-items:center}
+.jc{justify-content:center}.end{align-items:flex-end}.gap4{gap:4px}.gap6{gap:6px}.gap8{gap:8px}
+.gap10{gap:10px}.gap12{gap:12px}.gap16{gap:16px}.gap20{gap:20px}.gap24{gap:24px}
+.mt4{margin-top:4px}.mt6{margin-top:6px}.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}
+.mt24{margin-top:24px}.mt32{margin-top:32px}.mb4{margin-bottom:4px}.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}
+.mb16{margin-bottom:16px}.mb24{margin-bottom:24px}.w100{width:100%}.rel{position:relative}
+.muted{color:var(--muted-fg)}.small{font-size:12px}.tiny{font-size:11px}.micro{font-size:10px}
+.b{font-weight:600}.xb{font-weight:700}.up{text-transform:uppercase;letter-spacing:.08em}
+.grow{flex:1}.tc{text-align:center}.tr{text-align:right}.nowrap{white-space:nowrap}
+.ellip{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.split{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start}
+.mono{font-family:'Space Grotesk',monospace;font-variant-numeric:tabular-nums}
+
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 16px;border-radius:9px;
+  font-weight:600;font-size:13px;border:1px solid transparent;white-space:nowrap;transition:all .15s}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:linear-gradient(135deg,var(--royal),var(--blue2));color:#fff;box-shadow:0 2px 8px rgba(31,63,166,.35)}
+.btn-primary:hover{filter:brightness(1.1)}
+.btn-gold{background:linear-gradient(135deg,#f6c615,#e0af0a);color:#3d3000;box-shadow:0 2px 8px rgba(246,198,21,.35)}
+.btn-gold:hover{filter:brightness(1.05)}
+.btn-outline{border-color:var(--border);background:var(--card);color:var(--fg)}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-ghost{color:var(--muted-fg);padding:8px 12px}
+.btn-ghost:hover{background:var(--muted);color:var(--fg)}
+.btn-danger{background:var(--destructive);color:#fff}
+.btn-danger:hover{filter:brightness(1.08)}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{filter:brightness(1.08)}
+.btn-sm{padding:6px 11px;font-size:12px;border-radius:8px}
+.btn-lg{padding:12px 22px;font-size:14px;border-radius:11px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn svg{flex-shrink:0}
+
+/* ── Icon button ── */
+.ibtn{width:36px;height:36px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;
+  color:var(--muted-fg);border:1px solid transparent;position:relative}
+.ibtn:hover{background:var(--muted);color:var(--fg)}
+.ibtn.on{background:var(--secondary);color:var(--secondary-fg)}
+
+/* ── Badges & chips ── */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;font-size:11px;
+  font-weight:600;line-height:1.5;white-space:nowrap}
+.badge svg{width:12px;height:12px;flex-shrink:0}
+.bg-green{background:var(--green-soft);color:var(--green)}
+.bg-amber{background:var(--amber-soft);color:var(--amber)}
+.bg-blue{background:var(--secondary);color:var(--secondary-fg)}
+.bg-red{background:rgba(239,68,68,.12);color:var(--destructive)}
+.bg-gray{background:var(--muted);color:var(--muted-fg)}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:99px;font-size:12px;
+  font-weight:500;border:1px solid var(--border);background:var(--card);color:var(--muted-fg);cursor:pointer;transition:all .15s}
+.chip:hover{border-color:var(--primary);color:var(--primary)}
+.chip.on{background:linear-gradient(135deg,var(--royal),var(--blue2));border-color:transparent;color:#fff;font-weight:600}
+.skill-chip{display:inline-flex;align-items:center;padding:4px 10px;border-radius:7px;font-size:11.5px;font-weight:500;
+  background:var(--secondary);color:var(--secondary-fg);border:1px solid transparent}
+.skill-chip.miss{background:var(--muted);color:var(--muted-fg);border-style:dashed;border-color:var(--border)}
+.gold-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;
+  background:linear-gradient(135deg,#f6c615,#ffe27a);color:#3d3000}
+html.dark .gold-chip{background:linear-gradient(135deg,#8a6d00,#f6c615)}
+html.dark .gold-chip{color:#0a1022}
+.gold-chip svg{width:11px;height:11px}
+
+/* ── Cards ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow)}
+.card-pad{padding:20px}
+.card-hover{transition:all .18s}
+.card-hover:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--primary)}
+.brand-strip{height:3px;width:100%;background:linear-gradient(90deg,#1f3fa6,#3d6be0,#f6c615);border-radius:3px 3px 0 0}
+
+/* ── Stat cards ── */
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow);
+  position:relative;overflow:hidden}
+.stat .ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stat .num{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;line-height:1.1;letter-spacing:-.02em}
+.stat .lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted-fg)}
+.ic-blue{background:var(--secondary);color:var(--secondary-fg)}
+.ic-gold{background:var(--gold-soft);color:#a16207}
+html.dark .ic-gold{color:var(--gold)}
+.ic-green{background:var(--green-soft);color:var(--green)}
+.ic-red{background:rgba(239,68,68,.12);color:var(--destructive)}
+
+/* ── Shell layout ── */
+.shell{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+.sidebar{background:var(--sidebar);border-right:1px solid var(--border);padding:20px 14px;display:flex;flex-direction:column;
+  gap:4px;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:30}
+.side-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-weight:500;font-size:13.5px;
+  color:var(--muted-fg);width:100%;text-align:left;transition:all .15s;border:1px solid transparent}
+.side-item:hover{background:var(--muted);color:var(--fg)}
+.side-item.on{background:linear-gradient(135deg,var(--royal),var(--blue2));color:#fff;font-weight:600;
+  box-shadow:0 2px 8px rgba(31,63,166,.3)}
+.side-item svg{width:17px;height:17px;flex-shrink:0}
+.side-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted-fg);
+  padding:14px 12px 6px;opacity:.75}
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:25;background:color-mix(in srgb,var(--bg) 82%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:12px 28px;display:flex;
+  align-items:center;gap:14px}
+.content{padding:26px 28px 60px;max-width:1460px;width:100%;margin:0 auto}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--royal),var(--blue2));
+  color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.avatar.lg{width:64px;height:64px;font-size:22px;border-radius:18px}
+.avatar.sm{width:28px;height:28px;font-size:10px}
+.role-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--gold);
+  background:rgba(246,198,21,.13);border:1px solid rgba(246,198,21,.35);padding:2px 8px;border-radius:6px}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.dot-n{position:absolute;top:7px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--destructive);
+  border:2px solid var(--card)}
+
+/* ── Tables ── */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--muted-fg);padding:10px 14px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr{transition:background .12s}
+.tbl tbody tr:hover{background:var(--muted)}
+.tbl .rowlink{cursor:pointer}
+
+/* ── 19-state tracker ── */
+.tracker .ms-row{display:flex;justify-content:space-between;margin-bottom:5px}
+.tracker .ms{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted-fg);
+  opacity:.6;text-align:center;flex:1}
+.tracker .ms.done,.tracker .ms.active{color:var(--primary);opacity:1}
+.tracker .track{display:flex;align-items:center;gap:3px}
+.tracker .seg{height:6px;flex:1;border-radius:99px;background:var(--muted)}
+.tracker .seg.done{background:var(--primary)}
+.tracker .seg.active{background:linear-gradient(90deg,#1f3fa6,#3d6be0);box-shadow:0 0 0 2px rgba(246,198,21,.55)}
+.tracker .seg.branch{background:var(--destructive)}
+.tracker .foot{display:flex;justify-content:space-between;align-items:center;margin-top:5px}
+.tracker .st{font-size:10.5px;font-weight:600;color:var(--primary)}
+.tracker .st.neg{color:var(--destructive)}
+.tracker .nx{font-size:10.5px;color:var(--muted-fg)}
+
+/* ── Match ring ── */
+.ring-txt{font-family:'Space Grotesk',sans-serif;font-weight:700;fill:var(--fg)}
+.ring-lbl{font-size:10px;font-weight:600;fill:var(--muted-fg);text-transform:uppercase;letter-spacing:.05em}
+
+/* ── Weight bars ── */
+.wbar{margin-bottom:10px}
+.wbar .row{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:4px}
+.wbar .track{height:7px;border-radius:99px;background:var(--muted);overflow:hidden}
+.wbar .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#1f3fa6,#3d6be0)}
+.wbar.gold .fill{background:linear-gradient(90deg,#d4a900,#f6c615)}
+
+/* ── Progress ── */
+.pbar{height:8px;border-radius:99px;background:var(--muted);overflow:hidden}
+.pbar .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#1f3fa6,#3d6be0)}
+.pbar.gold .fill{background:linear-gradient(90deg,#d4a900,#f6c615)}
+.pbar.green .fill{background:var(--green)}
+
+/* ── Chart bars ── */
+.cbar{display:grid;grid-template-columns:150px 1fr 40px;align-items:center;gap:12px;padding:7px 0}
+.cbar .lb{font-size:12.5px;font-weight:500;color:var(--muted-fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cbar .tr{height:14px;border-radius:7px;background:var(--muted);overflow:hidden}
+.cbar .fl{height:100%;border-radius:7px;background:linear-gradient(90deg,#1f3fa6,#3d6be0);min-width:6px}
+.cbar .vl{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;text-align:right}
+
+/* ── 2-step endorsement flow ── */
+.flow2{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;border:1px solid var(--border);
+  background:var(--muted);border-radius:11px;padding:12px 14px}
+.flow2 .stp{display:flex;align-items:center;gap:9px}
+.flow2 .n{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;background:rgba(40,89,213,.14);color:var(--primary);flex-shrink:0}
+.flow2 .n.fill{background:var(--primary);color:#fff}
+.flow2 .n.neg{background:var(--destructive);color:#fff}
+.flow2 .arrow{color:var(--muted-fg)}
+
+/* ── Audit trail ── */
+.audit{position:relative;padding-left:20px}
+.audit::before{content:'';position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--border);border-radius:2px}
+.audit .ai{position:relative;padding-bottom:14px}
+.audit .ai::before{content:'';position:absolute;left:-19px;top:5px;width:10px;height:10px;border-radius:50%;
+  background:var(--card);border:2.5px solid var(--primary)}
+.audit .ai:last-child{padding-bottom:0}
+.audit .ai .d{font-size:10.5px;color:var(--muted-fg);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+
+/* ── Form ── */
+.field{margin-bottom:14px}
+.label{display:block;font-size:12px;font-weight:600;margin-bottom:6px;color:var(--fg)}
+.input{width:100%;padding:10px 13px;border-radius:9px;border:1.5px solid var(--border);background:var(--card);
+  outline:none;font-size:13.5px;transition:border .15s,box-shadow .15s;color:var(--fg)}
+.input:focus{border-color:var(--ring);box-shadow:0 0 0 3px rgba(40,89,213,.15)}
+textarea.input{resize:vertical;min-height:74px}
+select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+
+/* ── Toasts ── */
+.toasts{position:fixed;bottom:22px;right:22px;z-index:1000;display:flex;flex-direction:column;gap:9px;max-width:360px}
+.toast{display:flex;align-items:flex-start;gap:10px;background:var(--card);border:1px solid var(--border);
+  border-radius:11px;padding:13px 16px;box-shadow:var(--shadow-lg);animation:tin .28s cubic-bezier(.21,1.02,.73,1);font-size:13px}
+.toast .ti{width:20px;height:20px;flex-shrink:0;margin-top:1px}
+.toast.ok .ti{color:var(--green)}.toast.err .ti{color:var(--destructive)}.toast.info .ti{color:var(--primary)}
+.toast .tt{font-weight:700;font-size:13px}
+.toast .tm{color:var(--muted-fg);font-size:12.5px}
+@keyframes tin{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+.toast.out{animation:tout .25s ease forwards}
+@keyframes tout{to{opacity:0;transform:translateY(8px) scale(.97)}}
+
+/* ── Modal ── */
+.mback{position:fixed;inset:0;background:rgba(10,16,34,.55);backdrop-filter:blur(3px);z-index:900;display:flex;
+  align-items:center;justify-content:center;padding:24px;animation:fadein .18s ease}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.mbox{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-lg);
+  width:100%;max-width:560px;max-height:88vh;overflow-y:auto;animation:mup .22s cubic-bezier(.21,1.02,.73,1)}
+@keyframes mup{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+
+/* ── Dropdowns ── */
+.dd{position:absolute;top:calc(100% + 8px);right:0;background:var(--card);border:1px solid var(--border);
+  border-radius:13px;box-shadow:var(--shadow-lg);min-width:280px;z-index:80;animation:mup .18s ease;overflow:hidden}
+.dd .dd-h{padding:12px 16px;border-bottom:1px solid var(--border);font-weight:700;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+.dd .dd-i{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start;transition:background .12s;cursor:pointer}
+.dd .dd-i:hover{background:var(--muted)}
+.dd .dd-i:last-child{border-bottom:none}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);margin-top:6px;flex-shrink:0}
+
+/* ── Login / Landing ── */
+.login-wrap{min-height:100vh;display:grid;grid-template-columns:1.15fr 1fr}
+.login-hero{background:linear-gradient(150deg,#0e1f52 0%,#1a358c 45%,#1f3fa6 100%);color:#fff;padding:56px 64px;
+  display:flex;flex-direction:column;position:relative;overflow:hidden}
+.login-hero::before{content:'';position:absolute;width:560px;height:560px;border-radius:50%;
+  background:radial-gradient(circle,rgba(61,107,224,.35),transparent 70%);top:-160px;right:-120px}
+.login-hero::after{content:'';position:absolute;width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle,rgba(246,198,21,.16),transparent 70%);bottom:-140px;left:-100px}
+.hero-chip{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:99px;font-size:12px;font-weight:600;
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);color:#dbe4f8}
+.hero-stat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:13px;padding:16px 18px;backdrop-filter:blur(8px)}
+.hero-stat .n{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:#fff}
+.hero-stat .l{font-size:11px;color:#9bb7f2;font-weight:600;text-transform:uppercase;letter-spacing:.07em}
+.mock-card{background:rgba(255,255,255,.97);border-radius:16px;padding:18px;box-shadow:0 24px 60px rgba(0,0,0,.35);color:#101733}
+.login-panel{display:flex;align-items:center;justify-content:center;padding:48px 40px;background:var(--bg)}
+.login-card{width:100%;max-width:420px}
+.demo-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;
+  cursor:pointer;transition:all .14s;background:var(--card)}
+.demo-row:hover{border-color:var(--primary);transform:translateX(3px);box-shadow:var(--shadow)}
+.demo-row .em{font-size:12px;color:var(--muted-fg)}
+
+/* ── Job cards ── */
+.job-card{position:relative;overflow:hidden}
+.job-card .jc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.job-meta{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted-fg)}
+.job-meta svg{width:13px;height:13px;flex-shrink:0}
+.cat-ic{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  background:var(--secondary);color:var(--secondary-fg)}
+
+/* ── Page headers ── */
+.page-h{margin-bottom:22px}
+.page-h h1{font-size:26px;font-weight:700}
+.page-h p{color:var(--muted-fg);font-size:13.5px;margin-top:3px}
+.section-t{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.section-t svg{width:16px;height:16px;color:var(--primary)}
+
+/* ── Empty state ── */
+.empty{text-align:center;padding:44px 20px;color:var(--muted-fg)}
+.empty svg{width:40px;height:40px;opacity:.4;margin-bottom:10px}
+
+/* ── Landing top bar ── */
+.topnav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);padding:13px 40px;display:flex;align-items:center;justify-content:space-between}
+
+/* ── Responsive ── */
+@media (max-width:1180px){.grid4{grid-template-columns:1fr 1fr}.split{grid-template-columns:1fr}}
+@media (max-width:960px){
+  .login-wrap{grid-template-columns:1fr}
+  .login-hero{padding:40px 32px}
+  .shell{grid-template-columns:64px 1fr}
+  .sidebar .side-txt,.sidebar .side-label,.sidebar .logo-txt,.sidebar .user-box{display:none}
+  .side-item{justify-content:center;padding:12px}
+  .grid3,.grid2{grid-template-columns:1fr}
+  .content{padding:20px 16px 60px}
+  .topbar{padding:10px 16px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<linearGradient id="g-royal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1F3FA6"/><stop offset="1" stop-color="#3D6BE0"/></linearGradient>
+<linearGradient id="g-brand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1f3fa6"/><stop offset=".55" stop-color="#3d6be0"/><stop offset="1" stop-color="#f6c615"/></linearGradient>
+</defs></svg>
+<div id="app"></div>
+<div id="toasts" class="toasts"></div>
+<div id="modal-root"></div>
+<script>
+/* ═══ MatchWise prototype — in-memory data layer (mirrors 35-table schema seed) ═══ */
+const DB = {
+  users: [
+    { id:'a1', email:'applicant@fira.com.ph', pw:'applicant2025!', name:'Maria Santos', role:'applicant', city:'Davao City', region:'XI', type:'Caregiver', edu:'College Vocational', years:4, gender:'Female', pref:'Morocco · Caregiver', passport:'PN8891023 · Valid until 2031', medical:'Passed', complete:92, salary:'USD 500 – 900', avail:'Nov 2025', phone:'+63 917 214 8850',
+      skills:[['Elderly care','Advanced',4],['First aid','Advanced',3],['Patient care','Advanced',4],['Medication management','Intermediate',2],['Housekeeping','Intermediate',4],['Cooking','Intermediate',3]],
+      langs:[['English','Fluent'],['Tagalog','Native'],['Arabic','Basic']],
+      certs:[['TESDA Caregiving NC II','TESDA'],['Red Cross First Aid & BLS','Philippine Red Cross']],
+      docs:[['Passport','passport_maria.pdf',true],['Medical Certificate','med_maria.pdf',true],['NBI Clearance','nbi_maria.pdf',true],['TESDA Certificate','tesda_maria.pdf',true]],
+      exp:{company:'Davao Family Clinic', position:'Home Caregiver', country:'Philippines', period:'2021 – 2024', desc:'Provided elderly and post-operative home care, medication reminders, and mobility support for a 3-patient caseload.'} },
+    { id:'a2', email:'ana@fira.com.ph', pw:'applicant2025!', name:'Ana Reyes', role:'applicant', city:'Davao City', type:'Caregiver', years:4, complete:96, passport:'PN7781203 · Valid', medical:'Passed',
+      skills:[['Elderly care','Advanced',4],['First aid','Advanced',3],['Patient care','Advanced',4],['Medication management','Intermediate',2],['Housekeeping','Intermediate',4]],
+      langs:[['English','Fluent'],['Tagalog','Native'],['Arabic','Basic']],
+      certs:[['TESDA Caregiving NC II','TESDA'],['Red Cross First Aid & BLS','Philippine Red Cross']],
+      docs:[['Passport','passport_ana.pdf',true],['Medical Certificate','med_ana.pdf',true],['NBI Clearance','nbi_ana.pdf',true],['TESDA Certificate','tesda_ana.pdf',true]] },
+    { id:'a3', email:'joy@fira.com.ph', pw:'applicant2025!', name:'Joy Aquino', role:'applicant', city:'Pampanga', type:'Domestic Helper', years:5, complete:88, passport:'PN5590341 · Valid', medical:'Passed',
+      skills:[['Household management','Advanced',5],['Cooking','Advanced',5],['Child care','Advanced',4],['Laundry & Ironing','Advanced',5],['Pet Care','Intermediate',2]],
+      langs:[['English','Conversational'],['Tagalog','Native'],['Arabic','Basic']],
+      certs:[['TESDA Household Services NC II','TESDA']],
+      docs:[['Passport','passport_joy.pdf',true],['Medical Certificate','med_joy.pdf',true],['NBI Clearance','nbi_joy.pdf',false]] },
+    { id:'a4', email:'carmen@fira.com.ph', pw:'applicant2025!', name:'Carmen Garcia', role:'applicant', city:'Iloilo City', type:'Hotel Staff', years:3, complete:84, passport:'PN6621887 · Valid', medical:'Pending',
+      skills:[['Customer service','Advanced',3],['Food service','Advanced',3],['Housekeeping','Advanced',3],['Front desk operations','Intermediate',2]],
+      langs:[['English','Fluent'],['Tagalog','Native'],['French','Conversational']],
+      certs:[['TESDA Commercial Cooking NC II','TESDA']],
+      docs:[['Passport','passport_carmen.pdf',true],['NBI Clearance','nbi_carmen.pdf',true]] },
+    { id:'a5', email:'rosa@fira.com.ph', pw:'applicant2025!', name:'Rosa Lim', role:'applicant', city:'Cebu City', type:'Nurse', years:6, complete:98, passport:'PN4451029 · Valid', medical:'Passed',
+      skills:[['Patient assessment','Advanced',6],['IV therapy','Advanced',5],['Medication administration','Advanced',6],['Emergency response','Advanced',4],['Patient education','Intermediate',3]],
+      langs:[['English','Fluent'],['Tagalog','Native'],['Cebuano','Native']],
+      certs:[['PRC Registered Nurse','PRC'],['BLS/ACLS Provider','Philippine Heart Association']],
+      docs:[['Passport','passport_rosa.pdf',true],['Medical Certificate','med_rosa.pdf',true],['PRC License','prc_rosa.pdf',true]] },
+    { id:'a6', email:'jose@fira.com.ph', pw:'applicant2025!', name:'Jose Mendoza', role:'applicant', city:'Laguna', type:'Factory Worker', years:4, complete:80, passport:'PN3312876 · Valid', medical:'Pending',
+      skills:[['Electronics assembly','Advanced',4],['Quality control','Intermediate',3],['Teamwork','Advanced',4],['Machine operation','Intermediate',2]],
+      langs:[['English','Conversational'],['Tagalog','Native']],
+      certs:[['TESDA Mechatronics NC II','TESDA']],
+      docs:[['Passport','passport_jose.pdf',true],['Medical Certificate','med_jose.pdf',false]] },
+    { id:'a7', email:'liza@fira.com.ph', pw:'applicant2025!', name:'Liza Navarro', role:'applicant', city:'Bacolod City', type:'Caregiver', years:2, complete:58, passport:'PN8834102 · New', medical:'Pending',
+      skills:[['Elderly care','Intermediate',2],['Companionship','Intermediate',2],['Housekeeping','Intermediate',2]],
+      langs:[['English','Conversational'],['Tagalog','Native'],['Ilonggo','Native']],
+      certs:[['TESDA Caregiving NC II','TESDA']],
+      docs:[['Passport','passport_liza.pdf',false]] },
+    { id:'a8', email:'ben@fira.com.ph', pw:'applicant2025!', name:'Ben Tordesillas', role:'applicant', city:'Manila', type:'Nurse', years:3, complete:82, passport:'PN2290455 · Valid', medical:'Passed',
+      skills:[['Patient assessment','Intermediate',3],['IV therapy','Intermediate',2],['Medication administration','Advanced',3],['Documentation','Advanced',3]],
+      langs:[['English','Fluent'],['Tagalog','Native']],
+      certs:[['PRC Registered Nurse','PRC']],
+      docs:[['Passport','passport_ben.pdf',true],['PRC License','prc_ben.pdf',false]] },
+    { id:'e1', email:'employer@fira.com.ph', pw:'employer2025!', name:'Khalid Al Mansouri', role:'employer', company:'Al Baraka Holding', industry:'Conglomerate · Hospitality & Services', city:'Casablanca', country:'Morocco', contactEmail:'hr@albaraka.ma', contactPhone:'+212 522 480 100', website:'albaraka.ma', verified:true, since:'2023' },
+    { id:'e2', email:'amal@fira.com.ph', pw:'employer2025!', name:'Dr. Samira Al Amal', role:'employer', company:'AI Amal Clinic', industry:'Healthcare', city:'Rabat', country:'Morocco', contactEmail:'hr@amalclinic.ma', contactPhone:'+212 537 220 144', website:'amalclinic.ma', verified:true, since:'2024' },
+    { id:'e3', email:'resorts@fira.com.ph', pw:'employer2025!', name:'Youssef El Fassi', role:'employer', company:'Marrakech Luxury Resorts Group', industry:'Hospitality', city:'Marrakech', country:'Morocco', contactEmail:'talent@mlrg.ma', contactPhone:'+212 524 330 910', website:'mlrg.ma', verified:true, since:'2024' },
+    { id:'g1', email:'agency@fira.com.ph', pw:'agency2025!', name:'Ricardo Dela Cruz', role:'agency', company:'Manila Recruitment Corp', license:'DMW-LB-2024-087', city:'Manila', country:'Philippines', phone:'+63 2 8521 7744', email2:'deploy@manilarec.ph', verified:true },
+    { id:'g2', email:'cebu@fira.com.ph', pw:'agency2025!', name:'Marites Villanueva', role:'agency', company:'Cebu Global Manpower Intl', license:'DMW-LB-2024-118', city:'Cebu City', country:'Philippines', phone:'+63 32 255 8819', email2:'deploy@cebuglobal.ph', verified:true },
+    { id:'s1', email:'staff@fira.com.ph', pw:'staff2025!', name:'Adrian Flores', role:'staff', company:'FIRA Verification Office', city:'Pasay', country:'Philippines' },
+    { id:'sa', email:'admin@fira.com.ph', pw:'admin2025!', name:'Elena Ramos', role:'admin', company:'FIRA Executive Office', city:'Pasay', country:'Philippines' },
+  ],
+
+  jobs: [
+    { id:'j0', title:'Household Service Worker / Nanny', empId:'e1', agencyId:'g1', city:'Casablanca', country:'Morocco', cat:'Domestic Helper', type:'Full-time · 2 years', salaryMin:4500, salaryMax:5200, cur:'MAD', slots:3, filled:1, posted:'Sep 12, 2025', status:'open',
+      desc:'A respected household in central Casablanca seeks a trustworthy Filipino domestic helper and nanny. Private room provided, family of four with two school-age children. English-speaking household with prior OFW experience preferred.',
+      reqs:'2+ years household experience; good English; patient with children; verifiable references.',
+      benefits:'Private room, weekly rest day, annual airfare after contract, medical coverage, paid overtime.',
+      skills:['Household management','Cooking','Child care','Laundry & Ironing'] },
+    { id:'j1', title:'Caregiver for Elderly Care', empId:'e1', agencyId:'g1', city:'Rabat', country:'Morocco', cat:'Caregiver', type:'Full-time · 2 years', salaryMin:5000, salaryMax:5800, cur:'MAD', slots:2, filled:0, posted:'Sep 8, 2025', status:'open',
+      desc:'Live-in caregiver for an elderly couple in Rabat. Focus on mobility support, medication reminders, and companionship. Well-equipped home with accessibility features and a supportive family environment.',
+      reqs:'TESDA Caregiving NC II or equivalent; 2+ years elderly-care experience; first-aid training.',
+      benefits:'MAD 5,000+ monthly, private room, grocery allowance, medical coverage, airfare after contract.',
+      skills:['Elderly care','First aid','Patient care','Companionship'] },
+    { id:'j2', title:'Professional Nurse - Hospital', empId:'e1', agencyId:'g1', city:'Casablanca', country:'Morocco', cat:'Nurse', type:'Full-time · 3 years', salaryMin:9000, salaryMax:11000, cur:'MAD', slots:4, filled:0, posted:'Aug 30, 2025', status:'open',
+      desc:'Al Baraka Medical Wing is hiring PRC-licensed Filipino nurses for its Casablanca facility. Rotational shifts across general wards with structured onboarding, hospital housing, and continuing-education support.',
+      reqs:'PRC Registered Nurse; 3+ years hospital experience; BLS/ACLS certification preferred.',
+      benefits:'MAD 9,000+ monthly, hospital housing, transportation, 13th-month pay, licensure support.',
+      skills:['Patient assessment','IV therapy','Medication administration','Emergency response'] },
+    { id:'j3', title:'Factory Worker - Electronics', empId:'e1', agencyId:'g1', city:'Tangier', country:'Morocco', cat:'Factory Worker', type:'Full-time · 2 years', salaryMin:3800, salaryMax:4300, cur:'MAD', slots:6, filled:1, posted:'Sep 2, 2025', status:'open',
+      desc:'Electronics assembly line operators for a Tangier free-zone plant producing consumer devices. Clean-room environment, modern equipment, and a multinational supervisory team.',
+      reqs:'TESDA Mechatronics/ECM NC II a plus; 2+ years assembly or QC experience; able to work shifts.',
+      benefits:'MAD 3,800+ monthly, dormitory housing, meal allowance, transport, safety gear provided.',
+      skills:['Electronics assembly','Quality control','Machine operation','Teamwork'] },
+    { id:'j4', title:'Hotel Staff - Hospitality', empId:'e3', agencyId:'g1', city:'Marrakech', country:'Morocco', cat:'Hospitality', type:'Full-time · 2 years', salaryMin:4200, salaryMax:5000, cur:'MAD', slots:5, filled:0, posted:'Sep 20, 2025', status:'open',
+      desc:'Five-star resort group in Marrakech hiring restaurant, housekeeping, and front-office staff for peak season. International guest profile with strong service standards and cross-training opportunities.',
+      reqs:'1+ year hotel or restaurant experience; English fluency; polished grooming and service attitude.',
+      benefits:'MAD 4,200+ monthly, staff housing, duty meals, service charge share, training program.',
+      skills:['Customer service','Food service','Housekeeping','Front desk operations'] },
+    { id:'j5', title:'Domestic Helper - Casablanca', empId:'e2', agencyId:'g1', city:'Casablanca', country:'Morocco', cat:'Domestic Helper', type:'Full-time · 2 years', salaryMin:4200, salaryMax:4800, cur:'MAD', slots:4, filled:0, posted:'Sep 15, 2025', status:'open',
+      desc:'Trusted household for a family in central Casablanca. Filipino domestic helper with strong cooking and childcare experience preferred. Private room provided in a modern apartment near the clinic district.',
+      reqs:'2+ years household experience; good English; cooking versatility.',
+      benefits:'Private room, weekly rest day, airfare after contract, medical coverage.',
+      skills:['Household management','Cooking','Child care'] },
+    { id:'j6', title:'Caregiver - Rabat (Clinic-Managed)', empId:'e2', agencyId:'g1', city:'Rabat', country:'Morocco', cat:'Caregiver', type:'Full-time · 2 years', salaryMin:5500, salaryMax:6200, cur:'MAD', slots:6, filled:0, posted:'Sep 18, 2025', status:'open',
+      desc:'AI Amal Clinic manages in-home elderly care placements across Rabat. Compassionate caregivers with NC II certification and first-aid training, supervised by clinic nurses with monthly welfare visits.',
+      reqs:'TESDA Caregiving NC II; first-aid certificate; 2+ years experience.',
+      benefits:'MAD 5,500+ monthly, clinic-supervised, housing allowance, insurance, quarterly health check.',
+      skills:['Elderly care','First aid','Patient care','Medication management'] },
+  ],
+
+  applications: [
+    { id:'app0',  appId:'a1', jobId:'j0', status:'applied',                score:84, date:'Sep 28', stage:0, note:'Application submitted via job board.' },
+    { id:'app1',  appId:'a1', jobId:'j6', status:'interview',              score:92, date:'Sep 20', stage:2, note:'Interview set with AI Amal Clinic HR — Oct 9, 2:00 PM (video).' },
+    { id:'app2',  appId:'a1', jobId:'j4', status:'screening',              score:78, date:'Sep 22', stage:1, note:'Documents under initial review.' },
+    { id:'app3',  appId:'a1', jobId:'j2', status:'rejected',               score:41, date:'Sep 10', stage:1, note:'License verification did not proceed; profile kept for other roles.' },
+    { id:'app4',  appId:'a2', jobId:'j6', status:'pending_fira_review',    score:92, date:'Sep 24', stage:3, note:'Endorsed by agency — awaiting FIRA approval (step 1).' },
+    { id:'app5',  appId:'a3', jobId:'j5', status:'pending_employer_review',score:88, date:'Sep 21', stage:4, note:'FIRA approved — awaiting employer acceptance (step 2).' },
+    { id:'app6',  appId:'a5', jobId:'j2', status:'offered',                score:95, date:'Sep 5',  stage:5, note:'Offer released; contract signing scheduled.' },
+    { id:'app7',  appId:'a6', jobId:'j3', status:'assessment',             score:81, date:'Sep 14', stage:2, note:'Skills assessment at TESDA-accredited center.' },
+    { id:'app8',  appId:'a4', jobId:'j4', status:'shortlisted',            score:76, date:'Sep 25', stage:1, note:'Shortlisted by recruiter.' },
+    { id:'app9',  appId:'a7', jobId:'j6', status:'applied',                score:71, date:'Sep 29', stage:0, note:'Application submitted.' },
+    { id:'app10', appId:'a8', jobId:'j2', status:'under_review',           score:69, date:'Sep 16', stage:1, note:'PRC license verification in progress.' },
+    { id:'app11', appId:'a2', jobId:'j4', status:'withdrawn',              score:74, date:'Sep 8',  stage:1, note:'Applicant withdrew — accepted competing offer.' },
+    { id:'app12', appId:'a3', jobId:'j0', status:'deployed',               score:86, date:'Aug 2',  stage:6, note:'Deployed — arrival confirmed at Casablanca.' },
+    { id:'app13', appId:'a5', jobId:'j3', status:'processing',             score:72, date:'Sep 3',  stage:5, note:'Government processing (DMW).' },
+    { id:'app14', appId:'a8', jobId:'j3', status:'hired',                  score:83, date:'Sep 1',  stage:5, note:'Hired — onboarding in progress.' },
+    { id:'app15', appId:'a4', jobId:'j5', status:'completed',              score:80, date:'Jul 15', stage:7, note:'Contract completed successfully.' },
+  ],
+
+  endorsements: [
+    { id:'E-1042', appId:'app4', employerId:'e2', status:'pending_fira_review', created:'Sep 30, 2025',
+      agencyNote:'Top scorer (92) for this role. NC II certified, 4 yrs elderly-care experience, medical passed. Recommend immediate approval.',
+      firaNote:'', employerNote:'' },
+    { id:'E-1041', appId:'app5', employerId:'e2', status:'pending_employer_review', created:'Sep 26, 2025', firaAt:'Oct 1, 2025',
+      agencyNote:'5 yrs household experience, strong cooking profile, complete documents.',
+      firaNote:'Verified: passport valid, medical passed, DMW records clear. Approved by FIRA on Oct 1.',
+      employerNote:'' },
+    { id:'E-1038', appId:'app6', employerId:'e1', status:'employer_accepted', created:'Sep 12, 2025', firaAt:'Sep 18, 2025', empAt:'Sep 22, 2025',
+      agencyNote:'6 yrs hospital experience, PRC-licensed, ACLS certified.',
+      firaNote:'All credentials verified. FIRA approval granted.',
+      employerNote:'Accepted. Please schedule contract signing this week.' },
+    { id:'E-1035', appId:'app15', employerId:'e3', status:'employer_declined', created:'Jul 20, 2025', firaAt:'Jul 26, 2025', empAt:'Aug 2, 2025',
+      agencyNote:'Experienced in resort housekeeping and food service.',
+      firaNote:'Documents verified; approved by FIRA.',
+      employerNote:'Position filled internally this cycle. Will prioritize next intake.' },
+  ],
+
+  histories: {
+    app0:[{d:'Sep 28, 2025', by:'System', n:'Application submitted via job board.'}],
+    app1:[{d:'Sep 26, 2025', by:'Agency · Manila Recruitment Corp', n:'Interview scheduled — Oct 9, 2:00 PM (video call).'},{d:'Sep 24, 2025', by:'Agency · Manila Recruitment Corp', n:'Shortlisted after AI screening (92% match).'},{d:'Sep 20, 2025', by:'System', n:'Application submitted.'}],
+    app2:[{d:'Sep 23, 2025', by:'FIRA Staff · Adrian Flores', n:'Documents under initial review.'},{d:'Sep 22, 2025', by:'System', n:'Application submitted.'}],
+    app3:[{d:'Sep 12, 2025', by:'Agency · Manila Recruitment Corp', n:'Did not proceed — PRC license not found for nursing role.'},{d:'Sep 10, 2025', by:'System', n:'Application submitted.'}],
+    app4:[{d:'Sep 30, 2025', by:'Agency · Manila Recruitment Corp', n:'Endorsed to FIRA — step 1 of 2.'},{d:'Sep 27, 2025', by:'Agency · Manila Recruitment Corp', n:'Employer interview passed.'},{d:'Sep 24, 2025', by:'System', n:'Application submitted.'}],
+    app5:[{d:'Oct 1, 2025', by:'FIRA Staff · Adrian Flores', n:'FIRA approval granted — forwarded to employer (step 2).'},{d:'Sep 28, 2025', by:'Agency · Manila Recruitment Corp', n:'Endorsed to FIRA with complete verification packet.'},{d:'Sep 21, 2025', by:'System', n:'Application submitted.'}],
+    app6:[{d:'Sep 22, 2025', by:'Employer · Al Baraka Holding', n:'Offer released; contract signing scheduled.'},{d:'Sep 18, 2025', by:'FIRA Staff · Adrian Flores', n:'Credentials verified — FIRA approval granted.'},{d:'Sep 12, 2025', by:'Agency · Manila Recruitment Corp', n:'Endorsed to FIRA.'},{d:'Sep 5, 2025', by:'System', n:'Application submitted.'}],
+    app7:[{d:'Sep 19, 2025', by:'Agency · Manila Recruitment Corp', n:'Skills assessment scheduled at TESDA center.'},{d:'Sep 14, 2025', by:'System', n:'Application submitted.'}],
+    app8:[{d:'Sep 26, 2025', by:'Agency · Manila Recruitment Corp', n:'Shortlisted by recruiter for hospitality role.'},{d:'Sep 25, 2025', by:'System', n:'Application submitted.'}],
+    app9:[{d:'Sep 29, 2025', by:'System', n:'Application submitted.'}],
+    app10:[{d:'Sep 18, 2025', by:'FIRA Staff · Adrian Flores', n:'PRC license verification in progress.'},{d:'Sep 16, 2025', by:'System', n:'Application submitted.'}],
+    app11:[{d:'Sep 9, 2025', by:'Applicant · Ana Reyes', n:'Withdrew — accepted competing offer.'},{d:'Sep 8, 2025', by:'System', n:'Application submitted.'}],
+    app12:[{d:'Aug 2, 2025', by:'FIRA · Deployment Desk', n:'Deployed — arrival confirmed at Casablanca (CNSS registered).'},{d:'Jul 18, 2025', by:'Agency · Manila Recruitment Corp', n:'OEC / e-Registration completed.'},{d:'Jul 10, 2025', by:'Employer · Al Baraka Holding', n:'Employer accepted endorsement; contract signed.'},{d:'Jul 2, 2025', by:'FIRA Staff', n:'FIRA approval granted.'},{d:'Jun 28, 2025', by:'Agency · Manila Recruitment Corp', n:'Endorsed to FIRA.'},{d:'Aug 2, 2025', by:'System', n:'Application lifecycle complete.'}],
+    app13:[{d:'Sep 12, 2025', by:'FIRA · Processing Desk', n:'DMW government processing underway.'},{d:'Sep 3, 2025', by:'System', n:'Application submitted.'}],
+    app14:[{d:'Sep 6, 2025', by:'Employer · Al Baraka Holding', n:'Hired — onboarding in progress.'},{d:'Sep 1, 2025', by:'System', n:'Application submitted.'}],
+    app15:[{d:'Oct 8, 2025', by:'System', n:'Contract completed successfully.'},{d:'Aug 2, 2025', by:'Employer · Marrakech Luxury Resorts Group', n:'Declined — position filled internally.'},{d:'Jul 26, 2025', by:'FIRA Staff', n:'Documents verified; approved by FIRA.'},{d:'Jul 20, 2025', by:'Agency · Manila Recruitment Corp', n:'Endorsed to FIRA.'},{d:'Jul 15, 2025', by:'System', n:'Application submitted.'}],
+  },
+
+  notifications: [
+    { id:'n1', userId:'a1', title:'Interview scheduled', msg:'Your interview with AI Amal Clinic is set for Oct 9, 2:00 PM (video call).', type:'success', read:false, time:'2h ago' },
+    { id:'n2', userId:'a1', title:'New AI match: 87', msg:'Caregiver - Rabat (Clinic-Managed) at AI Amal Clinic matches your profile at 87.', type:'info', read:false, time:'1d ago' },
+    { id:'n3', userId:'a1', title:'Resume parsed', msg:'AI Resume Boost updated your skills: 6 skills extracted, profile 92% complete.', type:'info', read:true, time:'3d ago' },
+  ],
+
+  verifications: [
+    { id:'v1', appId:'a3', applicant:'Joy Aquino', doc:'NBI Clearance', file:'nbi_joy.pdf', submitted:'Sep 18, 2025' },
+    { id:'v2', appId:'a4', applicant:'Carmen Garcia', doc:'Medical Certificate', file:'med_carmen.pdf', submitted:'Sep 21, 2025' },
+    { id:'v3', appId:'a6', applicant:'Jose Mendoza', doc:'Medical Certificate', file:'med_jose.pdf', submitted:'Sep 15, 2025' },
+    { id:'v4', appId:'a7', applicant:'Liza Navarro', doc:'Passport', file:'passport_liza.pdf', submitted:'Sep 29, 2025' },
+    { id:'v5', appId:'a8', applicant:'Ben Tordesillas', doc:'PRC License', file:'prc_ben.pdf', submitted:'Sep 19, 2025' },
+  ],
+
+  audits: [
+    { d:'Oct 1, 2025 · 09:14', by:'FIRA Staff · Adrian Flores', a:'Approved endorsement E-1041 (Joy Aquino → AI Amal Clinic)' },
+    { d:'Sep 30, 2025 · 16:40', by:'Agency · Manila Recruitment Corp', a:'Created endorsement E-1042 (Ana Reyes → AI Amal Clinic)' },
+    { d:'Sep 29, 2025 · 11:02', by:'Applicant · Liza Navarro', a:'Submitted application for Caregiver - Rabat (Clinic-Managed)' },
+    { d:'Sep 26, 2025 · 14:22', by:'Agency · Manila Recruitment Corp', a:'Shortlisted Carmen Garcia for Hotel Staff - Hospitality' },
+    { d:'Sep 24, 2025 · 08:55', by:'Employer · Al Baraka Holding', a:'Posted new job order: Caregiver - Rabat (Clinic-Managed)' },
+  ],
+};
+
+/* ── Lookup helpers ── */
+const U   = id => DB.users.find(u => u.id === id);
+const JOB = id => DB.jobs.find(j => j.id === id);
+const APP = id => DB.applications.find(a => a.id === id);
+const appUser = app => U(app.appId);
+const appJob  = app => JOB(app.jobId);
+const endApp  = e  => APP(e.appId);
+/* ═══ MatchWise core — icons, helpers, router, shell ═══ */
+
+/* ── Icons (inline SVG, lucide-style) ── */
+const IC = {
+  search:'<path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>',
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.3 11.3 1.4 1.4M2 12h2m16 0h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/>',
+  moon:'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+  briefcase:'<rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  file:'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/>',
+  user:'<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  shield:'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
+  shieldcheck:'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+  send:'<path d="M14.54 3.54 20.5 9.5a2 2 0 0 1 0 2.83L13.06 19.77a2 2 0 0 1-2.83 0L3.5 13.06V6.5A3 3 0 0 1 6.5 3.5h6.21a2 2 0 0 1 1.83.04Z"/><path d="m22 22-5-5"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  building:'<rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/>',
+  arrow:'<path d="M5 12h14m-7-7 7 7-7 7"/>',
+  right:'<path d="m9 18 6-6-6-6"/>',
+  left:'<path d="m15 18-6-6 6-6"/>',
+  sparkles:'<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/>',
+  out:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/>',
+  plus:'<path d="M5 12h14M12 5v14"/>',
+  pin:'<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>',
+  cal:'<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  award:'<circle cx="12" cy="8" r="6"/><path d="M15.5 13 17 22l-5-3-5 3 1.5-9"/>',
+  mail:'<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>',
+  phone:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
+  globe:'<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/>',
+  activity:'<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  chart:'<path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/>',
+  clipboard:'<rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>',
+  wallet:'<path d="M19 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h15a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5"/><path d="M16 12h.01"/>',
+  logout2:'<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5M15 12H3"/>',
+  menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
+  heart:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
+  filter:'<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>',
+  trend:'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
+  info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
+  alert:'<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>',
+  stethoscope:'<path d="M4.8 2.3A.3.3 0 1 0 5 2.9a.3.3 0 0 0-.2-.6M2 3.1a.3.3 0 1 0 .6 0 .3.3 0 0 0-.6 0M5 5v1.5A3.5 3.5 0 0 0 8.5 10h.02A3.5 3.5 0 0 0 12 6.5V5"/><path d="M12 6.5a4 4 0 1 0 8 0V5a1 1 0 0 0-1-1"/>',
+  chef:'<path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><path d="M6 17h12"/>',
+  hardhat:'<path d="M2 18a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1Z"/><path d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5M4 15v-3a6 6 0 0 1 6-6M20 15v-3a6 6 0 0 0-6-6"/>',
+  home:'<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M9 22V12h6v10"/>',
+};
+function ic(name, size = 16, cls = '') {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="${cls}">${IC[name] || ''}</svg>`;
+}
+
+/* ── Logo ── */
+function mwMark(size = 34) {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 40 40" fill="none" style="flex-shrink:0">
+    <rect x="1" y="1" width="38" height="38" rx="10" fill="url(#g-royal)"/>
+    <rect x="1" y="1" width="38" height="38" rx="10" stroke="rgba(255,255,255,.18)"/>
+    <path d="M9.5 27.5V13.5L14.5 22 19.5 13.5V27.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M23 27.5V13.5L27 21.5 31 13.5V27.5" stroke="#F6C615" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+function mwWordmark(light = false, size = 34) {
+  return `<span class="flex aic gap10"><span style="color:${light ? '#fff' : 'var(--fg)'};font-size:${Math.round(size * .53)}px;font-weight:700" class="font-display nowrap">Match<span style="color:var(--gold)">Wise</span></span>${mwMark(size)}</span>`;
+}
+
+/* ── State ── */
+const S = { user: null, route: '', param: '', jobFilter: 'All', appFilter: 'All', noteDraft: {} };
+const ROLE_HOME = { applicant:'#/app/dashboard', employer:'#/emp/dashboard', agency:'#/agency/dashboard', staff:'#/fira/dashboard', admin:'#/fira/dashboard' };
+const ROLE_TAG  = { applicant:'Applicant', employer:'Employer', agency:'Agency Partner', staff:'FIRA Staff', admin:'Super Admin' };
+
+/* ── Generic helpers ── */
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+const initials = n => n.split(' ').filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+const money = (min, max, cur) => `${cur} ${min.toLocaleString()} – ${max.toLocaleString()} / mo`;
+function toast(title, msg = '', type = 'ok') {
+  const box = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  const icon = type === 'ok' ? 'check' : type === 'err' ? 'alert' : 'info';
+  el.innerHTML = `<span class="ti">${ic(icon, 20)}</span><span><span class="tt">${esc(title)}</span>${msg ? `<div class="tm">${esc(msg)}</div>` : ''}</span>`;
+  box.appendChild(el);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 260); }, 3400);
+}
+function openModal(html) {
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `<div class="mback" onclick="if(event.target===this)MW.closeModal()"><div class="mbox">${html}</div></div>`;
+}
+function closeModal() { document.getElementById('modal-root').innerHTML = ''; }
+
+/* ── Theme ── */
+function applyTheme(t) {
+  document.documentElement.classList.toggle('dark', t === 'dark');
+  try { localStorage.setItem('mw_theme', t); } catch (e) {}
+}
+function getTheme() { try { return localStorage.getItem('mw_theme') || 'light'; } catch (e) { return 'light'; } }
+function toggleTheme() { applyTheme(getTheme() === 'dark' ? 'light' : 'dark'); render(); }
+
+/* ── Simulated AI match engine (deterministic — mirrors match-sim.ts) ── */
+function hash01(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return ((h >>> 0) % 100000) / 100000;
+}
+function simulateMatch(jobId, userSeed, requiredSkills = []) {
+  const semantic = 55 + Math.round(hash01(`${userSeed}::${jobId}`) * 42);
+  const skills = 52 + Math.round(hash01(`${jobId}::${userSeed}::s`) * 45);
+  const experience = 58 + Math.round(hash01(`exp::${userSeed}::${jobId}`) * 40);
+  const score = Math.min(99, Math.round(semantic * 0.4 + skills * 0.4 + experience * 0.2));
+  const req = requiredSkills.length > 0 ? requiredSkills : ['Household management', 'Cooking', 'Child care', 'Elderly care'];
+  const matchedCount = Math.max(1, Math.round((skills / 100) * req.length));
+  const matchedSkills = req.slice(0, matchedCount);
+  const missingSkills = req.slice(matchedCount);
+  const why = [
+    `${matchedSkills.length}/${req.length} required skills present on your profile.`,
+    semantic >= 80 ? 'Strong semantic alignment between your resume and this job description.'
+      : semantic >= 65 ? 'Good overall alignment with the role description.'
+      : 'Partial alignment — consider tailoring your resume keywords.',
+    experience >= 80 ? 'Your years of experience exceed the typical requirement.'
+      : 'Your experience level is in the expected range for this role.',
+  ];
+  if (missingSkills.length > 0) why.push(`Missing: ${missingSkills.slice(0, 2).join(', ')} — AI Resume Boost can help.`);
+  return { score, semanticPct: semantic, skillsPct: skills, experiencePct: experience, matchedSkills, missingSkills, why };
+}
+
+/* ── Match ring gauge ── */
+function ring(score, size = 76, label = 'AI Match') {
+  const r = (size - 9) / 2, c = 2 * Math.PI * r, off = c * (1 - score / 100);
+  return `<div class="col aic" style="gap:5px"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--muted)" stroke-width="7.5"/>
+    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="url(#g-royal)" stroke-width="7.5" stroke-linecap="round"
+      stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 ${size/2} ${size/2})"/>
+    <text x="50%" y="52%" text-anchor="middle" dominant-baseline="middle" class="ring-txt" font-size="${Math.round(size*.26)}">${score}</text>
+    <text x="50%" y="72%" text-anchor="middle" class="ring-lbl" font-size="${Math.round(size*.13)}">%</text></svg>
+    ${label ? `<span class="tiny b up muted">${label}</span>` : ''}</div>`;
+}
+function goldChip(score) { return `<span class="gold-chip">${ic('sparkles', 11)}${score}% match</span>`; }
+
+/* ── 19-state application tracker (mirrors status-timeline.tsx) ── */
+const TRACKER_POS = ['applied','screening','shortlisted','interview','assessment','under_review','pending_fira_review','fira_approved','pending_employer_review','employer_accepted','processing','offered','hired','deployed','completed'];
+const TRACKER_NEG = ['rejected','withdrawn','fira_rejected','employer_declined'];
+const MILESTONES = [['Applied',0,0],['Screening',1,2],['Interview',3,5],['FIRA Review',6,7],['Employer',8,9],['Processing',10,12],['Deployed',13,13],['Completed',14,14]];
+const STATUS_LABEL = { applied:'Applied', screening:'Screening', shortlisted:'Shortlisted', interview:'Interview', assessment:'Assessment', under_review:'Under Review', pending_fira_review:'Pending FIRA Review', fira_approved:'FIRA Approved', pending_employer_review:'Pending Employer Review', employer_accepted:'Employer Accepted', processing:'Processing', offered:'Offered', hired:'Hired', deployed:'Deployed', completed:'Completed', rejected:'Rejected', withdrawn:'Withdrawn', fira_rejected:'FIRA Rejected', employer_declined:'Employer Declined' };
+function statusTone(st) {
+  if (TRACKER_NEG.includes(st)) return 'bg-red';
+  if (['offered','hired','deployed','completed','employer_accepted','fira_approved'].includes(st)) return 'bg-green';
+  if (['pending_fira_review','pending_employer_review'].includes(st)) return 'bg-amber';
+  return 'bg-blue';
+}
+function tracker(status, compact = false) {
+  const negIdx = TRACKER_NEG.indexOf(status);
+  const posIdx = TRACKER_POS.indexOf(status);
+  const isNeg = negIdx >= 0;
+  const current = isNeg ? 6 : posIdx;
+  const msRow = compact ? '' : MILESTONES.map(([lb, from, to]) =>
+    `<span class="ms ${current >= from && current <= to ? 'active' : current > to ? 'done' : ''}">${lb}</span>`).join('');
+  const segs = TRACKER_POS.map((s, i) => {
+    const done = i < current, active = i === current && !isNeg, branch = isNeg && i === current;
+    return `<div class="seg ${done ? 'done' : ''} ${active ? 'active' : ''} ${branch ? 'branch' : ''}" title="${s.replace(/_/g, ' ')}"></div>`;
+  }).join('');
+  const foot = isNeg
+    ? `<span class="st neg">Stopped — ${STATUS_LABEL[status]}</span><span class="nx">branch: ${status.replace(/_/g, ' ')}</span>`
+    : `<span class="st">Step ${posIdx + 1} of 19 · ${STATUS_LABEL[status]}</span>${posIdx < TRACKER_POS.length - 1 ? `<span class="nx">next: ${TRACKER_POS[posIdx + 1].replace(/_/g, ' ')}</span>` : ''}`;
+  return `<div class="tracker"><div class="ms-row">${msRow}</div><div class="track">${segs}</div><div class="foot">${foot}</div></div>`;
+}
+function statusBadge(st) { return `<span class="badge ${statusTone(st)}">${STATUS_LABEL[st] || st}</span>`; }
+
+/* ── Endorsement 2-step flow ── */
+const END_CFG = {
+  pending_fira_review:     { tone:'bg-amber', label:'Pending FIRA Review', icon:'clock' },
+  fira_approved:           { tone:'bg-green', label:'FIRA Approved', icon:'shieldcheck' },
+  fira_rejected:           { tone:'bg-red', label:'FIRA Rejected', icon:'x' },
+  pending_employer_review: { tone:'bg-blue', label:'Pending Employer', icon:'clock' },
+  employer_accepted:       { tone:'bg-green', label:'Accepted by Employer', icon:'check' },
+  employer_declined:       { tone:'bg-red', label:'Declined by Employer', icon:'x' },
+};
+function flowStep(st) {
+  if (st === 'pending_fira_review') return 0;
+  if (st === 'fira_approved' || st === 'pending_employer_review') return 1;
+  if (st === 'employer_accepted') return 2;
+  return -1;
+}
+function flow2Track(end) {
+  const st = end.status, step = flowStep(st), neg = st === 'fira_rejected' || st === 'employer_declined';
+  const s1 = st === 'pending_fira_review' ? 'Awaiting verification' : step >= 1 ? (st === 'fira_rejected' ? 'Rejected by FIRA' : 'Verified by FIRA') : '—';
+  const s2 = step >= 2 ? (st === 'employer_declined' ? 'Declined by employer' : 'Accepted by employer')
+    : st === 'pending_employer_review' ? 'Awaiting decision'
+    : (st === 'pending_fira_review' || st === 'fira_approved') ? 'Pending FIRA' : '—';
+  const cls = i => `n ${step > i || (i === 1 && step === 2) ? 'fill' : ''} ${neg && ((i === 0 && st === 'fira_rejected') || (i === 1 && st === 'employer_declined')) ? 'neg' : ''}`;
+  return `<div class="flow2">
+    <div class="stp ${step < 0 ? '' : ''}"><div class="${cls(0)}">1</div><div><p class="tiny b">Agency → FIRA</p><p class="micro muted">${s1}</p></div></div>
+    <span class="arrow">${ic('arrow', 15)}</span>
+    <div class="stp"><div class="${cls(1)}">2</div><div><p class="tiny b">Employer</p><p class="micro muted">${s2}</p></div></div></div>`;
+}
+function endBadge(st) { const c = END_CFG[st] || END_CFG.pending_fira_review; return `<span class="badge ${c.tone}">${ic(c.icon, 12)}${c.label}</span>`; }
+function auditTrail(appId) {
+  const h = DB.histories[appId] || [];
+  return `<div class="audit">${h.map(x => `<div class="ai"><div class="d">${esc(x.d)} · ${esc(x.by)}</div><p class="small" style="margin-top:2px">${esc(x.n)}</p></div>`).join('')}</div>`;
+}
+function pushHistory(appId, by, n) {
+  if (!DB.histories[appId]) DB.histories[appId] = [];
+  DB.histories[appId].unshift({ d:'Oct 2, 2025', by, n });
+}
+
+/* ── Animated counter ── */
+function animateCounters(scope) {
+  const els = (scope || document).querySelectorAll('[data-count]');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  els.forEach(el => {
+    const target = +el.dataset.count;
+    if (reduce) { el.textContent = target.toLocaleString(); return; }
+    const t0 = performance.now(), dur = 850;
+    const tick = t => {
+      const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * e).toLocaleString();
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+}
+
+/* ── Auth ── */
+function login(email, pw) {
+  const u = DB.users.find(x => x.email.toLowerCase() === email.trim().toLowerCase());
+  if (!u || u.pw !== pw) { toast('Sign-in failed', 'Invalid email or password. Try a demo account below.', 'err'); return false; }
+  S.user = u;
+  try { sessionStorage.setItem('mw_user', u.id); } catch (e) {}
+  toast(`Welcome, ${u.name.split(' ')[0]}!`, `Signed in as ${ROLE_TAG[u.role]}.`, 'ok');
+  location.hash = ROLE_HOME[u.role];
+  render();
+  return true;
+}
+function logout() {
+  S.user = null;
+  try { sessionStorage.removeItem('mw_user'); } catch (e) {}
+  location.hash = '#/login';
+  render();
+}
+function restoreSession() {
+  try {
+    const id = sessionStorage.getItem('mw_user');
+    if (id) { const u = U(id); if (u) S.user = u; }
+  } catch (e) {}
+}
+
+/* ── Nav config per role ── */
+const NAVS = {
+  applicant: [
+    ['#/app/dashboard', 'Dashboard', 'home'],
+    ['#/app/jobs', 'Job Board', 'briefcase'],
+    ['#/app/applications', 'My Applications', 'file'],
+    ['#/app/profile', 'My Profile', 'user'],
+  ],
+  employer: [
+    ['#/emp/dashboard', 'Dashboard', 'home'],
+    ['#/emp/jobs', 'Job Orders', 'briefcase'],
+    ['#/emp/candidates', 'Candidates', 'users'],
+    ['#/emp/endorsements', 'Endorsements', 'send'],
+  ],
+  agency: [
+    ['#/agency/dashboard', 'Dashboard', 'home'],
+    ['#/agency/candidates', 'Candidates', 'users'],
+    ['#/agency/jobs', 'Job Orders', 'briefcase'],
+    ['#/agency/endorsements', 'Endorsements', 'send'],
+  ],
+  fira: [
+    ['#/fira/dashboard', 'Command Center', 'activity'],
+    ['#/fira/applications', 'Applications', 'file'],
+    ['#/fira/endorsements', 'Endorsements', 'shieldcheck'],
+  ],
+};
+
+/* ── Shell (sidebar + topbar + content) ── */
+const PAGE_TITLES = {
+  '/app/dashboard':'Applicant Dashboard', '/app/jobs':'Job Board', '/app/jobs/id':'Job Details', '/app/applications':'My Applications', '/app/profile':'My Profile',
+  '/emp/dashboard':'Employer Dashboard', '/emp/jobs':'Job Orders', '/emp/candidates':'Candidates', '/emp/endorsements':'Endorsements',
+  '/agency/dashboard':'Agency Dashboard', '/agency/candidates':'Candidate Pool', '/agency/jobs':'Job Orders', '/agency/endorsements':'Endorsements',
+  '/fira/dashboard':'FIRA Command Center', '/fira/applications':'Application Oversight', '/fira/endorsements':'Endorsement Verification',
+};
+function shell(content, activePath, titleOverride) {
+  const u = S.user;
+  const nav = NAVS[u.role === 'admin' ? 'fira' : u.role] || [];
+  const navHtml = nav.map(([href, label, icon]) =>
+    `<button class="side-item ${activePath === href ? 'on' : ''}" onclick="MW.go('${href}')">${ic(icon, 17)}<span class="side-txt">${label}</span></button>`).join('');
+  const notifs = DB.notifications.filter(n => n.userId === u.id);
+  const unread = notifs.filter(n => !n.read).length;
+  const title = titleOverride || PAGE_TITLES[activePath.replace('#', '')] || 'MatchWise';
+  return `<div class="shell">
+    <aside class="sidebar">
+      <div class="flex aic gap10" style="padding:4px 10px 16px">${mwWordmark(false, 32)}</div>
+      <div style="padding:0 10px 6px"><span class="role-tag">${ROLE_TAG[u.role]}</span></div>
+      <div class="side-label">Menu</div>
+      ${navHtml}
+      <div style="flex:1"></div>
+      <div class="user-box card" style="padding:12px;margin:10px 4px 4px">
+        <div class="flex aic gap10">
+          <span class="avatar sm">${initials(u.name)}</span>
+          <div class="grow ellip"><p class="small b ellip">${esc(u.name)}</p><p class="micro muted ellip">${esc(u.email)}</p></div>
+        </div>
+        <button class="btn btn-outline btn-sm w100" style="margin-top:10px" onclick="MW.logout()">${ic('out', 13)} Sign out</button>
+      </div>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <div class="grow"><h2 class="font-display" style="font-size:17px">${title}</h2></div>
+        <div class="rel" style="width:min(300px,30vw)">
+          <span class="rel" style="position:absolute;left:11px;top:9px;color:var(--muted-fg)">${ic('search', 15)}</span>
+          <input class="input" style="padding-left:34px" placeholder="Search jobs, people…" onkeydown="if(event.key==='Enter')MW.toastInfo('Search','Prototype scope — search is simulated.')"/>
+        </div>
+        <button class="ibtn ${getTheme() === 'dark' ? 'on' : ''}" title="Toggle theme" onclick="MW.toggleTheme()">${ic(getTheme() === 'dark' ? 'sun' : 'moon', 17)}</button>
+        ${u.role === 'applicant' ? `<div class="rel"><button class="ibtn" title="Notifications" onclick="MW.toggleNotif()">${ic('bell', 17)}${unread ? '<span class="dot-n"></span>' : ''}</button><div id="notif-dd"></div></div>` : ''}
+        <button class="avatar" title="${esc(u.name)}" onclick="MW.toastInfo('Account','${esc(u.name)} · ${ROLE_TAG[u.role]}')">${initials(u.name)}</button>
+      </header>
+      <div class="content">${content}</div>
+    </div></div>`;
+}
+function toggleNotif() {
+  const dd = document.getElementById('notif-dd');
+  if (!dd) return;
+  if (dd.innerHTML) { dd.innerHTML = ''; return; }
+  const notifs = DB.notifications.filter(n => n.userId === S.user.id);
+  dd.innerHTML = `<div class="dd" style="min-width:340px">
+    <div class="dd-h">Notifications ${notifs.filter(n => !n.read).length ? `<button class="btn btn-ghost btn-sm" onclick="MW.markAllRead()">Mark all read</button>` : ''}</div>
+    ${notifs.length ? notifs.map(n => `<div class="dd-i" onclick="MW.readNotif('${n.id}')">
+      ${!n.read ? '<span class="notif-dot"></span>' : '<span style="width:8px"></span>'}
+      <span class="grow"><span class="small b">${esc(n.title)}</span><p class="tiny muted" style="margin-top:2px">${esc(n.msg)}</p><p class="micro muted" style="margin-top:3px">${n.time}</p></span>
+      <span style="color:var(--muted-fg)">${ic(n.type === 'success' ? 'check' : 'info', 15)}</span></div>`).join('')
+      : '<div class="empty" style="padding:26px">No notifications yet.</div>'}</div>`;
+}
+function readNotif(id) { const n = DB.notifications.find(x => x.id === id); if (n) n.read = true; toggleNotif(); toggleNotif(); render(); }
+function markAllRead() { DB.notifications.forEach(n => { if (n.userId === S.user.id) n.read = true; }); toggleNotif(); toggleNotif(); render(); }
+function toastInfo(t, m) { toast(t, m, 'info'); }
+
+/* ── Router ── */
+const VIEWS = {};
+function render() {
+  applyTheme(getTheme());
+  const h = location.hash || '#/login';
+  if (!S.user && h !== '#/login') { location.hash = '#/login'; return; }
+  if (S.user && h === '#/login') { location.hash = ROLE_HOME[S.user.role]; return; }
+  const parts = h.replace('#/', '').split('/');
+  const area = parts[0], route = parts[1] || 'dashboard', param = parts[2] || '';
+  S.route = area + '/' + route; S.param = param;
+  const app = document.getElementById('app');
+  if (h === '#/login') { app.innerHTML = VIEWS.login(); document.title = 'MatchWise — Clickable Prototype · FIRA Overseas Recruitment Platform'; return; }
+  const key = area + '/' + route;
+  const detailKey = key + '/id';
+  const fn = (param && VIEWS[detailKey]) ? VIEWS[detailKey] : VIEWS[key];
+  const activePath = '#/' + key;
+  const dTitle = (param && VIEWS[detailKey]) ? PAGE_TITLES['/' + detailKey] : null;
+  app.innerHTML = fn ? shell(fn(param), activePath, dTitle) : shell(`<div class="empty">${ic('search', 40)}<p>Screen not found in prototype.</p></div>`, activePath, dTitle);
+  animateCounters(app);
+  const titleKey = (param && VIEWS[detailKey]) ? detailKey : key;
+  document.title = (PAGE_TITLES['/' + titleKey] || PAGE_TITLES['/' + key] || 'MatchWise') + ' · MatchWise Prototype';
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', render);
+
+/* ── Public action API (inline handlers) ── */
+const MW = { go: h => { location.hash = h; }, toggleTheme, toggleNotif, readNotif, markAllRead, login, logout, closeModal, toastInfo };
+/* ═══ Login / Landing ═══ */
+VIEWS.login = function () {
+  const demo = [
+    ['applicant@fira.com.ph', 'Applicant · Maria Santos', 'user'],
+    ['employer@fira.com.ph', 'Employer · Al Baraka Holding', 'building'],
+    ['amal@fira.com.ph', 'Employer · AI Amal Clinic', 'heart'],
+    ['agency@fira.com.ph', 'Agency · Manila Recruitment Corp', 'briefcase'],
+    ['staff@fira.com.ph', 'FIRA Staff · Verification', 'shieldcheck'],
+    ['admin@fira.com.ph', 'Super Admin · Executive', 'activity'],
+  ];
+  const demoRows = demo.map(([em, lbl, icon]) =>
+    `<div class="demo-row" onclick="MW.demoLogin('${em}')">
+      <span class="ic-blue" style="width:32px;height:32px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;color:var(--secondary-fg)">${ic(icon, 15)}</span>
+      <span class="grow"><span class="small b">${lbl}</span><br/><span class="em">${em} · ${em.split('@')[0]}2025!</span></span>
+      ${ic('right', 14)}</div>`).join('');
+
+  return `
+  <div class="topnav">
+    <div class="flex aic gap10">${mwWordmark(false, 34)}</div>
+    <div class="flex aic gap12">
+      <button class="ibtn ${getTheme() === 'dark' ? 'on' : ''}" onclick="MW.toggleTheme()" title="Toggle light / dark">${ic(getTheme() === 'dark' ? 'sun' : 'moon', 17)}</button>
+      <a class="btn btn-primary btn-sm" href="#/login">Sign in</a>
+    </div>
+  </div>
+  <div class="login-wrap" style="min-height:calc(100vh - 61px)">
+    <section class="login-hero">
+      <div style="position:relative;z-index:2;max-width:560px">
+        <span class="hero-chip">${ic('sparkles', 13)} AI-powered overseas recruitment</span>
+        <h1 class="font-display" style="font-size:clamp(30px,4vw,44px);line-height:1.12;margin-top:22px;letter-spacing:-.02em">
+          One Platform.<br/>Smarter Matching.<br/><span style="color:var(--gold)">Better Hiring.</span></h1>
+        <p style="color:#c3cfe8;margin-top:16px;font-size:15px;max-width:480px">
+          MatchWise connects verified Filipino workers with licensed Moroccan employers —
+          with simulated AI matching, a 19-state government-compliant pipeline, and a two-step
+          FIRA endorsement flow that protects every party.</p>
+        <div class="flex wrap gap8" style="margin-top:20px">
+          <span class="hero-chip">${ic('user', 12)} Applicants</span>
+          <span class="hero-chip">${ic('building', 12)} Employers</span>
+          <span class="hero-chip">${ic('briefcase', 12)} Licensed Agencies</span>
+          <span class="hero-chip">${ic('shieldcheck', 12)} FIRA Staff</span>
+        </div>
+        <div class="grid3" style="margin-top:30px;gap:12px">
+          <div class="hero-stat"><div class="n mono">19</div><div class="l">Pipeline states</div></div>
+          <div class="hero-stat"><div class="n mono">2-Step</div><div class="l">Endorsement flow</div></div>
+          <div class="hero-stat"><div class="n mono">40/40/20</div><div class="l">AI match weights</div></div>
+        </div>
+      </div>
+      <div style="position:relative;z-index:2;margin-top:auto;padding-top:34px;max-width:430px">
+        <div class="mock-card">
+          <div class="flex between aic mb12">
+            <span class="flex aic gap8">${mwMark(24)}<span class="small b">MatchWise Console</span></span>
+            <span class="badge bg-blue">LIVE DEMO</span>
+          </div>
+          <div class="flex aic gap12 mb8"><span class="avatar sm">MS</span>
+            <div class="grow"><p class="tiny b">Maria Santos · Caregiver</p><p class="micro muted">92% AI match · Interview Oct 9</p></div>
+            <span class="badge bg-green">Interview</span></div>
+          ${tracker('interview', true)}
+          <div class="flex gap8" style="margin-top:12px">
+            <span class="skill-chip">Elderly care</span><span class="skill-chip">First aid</span>
+            <span class="skill-chip">Patient care</span><span class="skill-chip miss">+3</span>
+          </div>
+        </div>
+        <p class="micro" style="color:#8b9ac2;margin-top:14px">High-fidelity clickable prototype · MatchWise × FIRA · Oct 2025</p>
+      </div>
+    </section>
+
+    <section class="login-panel">
+      <div class="login-card">
+        <h2 class="font-display" style="font-size:24px">Welcome back</h2>
+        <p class="muted small" style="margin:6px 0 22px">Sign in to your MatchWise workspace — or jump in with a demo account.</p>
+        <form onsubmit="event.preventDefault();MW.login(this.email.value,this.pw.value)">
+          <div class="field"><label class="label">Email address</label>
+            <input class="input" name="email" type="email" placeholder="you@fira.com.ph" required autocomplete="off"/></div>
+          <div class="field"><label class="label">Password</label>
+            <input class="input" name="pw" type="password" placeholder="••••••••••" required autocomplete="off"/></div>
+          <button class="btn btn-primary btn-lg w100" type="submit">${ic('out', 15)} Sign in to MatchWise</button>
+        </form>
+        <div class="flex aic gap12" style="margin:20px 0"><span class="grow" style="height:1px;background:var(--border)"></span>
+          <span class="micro muted up b">Demo accounts</span><span class="grow" style="height:1px;background:var(--border)"></span></div>
+        <div class="col gap8">${demoRows}</div>
+        <p class="micro muted tc" style="margin-top:18px">Prototype only — no real data is transmitted. Passwords are pre-filled demo values.</p>
+      </div>
+    </section>
+  </div>`;
+};
+
+/* demo quick login */
+MW.demoLogin = function (email) { login(email, DB.users.find(u => u.email === email).pw); };
+/* ═══ Applicant role — Maria Santos ═══ */
+const CAT_ICONS = { 'Caregiver':'heart', 'Domestic Helper':'home', 'Nurse':'stethoscope', 'Factory Worker':'hardhat', 'Hospitality':'chef' };
+
+VIEWS['app/dashboard'] = function () {
+  const u = S.user;
+  const mine = DB.applications.filter(a => a.appId === u.id);
+  const active = mine.filter(a => !TRACKER_NEG.includes(a.status));
+  const interviews = mine.filter(a => a.status === 'interview').length;
+  const avg = active.length ? Math.round(active.reduce((s, a) => s + a.score, 0) / active.length) : 0;
+  const top = DB.jobs.map(j => ({ j, m: simulateMatch(j.id, u.email, j.skills) }))
+    .sort((a, b) => b.m.score - a.m.score).slice(0, 3);
+  const notifs = DB.notifications.filter(n => n.userId === u.id);
+
+  return `
+  <div class="page-h">
+    <h1>Welcome back, ${esc(u.name.split(' ')[0])}</h1>
+    <p>Your overseas journey at a glance — ${active.length} active applications in the pipeline.</p>
+  </div>
+  <div class="grid4 mb24">
+    <div class="stat"><div class="flex between aic"><div><p class="lbl">Active applications</p><p class="num" data-count="${active.length}">0</p></div><span class="ic ic-blue">${ic('file', 19)}</span></div>
+      <p class="tiny muted mt8">Across ${new Set(active.map(a => a.jobId)).size} job orders</p></div>
+    <div class="stat"><div class="flex between aic"><div><p class="lbl">Avg AI match</p><p class="num" data-count="${avg}">0</p></div><span class="ic ic-gold">${ic('sparkles', 19)}</span></div>
+      <p class="tiny muted mt8">Weighted 40/40/20 model</p></div>
+    <div class="stat"><div class="flex between aic"><div><p class="lbl">Profile completeness</p><p class="num" data-count="${u.complete}">0</p></div><span class="ic ic-green">${ic('user', 19)}</span></div>
+      <div class="pbar green mt8"><div class="fill" style="width:${u.complete}%"></div></div></div>
+    <div class="stat"><div class="flex between aic"><div><p class="lbl">Interviews</p><p class="num" data-count="${interviews}">0</p></div><span class="ic ic-blue">${ic('cal', 19)}</span></div>
+      <p class="tiny muted mt8">Next: Oct 9 · AI Amal Clinic</p></div>
+  </div>
+
+  <div class="split">
+    <div class="col gap16">
+      <div class="flex between aic">
+        <h3 class="section-t">${ic('sparkles')} Top AI matches for you</h3>
+        <button class="btn btn-ghost btn-sm" onclick="MW.go('#/app/jobs')">View all ${ic('right', 13)}</button>
+      </div>
+      ${top.map(({ j, m }) => `
+      <div class="card card-hover job-card" style="cursor:pointer" onclick="MW.go('#/app/jobs/${j.id}')">
+        <div class="brand-strip"></div>
+        <div class="card-pad" style="padding-top:16px">
+          <div class="jc-top">
+            <div class="flex aic gap12">
+              <span class="cat-ic">${ic(CAT_ICONS[j.cat] || 'briefcase', 19)}</span>
+              <div><p class="b font-display" style="font-size:15px">${esc(j.title)}</p>
+                <div class="flex wrap gap10 mt4">
+                  <span class="job-meta">${ic('building')} ${esc(U(j.empId).company)}</span>
+                  <span class="job-meta">${ic('pin')} ${j.city}, ${j.country}</span>
+                </div></div>
+            </div>
+            ${ring(m.score, 64, '')}
+          </div>
+          <div class="flex between aic mt12">
+            <span class="small b mono">${money(j.salaryMin, j.salaryMax, j.cur)}</span>
+            <span class="btn btn-outline btn-sm">View job &amp; AI match ${ic('right', 12)}</span>
+          </div>
+        </div>
+      </div>`).join('')}
+
+      <h3 class="section-t mt8">${ic('file')} Active applications</h3>
+      ${active.slice(0, 3).map(a => { const j = appJob(a); return `
+      <div class="card card-pad">
+        <div class="flex between aic mb12">
+          <div><p class="b">${esc(j.title)}</p><p class="tiny muted">${esc(U(j.empId).company)} · applied ${a.date}</p></div>
+          <div class="flex aic gap8">${goldChip(a.score)}${statusBadge(a.status)}</div>
+        </div>
+        ${tracker(a.status)}
+      </div>`; }).join('')}
+    </div>
+
+    <div class="col gap16">
+      <div class="card card-pad">
+        <h3 class="section-t mb12">${ic('bell')} Notifications</h3>
+        ${notifs.length ? notifs.map(n => `
+        <div class="flex gap10 ${n.id !== notifs[notifs.length - 1].id ? 'pb12 mb12' : ''}" style="${n.id !== notifs[notifs.length - 1].id ? 'border-bottom:1px solid var(--border)' : ''}">
+          <span class="ic ${n.type === 'success' ? 'ic-green' : 'ic-blue'}" style="width:30px;height:30px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center">${ic(n.type === 'success' ? 'check' : 'info', 14)}</span>
+          <div class="grow"><p class="small b">${esc(n.title)}</p><p class="tiny muted" style="margin-top:2px">${esc(n.msg)}</p><p class="micro muted mt4">${n.time}</p></div>
+        </div>`).join('') : '<p class="small muted">You are all caught up.</p>'}
+      </div>
+      <div class="card card-pad">
+        <h3 class="section-t mb12">${ic('award')} Your documents</h3>
+        ${u.docs.map(d => `<div class="flex between aic mb8"><span class="small">${d[0]}</span>
+          <span class="badge ${d[2] ? 'bg-green' : 'bg-amber'}">${d[2] ? 'Verified' : 'Pending'}</span></div>`).join('')}
+        <button class="btn btn-outline btn-sm w100 mt8" onclick="MW.toastInfo('AI Resume Boost','Prototype scope — resume parsing is simulated.')">${ic('sparkles', 13)} Run AI Resume Boost</button>
+      </div>
+    </div>
+  </div>`;
+};
+
+VIEWS['app/jobs'] = function () {
+  const u = S.user;
+  const cats = ['All', ...new Set(DB.jobs.map(j => j.cat))];
+  const jobs = DB.jobs.filter(j => S.jobFilter === 'All' || j.cat === S.jobFilter)
+    .map(j => ({ j, m: simulateMatch(j.id, u.email, j.skills), applied: DB.applications.some(a => a.appId === u.id && a.jobId === j.id) }))
+    .sort((a, b) => b.m.score - a.m.score);
+  return `
+  <div class="page-h"><h1>Job Board</h1><p>${DB.jobs.length} verified job orders from licensed Moroccan employers · ranked by AI match for you.</p></div>
+  <div class="flex wrap gap8 mb16">${cats.map(c => `<button class="chip ${S.jobFilter === c ? 'on' : ''}" onclick="MW.filterJobs('${c}')">${c}</button>`).join('')}</div>
+  <div class="grid2">
+    ${jobs.map(({ j, m, applied }) => `
+    <div class="card card-hover job-card" style="cursor:pointer" onclick="MW.go('#/app/jobs/${j.id}')">
+      <div class="brand-strip"></div>
+      <div class="card-pad" style="padding-top:16px">
+        <div class="jc-top">
+          <div class="flex aic gap12">
+            <span class="cat-ic">${ic(CAT_ICONS[j.cat] || 'briefcase', 19)}</span>
+            <div><p class="b font-display" style="font-size:15px">${esc(j.title)}</p>
+              <div class="flex wrap gap10 mt4">
+                <span class="job-meta">${ic('building')} ${esc(U(j.empId).company)}</span>
+                <span class="job-meta">${ic('pin')} ${j.city}, ${j.country}</span>
+              </div></div>
+          </div>
+          ${ring(m.score, 60, '')}
+        </div>
+        <div class="flex wrap gap10 mt12">
+          <span class="job-meta">${ic('wallet')} <span class="b mono">${money(j.salaryMin, j.salaryMax, j.cur)}</span></span>
+          <span class="job-meta">${ic('users')} ${j.slots - j.filled}/${j.slots} slots open</span>
+          <span class="job-meta">${ic('cal')} Posted ${j.posted}</span>
+        </div>
+        <div class="flex between aic mt12">
+          <div class="flex wrap gap6">${j.skills.slice(0, 3).map(s => `<span class="skill-chip">${esc(s)}</span>`).join('')}</div>
+          ${applied ? '<span class="badge bg-green">Applied</span>' : `<span class="btn btn-outline btn-sm">View ${ic('right', 12)}</span>`}
+        </div>
+      </div>
+    </div>`).join('')}
+  </div>`;
+};
+MW.filterJobs = c => { S.jobFilter = c; render(); };
+
+VIEWS['app/jobs/id'] = function (id) {
+  const j = JOB(id);
+  if (!j) return `<div class="empty">${ic('search', 40)}<p>Job not found.</p></div>`;
+  const u = S.user;
+  const m = simulateMatch(j.id, u.email, j.skills);
+  const emp = U(j.empId);
+  const applied = DB.applications.find(a => a.appId === u.id && a.jobId === j.id);
+  return `
+  <button class="btn btn-ghost btn-sm mb16" onclick="MW.go('#/app/jobs')">${ic('left', 13)} Back to Job Board</button>
+  <div class="split">
+    <div class="col gap16">
+      <div class="card">
+        <div class="brand-strip"></div>
+        <div class="card-pad">
+          <div class="flex aic gap12">
+            <span class="cat-ic">${ic(CAT_ICONS[j.cat] || 'briefcase', 20)}</span>
+            <div class="grow"><h1 class="font-display" style="font-size:21px">${esc(j.title)}</h1>
+              <div class="flex wrap gap10 mt4">
+                <span class="job-meta">${ic('building')} ${esc(emp.company)}</span>
+                <span class="job-meta">${ic('pin')} ${j.city}, ${j.country}</span>
+                <span class="job-meta">${ic('clock')} ${j.type}</span>
+              </div></div>
+            ${statusBadge(j.status === 'open' ? 'shortlisted' : 'completed')}
+          </div>
+          <div class="grid4 mt16" style="gap:10px">
+            <div class="card" style="padding:12px;box-shadow:none"><p class="micro muted up b">Salary</p><p class="small b mono mt4">${money(j.salaryMin, j.salaryMax, j.cur)}</p></div>
+            <div class="card" style="padding:12px;box-shadow:none"><p class="micro muted up b">Open slots</p><p class="small b mt4">${j.slots - j.filled} of ${j.slots}</p></div>
+            <div class="card" style="padding:12px;box-shadow:none"><p class="micro muted up b">Agency</p><p class="small b mt4">${esc(U(j.agencyId).company)}</p></div>
+            <div class="card" style="padding:12px;box-shadow:none"><p class="micro muted up b">Posted</p><p class="small b mt4">${j.posted}</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-pad">
+        <h3 class="section-t mb12">${ic('file')} About this role</h3>
+        <p class="small" style="line-height:1.7">${esc(j.desc)}</p>
+        <h4 class="b mt16 mb8" style="font-size:13px">Requirements</h4>
+        <p class="small muted" style="line-height:1.7">${esc(j.reqs)}</p>
+        <h4 class="b mt16 mb8" style="font-size:13px">Benefits</h4>
+        <p class="small muted" style="line-height:1.7">${esc(j.benefits)}</p>
+        <h4 class="b mt16 mb8" style="font-size:13px">Required skills</h4>
+        <div class="flex wrap gap6">${j.skills.map(s => `<span class="skill-chip">${esc(s)}</span>`).join('')}</div>
+      </div>
+
+      <div class="card card-pad">
+        <h3 class="section-t mb12">${ic('shield')} Employer &amp; agency verification</h3>
+        <div class="grid2">
+          <div class="flex aic gap10"><span class="ic-green" style="width:34px;height:34px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center">${ic('shieldcheck', 16)}</span>
+            <div><p class="small b">${esc(emp.company)}</p><p class="tiny muted">FIRA-verified employer · since ${emp.since}</p></div></div>
+          <div class="flex aic gap10"><span class="ic-blue" style="width:34px;height:34px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center">${ic('award', 16)}</span>
+            <div><p class="small b">${esc(U(j.agencyId).company)}</p><p class="tiny muted">DMW license ${esc(U(j.agencyId).license || '—')}</p></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col gap16">
+      <div class="card">
+        <div class="brand-strip"></div>
+        <div class="card-pad">
+          <div class="tc mb16">${ring(m.score, 110, 'AI Match Score')}</div>
+          <p class="tiny muted tc mb16" style="margin-top:-6px">Weighted model · 0.40 semantic + 0.40 skills + 0.20 experience</p>
+          <div class="wbar"><div class="row"><span class="b">Semantic fit</span><span class="mono b">${m.semanticPct}%</span></div><div class="track"><div class="fill" style="width:${m.semanticPct}%"></div></div></div>
+          <div class="wbar"><div class="row"><span class="b">Skills overlap</span><span class="mono b">${m.skillsPct}%</span></div><div class="track"><div class="fill" style="width:${m.skillsPct}%"></div></div></div>
+          <div class="wbar gold"><div class="row"><span class="b">Experience</span><span class="mono b">${m.experiencePct}%</span></div><div class="track"><div class="fill" style="width:${m.experiencePct}%"></div></div></div>
+          <div class="mt16">
+            <p class="tiny b up muted mb8" style="letter-spacing:.06em">Matched skills</p>
+            <div class="flex wrap gap6 mb12">${m.matchedSkills.map(s => `<span class="skill-chip">${ic('check', 11)} ${esc(s)}</span>`).join('')}</div>
+            ${m.missingSkills.length ? `<p class="tiny b up muted mb8" style="letter-spacing:.06em">Skill gaps</p>
+            <div class="flex wrap gap6 mb12">${m.missingSkills.map(s => `<span class="skill-chip miss">${esc(s)}</span>`).join('')}</div>` : ''}
+            <p class="tiny b up muted mb8" style="letter-spacing:.06em">Why this match</p>
+            <ul style="list-style:none" class="col gap6">
+              ${m.why.map(w => `<li class="flex gap8 small muted" style="line-height:1.55"><span style="color:var(--primary);flex-shrink:0;margin-top:2px">${ic('sparkles', 12)}</span>${esc(w)}</li>`).join('')}
+            </ul>
+          </div>
+          ${applied
+            ? `<button class="btn btn-outline btn-lg w100 mt16" disabled>${ic('check', 15)} Applied — tracking ${applied.id.toUpperCase()}</button>`
+            : `<button class="btn btn-primary btn-lg w100 mt16" onclick="MW.apply('${j.id}')">${ic('send', 15)} Apply with MatchWise profile</button>`}
+          <p class="micro muted tc mt8">Your verified documents attach automatically.</p>
+        </div>
+      </div>
+    </div>
+  </div>`;
+};
+MW.apply = function (jobId) {
+  const u = S.user;
+  const j = JOB(jobId);
+  const m = simulateMatch(jobId, u.email, j.skills);
+  const id = 'app' + Date.now();
+  DB.applications.unshift({ id, appId: u.id, jobId, status:'applied', score: m.score, date:'Oct 2', stage:0, note:'Application submitted via MatchWise profile.' });
+  pushHistory(id, 'System', 'Application submitted via MatchWise profile.');
+  toast('Application submitted', `${j.title} — AI match ${m.score}%. Track it in My Applications.`, 'ok');
+  render();
+};
+
+VIEWS['app/applications'] = function () {
+  const u = S.user;
+  let mine = DB.applications.filter(a => a.appId === u.id);
+  if (S.appFilter !== 'All') mine = mine.filter(a => S.appFilter === 'Active' ? TRACKER_POS.includes(a.status) : S.appFilter === 'Closed' ? TRACKER_NEG.includes(a.status) : true);
+  const counts = { All: DB.applications.filter(a => a.appId === u.id).length,
+    Active: DB.applications.filter(a => a.appId === u.id && TRACKER_POS.includes(a.status)).length,
+    Closed: DB.applications.filter(a => a.appId === u.id && TRACKER_NEG.includes(a.status)).length };
+  return `
+  <div class="page-h"><h1>My Applications</h1><p>Every application tracked across the 19-state government-compliant pipeline.</p></div>
+  <div class="flex wrap gap8 mb16">${['All','Active','Closed'].map(c =>
+    `<button class="chip ${S.appFilter === c ? 'on' : ''}" onclick="MW.filterApps('${c}')">${c} · ${counts[c]}</button>`).join('')}</div>
+  <div class="col gap16">
+    ${mine.length ? mine.map(a => { const j = appJob(a), neg = TRACKER_NEG.includes(a.status); return `
+    <div class="card card-hover">
+      <div class="brand-strip" style="${neg ? 'background:linear-gradient(90deg,#ef4444,#f87171)' : ''}"></div>
+      <div class="card-pad">
+        <div class="flex between aic mb12 wrap gap8">
+          <div class="flex aic gap12">
+            <span class="cat-ic">${ic(CAT_ICONS[j.cat] || 'briefcase', 18)}</span>
+            <div><p class="b font-display" style="font-size:15px">${esc(j.title)}</p>
+              <div class="flex wrap gap10 mt4">
+                <span class="job-meta">${ic('building')} ${esc(U(j.empId).company)}</span>
+                <span class="job-meta">${ic('pin')} ${j.city}, ${j.country}</span>
+                <span class="job-meta">${ic('cal')} Applied ${a.date}, 2025</span>
+              </div></div>
+          </div>
+          <div class="flex aic gap8">${goldChip(a.score)}${statusBadge(a.status)}</div>
+        </div>
+        ${tracker(a.status)}
+        <div class="flex between aic mt12 wrap gap8">
+          <p class="tiny muted ellip" style="max-width:70%">${esc(a.note)}</p>
+          <div class="flex gap8">
+            <button class="btn btn-ghost btn-sm" onclick="MW.viewApp('${a.id}')">${ic('activity', 13)} History</button>
+            ${['applied','screening','shortlisted'].includes(a.status) ? `<button class="btn btn-outline btn-sm" onclick="MW.withdraw('${a.id}')">${ic('x', 13)} Withdraw</button>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>`; }).join('') : `<div class="card"><div class="empty">${ic('file', 40)}<p>No applications in this view.</p></div></div>`}
+  </div>`;
+};
+MW.filterApps = c => { S.appFilter = c; render(); };
+MW.withdraw = function (id) {
+  const a = APP(id);
+  openModal(`<div class="card-pad">
+    <h3 class="font-display mb8" style="font-size:17px">Withdraw application?</h3>
+    <p class="small muted mb16">This stops the ${STATUS_LABEL[a.status]} process for <b>${esc(appJob(a).title)}</b>. You can always re-apply while the job order is open.</p>
+    <div class="flex gap8" style="justify-content:flex-end">
+      <button class="btn btn-outline" onclick="MW.closeModal()">Keep application</button>
+      <button class="btn btn-danger" onclick="MW.withdrawConfirm('${id}')">${ic('x', 13)} Withdraw</button>
+    </div></div>`);
+};
+MW.withdrawConfirm = function (id) {
+  const a = APP(id);
+  a.status = 'withdrawn';
+  pushHistory(id, `Applicant · ${S.user.name}`, 'Withdrew application voluntarily.');
+  closeModal(); toast('Application withdrawn', STATUS_LABEL[a.status] + ' recorded in your history.', 'info');
+  render();
+};
+MW.viewApp = function (id) {
+  const a = APP(id), j = appJob(a), u = appUser(a);
+  openModal(`<div class="card-pad">
+    <div class="flex between aic mb16"><h3 class="font-display" style="font-size:17px">Application history</h3>
+      <button class="ibtn" onclick="MW.closeModal()">${ic('x', 16)}</button></div>
+    <div class="flex aic gap10 mb16"><span class="avatar sm">${initials(u.name)}</span>
+      <div class="grow"><p class="small b">${esc(u.name)} → ${esc(j.title)}</p><p class="micro muted">${esc(U(j.empId).company)} · ${goldChip(a.score)}</p></div>
+      ${statusBadge(a.status)}</div>
+    ${tracker(a.status)}
+    <p class="tiny b up muted mb8 mt16" style="letter-spacing:.06em">Audit trail</p>
+    ${auditTrail(a.id)}</div>`);
+};
+
+VIEWS['app/profile'] = function () {
+  const u = S.user;
+  return `
+  <div class="page-h"><h1>My Profile</h1><p>This profile powers your AI match scores — keep it complete and verified.</p></div>
+  <div class="split">
+    <div class="col gap16">
+      <div class="card card-pad">
+        <div class="flex aic gap16">
+          <span class="avatar lg">${initials(u.name)}</span>
+          <div class="grow"><h2 class="font-display" style="font-size:19px">${esc(u.name)}</h2>
+            <div class="flex wrap gap8 mt4">
+              <span class="badge bg-blue">${esc(u.type)}</span>
+              <span class="badge bg-gray">${esc(u.edu)}</span>
+              <span class="badge bg-gray">${u.years} yrs experience</span>
+            </div>
+            <p class="tiny muted mt8">${esc(u.city)} · ${esc(u.phone || '+63 917 000 0000')} · Prefers ${esc(u.pref)}</p></div>
+        </div>
+        <div class="mt16">
+          <div class="flex between aic mb8"><span class="small b">Profile completeness</span><span class="mono b">${u.complete}%</span></div>
+          <div class="pbar green"><div class="fill" style="width:${u.complete}%"></div></div>
+          <p class="tiny muted mt8">Verified documents and detailed skills raise your AI match ceiling.</p>
+        </div>
+      </div>
+      <div class="card card-pad">
+        <h3 class="section-t mb12">${ic('award')} Skills</h3>
+        <table class="tbl"><thead><tr><th>Skill</th><th>Level</th><th style="text-align:right">Years</th></tr></thead>
+        <tbody>${u.skills.map(s => `<tr><td class="b small">${esc(s[0])}</td><td><span class="badge ${s[1] === 'Advanced' ? 'bg-green' : 'bg-blue'}">${s[1]}</span></td><td class="mono tr small">${s[2]}</td></tr>`).join('')}</tbody></table>
+      </div>
+      <div class="grid2">
+        <div class="card card-pad">
+          <h3 class="section-t mb12">${ic('globe')} Languages</h3>
+          ${u.langs.map(l => `<div class="flex between aic mb8"><span class="small b">${l[0]}</span><span class="badge bg-gray">${l[1]}</span></div>`).join('')}
+        </div>
+        <div class="card card-pad">
+          <h3 class="section-t mb12">${ic('award')} Certifications</h3>
+          ${u.certs.map(c => `<div class="mb12"><p class="small b">${c[0]}</p><p class="micro muted">Issued by ${c[1]}</p></div>`).join('')}
+        </div>
+      </div>
+      <div class="card card-pad">
+        <h3 class="section-t mb12">${ic('briefcase')} Experience</h3>
+        <div class="flex aic gap12"><span class="cat-ic">${ic('briefcase', 18)}</span>
+          <div><p class="small b">${esc(u.exp.position)} — ${esc(u.exp.company)}</p>
+          <p class="tiny muted">${esc(u.exp.period)} · ${esc(u.exp.country)}</p>
+          <p class="small muted mt4" style="line-height:1.6">${esc(u.exp.desc)}</p></div></div>
+      </div>
+    </div>
+    <div class="col gap16">
+      <div class="card card-pad">
+        <h3 class="section-t mb12">${ic('shield')} Documents &amp; verification</h3>
+        ${u.docs.map(d => `<div class="flex between aic mb10">
+          <div class="flex aic gap8">${ic('file', 14)}<span class="small b">${d[0]}</span></div>
+          <div class="flex aic gap8"><span class="micro muted">${d[1]}</span>
+            <span class="badge ${d[2] ? 'bg-green' : 'bg-amber'}">${d[2] ? 'Verified' : 'Pending'}</span></div></div>`).join('')}
+        <div class="mt12">
+          <div class="flex between aic mb8"><span class="small b">Passport</span></div>
+          <p class="tiny muted">${esc(u.passport)}</p>
+          <div class="flex between aic mt12 mb8"><span class="small b">Medical</span><span class="badge bg-green">${esc(u.medical)}</span></div>
+        </div>
+      </div>
+      <div class="card card-pad">
+        <h3 class="section-t mb12">${ic('sparkles')} AI Resume Boost</h3>
+        <p class="small muted mb12" style="line-height:1.65">Upload your latest resume and the simulated parser extracts skills, certifications, and experience — then suggests keywords for your target roles.</p>
+        <button class="btn btn-gold w100" onclick="MW.toastInfo('AI Resume Boost','Prototype scope — resume parsing is simulated.')">${ic('sparkles', 14)} Enhance my resume</button>
+      </div>
+      <div class="card card-pad">
+        <h3 class="section-t mb12">${ic('bell')} Job preferences</h3>
+        ${[['Preferred country','Morocco'],['Preferred role', u.type],['Salary expectation', u.salary || 'USD 500 – 900'],['Availability', u.avail || 'Nov 2025']].map(r =>
+          `<div class="flex between mb8"><span class="tiny muted">${r[0]}</span><span class="small b">${esc(r[1])}</span></div>`).join('')}
+        <button class="btn btn-outline btn-sm w100 mt8" onclick="MW.toastInfo('Preferences','Prototype scope — editing is simulated.')">Edit preferences</button>
+      </div>
+    </div>
+  </div>`;
+};
+/* ═══ Employer role — Al Baraka Holding (plus AI Amal Clinic, Resorts) ═══ */
+const myJobs = () => DB.jobs.filter(j => j.empId === S.user.id);
+const myApps = () => DB.applications.filter(a => myJobs().some(j => j.id === a.jobId));
+
+VIEWS['emp/dashboard'] = function () {
+  const u = S.user, jobs = myJobs(), apps = myApps();
+  const pending = DB.endorsements.filter(e => e.status === 'pending_employer_review' && e.employerId === u.id);
+  const hired = apps.filter(a => ['hired','deployed','completed','employer_accepted'].includes(a.status));
+  const buckets = [
+    ['Applied / Screening', apps.filter(a => ['applied','screening','shortlisted'].includes(a.status)).length, '2859d5'],
+    ['Interview / Assessment', apps.filter(a => ['interview','assessment','under_review'].includes(a.status)).length, '3d6be0'],
+    ['FIRA / Endorsement', apps.filter(a => ['pending_fira_review','fira_approved','pending_employer_review'].includes(a.status)).length, '6d93ea'],
+    ['Offer / Hired', apps.filter(a => ['offered','hired','employer_accepted'].includes(a.status)).length, 'f6c615'],
+    ['Deployed / Completed', apps.filter(a => ['processing','deployed','completed'].includes(a.status)).length, '16a34a'],
+  ];
+  const maxB = Math.max(...buckets.map(b => b[1]), 1);
+  const recent = [...apps].sort((a, b) => b.score - a.score).slice(0, 6);
+  return `
+  <div class="page-h"><h1>${esc(u.company)}</h1><p>Recruitment operations in ${esc(u.city)}, ${esc(u.country)} · FIRA-verified employer since ${u.since}.</p></div>
+  <div class="grid4 mb24">
+    <div class="stat"><div class="flex between aic"><div><p class="lbl">Active job orders</p><p class="num" data-count="${jobs.length}">0</p></div><span class="ic ic-blue">${ic('briefcase', 19)}</span></div>
+      <p class="tiny muted mt8">${jobs.reduce((s, j) => s + (j.slots - j.filled), 0)} open slots</p></div>
+    <div class="stat"><div class="flex between aic"><div><p class="lbl">Candidates in pipeline</p><p class="num" data-count="${apps.length}">0</p></div><span class="ic ic-gold">${ic('users', 19)}</span></div>
+      <p class="tiny muted mt8">Avg match ${Math.round(apps.reduce((s, a) => s + a.score, 0) / Math.max(apps.length, 1))}%</p></div>
+    <div class="stat"><div class="flex between aic"><div><p class="lbl">Awaiting your decision</p><p class="num" data-count="${pending.length}">0</p></div><span class="ic ic-red">${ic('clock', 19)}</span></div>
+      <p class="tiny muted mt8">Step-2 endorsements</p></div>
+    <div class="stat"><div class="flex between aic"><div><p class="lbl">Hired / deployed</p><p class="num" data-count="${hired.length}">0</p></div><span class="ic ic-green">${ic('check', 19)}</span></div>
+      <p class="tiny muted mt8">Lifetime placements</p></div>
+  </div>
+
+  <div class="split">
+    <div class="col gap16">
+      <div class="card card-pad">
+        <h3 class="section-t mb16">${ic('chart')} Pipeline overview</h3>
+        ${buckets.map(([lb, v, c]) => `
+        <div class="cbar" style="grid-template-columns:170px 1fr 34px">
+          <span class="lb">${lb}</span>
+          <div class="tr"><div class="fl" style="width:${Math.round(v / maxB * 100)}%;background:${c}"></div></div>
+          <span class="vl">${v}</span></div>`).join('')}
+      </div>
+      <div class="card">
+        <div class="flex between aic" style="padding:18px 20px 0"><h3 class="section-t">${ic('users')} Top candidates for your jobs</h3>
+          <button class="btn btn-ghost btn-sm" onclick="MW.go('#/emp/candidates')">All candidates ${ic('right', 13)}</button></div>
+        <div style="padding:10px 20px 18px">
+        <table class="tbl"><thead><tr><th>Candidate</th><th>Job order</th><th>AI match</th><th>Status</th></tr></thead>
+        <tbody>${recent.map(a => { const ap = appUser(a), j = appJob(a); return `
+          <tr class="rowlink" onclick="MW.viewApp('${a.id}')"><td>
+            <div class="flex aic gap8"><span class="avatar sm">${initials(ap.name)}</span><span class="b small">${esc(ap.name)}</span></div></td>
+            <td class="small ellip" style="max-width:220px">${esc(j.title)}</td>
+            <td>${goldChip(a.score)}</td><td>${statusBadge(a.status)}</td></tr>`; }).join('')}</tbody></table>
+        </div>
+      </div>
+    </div>
+    <div class="col gap16">
+      ${pending.length ? pending.map(e => { const a = endApp(e), ap = appUser(a), j = appJob(a); return `
+      <div class="card">
+        <div class="brand-strip"></div>
+        <div class="card-pad">
+          <p class="tiny b up muted mb8" style="letter-spacing:.07em">Endorsement needs your decision</p>
+          <div class="flex aic gap10 mb12"><span class="avatar">${initials(ap.name)}</span>
+            <div class="grow"><p class="small b">${esc(ap.name)}</p><p class="tiny muted">${esc(j.title)} · ${goldChip(a.score)}</p></div></div>
+          ${flow2Track(e)}
+          <div class="flex gap8 mt16">
+            <button class="btn btn-green grow" onclick="MW.empDecide('${e.id}','accept')">${ic('check', 14)} Accept</button>
+            <button class="btn btn-outline grow" onclick="MW.empDecide('${e.id}','decline')">${ic('x', 14)} Decline</button>
+          </div>
+        </div>
+      </div>`; }).join('') : `
+      <div class="card"><div class="empty">${ic('check', 40)}<p>No endorsements awaiting your decision.</p><p class="tiny mt8">FIRA-approved endorsements will appear here.</p></div></div>`}
+      <div class="card card-pad">
+        <h3 class="section-t mb12">${ic('briefcase')} Quick actions</h3>
+        <div class="col gap8">
+          <button class="btn btn-primary w100" onclick="MW.postJobModal()">${ic('plus', 14)} Post new job order</button>
+          <button class="btn btn-outline w100" onclick="MW.go('#/emp/endorsements')">${ic('send', 14)} Review endorsements</button>
+          <button class="btn btn-outline w100" onclick="MW.toastInfo('Reports','Prototype scope — exporting is simulated.')">${ic('chart', 14)} Export hiring report</button>
+        </div>
+      </div>
+      <div class="card card-pad">
+        <h3 class="section-t mb12">${ic('shield')} Compliance snapshot</h3>
+        ${[['Company verification','bg-green','Verified'],['DMW job approvals','bg-green','4 / 4 approved'],['Contract templates','bg-green','PH-MOR 2025 v2'],['CNSS registrations','bg-amber','1 pending']].map(r =>
+          `<div class="flex between aic mb8"><span class="small">${r[0]}</span><span class="badge ${r[1]}">${r[2]}</span></div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+};
+
+VIEWS['emp/jobs'] = function () {
+  const jobs = myJobs();
+  return `
+  <div class="page-h">
+    <div class="flex between aic wrap gap12">
+      <div><h1>Job Orders</h1><p>${jobs.length} job orders · managed with your licensed agency partner.</p></div>
+      <button class="btn btn-primary" onclick="MW.postJobModal()">${ic('plus', 14)} Post new job</button>
+    </div>
+  </div>
+  <div class="card">
+    <table class="tbl"><thead><tr><th>Job order</th><th>Location</th><th>Salary (MAD)</th><th>Slots</th><th>Candidates</th><th>Status</th></tr></thead>
+    <tbody>${jobs.map(j => {
+      const c = DB.applications.filter(a => a.jobId === j.id).length; return `
+      <tr><td><p class="b small">${esc(j.title)}</p><p class="micro muted">${esc(U(j.agencyId).company)} · posted ${j.posted}</p></td>
+        <td class="small">${j.city}, ${j.country}</td>
+        <td class="mono small">${j.salaryMin.toLocaleString()} – ${j.salaryMax.toLocaleString()}</td>
+        <td class="mono small">${j.filled}/${j.slots}</td>
+        <td class="mono small">${c}</td>
+        <td><span class="badge bg-green">Open</span></td></tr>`; }).join('')}</tbody></table>
+  </div>`;
+};
+MW.postJobModal = function () {
+  openModal(`<div class="card-pad">
+    <div class="flex between aic mb16"><h3 class="font-display" style="font-size:17px">Post new job order</h3>
+      <button class="ibtn" onclick="MW.closeModal()">${ic('x', 16)}</button></div>
+    <form onsubmit="event.preventDefault();MW.postJob(this)">
+      <div class="field"><label class="label">Job title</label><input class="input" name="title" required placeholder="e.g. Caregiver - Rabat"/></div>
+      <div class="grid2" style="gap:12px">
+        <div class="field"><label class="label">Category</label><select class="input" name="cat">${['Caregiver','Domestic Helper','Nurse','Factory Worker','Hospitality'].map(c => `<option>${c}</option>`).join('')}</select></div>
+        <div class="field"><label class="label">City</label><select class="input" name="city">${['Casablanca','Rabat','Marrakech','Tangier','Fes'].map(c => `<option>${c}</option>`).join('')}</select></div>
+        <div class="field"><label class="label">Salary min (MAD)</label><input class="input" name="smin" type="number" value="4500" required/></div>
+        <div class="field"><label class="label">Salary max (MAD)</label><input class="input" name="smax" type="number" value="5200" required/></div>
+        <div class="field"><label class="label">Slots</label><input class="input" name="slots" type="number" value="2" required/></div>
+        <div class="field"><label class="label">Contract</label><select class="input" name="type"><option>Full-time · 2 years</option><option>Full-time · 3 years</option></select></div>
+      </div>
+      <div class="field"><label class="label">Description</label><textarea class="input" name="desc" placeholder="Role summary, household or facility details…"></textarea></div>
+      <div class="field"><label class="label">Required skills (comma-separated)</label><input class="input" name="skills" placeholder="Elderly care, First aid, Cooking"/></div>
+      <button class="btn btn-primary btn-lg w100" type="submit">${ic('send', 14)} Submit for DMW approval</button>
+      <p class="micro muted tc mt8">Job orders route to your agency partner for deployment.</p>
+    </form></div>`);
+};
+MW.postJob = function (form) {
+  const f = new FormData(form);
+  const id = 'j' + Date.now();
+  DB.jobs.push({ id, title: f.get('title'), empId: S.user.id, agencyId:'g1', city: f.get('city'), country:'Morocco',
+    cat: f.get('cat'), type: f.get('type'), salaryMin:+f.get('smin'), salaryMax:+f.get('smax'), cur:'MAD',
+    slots:+f.get('slots'), filled:0, posted:'Oct 2, 2025', status:'open',
+    desc: f.get('desc') || 'Newly posted role pending full description.', reqs:'As per employer requirements.',
+    benefits:'Standard employer package.', skills:(f.get('skills') || 'Teamwork').split(',').map(s => s.trim()).filter(Boolean) });
+  DB.audits.unshift({ d:'Oct 2, 2025 · now', by:`Employer · ${S.user.company}`, a:`Posted new job order: ${f.get('title')}` });
+  closeModal(); toast('Job order posted', `${f.get('title')} is now open for candidates.`, 'ok');
+  render();
+};
+
+VIEWS['emp/candidates'] = function () {
+  const apps = [...myApps()].sort((a, b) => b.score - a.score);
+  return `
+  <div class="page-h"><h1>Candidates</h1><p>${apps.length} applications across your job orders — ranked by simulated AI match.</p></div>
+  <div class="grid3">
+    ${apps.map(a => { const ap = appUser(a), j = appJob(a); return `
+    <div class="card card-hover">
+      <div class="card-pad">
+        <div class="flex between aic mb12">
+          <div class="flex aic gap10"><span class="avatar">${initials(ap.name)}</span>
+            <div><p class="small b">${esc(ap.name)}</p><p class="micro muted">${esc(ap.city || '')} · ${ap.years || '—'} yrs exp</p></div></div>
+          ${ring(a.score, 52, '')}
+        </div>
+        <p class="tiny muted mb8">Applied for</p><p class="small b mb12 ellip">${esc(j.title)}</p>
+        <div class="flex wrap gap6 mb12">${(ap.skills || []).slice(0, 3).map(s => `<span class="skill-chip">${esc(s[0])}</span>`).join('')}</div>
+        <div class="flex between aic">
+          ${statusBadge(a.status)}
+          <div class="flex gap6">
+            <button class="btn btn-ghost btn-sm" onclick="MW.viewApp('${a.id}')">${ic('activity', 13)}</button>
+            <button class="btn btn-outline btn-sm" onclick="MW.candidateCV('${ap.id}')">CV</button>
+          </div></div>
+      </div>
+    </div>`; }).join('')}
+  </div>`;
+};
+MW.candidateCV = function (uid) {
+  const u = U(uid);
+  openModal(`<div class="card-pad">
+    <div class="flex between aic mb16"><h3 class="font-display" style="font-size:17px">${esc(u.name)} — profile</h3>
+      <button class="ibtn" onclick="MW.closeModal()">${ic('x', 16)}</button></div>
+    <div class="flex wrap gap8 mb16">
+      <span class="badge bg-blue">${esc(u.type || '')}</span><span class="badge bg-gray">${esc(u.city || '')}</span>
+      <span class="badge bg-gray">${u.years || '—'} yrs experience</span><span class="badge ${u.medical === 'Passed' ? 'bg-green' : 'bg-amber'}">Medical ${esc(u.medical || '—')}</span></div>
+    <p class="tiny b up muted mb8" style="letter-spacing:.06em">Skills</p>
+    <div class="flex wrap gap6 mb16">${(u.skills || []).map(s => `<span class="skill-chip">${esc(s[0])} · ${s[1]}</span>`).join('')}</div>
+    <p class="tiny b up muted mb8" style="letter-spacing:.06em">Certifications</p>
+    ${(u.certs || []).map(c => `<p class="small mb4">${ic('award', 13)} ${esc(c[0])} <span class="muted">— ${esc(c[1])}</span></p>`).join('')}
+    <p class="tiny b up muted mb8 mt16" style="letter-spacing:.06em">Documents</p>
+    ${(u.docs || []).map(d => `<div class="flex between aic mb8"><span class="small">${d[0]}</span><span class="badge ${d[2] ? 'bg-green' : 'bg-amber'}">${d[2] ? 'Verified' : 'Pending'}</span></div>`).join('')}
+  </div>`);
+};
+
+VIEWS['emp/endorsements'] = function () {
+  const u = S.user;
+  const ends = DB.endorsements.filter(e => e.employerId === u.id);
+  return `
+  <div class="page-h"><h1>Endorsements</h1><p>Two-step flow: Agency → FIRA (step 1) → Employer (step 2). You act only after FIRA approval.</p></div>
+  <div class="col gap16">
+    ${ends.length ? ends.map(e => { const a = endApp(e), ap = appUser(a), j = appJob(a); return `
+    <div class="card card-hover">
+      <div class="brand-strip" style="${e.status === 'employer_declined' ? 'background:linear-gradient(90deg,#ef4444,#f87171)' : ''}"></div>
+      <div class="card-pad">
+        <div class="flex between aic mb12 wrap gap8">
+          <div><div class="flex aic gap8 mb4"><p class="b font-display" style="font-size:15px">${esc(ap.name)}</p>
+            ${ic('right', 13)}<span class="small muted ellip">${esc(j.title)}</span>${goldChip(a.score)}</div>
+            <p class="tiny muted">${ic('building', 12)} ${esc(U(e.employerId).company)} · endorsed ${e.created}</p></div>
+          ${endBadge(e.status)}
+        </div>
+        ${flow2Track(e)}
+        <div class="grid2 mt16" style="gap:12px">
+          <div class="card" style="padding:12px;box-shadow:none"><p class="micro muted up b mb4">Agency note</p><p class="tiny" style="line-height:1.6">${esc(e.agencyNote)}</p></div>
+          <div class="card" style="padding:12px;box-shadow:none"><p class="micro muted up b mb4">FIRA verification</p><p class="tiny" style="line-height:1.6">${esc(e.firaNote || 'Awaiting FIRA review (step 1).')}</p></div>
+        </div>
+        ${e.employerNote ? `<div class="card mt12" style="padding:12px;box-shadow:none"><p class="micro muted up b mb4">Employer decision</p><p class="tiny" style="line-height:1.6">${esc(e.employerNote)}</p></div>` : ''}
+        ${e.status === 'pending_employer_review' ? `
+        <div class="flex gap8 mt16 aic">
+          <input class="input grow" placeholder="Optional note to the agency…" oninput="MW.draft(this.value)"/>
+          <button class="btn btn-green" onclick="MW.empDecide('${e.id}','accept')">${ic('check', 14)} Accept</button>
+          <button class="btn btn-danger" onclick="MW.empDecide('${e.id}','decline')">${ic('x', 14)} Decline</button>
+        </div>` : ''}
+      </div>
+    </div>`; }).join('') : `<div class="card"><div class="empty">${ic('send', 40)}<p>No endorsements for your company yet.</p></div></div>`}
+  </div>`;
+};
+MW.draft = function (v) { S.noteDraft.emp = v; };
+MW.empDecide = function (endId, action) {
+  const e = DB.endorsements.find(x => x.id === endId);
+  const a = endApp(e), ap = appUser(a), j = appJob(a);
+  const note = (S.noteDraft.emp || '').trim();
+  if (action === 'accept') {
+    e.status = 'employer_accepted'; e.empAt = 'Oct 2, 2025';
+    e.employerNote = note || 'Accepted — please proceed with contract scheduling.';
+    a.status = 'employer_accepted';
+    pushHistory(a.id, `Employer · ${S.user.company}`, 'Employer accepted FIRA-endorsed candidate (step 2 complete).');
+    toast('Candidate accepted', `${ap.name} moves to contract processing for ${j.title}.`, 'ok');
+  } else {
+    e.status = 'employer_declined'; e.empAt = 'Oct 2, 2025';
+    e.employerNote = note || 'Declined by employer.';
+    a.status = 'employer_declined';
+    pushHistory(a.id, `Employer · ${S.user.company}`, 'Employer declined endorsement.');
+    toast('Decision recorded', `${ap.name} was declined — agency notified.`, 'info');
+  }
+  DB.audits.unshift({ d:'Oct 2, 2025 · now', by:`Employer · ${S.user.company}`, a:`${action === 'accept' ? 'Accepted' : 'Declined'} endorsement ${e.id} (${ap.name} → ${j.title})` });
+  S.noteDraft.emp = '';
+  closeModal(); render();
+};
+/* ═══ Agency role — Manila Recruitment Corp ═══ */
+const agencyCandidates = () => DB.users.filter(u => u.role === 'applicant');
+
+VIEWS['agency/dashboard'] = function () {
+  const u = S.user;
+  const cands = agencyCandidates();
+  const ends = DB.endorsements.filter(e => e.status === 'pending_fira_review' || e.status === 'pending_employer_review');
+  const placements = DB.applications.filter(a => ['hired','deployed','completed','employer_accepted'].includes(a.status)).length;
+  const funnel = [
+    ['Candidates', cands.length, 'var(--muted-fg)'],
+    ['Endorsed to FIRA', DB.endorsements.length, '#1f3fa6'],
+    ['FIRA approved', DB.endorsements.filter(e => ['fira_approved','pending_employer_review','employer_accepted'].includes(e.status)).length, '#3d6be0'],
+    ['Employer accepted', DB.endorsements.filter(e => e.status === 'employer_accepted').length, '#16a34a'],
+  ];
+  const top = DB.applications.filter(a => TRACKER_POS.includes(a.status)).sort((a, b) => b.score - a.score).slice(0, 5);
+  return `
+  <div class="page-h"><h1>${esc(u.company)}</h1><p>DMW license ${u.license} · ${u.city} · deployment partner for Moroccan employers.</p></div>
+  <div class="grid4 mb24">
+    <div class="stat"><div class="flex between aic"><div><p class="lbl">Candidate pool</p><p class="num" data-count="${cands.length}">0</p></div><span class="ic ic-blue">${ic('users', 19)}</span></div>
+      <p class="tiny muted mt8">${cands.filter(c => c.complete >= 80).length} deployment-ready</p></div>
+    <div class="stat"><div class="flex between aic"><div><p class="lbl">Endorsements active</p><p class="num" data-count="${ends.length}">0</p></div><span class="ic ic-gold">${ic('send', 19)}</span></div>
+      <p class="tiny muted mt8">In the 2-step flow</p></div>
+    <div class="stat"><div class="flex between aic"><div><p class="lbl">Job orders</p><p class="num" data-count="${DB.jobs.length}">0</p></div><span class="ic ic-blue">${ic('briefcase', 19)}</span></div>
+      <p class="tiny muted mt8">${DB.jobs.reduce((s, j) => s + (j.slots - j.filled), 0)} open slots</p></div>
+    <div class="stat"><div class="flex between aic"><div><p class="lbl">Placements</p><p class="num" data-count="${placements}">0</p></div><span class="ic ic-green">${ic('check', 19)}</span></div>
+      <p class="tiny muted mt8">Hired / deployed lifetime</p></div>
+  </div>
+
+  <div class="split">
+    <div class="col gap16">
+      <div class="card card-pad">
+        <h3 class="section-t mb16">${ic('trend')} Endorsement funnel</h3>
+        <div class="col gap10">
+        ${funnel.map(([lb, v, c], i) => `
+          <div class="cbar" style="grid-template-columns:150px 1fr 34px">
+            <span class="lb">${lb}</span>
+            <div class="tr" style="height:20px"><div class="fl" style="width:${Math.round(v / funnel[0][1] * 100)}%;opacity:${1 - i * .12}"></div></div>
+            <span class="vl">${v}</span></div>`).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <div class="flex between aic" style="padding:18px 20px 0"><h3 class="section-t">${ic('sparkles')} Highest-scoring active candidates</h3>
+          <button class="btn btn-ghost btn-sm" onclick="MW.go('#/agency/candidates')">Candidate pool ${ic('right', 13)}</button></div>
+        <div style="padding:10px 20px 18px">
+        <table class="tbl"><thead><tr><th>Candidate</th><th>Job order</th><th>Match</th><th>Status</th><th></th></tr></thead>
+        <tbody>${top.map(a => { const ap = appUser(a), j = appJob(a); return `
+          <tr><td><div class="flex aic gap8"><span class="avatar sm">${initials(ap.name)}</span><span class="b small">${esc(ap.name)}</span></div></td>
+            <td class="small ellip" style="max-width:210px">${esc(j.title)}</td>
+            <td>${goldChip(a.score)}</td><td>${statusBadge(a.status)}</td>
+            <td>${!DB.endorsements.some(e => e.appId === a.id) && ['shortlisted','interview','assessment'].includes(a.status)
+              ? `<button class="btn btn-gold btn-sm" onclick="MW.endorseModal('${ap.id}')">${ic('send', 12)} Endorse</button>` : ''}</td></tr>`; }).join('')}</tbody></table>
+        </div>
+      </div>
+    </div>
+    <div class="col gap16">
+      <div class="card card-pad">
+        <h3 class="section-t mb12">${ic('send')} Quick actions</h3>
+        <div class="col gap8">
+          <button class="btn btn-primary w100" onclick="MW.endorseModal()">${ic('send', 14)} Endorse candidate to FIRA</button>
+          <button class="btn btn-outline w100" onclick="MW.go('#/agency/jobs')">${ic('briefcase', 14)} Browse job orders</button>
+          <button class="btn btn-outline w100" onclick="MW.toastInfo('DMW reporting','Prototype scope — government reporting is simulated.')">${ic('chart', 14)} Submit DMW report</button>
+        </div>
+      </div>
+      <div class="card card-pad">
+        <h3 class="section-t mb12">${ic('clock')} Flow status</h3>
+        ${Object.entries({ 'Awaiting FIRA (step 1)': DB.endorsements.filter(e => e.status === 'pending_fira_review').length,
+          'Awaiting employer (step 2)': DB.endorsements.filter(e => e.status === 'pending_employer_review').length,
+          'Accepted': DB.endorsements.filter(e => e.status === 'employer_accepted').length,
+          'Declined / rejected': DB.endorsements.filter(e => ['employer_declined','fira_rejected'].includes(e.status)).length }).map(([k, v]) =>
+          `<div class="flex between aic mb8"><span class="small muted">${k}</span><span class="mono b">${v}</span></div>`).join('')}
+      </div>
+      <div class="card card-pad">
+        <h3 class="section-t mb12">${ic('shield')} Agency compliance</h3>
+        ${[['DMW license','bg-green','Active'],['POEA bond','bg-green','Renewed 2025'],['Field audits','bg-green','Passed Mar 2025'],['Placement fee cap','bg-green','Compliant']].map(r =>
+          `<div class="flex between aic mb8"><span class="small">${r[0]}</span><span class="badge ${r[1]}">${r[2]}</span></div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+};
+
+VIEWS['agency/candidates'] = function () {
+  const cands = agencyCandidates();
+  return `
+  <div class="page-h"><h1>Candidate Pool</h1><p>${cands.length} registered applicants · AI-scored against all open job orders.</p></div>
+  <div class="grid3">
+    ${cands.map(c => {
+      const best = DB.jobs.map(j => ({ j, m: simulateMatch(j.id, c.email, j.skills) })).sort((a, b) => b.m.score - a.m.score)[0];
+      const active = DB.applications.filter(a => a.appId === c.id && TRACKER_POS.includes(a.status)).length;
+      const endorsed = DB.endorsements.some(e => e.appId && endApp(e).appId === c.id && e.status === 'pending_fira_review');
+      return `
+      <div class="card card-hover">
+        <div class="card-pad">
+          <div class="flex between aic mb12">
+            <div class="flex aic gap10"><span class="avatar">${initials(c.name)}</span>
+              <div><p class="small b">${esc(c.name)}</p><p class="micro muted">${esc(c.type)} · ${esc(c.city)}</p></div></div>
+            ${ring(best.m.score, 52, '')}
+          </div>
+          <p class="tiny muted mb4">Best match</p><p class="small b mb8 ellip">${esc(best.j.title)}</p>
+          <div class="flex wrap gap6 mb12">${(c.skills || []).slice(0, 3).map(s => `<span class="skill-chip">${esc(s[0])}</span>`).join('')}</div>
+          <div class="flex between aic mb12">
+            <span class="badge ${c.complete >= 80 ? 'bg-green' : 'bg-amber'}">Profile ${c.complete}%</span>
+            <span class="tiny muted">${active} active app${active === 1 ? '' : 's'}</span>
+          </div>
+          <button class="btn ${endorsed ? 'btn-outline' : 'btn-gold'} btn-sm w100" ${endorsed ? 'disabled' : ''}
+            onclick="MW.endorseModal('${c.id}')">${endorsed ? 'Endorsed — awaiting FIRA' : `${ic('send', 13)} Endorse to FIRA`}</button>
+        </div>
+      </div>`; }).join('')}
+  </div>`;
+};
+MW.endorseModal = function (candId) {
+  const cands = agencyCandidates().filter(c => c.complete >= 55);
+  const sel = candId || cands[0].id;
+  openModal(`<div class="card-pad">
+    <div class="flex between aic mb16"><h3 class="font-display" style="font-size:17px">Endorse candidate to FIRA</h3>
+      <button class="ibtn" onclick="MW.closeModal()">${ic('x', 16)}</button></div>
+    <form onsubmit="event.preventDefault();MW.endorseSubmit(this)">
+      <div class="field"><label class="label">Candidate</label>
+        <select class="input" name="cand">${cands.map(c => `<option value="${c.id}" ${c.id === sel ? 'selected' : ''}>${esc(c.name)} — ${esc(c.type)} (${c.complete}% profile)</option>`).join('')}</select></div>
+      <div class="field"><label class="label">Job order</label>
+        <select class="input" name="job">${DB.jobs.map(j => `<option value="${j.id}">${esc(j.title)} — ${esc(U(j.empId).company)}</option>`).join('')}</select></div>
+      <div class="field"><label class="label">Agency endorsement note</label>
+        <textarea class="input" name="note" placeholder="Why this candidate is ready for FIRA verification…">Verified documents, passed medical, and strong interview feedback. Recommend FIRA approval.</textarea></div>
+      <button class="btn btn-primary btn-lg w100" type="submit">${ic('send', 14)} Submit endorsement — step 1</button>
+      <p class="micro muted tc mt8">FIRA verifies documents first, then the employer makes the final decision.</p>
+    </form></div>`);
+};
+MW.endorseSubmit = function (form) {
+  const f = new FormData(form);
+  const cand = U(f.get('cand')), job = JOB(f.get('job'));
+  let app = DB.applications.find(a => a.appId === cand.id && a.jobId === job.id);
+  if (!app) {
+    const m = simulateMatch(job.id, cand.email, job.skills);
+    app = { id:'app' + Date.now(), appId: cand.id, jobId: job.id, status:'applied', score: m.score, date:'Oct 2', stage:0, note:'Submitted by agency.' };
+    DB.applications.unshift(app);
+  }
+  app.status = 'pending_fira_review';
+  const eid = 'E-' + Math.floor(1050 + Math.random() * 900);
+  DB.endorsements.unshift({ id: eid, appId: app.id, employerId: job.empId, status:'pending_fira_review', created:'Oct 2, 2025',
+    agencyNote: f.get('note'), firaNote:'', employerNote:'' });
+  pushHistory(app.id, `Agency · ${S.user.company}`, `Endorsed to FIRA — endorsement ${eid} created (step 1).`);
+  DB.audits.unshift({ d:'Oct 2, 2025 · now', by:`Agency · ${S.user.company}`, a:`Created endorsement ${eid} (${cand.name} → ${job.title})` });
+  closeModal(); toast('Endorsement submitted', `${cand.name} → ${job.title} is now awaiting FIRA review.`, 'ok');
+  render();
+};
+
+VIEWS['agency/jobs'] = function () {
+  return `
+  <div class="page-h"><h1>Job Orders</h1><p>All job orders assigned to your agency, across employer accounts.</p></div>
+  <div class="card">
+    <table class="tbl"><thead><tr><th>Job order</th><th>Employer</th><th>Location</th><th>Salary (MAD)</th><th>Slots</th><th>Candidates</th><th>Status</th></tr></thead>
+    <tbody>${DB.jobs.map(j => {
+      const c = DB.applications.filter(a => a.jobId === j.id).length; return `
+      <tr><td><p class="b small">${esc(j.title)}</p><p class="micro muted">Posted ${j.posted}</p></td>
+        <td class="small">${esc(U(j.empId).company)}</td>
+        <td class="small">${j.city}</td>
+        <td class="mono small">${j.salaryMin.toLocaleString()} – ${j.salaryMax.toLocaleString()}</td>
+        <td class="mono small">${j.filled}/${j.slots}</td>
+        <td class="mono small">${c}</td>
+        <td><span class="badge bg-green">Open</span></td></tr>`; }).join('')}</tbody></table>
+  </div>`;
+};
+
+VIEWS['agency/endorsements'] = function () {
+  const rank = s => (s === 'pending_fira_review' ? 0 : s === 'pending_employer_review' ? 1 : 2);
+  const ends = [...DB.endorsements].sort((a, b) => rank(a.status) - rank(b.status));
+  return `
+  <div class="page-h"><h1>Endorsements</h1><p>Two-step flow: Agency → FIRA (step 1) → Employer (step 2) · live status per candidate.</p></div>
+  <div class="col gap16">
+    ${ends.map(e => { const a = endApp(e), ap = appUser(a), j = appJob(a); return `
+    <div class="card card-hover">
+      <div class="brand-strip" style="${['employer_declined','fira_rejected'].includes(e.status) ? 'background:linear-gradient(90deg,#ef4444,#f87171)' : ''}"></div>
+      <div class="card-pad">
+        <div class="flex between aic mb12 wrap gap8">
+          <div><div class="flex aic gap8 mb4 wrap"><p class="b font-display" style="font-size:15px">${esc(ap.name)}</p>
+            ${ic('right', 13)}<span class="small muted">${esc(j.title)}</span>${goldChip(a.score)}</div>
+            <p class="tiny muted">${ic('building', 12)} ${esc(U(e.employerId).company)} · created ${e.created}</p></div>
+          ${endBadge(e.status)}
+        </div>
+        ${flow2Track(e)}
+        <div class="grid3 mt16" style="gap:12px">
+          <div class="card" style="padding:12px;box-shadow:none"><p class="micro muted up b mb4">Agency note</p><p class="tiny" style="line-height:1.6">${esc(e.agencyNote)}</p></div>
+          <div class="card" style="padding:12px;box-shadow:none"><p class="micro muted up b mb4">FIRA note</p><p class="tiny" style="line-height:1.6">${esc(e.firaNote || '—')}</p></div>
+          <div class="card" style="padding:12px;box-shadow:none"><p class="micro muted up b mb4">Employer note</p><p class="tiny" style="line-height:1.6">${esc(e.employerNote || '—')}</p></div>
+        </div>
+        <div class="flex between aic mt16">
+          <span class="micro muted">Endorsement ${e.id}</span>
+          <button class="btn btn-ghost btn-sm" onclick="MW.viewApp('${a.id}')">${ic('activity', 13)} Application audit trail</button>
+        </div>
+      </div>
+    </div>`; }).join('')}
+  </div>`;
+};
+/* ═══ FIRA Staff — Command Center, Applications, Endorsements ═══ */
+
+VIEWS['fira/dashboard'] = function () {
+  const apps = DB.applications;
+  const pendingFira = DB.endorsements.filter(e => e.status === 'pending_fira_review').length;
+  const avg = Math.round(apps.reduce((s, a) => s + a.score, 0) / apps.length);
+  const byStatus = {};
+  apps.forEach(a => { byStatus[a.status] = (byStatus[a.status] || 0) + 1; });
+  const statusRows = Object.entries(byStatus).sort((a, b) => b[1] - a[1]);
+  const maxS = Math.max(...statusRows.map(r => r[1]), 1);
+  const byCity = {};
+  DB.jobs.forEach(j => { byCity[j.city] = (byCity[j.city] || 0) + 1; });
+  const maxC = Math.max(...Object.values(byCity), 1);
+  const neg = apps.filter(a => TRACKER_NEG.includes(a.status)).length;
+  return `
+  <div class="page-h"><h1>FIRA Command Center</h1><p>Government oversight of the overseas recruitment pipeline — simulated regulatory console.</p></div>
+  <div class="grid4 mb24">
+    <div class="stat"><div class="flex between aic"><div><p class="lbl">Total applications</p><p class="num" data-count="${apps.length}">0</p></div><span class="ic ic-blue">${ic('file', 19)}</span></div>
+      <p class="tiny muted mt8">${neg} closed (negative)</p></div>
+    <div class="stat"><div class="flex between aic"><div><p class="lbl">Pending FIRA review</p><p class="num" data-count="${pendingFira}">0</p></div><span class="ic ic-gold">${ic('shieldcheck', 19)}</span></div>
+      <p class="tiny muted mt8">Step-1 endorsements</p></div>
+    <div class="stat"><div class="flex between aic"><div><p class="lbl">Verified employers</p><p class="num" data-count="${DB.users.filter(u => u.role === 'employer').length}">0</p></div><span class="ic ic-green">${ic('building', 19)}</span></div>
+      <p class="tiny muted mt8">${DB.users.filter(u => u.role === 'agency').length} licensed agencies</p></div>
+    <div class="stat"><div class="flex between aic"><div><p class="lbl">Avg AI match</p><p class="num" data-count="${avg}">0</p></div><span class="ic ic-blue">${ic('sparkles', 19)}</span></div>
+      <p class="tiny muted mt8">Across all applications</p></div>
+  </div>
+
+  <div class="grid2 mb24">
+    <div class="card card-pad">
+      <h3 class="section-t mb16">${ic('chart')} Applications by pipeline state</h3>
+      ${statusRows.map(([st, v]) => `
+      <div class="cbar"><span class="lb">${STATUS_LABEL[st] || st}</span>
+        <div class="tr"><div class="fl" style="width:${Math.round(v / maxS * 100)}%"></div></div>
+        <span class="vl">${v}</span></div>`).join('')}
+    </div>
+    <div class="col gap16">
+      <div class="card card-pad">
+        <h3 class="section-t mb16">${ic('pin')} Job orders by destination</h3>
+        ${Object.entries(byCity).map(([c, v]) => `
+        <div class="cbar"><span class="lb">${c}</span>
+          <div class="tr"><div class="fl" style="width:${Math.round(v / maxC * 100)}%;background:linear-gradient(90deg,#d4a900,#f6c615)"></div></div>
+          <span class="vl">${v}</span></div>`).join('')}
+      </div>
+      <div class="card card-pad">
+        <h3 class="section-t mb12">${ic('alert')} Verification queue</h3>
+        ${DB.verifications.length ? DB.verifications.slice(0, 4).map(v => `
+        <div class="flex between aic mb10">
+          <div><p class="small b">${esc(v.applicant)}</p><p class="micro muted">${v.doc} · ${v.file}</p></div>
+          <button class="btn btn-green btn-sm" onclick="MW.verifyDoc('${v.id}')">${ic('check', 12)} Verify</button>
+        </div>`).join('') : '<p class="small muted">Queue clear — all documents verified.</p>'}
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-pad">
+    <h3 class="section-t mb16">${ic('activity')} Regulatory audit trail</h3>
+    <div class="audit">${DB.audits.slice(0, 7).map(x => `<div class="ai"><div class="d">${esc(x.d)} · ${esc(x.by)}</div><p class="small" style="margin-top:2px">${esc(x.a)}</p></div>`).join('')}</div>
+  </div>`;
+};
+MW.verifyDoc = function (id) {
+  const v = DB.verifications.find(x => x.id === id);
+  DB.verifications = DB.verifications.filter(x => x.id !== id);
+  const u = U(v.appId);
+  if (u) u.docs.forEach(d => { if (d[0] === v.doc) d[2] = true; });
+  DB.audits.unshift({ d:'Oct 2, 2025 · now', by:'FIRA Staff · Adrian Flores', a:`Verified ${v.doc} for ${v.applicant}` });
+  toast('Document verified', `${v.doc} for ${v.applicant} marked as verified.`, 'ok');
+  render();
+};
+
+VIEWS['fira/applications'] = function () {
+  const opts = ['All', 'Pending FIRA', 'Active', 'Closed'];
+  let apps = [...DB.applications];
+  if (S.appFilter === 'Pending FIRA') apps = apps.filter(a => a.status === 'pending_fira_review');
+  else if (S.appFilter === 'Active') apps = apps.filter(a => TRACKER_POS.includes(a.status));
+  else if (S.appFilter === 'Closed') apps = apps.filter(a => TRACKER_NEG.includes(a.status));
+  return `
+  <div class="page-h"><h1>Application Oversight</h1><p>${DB.applications.length} applications across ${DB.jobs.length} job orders · full pipeline visibility.</p></div>
+  <div class="flex wrap gap8 mb16">${opts.map(o => `<button class="chip ${S.appFilter === o ? 'on' : ''}" onclick="MW.filterFiraApps('${o}')">${o}</button>`).join('')}</div>
+  <div class="card">
+    <div style="overflow-x:auto">
+    <table class="tbl"><thead><tr><th>Applicant</th><th>Job order</th><th>Employer</th><th>Match</th><th>Status</th><th></th></tr></thead>
+    <tbody>${apps.map(a => { const ap = appUser(a), j = appJob(a); return `
+      <tr><td><div class="flex aic gap8"><span class="avatar sm">${initials(ap.name)}</span>
+        <span><span class="b small">${esc(ap.name)}</span><br/><span class="micro muted">${esc(ap.city || '')}</span></span></div></td>
+        <td class="small ellip" style="max-width:220px">${esc(j.title)}</td>
+        <td class="small">${esc(U(j.empId).company)}</td>
+        <td>${goldChip(a.score)}</td>
+        <td>${statusBadge(a.status)}</td>
+        <td><button class="btn btn-ghost btn-sm" onclick="MW.firaViewApp('${a.id}')">${ic('activity', 13)} Review</button></td></tr>`; }).join('')}</tbody></table>
+    </div>
+  </div>`;
+};
+MW.filterFiraApps = c => { S.appFilter = c; render(); };
+MW.firaViewApp = function (id) {
+  const a = APP(id), ap = appUser(a), j = appJob(a);
+  openModal(`<div class="card-pad">
+    <div class="flex between aic mb16"><h3 class="font-display" style="font-size:17px">Application review</h3>
+      <button class="ibtn" onclick="MW.closeModal()">${ic('x', 16)}</button></div>
+    <div class="flex aic gap10 mb16"><span class="avatar">${initials(ap.name)}</span>
+      <div class="grow"><p class="small b">${esc(ap.name)} → ${esc(j.title)}</p>
+        <p class="micro muted">${esc(U(j.empId).company)} · ${esc(U(j.agencyId || 'g1').company)}</p></div>
+      <div class="flex aic gap8">${goldChip(a.score)}${statusBadge(a.status)}</div></div>
+    ${tracker(a.status)}
+    <div class="mt16 mb16">${auditTrail(a.id)}</div>
+    <p class="micro muted">Simulated regulatory view — documents, stage history, and AI analysis are attached to each application in the full schema.</p>
+  </div>`);
+};
+
+VIEWS['fira/endorsements'] = function () {
+  const rank = s => (s === 'pending_fira_review' ? 0 : s === 'pending_employer_review' ? 1 : 2);
+  const ends = [...DB.endorsements].sort((a, b) => rank(a.status) - rank(b.status));
+  return `
+  <div class="page-h"><h1>Endorsement Verification</h1><p>Step 1 of the two-step flow: verify credentials before the employer decision.</p></div>
+  <div class="col gap16">
+    ${ends.map(e => { const a = endApp(e), ap = appUser(a), j = appJob(a); const canAct = e.status === 'pending_fira_review'; return `
+    <div class="card card-hover">
+      <div class="brand-strip" style="${['employer_declined','fira_rejected'].includes(e.status) ? 'background:linear-gradient(90deg,#ef4444,#f87171)' : ''}"></div>
+      <div class="card-pad">
+        <div class="flex between aic mb12 wrap gap8">
+          <div><div class="flex aic gap8 mb4 wrap"><p class="b font-display" style="font-size:15px">${esc(ap.name)}</p>
+            ${ic('right', 13)}<span class="small muted">${esc(j.title)}</span>${goldChip(a.score)}</div>
+            <p class="tiny muted">${ic('building', 12)} ${esc(U(e.employerId).company)} · endorsed ${e.created}</p></div>
+          ${endBadge(e.status)}
+        </div>
+        ${flow2Track(e)}
+        <div class="grid2 mt16" style="gap:12px">
+          <div class="card" style="padding:12px;box-shadow:none"><p class="micro muted up b mb4">Agency note</p><p class="tiny" style="line-height:1.6">${esc(e.agencyNote)}</p></div>
+          <div class="card" style="padding:12px;box-shadow:none"><p class="micro muted up b mb4">Candidate documents</p>
+            <div class="flex wrap gap6">${(ap.docs || []).map(d => `<span class="badge ${d[2] ? 'bg-green' : 'bg-amber'}">${esc(d[0])}</span>`).join('')}</div></div>
+        </div>
+        ${e.firaNote ? `<div class="card mt12" style="padding:12px;box-shadow:none"><p class="micro muted up b mb4">FIRA verification</p><p class="tiny" style="line-height:1.6">${esc(e.firaNote)}</p></div>` : ''}
+        ${canAct ? `
+        <div class="mt16">
+          <textarea class="input mb8" placeholder="FIRA verification note (attached to audit trail)…" oninput="MW.draftFira(this.value)">Verified: passport valid, medical passed, DMW records clear.</textarea>
+          <div class="flex gap8" style="justify-content:flex-end">
+            <button class="btn btn-danger" onclick="MW.firaDecide('${e.id}','reject')">${ic('x', 14)} Reject</button>
+            <button class="btn btn-green" onclick="MW.firaDecide('${e.id}','approve')">${ic('shieldcheck', 14)} Approve — forward to employer</button>
+          </div>
+        </div>` : ''}
+      </div>
+    </div>`; }).join('')}
+  </div>`;
+};
+MW.draftFira = function (v) { S.noteDraft.fira = v; };
+MW.firaDecide = function (endId, action) {
+  const e = DB.endorsements.find(x => x.id === endId);
+  const a = endApp(e), ap = appUser(a), j = appJob(a);
+  const note = (S.noteDraft.fira || '').trim() || (action === 'approve' ? 'Verified: passport valid, medical passed, DMW records clear.' : 'Verification failed.');
+  if (action === 'approve') {
+    e.status = 'pending_employer_review'; e.firaAt = 'Oct 2, 2025'; e.firaNote = note;
+    a.status = 'pending_employer_review';
+    pushHistory(a.id, `FIRA Staff · ${S.user.name}`, 'FIRA approval granted — forwarded to employer (step 2).');
+    DB.audits.unshift({ d:'Oct 2, 2025 · now', by:`FIRA Staff · ${S.user.name}`, a:`Approved endorsement ${e.id} (${ap.name} → ${j.title})` });
+    toast('Endorsement approved', `${ap.name} moves to employer decision for ${j.title}.`, 'ok');
+  } else {
+    e.status = 'fira_rejected'; e.firaAt = 'Oct 2, 2025'; e.firaNote = note;
+    a.status = 'fira_rejected';
+    pushHistory(a.id, `FIRA Staff · ${S.user.name}`, 'FIRA rejected endorsement after verification.');
+    DB.audits.unshift({ d:'Oct 2, 2025 · now', by:`FIRA Staff · ${S.user.name}`, a:`Rejected endorsement ${e.id} (${ap.name} → ${j.title})` });
+    toast('Endorsement rejected', 'The agency has been notified with your note.', 'info');
+  }
+  S.noteDraft.fira = '';
+  closeModal(); render();
+};
+/* ═══ Boot ═══ */
+(function boot() {
+  applyTheme(getTheme());
+  restoreSession();
+  if (!location.hash) location.hash = S.user ? ROLE_HOME[S.user.role] : '#/login';
+  render();
+})();
+</script>
+</body>
+</html>
