@@ -760,3 +760,17 @@ Work Log:
 Stage Summary:
 - Sandbox state healthy: 3 deliverables x2 locations, scripts intact
 - If panel still empty after refresh → advise session restart (panel resyncs from sandbox)
+
+---
+Task ID: 13
+Agent: Main agent (Super Z)
+Task: Second panel-sync recovery attempt (user reports files still invisible)
+
+Work Log:
+- Fresh-inode rewrite of all 3 deliverables in both locations (cat > .new && mv), fsync'd, md5 verified (a6ea9037 unchanged)
+- Marker test via Write tool: download/README-MatchWise.txt + System Prototype/README.txt (README lists contents + diagnostic instruction for user)
+- Rationale: bash-created files may not be indexed by panel; Write-tool files use a different sync path
+
+Stage Summary:
+- Sandbox healthy; two sync paths now exercised (bash rewrite + Write tool)
+- If user sees README but not the 3 files → large-file sync issue; if nothing → panel dead → session restart required
