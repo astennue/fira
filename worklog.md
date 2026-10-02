@@ -803,3 +803,28 @@ Work Log:
 Stage Summary:
 - Live URLs: github.com/astennue/fira/tree/main/system-prototype (PDF blob renders inline on GitHub)
 - Future regenerations: build to download/ then cp into system-prototype/ and push
+
+---
+Task ID: 16
+Agent: Main agent (Super Z)
+Task: Build MatchWise hi-fi clickable prototype (web app) — user-clarified: clickable prototype, all 4 roles, 35-table-aligned data, simulated AI scores, full auth+roles, theme toggle, preview+GitHub, English UI
+
+Work Log:
+- Loaded fullstack-dev skill; discovered existing FIRA Next.js 16 single-page app (101 components, Zustand view-nav, next-themes, real API+Prisma)
+- Switched schema to SQLite (db:dev:switch), pushed, seeded base + wrote prisma/seed-ext.ts: 8 applicants w/ profiles/skills/docs, 3 employers (incl. deck's AI Amal Clinic w/ MAD salaries), 2 agencies, 7 jobs, 16 applications across 15 of 19 states, 4 endorsements (full 2-step), 14 AIAnalysisResult, stage history, notifications
+- Fixed fatal db.ts guard: provider-aware (reads generated client > schema.prisma) so SQLite dev + postgres repo-parity both work
+- Brand foundation: globals.css royal-blue scale (#2859D5/#1F3FA6) + gold #F6C615 tokens, .dark navy palette, mw-hero gradients, brand utilities; layout.tsx Space Grotesk+Inter+MatchWise metadata; mw-logo.tsx (SVG mark + wordmark); app-nav rebrand; mw-icon.svg favicon
+- Landing hero: "One Platform. Smarter Matching. Better Hiring." + role chips + dashboard mockup (ring gauges, AI Recommended, MAD figures) per deck cover
+- job-detail-page: AI Match Score panel (MatchRing + weighted bars Semantic .40/Skills .40/Experience .20 + Why-this-match) via src/lib/match-sim.ts (deterministic simulated scores)
+- applicant-applications-page: 19-state StatusTimeline (8 milestones, negative branch states) via src/components/shared/status-timeline.tsx
+- agency-endorsements-page rebuilt: 2-step flow tracker, audit trail (agency/FIRA/employer notes), match chips, staff fira_approve/fira_reject + employer accept/decline actions (PATCH API) — VERIFIED end-to-end in browser (approve moved state + toast + resort)
+- fira-dashboard: Review button → endorsements view; staff nav + Endorsements item
+- employer-dashboard: royal heading, fixed AnimatedCounter first-render 0 bug (shared fix), endorsement matchScore from application, header-based query keys
+- auth-modal: MW wordmark + welcome copy
+- eslint.config.mjs: global ignores for legacy prisma/scripts JS → lint 0 errors
+- QA via agent-browser: applicant (tracker + AI panel + dashboard), employer (stats now correct), agency (4 endorsement states), staff (command center 2/3/8/7/0→1/4, approve flow), light+dark themes — all rendered; dev.log clean
+
+Stage Summary:
+- Live prototype on sandbox :3000 (single-page view routing); repo pushed a6cf25f → github.com/astennue/fira main
+- Demo accounts: applicant@/employer@/agency@/staff@/admin@fira.com.ph (+ amal@, resorts@, cebu@, 7 applicants) — password pattern <role>2025!
+- 5 QA screenshots in scripts/mw_proto/qa/
