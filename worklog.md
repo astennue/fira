@@ -774,3 +774,18 @@ Work Log:
 Stage Summary:
 - Sandbox healthy; two sync paths now exercised (bash rewrite + Write tool)
 - If user sees README but not the 3 files → large-file sync issue; if nothing → panel dead → session restart required
+
+---
+Task ID: 14
+Agent: Main agent (Super Z)
+Task: Panel workaround — user sees only download/gdrive_workspace (Sep 9 snapshot); panel frozen at session start
+
+Work Log:
+- Diagnosis: panel shows ONLY pre-session files (gdrive_workspace, Sep 9); everything created this session invisible → panel snapshot frozen at session start
+- chmod 755 all new files/folders (match permission pattern of visible files — cheap theory test)
+- Copied 3 deliverables + README into download/gdrive_workspace/ (folder user CAN see) + created gdrive_workspace/System Prototype/
+- Cannot force-refresh panel from inside — no UI-control tool; restart re-snapshots (safe: all data persisted)
+
+Stage Summary:
+- Files now in: download/ root, download/System Prototype/, download/gdrive_workspace/, download/gdrive_workspace/System Prototype/
+- If user still sees nothing anywhere → definitive: frozen snapshot → session restart required
