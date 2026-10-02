@@ -745,3 +745,18 @@ Work Log:
 Stage Summary:
 - Deliverables now in BOTH /home/z/my-project/download/ (root) and /home/z/my-project/download/System Prototype/
 - Build pipeline (build.py, finalize.py) now points to System Prototype folder
+
+---
+Task ID: 12
+Agent: Main agent (Super Z)
+Task: Diagnose "download panel empty" report from user
+
+Work Log:
+- Verified sandbox: ALL files intact in download/ root + System Prototype/ (md5-identical copies, a6ea9037...)
+- Refreshed mtimes (touch + cp round-trip) to re-trigger any panel file-watcher sync
+- Removed stray 0-byte MatchWise-HiFi-Preview.pdf (typo artifact)
+- Conclusion: files persist sandbox-side; issue is panel/UI sync, not data loss
+
+Stage Summary:
+- Sandbox state healthy: 3 deliverables x2 locations, scripts intact
+- If panel still empty after refresh → advise session restart (panel resyncs from sandbox)
