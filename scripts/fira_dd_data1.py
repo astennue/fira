@@ -1,4 +1,4 @@
-# FIRA Data Dictionary - Part 1: User & Org + Applicant models
+# MatchWise Data Dictionary - Part 1: User & Org + Applicant models
 # Field tuple: (field, type, required, description, allowed_values, populated_by, fk, algo_role)
 
 ORG_TABLES = [

@@ -1,4 +1,4 @@
-# FIRA Data Dictionary - Part 2: Job, ATS, Endorsement, AI, Support, CMS models
+# MatchWise Data Dictionary - Part 2: Job, ATS, Endorsement, AI, Support, CMS models
 # Field tuple: (field, type, required, description, allowed_values, populated_by, fk, algo_role)
 
 JOB_TABLES = [

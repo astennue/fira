@@ -19,7 +19,7 @@ from fira_dd_data3 import (STATUS_MACHINE, PIPELINE, FORMULAS, FEATURES,
                            QUALITY_NOTES, RELATIONSHIPS, FLOW_EDGES, GROUPS,
                            COLUMN_LEGEND, ROLE_LEGEND, README_ABOUT)
 
-OUT = "/home/z/my-project/download/FIRA-Data-Dictionary.xlsx"
+OUT = "/home/z/my-project/download/MatchWise-Data-Dictionary.xlsx"
 TODAY = datetime.date.today().isoformat()
 
 WRAP_LT = Alignment(horizontal="left", vertical="top", wrap_text=True)
@@ -71,12 +71,14 @@ def caption(ws, row, col, text):
 # ============================================================
 wb = Workbook()
 wb.properties.creator = "Z.ai"
+wb.properties.title = "MatchWise Data Dictionary"
+wb.properties.subject = "Job matching & ranking platform - data dictionary (by FIRA)"
 
 # ---------- README ----------
 ws = wb.active
 ws.title = "README"
 ws.sheet_properties.tabColor = PRIMARY
-setup_sheet(ws, title="FIRA Data Dictionary - Job Matching & Ranking Platform", last_col=5)
+setup_sheet(ws, title="MatchWise Data Dictionary - Job Matching & Ranking Platform", last_col=5)
 r = 4
 section_row(ws, r, 2, 5, "About This Dictionary"); r += 1
 r = write_table(ws, r, ["Item", "Description"],

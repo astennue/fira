@@ -849,3 +849,20 @@ Stage Summary:
 - Rebuild: scripts/mw_proto_html/build.sh (edit part files then run)
 - QA screenshots: scripts/mw_proto_html/qa/ (14 screenshots)
 - Demo accounts: 6 quick-login chips on login screen (all passwords <role>2025!)
+
+---
+Task ID: 18
+Agent: Main (Super Z)
+Task: Regenerate the Data Dictionary (updated) and make it downloadable
+
+Work Log:
+- Verified DD build scripts (build_fira_dd.py + fira_dd_data1/2/3.py) fully aligned with current prisma/schema.prisma: all 35 models covered, zero table drift (comm check)
+- Rebranded to MatchWise per branding decision: title "MatchWise Data Dictionary - Job Matching & Ranking Platform", README_ABOUT System/Branding rows, new "Companion prototype" row (0.40/0.40/0.20 simulated scoring, 19-state tracker, 2-step endorsement); FIRA kept as company/role naming ("FIRA Staff" columns intentionally unchanged)
+- Rebuilt download/MatchWise-Data-Dictionary.xlsx: 11 sheets, 35 tables, 358 fields; workbook metadata title/subject set
+- QA via skills/xlsx xlsx.py: audit 0 errors, scan 0 findings, validate passed exit 0; README spot-check confirmed branding
+- Delivered to download/ root + download/gdrive_workspace/ (frozen-panel workaround) + system-prototype/; pushed commit a5a3ccc to github.com/astennue/fira main
+
+Stage Summary:
+- Updated deliverable: MatchWise-Data-Dictionary.xlsx (was FIRA-Data-Dictionary.xlsx; regenerated + rebranded)
+- Download channel that works for user: https://github.com/astennue/fira (system-prototype/MatchWise-Data-Dictionary.xlsx)
+- Future rebuild: python3 scripts/build_fira_dd.py

@@ -1,4 +1,4 @@
-# FIRA Data Dictionary - Part 3: Algorithm mapping, status machine, relationships
+# MatchWise Data Dictionary - Part 3: Algorithm mapping, status machine, relationships
 
 # ---------- Application status state machine (code-verified: src/lib/status.ts) ----------
 # (status, category, meaning, allowedBy roles, next statuses, terminal)
@@ -155,7 +155,9 @@ ROLE_LEGEND = [
 ]
 
 README_ABOUT = [
-("System", "FIRA - Philippine overseas employment job-matching platform (applicants -> FIRA staff/agency screening -> international employers)."),
+("System", "MatchWise (by FIRA) - overseas employment job-matching platform connecting Filipino applicants, local & international agencies, FIRA governance staff, and international employers (Philippines -> Morocco corridor)."),
+("Branding", "MatchWise = platform/system name; FIRA = company & governance body (FIRA Staff workspace, endorsement approvals, compliance). 'FIRA Staff' in role columns refers to the staff role, not the platform name."),
+("Companion prototype", "MatchWise clickable prototype (Next.js app + single-file HTML) implements the same contract: simulated scoring 0.40 semantic + 0.40 skills + 0.20 experience, 19-state application tracker, two-step endorsement (FIRA review -> employer review) with audit trail."),
 ("Source audited", "prisma/schema.prisma (35 models), API routes (src/app/api/*), UI constants (src/components/*), AI service (python-ai/). Enumerations are CODE-VERIFIED, not assumed."),
 ("Algorithm scope", "Candidate<->Job matching & ranking: SBERT semantic similarity + skill overlap + experience factor -> suitability score 0-100 -> ranked shortlists feeding the application/endorsement pipeline."),
 ("Workbook layout", "README (this sheet) -> Algorithm Mapping (pipeline, formulas, features, data-quality notes) -> Relationship Map -> 8 dictionary sheets, one per functional group."),
