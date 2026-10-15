@@ -866,3 +866,24 @@ Stage Summary:
 - Updated deliverable: MatchWise-Data-Dictionary.xlsx (was FIRA-Data-Dictionary.xlsx; regenerated + rebranded)
 - Download channel that works for user: https://github.com/astennue/fira (system-prototype/MatchWise-Data-Dictionary.xlsx)
 - Future rebuild: python3 scripts/build_fira_dd.py
+
+---
+Task ID: 19
+Agent: Main (Super Z)
+Task: Create MatchWise legal document bundle (T&C + Privacy Policy + EULA/Cookie Notice) — user-clarified: all users, PH governing law, standard legal style, comprehensive, .docx, real agency details, AI matching process disclosure
+
+Work Log:
+- AskUserQuestion answers: scope=all users, law=Philippines (RA 8042/DMW/RA 10173), format=docx, style=standard legal, clauses=data privacy + fees/refunds + verification, company info=user said "I'll provide" then remark: search FIL International Recruitment Agency; length=comprehensive; companions=+Privacy+EULA
+- Web search (z-ai web_search): FIRA = FIL International Recruitment Agency, Casablanca — HQ 59 Blvd Zerktouni, Résidence Les Fleurs 6F Appt 19, 20360 Casablanca; +212 6 62 26 14 99 / 03 36; client@/manpower@filinternational.ma; "WE RECRUIT. WE DEPLOY. WE MONITOR."; PH partners: MY K STAR Int'l Manpower Services Corp (Ermita Manila, DMW-licensed), ERRX Recruitment Consulting (QC); accredited for Morocco (poeajobs.ph)
+- Loaded full docx skill chain (SKILL.md, create.md, contract.md, common-rules.md, docx-js-core.md, docx-js-advanced.md, toc.md, design-system.md head); contract scene: no cover, pure black, 1.5x line spacing, no decorative elements, no fabricated statute article numbers, 【】 placeholders
+- Built scripts/mw_legal/: lib.js (clause/item/article/table builders, title block, Roman/Arabic footers), tc-data-1/2.js (23 articles), privacy-data.js (14 sections), eula-data.js (16 sections incl. cookie table), build.js, patch.py (footer PAGE \* ROMAN/arabic switches + pgNumType strip)
+- T&C articles include: AI-Assisted Matching & Assessment (0.40/0.40/0.20 similarity scoring, decision-support, human review, RA 10173 objection rights), Verification/Licensing/Anti-Illegal Recruitment (RA 8042), Fees/Refunds (no placement fee policy), Data Privacy (cross-ref Policy), disputes → negotiation then Manila courts
+- QA: add_toc_placeholders --auto exit 0 (23 entries); postcheck 0 errors on all 3 (2 line-spacing warnings from intentional title-block/table/TOC-injected spacing); PDF render visual check of title page + body; fixed duplicate operator meta line
+- Word counts: T&C 4,883 / Privacy 1,643 / EULA+Cookie 1,031
+- Delivered: download/ + download/gdrive_workspace/ + system-prototype/; pushed commit bfb3071 to github.com/astennue/fira main
+
+Stage Summary:
+- Deliverables: MatchWise-Terms-and-Conditions.docx (23 articles, TOC, Roman/Arabic numbering), MatchWise-Privacy-Policy.docx (RA 10173 + Morocco 09-08, Sec 6 automated scoring rights), MatchWise-EULA-and-Cookie-Notice.docx (license + cookie table)
+- Real operator details embedded; placeholders 【】 only for unverifiable fields: Effective Date, DPO name/email, PH partner license nos. (avoided fabrication), invoice terms, Philippine address for service
+- Rebuild: node scripts/mw_legal/build.js && python3 scripts/mw_legal/patch.py <files> (TOC script for T&C)
+- Legal review note: Art 17/Part A §8 flagged for counsel review (adhesion/liability limits)
